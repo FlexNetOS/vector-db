@@ -54,3 +54,9 @@ impl From<serde_json::Error> for TinyDancerError {
         TinyDancerError::SerializationError(err.to_string())
     }
 }
+
+impl From<std::io::Error> for TinyDancerError {
+    fn from(err: std::io::Error) -> Self {
+        TinyDancerError::StorageError(err.to_string())
+    }
+}

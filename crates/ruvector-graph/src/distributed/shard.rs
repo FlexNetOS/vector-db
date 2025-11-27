@@ -98,6 +98,7 @@ pub struct HashPartitioner {
 impl HashPartitioner {
     /// Create a new hash partitioner
     pub fn new(shard_count: u32) -> Self {
+        assert!(shard_count > 0, "shard_count must be greater than zero");
         Self {
             shard_count,
             virtual_nodes: 150, // Similar to consistent hashing best practices

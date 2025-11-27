@@ -186,10 +186,10 @@ impl MultiHeadAttention {
             })
             .collect();
 
-        // Softmax
+        // Softmax with epsilon guard against division by zero
         let max_score = scores.iter().copied().fold(f32::NEG_INFINITY, f32::max);
         let exp_scores: Vec<f32> = scores.iter().map(|&s| (s - max_score).exp()).collect();
-        let sum_exp: f32 = exp_scores.iter().sum();
+        let sum_exp: f32 = exp_scores.iter().sum::<f32>().max(1e-10);
         let attention_weights: Vec<f32> = exp_scores.iter().map(|&e| e / sum_exp).collect();
 
         // Weighted sum of values
@@ -268,9 +268,14 @@ impl GRUCell {
         self.add_vecs(&term1, &term2)
     }
 
-    /// Sigmoid activation
+    /// Sigmoid activation with numerical stability
     fn sigmoid(&self, x: f32) -> f32 {
-        1.0 / (1.0 + (-x).exp())
+        if x > 0.0 {
+            1.0 / (1.0 + (-x).exp())
+        } else {
+            let ex = x.exp();
+            ex / (1.0 + ex)
+        }
     }
 
     /// Sigmoid for vectors

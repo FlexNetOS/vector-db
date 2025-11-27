@@ -79,6 +79,21 @@ impl ProductQuantized {
         codebook_size: usize,
         iterations: usize,
     ) -> Result<Self> {
+        if vectors.is_empty() {
+            return Err(crate::error::RuvectorError::InvalidInput(
+                "Cannot train on empty vector set".into(),
+            ));
+        }
+        if vectors[0].is_empty() {
+            return Err(crate::error::RuvectorError::InvalidInput(
+                "Cannot train on vectors with zero dimensions".into(),
+            ));
+        }
+        if codebook_size > 256 {
+            return Err(crate::error::RuvectorError::InvalidParameter(
+                format!("Codebook size {} exceeds u8 maximum of 256", codebook_size),
+            ));
+        }
         let dimensions = vectors[0].len();
         let subspace_dim = dimensions / num_subspaces;
 

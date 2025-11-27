@@ -1,39 +1,19 @@
-//! Comprehensive observability example combining metrics and tracing
+//! Comprehensive observability example demonstrating routing performance
 //!
 //! This example demonstrates:
-//! - Prometheus metrics collection
-//! - OpenTelemetry distributed tracing
-//! - Structured logging
 //! - Circuit breaker monitoring
 //! - Performance tracking
-//!
-//! Prerequisites:
-//! - Jaeger (optional): docker run -d -p6831:6831/udp -p16686:16686 jaegertracing/all-in-one:latest
-//! - Prometheus (optional): Configure to scrape your metrics endpoint
+//! - Response statistics
+//! - Different load scenarios
 //!
 //! Run with: cargo run --example full_observability
 
-use ruvector_tiny_dancer_core::{
-    Candidate, Router, RouterConfig, RoutingRequest, TracingConfig, TracingSystem,
-};
+use ruvector_tiny_dancer_core::{Candidate, Router, RouterConfig, RoutingRequest, RoutingResponse};
 use std::collections::HashMap;
 use std::time::Duration;
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     println!("=== Tiny Dancer Full Observability Example ===\n");
-
-    // Initialize tracing (optional, for demonstration)
-    let tracing_config = TracingConfig {
-        service_name: "tiny-dancer-full-observability".to_string(),
-        service_version: "1.0.0".to_string(),
-        jaeger_agent_endpoint: None, // Set to Some("localhost:6831") for Jaeger
-        sampling_ratio: 1.0,
-        enable_stdout: false,
-    };
-
-    let tracing_system = TracingSystem::new(tracing_config);
-    // Ignore error if Jaeger is not available
-    let _ = tracing_system.init();
 
     // Create router with full configuration
     let config = RouterConfig {
@@ -47,6 +27,13 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     };
 
     let router = Router::new(config)?;
+
+    // Track metrics manually
+    let mut total_requests = 0u64;
+    let mut successful_requests = 0u64;
+    let mut total_latency_us = 0u64;
+    let mut lightweight_routes = 0usize;
+    let mut powerful_routes = 0usize;
 
     println!("\n=== Scenario 1: Normal Operations ===\n");
 
@@ -62,8 +49,14 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             )])),
         };
 
+        total_requests += 1;
         match router.route(request) {
             Ok(response) => {
+                successful_requests += 1;
+                total_latency_us += response.inference_time_us;
+                let (lw, pw) = count_routes(&response);
+                lightweight_routes += lw;
+                powerful_routes += pw;
                 print_response_summary(i + 1, &response);
             }
             Err(e) => {
@@ -88,8 +81,14 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             )])),
         };
 
+        total_requests += 1;
         match router.route(request) {
             Ok(response) => {
+                successful_requests += 1;
+                total_latency_us += response.inference_time_us;
+                let (lw, pw) = count_routes(&response);
+                lightweight_routes += lw;
+                powerful_routes += pw;
                 print_response_summary(i + 1, &response);
             }
             Err(e) => {
@@ -98,41 +97,24 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         }
     }
 
-    println!("\n=== Metrics Export ===\n");
-
-    // Export Prometheus metrics
-    let metrics = router.export_metrics()?;
-
-    println!("Sample metrics (showing key metrics only):\n");
-    for line in metrics.lines() {
-        if line.starts_with("tiny_dancer_routing_requests_total")
-            || line.starts_with("tiny_dancer_routing_decisions_total")
-            || line.starts_with("tiny_dancer_circuit_breaker_state")
-            || line.starts_with("# HELP")
-            || line.starts_with("# TYPE")
-        {
-            println!("{}", line);
-        }
-    }
-
     // Display statistics
     println!("\n=== Performance Statistics ===\n");
-    display_statistics();
-
-    // Shutdown tracing
-    tracing_system.shutdown();
+    display_statistics(
+        total_requests,
+        successful_requests,
+        total_latency_us,
+        lightweight_routes,
+        powerful_routes,
+        &router,
+    );
 
     println!("\n=== Full Observability Example Complete ===");
-    println!("\nObservability Stack:");
-    println!("✓ Prometheus metrics collected");
-    println!("✓ Distributed traces created");
-    println!("✓ Structured logging enabled");
-    println!("✓ Circuit breaker monitored");
-    println!("\nNext steps:");
-    println!("1. Deploy Prometheus to scrape metrics");
-    println!("2. Connect Jaeger for trace visualization");
-    println!("3. Set up Grafana dashboards");
-    println!("4. Configure alerting rules");
+    println!("\nMetrics Summary:");
+    println!("- Total requests processed");
+    println!("- Success/failure rates tracked");
+    println!("- Latency statistics computed");
+    println!("- Routing decisions categorized");
+    println!("- Circuit breaker state monitored");
 
     Ok(())
 }
@@ -153,13 +135,14 @@ fn create_candidates(offset: i32, count: usize) -> Vec<Candidate> {
         .collect()
 }
 
-fn print_response_summary(request_num: i32, response: &ruvector_tiny_dancer_core::RoutingResponse) {
-    let lightweight_count = response
-        .decisions
-        .iter()
-        .filter(|d| d.use_lightweight)
-        .count();
-    let powerful_count = response.decisions.len() - lightweight_count;
+fn count_routes(response: &RoutingResponse) -> (usize, usize) {
+    let lightweight = response.decisions.iter().filter(|d| d.use_lightweight).count();
+    let powerful = response.decisions.len() - lightweight;
+    (lightweight, powerful)
+}
+
+fn print_response_summary(request_num: i32, response: &RoutingResponse) {
+    let (lightweight_count, powerful_count) = count_routes(response);
 
     println!(
         "Request {}: {}μs total, {}μs features, {} candidates",
@@ -181,16 +164,37 @@ fn print_response_summary(request_num: i32, response: &ruvector_tiny_dancer_core
     }
 }
 
-fn display_statistics() {
-    println!("Circuit Breaker: Closed");
-    println!("Total Requests: 8");
-    println!("Success Rate: 100%");
-    println!("Avg Latency: <1ms");
-    println!("\nMetric Types Collected:");
-    println!("- tiny_dancer_routing_requests_total (counter)");
-    println!("- tiny_dancer_routing_latency_seconds (histogram)");
-    println!("- tiny_dancer_circuit_breaker_state (gauge)");
-    println!("- tiny_dancer_routing_decisions_total (counter)");
-    println!("- tiny_dancer_confidence_scores (histogram)");
-    println!("- tiny_dancer_uncertainty_estimates (histogram)");
+fn display_statistics(
+    total_requests: u64,
+    successful_requests: u64,
+    total_latency_us: u64,
+    lightweight_routes: usize,
+    powerful_routes: usize,
+    router: &Router,
+) {
+    let cb_state = match router.circuit_breaker_status() {
+        Some(true) => "Closed",
+        Some(false) => "Open",
+        None => "Disabled",
+    };
+
+    let success_rate = if total_requests > 0 {
+        (successful_requests as f64 / total_requests as f64) * 100.0
+    } else {
+        0.0
+    };
+
+    let avg_latency = if successful_requests > 0 {
+        total_latency_us / successful_requests
+    } else {
+        0
+    };
+
+    println!("Circuit Breaker: {}", cb_state);
+    println!("Total Requests: {}", total_requests);
+    println!("Successful Requests: {}", successful_requests);
+    println!("Success Rate: {:.1}%", success_rate);
+    println!("Avg Latency: {}μs", avg_latency);
+    println!("Lightweight Routes: {}", lightweight_routes);
+    println!("Powerful Routes: {}", powerful_routes);
 }

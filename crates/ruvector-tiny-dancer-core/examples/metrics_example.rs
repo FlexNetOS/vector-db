@@ -1,8 +1,7 @@
-//! Example demonstrating Prometheus metrics collection with Tiny Dancer
+//! Example demonstrating metrics collection with Tiny Dancer
 //!
 //! This example shows how to:
-//! - Collect routing metrics
-//! - Export metrics in Prometheus format
+//! - Collect routing metrics manually
 //! - Monitor circuit breaker state
 //! - Track routing decisions and latencies
 //!
@@ -25,6 +24,13 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     };
 
     let router = Router::new(config)?;
+
+    // Track metrics manually
+    let mut total_requests = 0u64;
+    let mut total_candidates = 0u64;
+    let mut total_latency_us = 0u64;
+    let mut lightweight_count = 0u64;
+    let mut powerful_count = 0u64;
 
     // Process multiple routing requests
     println!("Processing routing requests...\n");
@@ -65,13 +71,31 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
         match router.route(request) {
             Ok(response) => {
+                total_requests += 1;
+                total_candidates += response.candidates_processed as u64;
+                total_latency_us += response.inference_time_us;
+
+                // Count routing decisions
+                for decision in &response.decisions {
+                    if decision.use_lightweight {
+                        lightweight_count += 1;
+                    } else {
+                        powerful_count += 1;
+                    }
+                }
+
                 println!(
                     "Request {}: Processed {} candidates in {}μs",
                     i + 1,
                     response.candidates_processed,
                     response.inference_time_us
                 );
-                println!("  Top decision: {:?}", response.decisions.first());
+                if let Some(top) = response.decisions.first() {
+                    println!(
+                        "  Top decision: {} (confidence: {:.3}, lightweight: {})",
+                        top.candidate_id, top.confidence, top.use_lightweight
+                    );
+                }
             }
             Err(e) => {
                 eprintln!("Error processing request {}: {}", i + 1, e);
@@ -79,36 +103,39 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         }
     }
 
-    // Export metrics
-    println!("\n=== Prometheus Metrics ===\n");
-    let metrics = router.export_metrics()?;
-    println!("{}", metrics);
+    // Display collected metrics
+    println!("\n=== Collected Metrics ===\n");
 
-    // Parse and display key metrics
-    println!("\n=== Key Metrics Summary ===\n");
+    let cb_state = match router.circuit_breaker_status() {
+        Some(true) => "closed",
+        Some(false) => "open",
+        None => "disabled",
+    };
 
-    for line in metrics.lines() {
-        if line.starts_with("tiny_dancer_routing_requests_total") {
-            println!("{}", line);
-        } else if line.starts_with("tiny_dancer_routing_decisions_total") {
-            println!("{}", line);
-        } else if line.starts_with("tiny_dancer_circuit_breaker_state") {
-            println!("{}", line);
-        } else if line.starts_with("tiny_dancer_candidates_processed_total") {
-            println!("{}", line);
-        }
-    }
+    let avg_latency = if total_requests > 0 {
+        total_latency_us / total_requests
+    } else {
+        0
+    };
+
+    println!("tiny_dancer_routing_requests_total {}", total_requests);
+    println!("tiny_dancer_candidates_processed_total {}", total_candidates);
+    println!(
+        "tiny_dancer_routing_decisions_total{{model_type=\"lightweight\"}} {}",
+        lightweight_count
+    );
+    println!(
+        "tiny_dancer_routing_decisions_total{{model_type=\"powerful\"}} {}",
+        powerful_count
+    );
+    println!("tiny_dancer_avg_latency_us {}", avg_latency);
+    println!("tiny_dancer_circuit_breaker_state {}", cb_state);
 
     println!("\n=== Metrics Collection Complete ===");
-    println!("\nTo visualize these metrics:");
-    println!("1. Set up a Prometheus server");
-    println!("2. Configure scraping from your application");
-    println!("3. Use Grafana to create dashboards");
-    println!("\nExample Prometheus configuration:");
-    println!("  scrape_configs:");
-    println!("    - job_name: 'tiny-dancer'");
-    println!("      static_configs:");
-    println!("        - targets: ['localhost:9090']");
+    println!("\nThese metrics can be exported to monitoring systems:");
+    println!("- Prometheus for time-series collection");
+    println!("- Grafana for visualization");
+    println!("- Custom dashboards for real-time monitoring");
 
     Ok(())
 }

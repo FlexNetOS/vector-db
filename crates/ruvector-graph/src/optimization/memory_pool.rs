@@ -60,6 +60,11 @@ impl ArenaAllocator {
         let size = layout.size();
         let align = layout.align();
 
+        // SECURITY: Validate layout parameters
+        assert!(size > 0, "Cannot allocate zero bytes");
+        assert!(align > 0 && align.is_power_of_two(), "Alignment must be a power of 2");
+        assert!(size <= isize::MAX as usize, "Allocation size too large");
+
         // Get current chunk or allocate new one
         let chunk = match self.current.get() {
             Some(chunk) => chunk,
@@ -76,7 +81,14 @@ impl ArenaAllocator {
 
             // Align offset
             let aligned_offset = (offset + align - 1) & !(align - 1);
-            let new_offset = aligned_offset + size;
+
+            // SECURITY: Check for overflow in alignment calculation
+            if aligned_offset < offset {
+                panic!("Alignment calculation overflow");
+            }
+
+            let new_offset = aligned_offset.checked_add(size)
+                .expect("Arena allocation overflow");
 
             if new_offset > chunk_ref.capacity {
                 // Need a new chunk
@@ -89,7 +101,19 @@ impl ArenaAllocator {
             }
 
             chunk_ref.offset.set(new_offset);
-            NonNull::new_unchecked(chunk_ref.data.as_ptr().add(aligned_offset))
+
+            // SECURITY: Verify pointer arithmetic is safe
+            let result_ptr = chunk_ref.data.as_ptr().add(aligned_offset);
+            debug_assert!(
+                result_ptr as usize >= chunk_ref.data.as_ptr() as usize,
+                "Pointer arithmetic underflow"
+            );
+            debug_assert!(
+                result_ptr as usize <= chunk_ref.data.as_ptr().add(chunk_ref.capacity) as usize,
+                "Pointer arithmetic overflow"
+            );
+
+            NonNull::new_unchecked(result_ptr)
         }
     }
 

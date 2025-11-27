@@ -53,6 +53,11 @@ impl Arena {
 
     /// Allocate raw bytes with specified alignment
     fn alloc_raw(&self, size: usize, align: usize) -> *mut u8 {
+        // SECURITY: Validate alignment is a power of 2 and size is reasonable
+        assert!(align > 0 && align.is_power_of_two(), "Alignment must be a power of 2");
+        assert!(size > 0, "Cannot allocate zero bytes");
+        assert!(size <= isize::MAX as usize, "Allocation size too large");
+
         let mut chunks = self.chunks.borrow_mut();
 
         // Try to allocate from the last chunk
@@ -60,11 +65,23 @@ impl Arena {
             // Align the current position
             let current = chunk.used;
             let aligned = (current + align - 1) & !(align - 1);
-            let needed = aligned + size;
+
+            // SECURITY: Check for overflow in alignment calculation
+            if aligned < current {
+                panic!("Alignment calculation overflow");
+            }
+
+            let needed = aligned.checked_add(size)
+                .expect("Arena allocation size overflow");
 
             if needed <= chunk.capacity {
                 chunk.used = needed;
-                return unsafe { chunk.data.add(aligned) };
+                return unsafe {
+                    // SECURITY: Verify pointer arithmetic doesn't overflow
+                    let ptr = chunk.data.add(aligned);
+                    debug_assert!(ptr as usize >= chunk.data as usize, "Pointer underflow");
+                    ptr
+                };
             }
         }
 
@@ -130,9 +147,18 @@ pub struct ArenaVec<T> {
 impl<T> ArenaVec<T> {
     /// Push an element (panics if capacity exceeded)
     pub fn push(&mut self, value: T) {
+        // SECURITY: Bounds check before pointer arithmetic
         assert!(self.len < self.capacity, "ArenaVec capacity exceeded");
+        assert!(!self.ptr.is_null(), "ArenaVec pointer is null");
+
         unsafe {
-            ptr::write(self.ptr.add(self.len), value);
+            // Additional safety: verify the pointer offset is within bounds
+            let offset_ptr = self.ptr.add(self.len);
+            debug_assert!(
+                offset_ptr as usize >= self.ptr as usize,
+                "Pointer arithmetic overflow"
+            );
+            ptr::write(offset_ptr, value);
         }
         self.len += 1;
     }
@@ -154,11 +180,19 @@ impl<T> ArenaVec<T> {
 
     /// Get as slice
     pub fn as_slice(&self) -> &[T] {
+        // SECURITY: Bounds check before creating slice
+        assert!(self.len <= self.capacity, "Length exceeds capacity");
+        assert!(!self.ptr.is_null(), "Cannot create slice from null pointer");
+
         unsafe { std::slice::from_raw_parts(self.ptr, self.len) }
     }
 
     /// Get as mutable slice
     pub fn as_mut_slice(&mut self) -> &mut [T] {
+        // SECURITY: Bounds check before creating slice
+        assert!(self.len <= self.capacity, "Length exceeds capacity");
+        assert!(!self.ptr.is_null(), "Cannot create slice from null pointer");
+
         unsafe { std::slice::from_raw_parts_mut(self.ptr, self.len) }
     }
 }

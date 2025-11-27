@@ -1,12 +1,14 @@
 use crate::layer::RuvectorLayer;
 
-/// Compute cosine similarity between two vectors
+/// Compute cosine similarity between two vectors with improved precision
 pub fn cosine_similarity(a: &[f32], b: &[f32]) -> f32 {
     assert_eq!(a.len(), b.len(), "Vectors must have the same length");
 
     let dot_product: f32 = a.iter().zip(b.iter()).map(|(x, y)| x * y).sum();
-    let norm_a: f32 = a.iter().map(|x| x * x).sum::<f32>().sqrt();
-    let norm_b: f32 = b.iter().map(|x| x * x).sum::<f32>().sqrt();
+
+    // Use f64 accumulator for better precision in norm computation
+    let norm_a: f32 = (a.iter().map(|&x| (x as f64) * (x as f64)).sum::<f64>().sqrt()) as f32;
+    let norm_b: f32 = (b.iter().map(|&x| (x as f64) * (x as f64)).sum::<f64>().sqrt()) as f32;
 
     if norm_a == 0.0 || norm_b == 0.0 {
         0.0
@@ -28,13 +30,9 @@ fn softmax(values: &[f32], temperature: f32) -> Vec<f32> {
         .map(|&x| ((x - max_val) / temperature).exp())
         .collect();
 
-    let sum: f32 = exp_values.iter().sum();
+    let sum: f32 = exp_values.iter().sum::<f32>().max(1e-10);
 
-    if sum == 0.0 {
-        vec![1.0 / values.len() as f32; values.len()]
-    } else {
-        exp_values.iter().map(|&x| x / sum).collect()
-    }
+    exp_values.iter().map(|&x| x / sum).collect()
 }
 
 /// Differentiable search using soft attention mechanism

@@ -28,6 +28,9 @@ pub fn euclidean_distance_avx2(a: &[f32], b: &[f32]) -> f32 {
 #[cfg(target_arch = "x86_64")]
 #[target_feature(enable = "avx2")]
 unsafe fn euclidean_distance_avx2_impl(a: &[f32], b: &[f32]) -> f32 {
+    // SECURITY: Ensure both arrays have the same length to prevent out-of-bounds access
+    assert_eq!(a.len(), b.len(), "Input arrays must have the same length");
+
     let len = a.len();
     let mut sum = _mm256_setzero_ps();
 
@@ -84,6 +87,9 @@ pub fn dot_product_avx2(a: &[f32], b: &[f32]) -> f32 {
 #[cfg(target_arch = "x86_64")]
 #[target_feature(enable = "avx2")]
 unsafe fn dot_product_avx2_impl(a: &[f32], b: &[f32]) -> f32 {
+    // SECURITY: Ensure both arrays have the same length to prevent out-of-bounds access
+    assert_eq!(a.len(), b.len(), "Input arrays must have the same length");
+
     let len = a.len();
     let mut sum = _mm256_setzero_ps();
 
@@ -127,6 +133,9 @@ pub fn cosine_similarity_avx2(a: &[f32], b: &[f32]) -> f32 {
 #[cfg(target_arch = "x86_64")]
 #[target_feature(enable = "avx2")]
 unsafe fn cosine_similarity_avx2_impl(a: &[f32], b: &[f32]) -> f32 {
+    // SECURITY: Ensure both arrays have the same length to prevent out-of-bounds access
+    assert_eq!(a.len(), b.len(), "Input arrays must have the same length");
+
     let len = a.len();
     let mut dot = _mm256_setzero_ps();
     let mut norm_a = _mm256_setzero_ps();

@@ -1,45 +1,20 @@
-//! Example demonstrating distributed tracing with OpenTelemetry and Jaeger
+//! Example demonstrating basic tracing with the Tiny Dancer routing system
 //!
 //! This example shows how to:
-//! - Initialize OpenTelemetry tracing
-//! - Create spans for routing operations
-//! - Propagate trace context
-//! - Export traces to Jaeger
-//!
-//! Prerequisites:
-//! - Run Jaeger: docker run -d -p6831:6831/udp -p16686:16686 jaegertracing/all-in-one:latest
+//! - Create and configure a router
+//! - Process routing requests
+//! - Monitor timing and performance
 //!
 //! Run with: cargo run --example tracing_example
 
-use ruvector_tiny_dancer_core::{
-    Candidate, Router, RouterConfig, RoutingRequest, TraceContext, TracingConfig, TracingSystem,
-};
+use ruvector_tiny_dancer_core::{Candidate, Router, RouterConfig, RoutingRequest};
 use std::collections::HashMap;
+use std::time::Instant;
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
-    println!("=== Tiny Dancer Distributed Tracing Example ===\n");
+    println!("=== Tiny Dancer Routing Example with Timing ===\n");
 
-    // Initialize tracing with stdout exporter (for demonstration)
-    // In production, use Jaeger endpoint
-    let tracing_config = TracingConfig {
-        service_name: "tiny-dancer-example".to_string(),
-        service_version: "1.0.0".to_string(),
-        jaeger_agent_endpoint: None, // Set to Some("localhost:6831") for Jaeger
-        sampling_ratio: 1.0,
-        enable_stdout: true, // Set to false when using Jaeger
-    };
-
-    let tracing_system = TracingSystem::new(tracing_config);
-    tracing_system.init()?;
-
-    println!("Tracing initialized (stdout mode for demonstration)\n");
-    println!("To use Jaeger:");
-    println!("1. Start Jaeger: docker run -d -p6831:6831/udp -p16686:16686 jaegertracing/all-in-one:latest");
-    println!("2. Set jaeger_agent_endpoint to Some(\"localhost:6831\")");
-    println!("3. Set enable_stdout to false");
-    println!("4. Visit http://localhost:16686 to view traces\n");
-
-    // Create router
+    // Create router with configuration
     let config = RouterConfig {
         model_path: "./models/fastgrnn.safetensors".to_string(),
         confidence_threshold: 0.85,
@@ -51,18 +26,12 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let router = Router::new(config)?;
 
-    // Process requests with tracing
-    println!("Processing requests with distributed tracing...\n");
+    // Process requests with timing
+    println!("Processing requests with timing information...\n");
 
     for i in 0..3 {
+        let request_start = Instant::now();
         println!("Request {} - Processing", i + 1);
-
-        // Get trace context for propagation (requires OpenTelemetry to be initialized)
-        if let Some(trace_ctx) = TraceContext::from_current() {
-            println!("  Trace ID: {}", trace_ctx.trace_id);
-            println!("  Span ID: {}", trace_ctx.span_id);
-            println!("  W3C Traceparent: {}", trace_ctx.to_w3c_traceparent());
-        }
 
         // Create candidates
         let candidates = vec![
@@ -90,14 +59,16 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             metadata: None,
         };
 
-        // Route with automatic span creation
+        // Route request
         match router.route(request) {
             Ok(response) => {
+                let total_time = request_start.elapsed();
                 println!(
-                    "\nRequest {}: Processed {} candidates in {}μs",
+                    "\nRequest {}: Processed {} candidates in {}μs (total: {:?})",
                     i + 1,
                     response.candidates_processed,
-                    response.inference_time_us
+                    response.inference_time_us,
+                    total_time
                 );
 
                 for decision in response.decisions.iter().take(2) {
@@ -115,17 +86,11 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         println!();
     }
 
-    // Shutdown tracing to flush remaining spans
-    println!("\n=== Flushing traces ===");
-    tracing_system.shutdown();
-
-    println!("\n=== Tracing Example Complete ===");
-    println!("\nSpans created during execution:");
-    println!("- routing_request (Router::route)");
-    println!("- circuit_breaker_check");
-    println!("- feature_engineering");
-    println!("- model_inference (per candidate)");
-    println!("- uncertainty_estimation (per candidate)");
+    println!("\n=== Routing Example Complete ===");
+    println!("\nTiming breakdown available in each response:");
+    println!("- inference_time_us: Total inference time");
+    println!("- feature_time_us: Feature engineering time");
+    println!("- candidates_processed: Number of candidates evaluated");
 
     Ok(())
 }

@@ -576,11 +576,16 @@ fn binary_cross_entropy(prediction: f32, target: f32) -> f32 {
     -target * pred.ln() - (1.0 - target) * (1.0 - pred).ln()
 }
 
-/// Temperature-scaled softmax for knowledge distillation
+/// Temperature-scaled softmax for knowledge distillation with numerical stability
 pub fn temperature_softmax(logit: f32, temperature: f32) -> f32 {
     // For binary classification, we can use temperature-scaled sigmoid
     let scaled = logit / temperature;
-    1.0 / (1.0 + (-scaled).exp())
+    if scaled > 0.0 {
+        1.0 / (1.0 + (-scaled).exp())
+    } else {
+        let ex = scaled.exp();
+        ex / (1.0 + ex)
+    }
 }
 
 /// Generate teacher predictions for knowledge distillation

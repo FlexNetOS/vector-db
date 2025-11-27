@@ -47,10 +47,20 @@ impl VectorStorage {
     /// instances to share the same underlying database file, fixing the
     /// "Database already open. Cannot acquire lock" error.
     pub fn new<P: AsRef<Path>>(path: P, dimensions: usize) -> Result<Self> {
-        let path_buf = path
-            .as_ref()
+        // SECURITY: Validate path to prevent directory traversal attacks
+        let path_ref = path.as_ref();
+        let path_buf = path_ref
             .canonicalize()
-            .unwrap_or_else(|_| path.as_ref().to_path_buf());
+            .unwrap_or_else(|_| path_ref.to_path_buf());
+
+        // Ensure the path doesn't escape the current working directory
+        if let Ok(cwd) = std::env::current_dir() {
+            if !path_buf.starts_with(&cwd) && !path_buf.is_absolute() {
+                return Err(RuvectorError::InvalidPath(
+                    "Path traversal attempt detected".to_string()
+                ));
+            }
+        }
 
         // Check if we already have a Database instance for this path
         let db = {

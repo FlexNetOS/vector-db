@@ -49,6 +49,10 @@ pub enum VectorDbError {
     #[error("Database error: {0}")]
     Database(String),
 
+    /// Invalid path error
+    #[error("Invalid path: {0}")]
+    InvalidPath(String),
+
     /// Generic error
     #[error("{0}")]
     Other(String),

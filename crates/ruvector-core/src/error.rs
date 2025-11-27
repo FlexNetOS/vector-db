@@ -49,6 +49,10 @@ pub enum RuvectorError {
     #[error("Database error: {0}")]
     DatabaseError(String),
 
+    /// Invalid path error
+    #[error("Invalid path: {0}")]
+    InvalidPath(String),
+
     /// Other errors
     #[error("Internal error: {0}")]
     Internal(String),

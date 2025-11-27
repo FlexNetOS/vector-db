@@ -204,6 +204,11 @@ impl ConformalPredictor {
                         ))
                     })?;
 
+                // Guard against empty results
+                if results.is_empty() {
+                    return Ok(target_score);
+                }
+
                 let avg_score = results.iter().map(|r| r.score).sum::<f32>() / results.len() as f32;
 
                 Ok(if avg_score > 0.0 {
@@ -249,6 +254,16 @@ impl ConformalPredictor {
                 results.into_iter().take(k).collect()
             }
             NonconformityMeasure::NormalizedDistance => {
+                // Guard against empty results
+                if results.is_empty() {
+                    return Ok(PredictionSet {
+                        results: vec![],
+                        threshold,
+                        confidence: 1.0 - self.config.alpha,
+                        coverage_guarantee: 1.0 - self.config.alpha,
+                    });
+                }
+
                 let avg_score = results.iter().map(|r| r.score).sum::<f32>() / results.len() as f32;
                 let adjusted_threshold = threshold * avg_score;
                 results

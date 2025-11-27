@@ -135,7 +135,11 @@ impl SimdTraversal {
         if is_x86_feature_detected!("avx2") {
             unsafe { self.batch_property_access_f32_avx2(properties, indices) }
         } else {
-            indices.iter().map(|&idx| properties[idx]).collect()
+            // SECURITY: Bounds check for scalar fallback
+            indices.iter().map(|&idx| {
+                assert!(idx < properties.len(), "Index out of bounds: {} >= {}", idx, properties.len());
+                properties[idx]
+            }).collect()
         }
     }
 
@@ -150,7 +154,9 @@ impl SimdTraversal {
 
         // Gather operation using AVX2
         // Note: True AVX2 gather is complex; this is a simplified version
+        // SECURITY: Bounds check each index before access
         for &idx in indices {
+            assert!(idx < properties.len(), "Index out of bounds: {} >= {}", idx, properties.len());
             result.push(properties[idx]);
         }
 
@@ -159,7 +165,11 @@ impl SimdTraversal {
 
     #[cfg(not(target_arch = "x86_64"))]
     pub fn batch_property_access_f32(&self, properties: &[f32], indices: &[usize]) -> Vec<f32> {
-        indices.iter().map(|&idx| properties[idx]).collect()
+        // SECURITY: Bounds check for non-x86 platforms
+        indices.iter().map(|&idx| {
+            assert!(idx < properties.len(), "Index out of bounds: {} >= {}", idx, properties.len());
+            properties[idx]
+        }).collect()
     }
 
     /// Parallel DFS with work-stealing for load balancing

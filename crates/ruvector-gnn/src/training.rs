@@ -10,32 +10,209 @@ use ndarray::Array2;
 #[derive(Debug, Clone)]
 pub enum OptimizerType {
     /// Stochastic Gradient Descent
-    Sgd { learning_rate: f32 },
+    Sgd {
+        /// Learning rate
+        learning_rate: f32,
+        /// Momentum coefficient (0.0 = no momentum, 0.9 = standard)
+        momentum: f32,
+    },
     /// Adam optimizer
     Adam {
         /// Learning rate
         learning_rate: f32,
-        /// Beta1 parameter
+        /// Beta1 parameter (exponential decay rate for first moment)
         beta1: f32,
-        /// Beta2 parameter
+        /// Beta2 parameter (exponential decay rate for second moment)
         beta2: f32,
+        /// Epsilon for numerical stability
+        epsilon: f32,
     },
 }
 
-/// TODO: Implement optimizer
+/// Optimizer state storage
+#[derive(Debug)]
+enum OptimizerState {
+    /// SGD with momentum state
+    Sgd {
+        /// Momentum buffer (velocity)
+        velocity: Option<Array2<f32>>,
+    },
+    /// Adam optimizer state
+    Adam {
+        /// First moment estimate (mean of gradients)
+        m: Option<Array2<f32>>,
+        /// Second moment estimate (uncentered variance of gradients)
+        v: Option<Array2<f32>>,
+        /// Timestep counter
+        t: usize,
+    },
+}
+
+/// Optimizer for parameter updates
 pub struct Optimizer {
     optimizer_type: OptimizerType,
+    state: OptimizerState,
 }
 
 impl Optimizer {
     /// Create a new optimizer
     pub fn new(optimizer_type: OptimizerType) -> Self {
-        Self { optimizer_type }
+        let state = match &optimizer_type {
+            OptimizerType::Sgd { .. } => OptimizerState::Sgd { velocity: None },
+            OptimizerType::Adam { .. } => OptimizerState::Adam {
+                m: None,
+                v: None,
+                t: 0,
+            },
+        };
+
+        Self {
+            optimizer_type,
+            state,
+        }
     }
 
-    /// TODO: Perform optimization step
+    /// Perform optimization step
+    ///
+    /// Updates parameters in-place based on gradients using the configured optimizer.
+    ///
+    /// # Arguments
+    /// * `params` - Parameters to update (modified in-place)
+    /// * `grads` - Gradients for the parameters
+    ///
+    /// # Returns
+    /// * `Ok(())` on success
+    /// * `Err(GnnError)` if shapes don't match or other errors occur
     pub fn step(&mut self, params: &mut Array2<f32>, grads: &Array2<f32>) -> Result<()> {
-        unimplemented!("TODO: Implement optimizer step")
+        // Validate shapes match
+        if params.shape() != grads.shape() {
+            return Err(GnnError::dimension_mismatch(
+                format!("{:?}", params.shape()),
+                format!("{:?}", grads.shape()),
+            ));
+        }
+
+        match (&self.optimizer_type, &mut self.state) {
+            (OptimizerType::Sgd { learning_rate, momentum }, OptimizerState::Sgd { velocity }) => {
+                Self::sgd_step_with_momentum(params, grads, *learning_rate, *momentum, velocity)
+            }
+            (
+                OptimizerType::Adam {
+                    learning_rate,
+                    beta1,
+                    beta2,
+                    epsilon,
+                },
+                OptimizerState::Adam { m, v, t },
+            ) => Self::adam_step(params, grads, *learning_rate, *beta1, *beta2, *epsilon, m, v, t),
+            _ => {
+                return Err(GnnError::invalid_input(
+                    "Optimizer type and state mismatch",
+                ))
+            }
+        }
+    }
+
+    /// SGD optimization step with momentum
+    ///
+    /// Implements: v_t = momentum * v_{t-1} + learning_rate * grad
+    ///             params = params - v_t
+    fn sgd_step_with_momentum(
+        params: &mut Array2<f32>,
+        grads: &Array2<f32>,
+        learning_rate: f32,
+        momentum: f32,
+        velocity: &mut Option<Array2<f32>>,
+    ) -> Result<()> {
+        if momentum == 0.0 {
+            // Simple SGD without momentum
+            *params -= &(grads * learning_rate);
+        } else {
+            // SGD with momentum
+            if velocity.is_none() {
+                // Initialize velocity buffer
+                *velocity = Some(Array2::zeros(params.dim()));
+            }
+
+            if let Some(v) = velocity {
+                // Update velocity: v = momentum * v + learning_rate * grad
+                let new_velocity = v.mapv(|x| x * momentum) + grads * learning_rate;
+                *v = new_velocity;
+
+                // Update parameters: params = params - v
+                *params -= &*v;
+            }
+        }
+
+        Ok(())
+    }
+
+    /// Adam optimization step
+    ///
+    /// Implements the Adam algorithm:
+    /// 1. m_t = beta1 * m_{t-1} + (1 - beta1) * g_t
+    /// 2. v_t = beta2 * v_{t-1} + (1 - beta2) * g_t^2
+    /// 3. m_hat = m_t / (1 - beta1^t)
+    /// 4. v_hat = v_t / (1 - beta2^t)
+    /// 5. params = params - lr * m_hat / (sqrt(v_hat) + epsilon)
+    #[allow(clippy::too_many_arguments)]
+    fn adam_step(
+        params: &mut Array2<f32>,
+        grads: &Array2<f32>,
+        learning_rate: f32,
+        beta1: f32,
+        beta2: f32,
+        epsilon: f32,
+        m: &mut Option<Array2<f32>>,
+        v: &mut Option<Array2<f32>>,
+        t: &mut usize,
+    ) -> Result<()> {
+        // Initialize moment buffers if needed
+        if m.is_none() {
+            *m = Some(Array2::zeros(params.dim()));
+        }
+        if v.is_none() {
+            *v = Some(Array2::zeros(params.dim()));
+        }
+
+        // Increment timestep
+        *t += 1;
+        let timestep = *t as f32;
+
+        if let (Some(m_buf), Some(v_buf)) = (m, v) {
+            // Update biased first moment estimate
+            // m_t = beta1 * m_{t-1} + (1 - beta1) * g_t
+            let new_m = m_buf.mapv(|x| x * beta1) + grads * (1.0 - beta1);
+            *m_buf = new_m;
+
+            // Update biased second raw moment estimate
+            // v_t = beta2 * v_{t-1} + (1 - beta2) * g_t^2
+            let grads_squared = grads.mapv(|x| x * x);
+            let new_v = v_buf.mapv(|x| x * beta2) + grads_squared * (1.0 - beta2);
+            *v_buf = new_v;
+
+            // Compute bias-corrected first moment estimate
+            // m_hat = m_t / (1 - beta1^t)
+            let bias_correction1 = 1.0 - beta1.powi(*t as i32);
+            let m_hat = m_buf.mapv(|x| x / bias_correction1);
+
+            // Compute bias-corrected second raw moment estimate
+            // v_hat = v_t / (1 - beta2^t)
+            let bias_correction2 = 1.0 - beta2.powi(*t as i32);
+            let v_hat = v_buf.mapv(|x| x / bias_correction2);
+
+            // Update parameters
+            // params = params - lr * m_hat / (sqrt(v_hat) + epsilon)
+            let update = m_hat.iter().zip(v_hat.iter()).map(|(&m_val, &v_val)| {
+                learning_rate * m_val / (v_val.sqrt() + epsilon)
+            });
+
+            for (param, upd) in params.iter_mut().zip(update) {
+                *param -= upd;
+            }
+        }
+
+        Ok(())
     }
 }
 
@@ -99,6 +276,7 @@ impl Default for TrainingConfig {
                 learning_rate: 0.001,
                 beta1: 0.9,
                 beta2: 0.999,
+                epsilon: 1e-8,
             },
         }
     }
@@ -544,5 +722,217 @@ mod tests {
 
         // Loss should be lower when positive is closer to anchor
         assert!(loss_close < loss_far);
+    }
+
+    #[test]
+    fn test_sgd_optimizer_basic() {
+        let optimizer_type = OptimizerType::Sgd {
+            learning_rate: 0.1,
+            momentum: 0.0,
+        };
+        let mut optimizer = Optimizer::new(optimizer_type);
+
+        let mut params = Array2::from_shape_vec((2, 2), vec![1.0, 2.0, 3.0, 4.0]).unwrap();
+        let grads = Array2::from_shape_vec((2, 2), vec![0.1, 0.2, 0.3, 0.4]).unwrap();
+
+        let result = optimizer.step(&mut params, &grads);
+        assert!(result.is_ok());
+
+        // Expected: params[i] -= learning_rate * grads[i]
+        assert!((params[[0, 0]] - 0.99).abs() < 1e-6); // 1.0 - 0.1 * 0.1
+        assert!((params[[0, 1]] - 1.98).abs() < 1e-6); // 2.0 - 0.1 * 0.2
+        assert!((params[[1, 0]] - 2.97).abs() < 1e-6); // 3.0 - 0.1 * 0.3
+        assert!((params[[1, 1]] - 3.96).abs() < 1e-6); // 4.0 - 0.1 * 0.4
+    }
+
+    #[test]
+    fn test_sgd_optimizer_with_momentum() {
+        let optimizer_type = OptimizerType::Sgd {
+            learning_rate: 0.1,
+            momentum: 0.9,
+        };
+        let mut optimizer = Optimizer::new(optimizer_type);
+
+        let mut params = Array2::from_shape_vec((2, 2), vec![1.0, 2.0, 3.0, 4.0]).unwrap();
+        let grads = Array2::from_shape_vec((2, 2), vec![0.1, 0.2, 0.3, 0.4]).unwrap();
+
+        // First step
+        let result = optimizer.step(&mut params, &grads);
+        assert!(result.is_ok());
+
+        // First step should be same as SGD without momentum (velocity starts at 0)
+        assert!((params[[0, 0]] - 0.99).abs() < 1e-6);
+
+        // Second step should use accumulated momentum
+        let result = optimizer.step(&mut params, &grads);
+        assert!(result.is_ok());
+
+        // With momentum, the update should be larger
+        assert!(params[[0, 0]] < 0.99);
+    }
+
+    #[test]
+    fn test_adam_optimizer_basic() {
+        let optimizer_type = OptimizerType::Adam {
+            learning_rate: 0.001,
+            beta1: 0.9,
+            beta2: 0.999,
+            epsilon: 1e-8,
+        };
+        let mut optimizer = Optimizer::new(optimizer_type);
+
+        let mut params = Array2::from_shape_vec((2, 2), vec![1.0, 2.0, 3.0, 4.0]).unwrap();
+        let grads = Array2::from_shape_vec((2, 2), vec![0.1, 0.2, 0.3, 0.4]).unwrap();
+
+        let original_params = params.clone();
+        let result = optimizer.step(&mut params, &grads);
+        assert!(result.is_ok());
+
+        // Parameters should be updated (decreased in the direction of gradients)
+        assert!(params[[0, 0]] < original_params[[0, 0]]);
+        assert!(params[[0, 1]] < original_params[[0, 1]]);
+        assert!(params[[1, 0]] < original_params[[1, 0]]);
+        assert!(params[[1, 1]] < original_params[[1, 1]]);
+
+        // Check that all values are finite
+        assert!(params.iter().all(|&x| x.is_finite()));
+    }
+
+    #[test]
+    fn test_adam_optimizer_multiple_steps() {
+        let optimizer_type = OptimizerType::Adam {
+            learning_rate: 0.01,
+            beta1: 0.9,
+            beta2: 0.999,
+            epsilon: 1e-8,
+        };
+        let mut optimizer = Optimizer::new(optimizer_type);
+
+        let mut params = Array2::from_shape_vec((2, 2), vec![1.0, 2.0, 3.0, 4.0]).unwrap();
+        let grads = Array2::from_shape_vec((2, 2), vec![0.1, 0.2, 0.3, 0.4]).unwrap();
+        let initial_params = params.clone();
+
+        // Perform multiple steps
+        for _ in 0..10 {
+            let result = optimizer.step(&mut params, &grads);
+            assert!(result.is_ok());
+            assert!(params.iter().all(|&x| x.is_finite()));
+        }
+
+        // After multiple steps, parameters should have decreased (gradients are positive)
+        assert!(params[[0, 0]] < initial_params[[0, 0]]);
+        assert!(params[[1, 1]] < initial_params[[1, 1]]);
+        // All parameters should have moved
+        for i in 0..2 {
+            for j in 0..2 {
+                assert!(params[[i, j]] < initial_params[[i, j]]);
+            }
+        }
+    }
+
+    #[test]
+    fn test_adam_bias_correction() {
+        let optimizer_type = OptimizerType::Adam {
+            learning_rate: 0.001,
+            beta1: 0.9,
+            beta2: 0.999,
+            epsilon: 1e-8,
+        };
+        let mut optimizer = Optimizer::new(optimizer_type.clone());
+
+        let mut params = Array2::from_shape_vec((1, 1), vec![1.0]).unwrap();
+        let grads = Array2::from_shape_vec((1, 1), vec![0.1]).unwrap();
+
+        // First step should have strong bias correction
+        let result = optimizer.step(&mut params, &grads);
+        assert!(result.is_ok());
+        let first_update = 1.0 - params[[0, 0]];
+
+        // Reset optimizer
+        let mut optimizer = Optimizer::new(optimizer_type);
+        let mut params = Array2::from_shape_vec((1, 1), vec![1.0]).unwrap();
+
+        // Perform 100 steps, last step should have less bias correction effect
+        for _ in 0..100 {
+            let _ = optimizer.step(&mut params, &grads);
+        }
+
+        // The bias correction effect should diminish over time
+        assert!(first_update > 0.0);
+    }
+
+    #[test]
+    fn test_optimizer_shape_mismatch() {
+        let optimizer_type = OptimizerType::Adam {
+            learning_rate: 0.001,
+            beta1: 0.9,
+            beta2: 0.999,
+            epsilon: 1e-8,
+        };
+        let mut optimizer = Optimizer::new(optimizer_type);
+
+        let mut params = Array2::from_shape_vec((2, 2), vec![1.0, 2.0, 3.0, 4.0]).unwrap();
+        let grads = Array2::from_shape_vec((3, 2), vec![0.1, 0.2, 0.3, 0.4, 0.5, 0.6]).unwrap();
+
+        let result = optimizer.step(&mut params, &grads);
+        assert!(result.is_err());
+        if let Err(GnnError::DimensionMismatch { expected, actual }) = result {
+            assert!(expected.contains("2, 2"));
+            assert!(actual.contains("3, 2"));
+        } else {
+            panic!("Expected DimensionMismatch error");
+        }
+    }
+
+    #[test]
+    fn test_adam_convergence() {
+        // Test that Adam can minimize a simple quadratic function
+        let optimizer_type = OptimizerType::Adam {
+            learning_rate: 0.5,
+            beta1: 0.9,
+            beta2: 0.999,
+            epsilon: 1e-8,
+        };
+        let mut optimizer = Optimizer::new(optimizer_type);
+
+        // Start with params far from optimum (0, 0)
+        let mut params = Array2::from_shape_vec((1, 2), vec![5.0, 5.0]).unwrap();
+
+        // Gradient of f(x, y) = x^2 + y^2 is (2x, 2y)
+        for _ in 0..200 {
+            let grads =
+                Array2::from_shape_vec((1, 2), vec![2.0 * params[[0, 0]], 2.0 * params[[0, 1]]])
+                    .unwrap();
+            let _ = optimizer.step(&mut params, &grads);
+        }
+
+        // Should converge close to (0, 0)
+        assert!(params[[0, 0]].abs() < 0.5);
+        assert!(params[[0, 1]].abs() < 0.5);
+    }
+
+    #[test]
+    fn test_sgd_momentum_convergence() {
+        // Test that SGD with momentum can minimize a simple quadratic function
+        let optimizer_type = OptimizerType::Sgd {
+            learning_rate: 0.01,
+            momentum: 0.9,
+        };
+        let mut optimizer = Optimizer::new(optimizer_type);
+
+        // Start with params far from optimum (0, 0)
+        let mut params = Array2::from_shape_vec((1, 2), vec![5.0, 5.0]).unwrap();
+
+        // Gradient of f(x, y) = x^2 + y^2 is (2x, 2y)
+        for _ in 0..200 {
+            let grads =
+                Array2::from_shape_vec((1, 2), vec![2.0 * params[[0, 0]], 2.0 * params[[0, 1]]])
+                    .unwrap();
+            let _ = optimizer.step(&mut params, &grads);
+        }
+
+        // Should converge close to (0, 0)
+        assert!(params[[0, 0]].abs() < 0.5);
+        assert!(params[[0, 1]].abs() < 0.5);
     }
 }

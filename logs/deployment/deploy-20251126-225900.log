@@ -1,0 +1,32 @@
+[0;36mLogging to: /workspaces/ruvector/logs/deployment/deploy-20251126-225900.log[0m
+RuVector Deployment Script
+
+Usage: ./scripts/deploy.sh [OPTIONS]
+
+Options:
+  --dry-run           Run without actually publishing
+  --skip-tests        Skip test suite execution
+  --skip-crates       Skip crates.io publishing
+  --skip-npm          Skip NPM publishing
+  --skip-checks       Skip pre-deployment checks
+  --force             Skip confirmation prompts
+  --version VERSION   Set explicit version
+  -h, --help          Show this help message
+
+Environment Variables:
+  CRATES_API_KEY      API key for crates.io (required for crate publishing)
+  NPM_TOKEN           NPM authentication token (required for npm publishing)
+  GITHUB_TOKEN        GitHub token for Actions API (optional)
+
+Examples:
+  # Full deployment with all checks
+  ./scripts/deploy.sh
+
+  # Dry run to test the process
+  ./scripts/deploy.sh --dry-run
+
+  # Publish only to crates.io
+  ./scripts/deploy.sh --skip-npm
+
+  # Quick deployment skipping tests (not recommended for production)
+  ./scripts/deploy.sh --skip-tests --force

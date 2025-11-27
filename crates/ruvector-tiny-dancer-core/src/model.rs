@@ -218,9 +218,14 @@ fn sigmoid(x: &Array1<f32>, scale: f32) -> Array1<f32> {
     x.mapv(|v| sigmoid_scalar(v * scale))
 }
 
-/// Scalar sigmoid
+/// Scalar sigmoid with numerical stability
 fn sigmoid_scalar(x: f32) -> f32 {
-    1.0 / (1.0 + (-x).exp())
+    if x > 0.0 {
+        1.0 / (1.0 + (-x).exp())
+    } else {
+        let ex = x.exp();
+        ex / (1.0 + ex)
+    }
 }
 
 /// Tanh activation with scaling parameter

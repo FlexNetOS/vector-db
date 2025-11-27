@@ -140,13 +140,17 @@ impl SoAVectorStorage {
     /// Grow the storage capacity
     fn grow(&mut self) {
         let new_capacity = self.capacity * 2;
-        let new_total_elements = self.dimensions * new_capacity;
 
-        let new_layout = Layout::from_size_align(
-            new_total_elements * std::mem::size_of::<f32>(),
-            CACHE_LINE_SIZE,
-        )
-        .unwrap();
+        // Security: Use checked arithmetic to prevent overflow
+        let new_total_elements = self.dimensions
+            .checked_mul(new_capacity)
+            .expect("dimensions * new_capacity overflow");
+        let new_total_bytes = new_total_elements
+            .checked_mul(std::mem::size_of::<f32>())
+            .expect("total size overflow in grow");
+
+        let new_layout = Layout::from_size_align(new_total_bytes, CACHE_LINE_SIZE)
+            .expect("invalid memory layout in grow");
 
         let new_data = unsafe { alloc(new_layout) as *mut f32 };
 

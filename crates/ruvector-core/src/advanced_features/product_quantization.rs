@@ -34,6 +34,23 @@ impl Default for PQConfig {
     }
 }
 
+impl PQConfig {
+    /// Validate the configuration
+    pub fn validate(&self) -> Result<()> {
+        if self.codebook_size > 256 {
+            return Err(RuvectorError::InvalidParameter(
+                format!("Codebook size {} exceeds u8 maximum of 256", self.codebook_size),
+            ));
+        }
+        if self.num_subspaces == 0 {
+            return Err(RuvectorError::InvalidParameter(
+                "Number of subspaces must be greater than 0".to_string(),
+            ));
+        }
+        Ok(())
+    }
+}
+
 /// Precomputed lookup table for fast distance computation
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct LookupTable {
@@ -92,6 +109,14 @@ pub struct EnhancedPQ {
 impl EnhancedPQ {
     /// Create a new Enhanced PQ instance
     pub fn new(dimensions: usize, config: PQConfig) -> Result<Self> {
+        config.validate()?;
+
+        if dimensions == 0 {
+            return Err(RuvectorError::InvalidParameter(
+                "Dimensions must be greater than 0".to_string(),
+            ));
+        }
+
         if dimensions % config.num_subspaces != 0 {
             return Err(RuvectorError::InvalidParameter(format!(
                 "Dimensions {} must be divisible by num_subspaces {}",
@@ -112,6 +137,12 @@ impl EnhancedPQ {
         if training_vectors.is_empty() {
             return Err(RuvectorError::InvalidParameter(
                 "Training set cannot be empty".to_string(),
+            ));
+        }
+
+        if training_vectors[0].is_empty() {
+            return Err(RuvectorError::InvalidParameter(
+                "Training vectors cannot have zero dimensions".to_string(),
             ));
         }
 
@@ -322,12 +353,24 @@ fn kmeans_clustering(
         ));
     }
 
+    if vectors[0].is_empty() {
+        return Err(RuvectorError::InvalidParameter(
+            "Cannot cluster vectors with zero dimensions".to_string(),
+        ));
+    }
+
     if k > vectors.len() {
         return Err(RuvectorError::InvalidParameter(format!(
             "k ({}) cannot be larger than number of vectors ({})",
             k,
             vectors.len()
         )));
+    }
+
+    if k > 256 {
+        return Err(RuvectorError::InvalidParameter(
+            format!("k ({}) exceeds u8 maximum of 256 for codebook size", k),
+        ));
     }
 
     let mut rng = thread_rng();

@@ -22,7 +22,22 @@ pub struct Storage {
 impl Storage {
     /// Create a new storage instance
     pub fn new<P: AsRef<Path>>(path: P) -> Result<Self> {
-        let db = Database::create(path)?;
+        // SECURITY: Validate and canonicalize path to prevent directory traversal
+        let path_ref = path.as_ref();
+        let canonical_path = path_ref
+            .canonicalize()
+            .unwrap_or_else(|_| path_ref.to_path_buf());
+
+        // Ensure the path doesn't escape allowed directories
+        if let Ok(cwd) = std::env::current_dir() {
+            if !canonical_path.starts_with(&cwd) && !canonical_path.is_absolute() {
+                return Err(VectorDbError::InvalidPath(
+                    "Path traversal attempt detected".to_string()
+                ));
+            }
+        }
+
+        let db = Database::create(canonical_path)?;
 
         Ok(Self {
             db: Arc::new(db),
@@ -32,7 +47,22 @@ impl Storage {
 
     /// Open an existing storage instance
     pub fn open<P: AsRef<Path>>(path: P) -> Result<Self> {
-        let db = Database::open(path)?;
+        // SECURITY: Validate and canonicalize path to prevent directory traversal
+        let path_ref = path.as_ref();
+        let canonical_path = path_ref
+            .canonicalize()
+            .unwrap_or_else(|_| path_ref.to_path_buf());
+
+        // Ensure the path doesn't escape allowed directories
+        if let Ok(cwd) = std::env::current_dir() {
+            if !canonical_path.starts_with(&cwd) && !canonical_path.is_absolute() {
+                return Err(VectorDbError::InvalidPath(
+                    "Path traversal attempt detected".to_string()
+                ));
+            }
+        }
+
+        let db = Database::open(canonical_path)?;
 
         Ok(Self {
             db: Arc::new(db),

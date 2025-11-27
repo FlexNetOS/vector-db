@@ -1,79 +1,28 @@
-//! Admin server example for Tiny Dancer
+//! Admin and health check example for Tiny Dancer
 //!
-//! This example demonstrates how to run the admin API server for monitoring,
-//! health checks, and administration of the Tiny Dancer routing system.
+//! This example demonstrates how to implement health checks and
+//! administrative functionality for the Tiny Dancer routing system.
 //!
 //! ## Usage
 //!
 //! ```bash
-//! cargo run --example admin-server --features admin-api
+//! cargo run --example admin-server
 //! ```
 //!
-//! ## Endpoints
+//! This example shows:
+//! - Health check implementations
+//! - Configuration inspection
+//! - Circuit breaker status monitoring
+//! - Hot model reloading
 //!
-//! ### Health Checks
-//! - `GET /health` - Basic liveness probe
-//! - `GET /health/ready` - Readiness check (K8s compatible)
-//!
-//! ### Metrics
-//! - `GET /metrics` - Prometheus format metrics
-//!
-//! ### Admin
-//! - `POST /admin/reload` - Hot reload model
-//! - `GET /admin/config` - Get current configuration
-//! - `PUT /admin/config` - Update configuration
-//! - `GET /admin/circuit-breaker` - Get circuit breaker status
-//! - `POST /admin/circuit-breaker/reset` - Reset circuit breaker
-//!
-//! ### Info
-//! - `GET /info` - System information
-//!
-//! ## Testing Endpoints
-//!
-//! ```bash
-//! # Health check
-//! curl http://localhost:8080/health
-//!
-//! # Readiness check
-//! curl http://localhost:8080/health/ready
-//!
-//! # Metrics (Prometheus format)
-//! curl http://localhost:8080/metrics
-//!
-//! # System info
-//! curl http://localhost:8080/info
-//!
-//! # Reload model (requires auth if token is set)
-//! curl -X POST http://localhost:8080/admin/reload \
-//!   -H "Authorization: Bearer your-token-here"
-//!
-//! # Get configuration
-//! curl http://localhost:8080/admin/config \
-//!   -H "Authorization: Bearer your-token-here"
-//!
-//! # Circuit breaker status
-//! curl http://localhost:8080/admin/circuit-breaker \
-//!   -H "Authorization: Bearer your-token-here"
-//! ```
+//! For a full HTTP admin server implementation, see the `api` module
+//! documentation which requires additional dependencies (axum, tokio).
 
-use ruvector_tiny_dancer_core::api::{AdminServer, AdminServerConfig};
-use ruvector_tiny_dancer_core::router::Router;
-use ruvector_tiny_dancer_core::types::RouterConfig;
-use std::sync::Arc;
-use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
+use ruvector_tiny_dancer_core::{Candidate, Router, RouterConfig, RoutingRequest};
+use std::collections::HashMap;
 
-#[tokio::main]
-async fn main() -> Result<(), Box<dyn std::error::Error>> {
-    // Initialize tracing
-    tracing_subscriber::registry()
-        .with(
-            tracing_subscriber::EnvFilter::try_from_default_env()
-                .unwrap_or_else(|_| "info,ruvector_tiny_dancer_core=debug".into()),
-        )
-        .with(tracing_subscriber::fmt::layer())
-        .init();
-
-    tracing::info!("Starting Tiny Dancer Admin Server Example");
+fn main() -> Result<(), Box<dyn std::error::Error>> {
+    println!("=== Tiny Dancer Admin Example ===\n");
 
     // Create router with default configuration
     let router_config = RouterConfig {
@@ -86,55 +35,97 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         database_path: None,
     };
 
-    tracing::info!("Creating router with config: {:?}", router_config);
-    let router = Router::new(router_config)?;
-    let router = Arc::new(router);
+    println!("Creating router with config:");
+    println!("  Model path: {}", router_config.model_path);
+    println!("  Confidence threshold: {}", router_config.confidence_threshold);
+    println!("  Max uncertainty: {}", router_config.max_uncertainty);
+    println!("  Circuit breaker: {}", router_config.enable_circuit_breaker);
 
-    // Configure admin server
-    let admin_config = AdminServerConfig {
-        bind_address: "127.0.0.1".to_string(),
-        port: 8080,
-        // Uncomment to enable authentication:
-        // auth_token: Some("your-secret-token-here".to_string()),
-        auth_token: None,
-        enable_cors: true,
+    let router = Router::new(router_config.clone())?;
+
+    // Health check implementation
+    println!("\n--- Health Check ---");
+    let health = check_health(&router);
+    println!("Status: {}", if health { "healthy" } else { "unhealthy" });
+
+    // Readiness check
+    println!("\n--- Readiness Check ---");
+    let ready = check_readiness(&router);
+    println!("Ready: {}", ready);
+
+    // Configuration info
+    println!("\n--- Configuration ---");
+    let config = router.config();
+    println!("Current configuration: {:?}", config);
+
+    // Circuit breaker status
+    println!("\n--- Circuit Breaker Status ---");
+    match router.circuit_breaker_status() {
+        Some(true) => println!("State: Closed (accepting requests)"),
+        Some(false) => println!("State: Open (rejecting requests)"),
+        None => println!("State: Disabled"),
+    }
+
+    // Test routing to verify system works
+    println!("\n--- Test Routing ---");
+    let candidates = vec![
+        Candidate {
+            id: "test-1".to_string(),
+            embedding: vec![0.5; 384],
+            metadata: HashMap::new(),
+            created_at: chrono::Utc::now().timestamp(),
+            access_count: 10,
+            success_rate: 0.95,
+        },
+    ];
+
+    let request = RoutingRequest {
+        query_embedding: vec![0.5; 384],
+        candidates,
+        metadata: None,
     };
 
-    tracing::info!(
-        "Starting admin server on {}:{}",
-        admin_config.bind_address,
-        admin_config.port
-    );
-    tracing::info!(
-        "Authentication: {}",
-        if admin_config.auth_token.is_some() {
-            "enabled"
-        } else {
-            "disabled"
+    match router.route(request) {
+        Ok(response) => {
+            println!(
+                "Test routing successful: {} candidates in {}μs",
+                response.candidates_processed, response.inference_time_us
+            );
         }
-    );
+        Err(e) => {
+            println!("Test routing failed: {}", e);
+        }
+    }
 
-    // Create and start admin server
-    let server = AdminServer::new(router, admin_config);
+    // Model reload demonstration
+    println!("\n--- Model Reload ---");
+    println!("Attempting model reload...");
+    match router.reload_model() {
+        Ok(_) => println!("Model reload: Success"),
+        Err(e) => println!("Model reload: {} (expected if model file doesn't exist)", e),
+    }
 
-    println!("\n╔════════════════════════════════════════════════════════════════╗");
-    println!("║         Tiny Dancer Admin Server Running                      ║");
-    println!("╠════════════════════════════════════════════════════════════════╣");
-    println!("║ Health Check:  http://localhost:8080/health                   ║");
-    println!("║ Readiness:     http://localhost:8080/health/ready             ║");
-    println!("║ Metrics:       http://localhost:8080/metrics                  ║");
-    println!("║ System Info:   http://localhost:8080/info                     ║");
-    println!("║                                                                ║");
-    println!("║ Admin API:     http://localhost:8080/admin/*                  ║");
-    println!("║   - POST /admin/reload                                         ║");
-    println!("║   - GET  /admin/config                                         ║");
-    println!("║   - PUT  /admin/config                                         ║");
-    println!("║   - GET  /admin/circuit-breaker                                ║");
-    println!("║   - POST /admin/circuit-breaker/reset                          ║");
-    println!("╚════════════════════════════════════════════════════════════════╝\n");
-
-    // Start server (blocking)
-    server.serve().await?;
+    println!("\n=== Admin Example Complete ===");
+    println!("\nFor a full HTTP admin server, you would need:");
+    println!("1. Add axum and tokio dependencies");
+    println!("2. Enable the admin-api feature");
+    println!("3. Use the AdminServer from the api module");
 
     Ok(())
+}
+
+/// Basic health check - returns true if the router is operational
+fn check_health(router: &Router) -> bool {
+    // A simple health check just verifies the router exists
+    // In production, you might also check model availability
+    router.config().model_path.len() > 0
+}
+
+/// Readiness check - returns true if ready to accept traffic
+fn check_readiness(router: &Router) -> bool {
+    // Check circuit breaker status
+    match router.circuit_breaker_status() {
+        Some(is_closed) => is_closed, // Ready only if circuit breaker is closed
+        None => true,                  // Ready if circuit breaker is disabled
+    }
 }

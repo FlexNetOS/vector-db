@@ -238,7 +238,7 @@ impl Tensor {
         }
     }
 
-    /// Sigmoid activation function (1 / (1 + e^(-x)))
+    /// Sigmoid activation function (1 / (1 + e^(-x))) with numerical stability
     ///
     /// # Returns
     /// A new tensor with sigmoid applied element-wise
@@ -246,7 +246,14 @@ impl Tensor {
         let result: Vec<f32> = self
             .data
             .iter()
-            .map(|&x| 1.0 / (1.0 + (-x).exp()))
+            .map(|&x| {
+                if x > 0.0 {
+                    1.0 / (1.0 + (-x).exp())
+                } else {
+                    let ex = x.exp();
+                    ex / (1.0 + ex)
+                }
+            })
             .collect();
         Tensor {
             data: result,
@@ -266,12 +273,14 @@ impl Tensor {
         }
     }
 
-    /// Compute L2 norm (Euclidean norm)
+    /// Compute L2 norm (Euclidean norm) with improved precision
     ///
     /// # Returns
     /// The L2 norm of the tensor
     pub fn l2_norm(&self) -> f32 {
-        self.data.iter().map(|&x| x * x).sum::<f32>().sqrt()
+        // Use f64 accumulator for better numerical precision
+        let sum_squares: f64 = self.data.iter().map(|&x| (x as f64) * (x as f64)).sum();
+        (sum_squares.sqrt()) as f32
     }
 
     /// Normalize the tensor to unit L2 norm

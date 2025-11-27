@@ -1,0 +1,503 @@
+[0;36mLogging to: /workspaces/ruvector/logs/deployment/deploy-20251126-230017.log[0m
+[1;33m[WARNING][0m DRY RUN MODE: No actual publishing will occur
+[1;33m[WARNING][0m Skipping test suite
+[1;33m[WARNING][0m Skipping pre-deployment checks
+[1;33m[WARNING][0m Force mode: Skipping confirmation prompts
+
+[1m[0;36m========================================[0m
+[1m[0;36mChecking Prerequisites[0m
+[1m[0;36m========================================[0m
+[0;32m[SUCCESS][0m All required tools found
+[0;34m[INFO][0m Rust version: rustc 1.91.1 (ed61e7d7e 2025-11-07)
+[0;34m[INFO][0m Cargo version: cargo 1.91.1 (ea2d97820 2025-10-10)
+[0;34m[INFO][0m Node version: v22.21.1
+[0;34m[INFO][0m NPM version: 9.8.1
+[0;34m[INFO][0m wasm-pack version: wasm-pack 0.13.1
+
+[1m[0;36m========================================[0m
+[1m[0;36mReading Workspace Version[0m
+[1m[0;36m========================================[0m
+[0;32m[SUCCESS][0m Workspace version: 0.1.2
+
+[1m[0;36m========================================[0m
+[1m[0;36mSynchronizing Package Versions[0m
+[1m[0;36m========================================[0m
+[0;34m[INFO][0m Updating root package.json to version 0.1.2
+[0;32m[SUCCESS][0m Root package.json updated
+[0;34m[INFO][0m Updating crates/ruvector-node/package.json to version 0.1.2
+[0;34m[INFO][0m Updating crates/ruvector-wasm/package.json to version 0.1.2
+[0;34m[INFO][0m Updating crates/ruvector-gnn-node/package.json to version 0.1.2
+[0;32m[SUCCESS][0m All package versions synchronized to 0.1.2
+[1;33m[WARNING][0m Skipping tests (--skip-tests flag set)
+[1;33m[WARNING][0m Skipping clippy checks
+[1;33m[WARNING][0m Skipping formatting check
+
+[1m[0;36m========================================[0m
+[1m[0;36mBuilding WASM Packages[0m
+[1m[0;36m========================================[0m
+[0;34m[INFO][0m Building WASM package: crates/ruvector-wasm
+[0;34m[INFO][0m Using npm build for crates/ruvector-wasm
+
+> @ruvector/wasm@0.1.2 build
+> npm run build:web && npm run build:simd && npm run build:bundler
+
+
+> @ruvector/wasm@0.1.2 build:web
+> wasm-pack build --target web --out-dir pkg --release
+
+[INFO]: 🎯  Checking for the Wasm target...
+[INFO]: 🌀  Compiling to Wasm...
+warning: profiles for the non root package will be ignored, specify profiles at the workspace root:
+package:   /workspaces/ruvector/crates/ruvector-node/Cargo.toml
+workspace: /workspaces/ruvector/Cargo.toml
+warning: profiles for the non root package will be ignored, specify profiles at the workspace root:
+package:   /workspaces/ruvector/crates/ruvector-wasm/Cargo.toml
+workspace: /workspaces/ruvector/Cargo.toml
+warning: profiles for the non root package will be ignored, specify profiles at the workspace root:
+package:   /workspaces/ruvector/crates/ruvector-router-cli/Cargo.toml
+workspace: /workspaces/ruvector/Cargo.toml
+warning: profiles for the non root package will be ignored, specify profiles at the workspace root:
+package:   /workspaces/ruvector/crates/ruvector-router-ffi/Cargo.toml
+workspace: /workspaces/ruvector/Cargo.toml
+warning: profiles for the non root package will be ignored, specify profiles at the workspace root:
+package:   /workspaces/ruvector/crates/ruvector-router-wasm/Cargo.toml
+workspace: /workspaces/ruvector/Cargo.toml
+warning: profiles for the non root package will be ignored, specify profiles at the workspace root:
+package:   /workspaces/ruvector/crates/ruvector-tiny-dancer-wasm/Cargo.toml
+workspace: /workspaces/ruvector/Cargo.toml
+warning: profiles for the non root package will be ignored, specify profiles at the workspace root:
+package:   /workspaces/ruvector/crates/ruvector-tiny-dancer-node/Cargo.toml
+workspace: /workspaces/ruvector/Cargo.toml
+warning: profiles for the non root package will be ignored, specify profiles at the workspace root:
+package:   /workspaces/ruvector/crates/ruvector-graph-node/Cargo.toml
+workspace: /workspaces/ruvector/Cargo.toml
+warning: profiles for the non root package will be ignored, specify profiles at the workspace root:
+package:   /workspaces/ruvector/crates/ruvector-graph-wasm/Cargo.toml
+workspace: /workspaces/ruvector/Cargo.toml
+warning: profiles for the non root package will be ignored, specify profiles at the workspace root:
+package:   /workspaces/ruvector/crates/ruvector-gnn-node/Cargo.toml
+workspace: /workspaces/ruvector/Cargo.toml
+warning: profiles for the non root package will be ignored, specify profiles at the workspace root:
+package:   /workspaces/ruvector/crates/ruvector-gnn-wasm/Cargo.toml
+workspace: /workspaces/ruvector/Cargo.toml
+   Compiling syn v2.0.111
+   Compiling wasm-bindgen-shared v0.2.105
+   Compiling cfg-if v1.0.4
+   Compiling once_cell v1.21.3
+   Compiling rustversion v1.0.22
+   Compiling bumpalo v3.19.0
+   Compiling wasm-bindgen-macro-support v0.2.105
+   Compiling wasm-bindgen v0.2.105
+   Compiling unicode-ident v1.0.22
+   Compiling crossbeam-utils v0.8.21
+   Compiling wasm-bindgen-macro v0.2.105
+   Compiling serde_core v1.0.228
+   Compiling libm v0.2.15
+   Compiling num-traits v0.2.19
+   Compiling js-sys v0.3.82
+   Compiling zerocopy v0.8.30
+   Compiling serde v1.0.228
+   Compiling serde_derive v1.0.228
+   Compiling ptr_meta_derive v0.3.1
+   Compiling ptr_meta v0.3.1
+   Compiling getrandom v0.2.16
+   Compiling crossbeam-epoch v0.9.18
+   Compiling parking_lot_core v0.9.12
+   Compiling crossbeam-deque v0.8.6
+   Compiling ppv-lite86 v0.2.21
+   Compiling rand_core v0.6.4
+   Compiling rancor v0.1.1
+   Compiling bytecheck_derive v0.8.2
+   Compiling tracing-core v0.1.35
+   Compiling simdutf8 v0.1.5
+   Compiling smallvec v1.15.1
+   Compiling scopeguard v1.2.0
+   Compiling lock_api v0.4.14
+   Compiling bytecheck v0.8.2
+   Compiling rayon-core v1.13.0
+   Compiling matrixmultiply v0.3.10
+   Compiling rand_chacha v0.3.1
+   Compiling tracing-attributes v0.1.31
+   Compiling munge_macro v0.4.7
+   Compiling rawpointer v0.2.1
+   Compiling lazy_static v1.5.0
+   Compiling pin-project-lite v0.2.16
+   Compiling anyhow v1.0.100
+   Compiling tracing v0.1.42
+   Compiling thiserror v2.0.17
+   Compiling munge v0.4.7
+   Compiling serde_json v1.0.145
+   Compiling sharded-slab v0.1.7
+   Compiling rand v0.8.5
+   Compiling simsimd v5.9.11
+   Compiling rend v0.5.3
+   Compiling num-integer v0.1.46
+   Compiling num-complex v0.4.6
+   Compiling crossbeam-queue v0.3.12
+   Compiling crossbeam-channel v0.5.15
+   Compiling rkyv_derive v0.8.12
+   Compiling thiserror-impl v2.0.17
+   Compiling thread_local v1.1.9
+   Compiling hashbrown v0.15.5
+   Compiling either v1.15.0
+   Compiling getrandom v0.3.4
+   Compiling unty v0.0.4
+   Compiling memchr v2.7.6
+   Compiling itoa v1.0.15
+   Compiling ryu v1.0.20
+   Compiling hashbrown v0.14.5
+   Compiling dashmap v6.1.0
+   Compiling rkyv v0.8.12
+   Compiling bincode v2.0.1
+   Compiling rayon v1.11.0
+   Compiling tracing-subscriber v0.3.21
+   Compiling crossbeam v0.8.4
+   Compiling ndarray v0.16.1
+   Compiling rand_distr v0.4.3
+   Compiling parking_lot v0.12.5
+   Compiling uuid v1.18.1
+   Compiling chrono v0.4.42
+   Compiling ruvector-core v0.1.2 (/workspaces/ruvector/crates/ruvector-core)
+warning: unused import: `std::collections::HashMap`
+ --> crates/ruvector-core/src/advanced_features/conformal_prediction.rs:9:5
+  |
+9 | use std::collections::HashMap;
+  |     ^^^^^^^^^^^^^^^^^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: unused import: `RuvectorError`
+ --> crates/ruvector-core/src/advanced_features/filtered_search.rs:8:28
+  |
+8 | use crate::error::{Result, RuvectorError};
+  |                            ^^^^^^^^^^^^^
+
+warning: unused import: `RuvectorError`
+ --> crates/ruvector-core/src/advanced_features/hybrid_search.rs:8:28
+  |
+8 | use crate::error::{Result, RuvectorError};
+  |                            ^^^^^^^^^^^^^
+
+warning: unused import: `DistanceMetric`
+ --> crates/ruvector-core/src/index.rs:8:20
+  |
+8 | use crate::types::{DistanceMetric, SearchResult, VectorId};
+  |                    ^^^^^^^^^^^^^^
+
+warning: unused doc comment
+   --> crates/ruvector-core/src/arena.rs:180:1
+    |
+180 | /// Thread-local arena for per-thread allocations
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ rustdoc does not generate documentation for macro invocations
+    |
+    = help: to document an item produced by a macro, the macro must produce the documentation as part of its expansion
+    = note: `#[warn(unused_doc_comments)]` (part of `#[warn(unused)]`) on by default
+
+warning: unused imports: `Result` and `RuvectorError`
+ --> crates/ruvector-core/src/advanced/neural_hash.rs:6:20
+  |
+6 | use crate::error::{Result, RuvectorError};
+  |                    ^^^^^^  ^^^^^^^^^^^^^
+
+warning: unused import: `Array1`
+ --> crates/ruvector-core/src/advanced/tda.rs:7:15
+  |
+7 | use ndarray::{Array1, Array2};
+  |               ^^^^^^
+
+warning: unused imports: `HashMap` and `HashSet`
+ --> crates/ruvector-core/src/advanced/tda.rs:9:24
+  |
+9 | use std::collections::{HashMap, HashSet};
+  |                        ^^^^^^^  ^^^^^^^
+
+   Compiling tracing-wasm v0.2.1
+warning: variable does not need to be mutable
+  --> crates/ruvector-core/src/advanced_features/mmr.rs:66:9
+   |
+66 |         mut candidates: Vec<SearchResult>,
+   |         ----^^^^^^^^^^
+   |         |
+   |         help: remove this `mut`
+   |
+   = note: `#[warn(unused_mut)]` (part of `#[warn(unused)]`) on by default
+
+warning: unused variable: `query`
+   --> crates/ruvector-core/src/advanced_features/mmr.rs:114:9
+    |
+114 |         query: &[f32],
+    |         ^^^^^ help: if this is intentional, prefix it with an underscore: `_query`
+    |
+    = note: `#[warn(unused_variables)]` (part of `#[warn(unused)]`) on by default
+
+warning: unused variable: `subspace_dim`
+   --> crates/ruvector-core/src/advanced_features/product_quantization.rs:241:13
+    |
+241 |         let subspace_dim = self.dimensions / self.config.num_subspaces;
+    |             ^^^^^^^^^^^^
+    |
+help: if this is intentional, prefix it with an underscore
+    |
+241 |         let _subspace_dim = self.dimensions / self.config.num_subspaces;
+    |             +
+help: you might have meant to pattern match on the similarly named constant `CACHE_LINE_SIZE`
+    |
+241 -         let subspace_dim = self.dimensions / self.config.num_subspaces;
+241 +         let cache_optimized::CACHE_LINE_SIZE = self.dimensions / self.config.num_subspaces;
+    |
+
+warning: unused variable: `hnsw_config`
+  --> crates/ruvector-core/src/vector_db.rs:41:55
+   |
+41 |         let index: Box<dyn VectorIndex> = if let Some(hnsw_config) = &options.hnsw_config {
+   |                                                       ^^^^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_hnsw_config`
+
+warning: field `dimensions` is never read
+  --> crates/ruvector-core/src/index/flat.rs:14:5
+   |
+11 | pub struct FlatIndex {
+   |            --------- field in this struct
+...
+14 |     dimensions: usize,
+   |     ^^^^^^^^^^
+   |
+   = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: missing documentation for a struct field
+  --> crates/ruvector-core/src/advanced_features/hybrid_search.rs:58:5
+   |
+58 |     pub b: f32,
+   |     ^^^^^^^^^^
+   |
+note: the lint level is defined here
+  --> crates/ruvector-core/src/lib.rs:13:9
+   |
+13 | #![warn(missing_docs)]
+   |         ^^^^^^^^^^^^
+
+warning: missing documentation for an associated function
+  --> crates/ruvector-core/src/lockfree.rs:18:5
+   |
+18 |     pub fn new(initial: u64) -> Self {
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a method
+  --> crates/ruvector-core/src/lockfree.rs:25:5
+   |
+25 |     pub fn increment(&self) -> u64 {
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a method
+  --> crates/ruvector-core/src/lockfree.rs:30:5
+   |
+30 |     pub fn get(&self) -> u64 {
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a method
+  --> crates/ruvector-core/src/lockfree.rs:35:5
+   |
+35 |     pub fn add(&self, delta: u64) -> u64 {
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for an associated function
+  --> crates/ruvector-core/src/lockfree.rs:49:5
+   |
+49 |     pub fn new() -> Self {
+   |     ^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a method
+  --> crates/ruvector-core/src/lockfree.rs:59:5
+   |
+59 |     pub fn record_query(&self, latency_ns: u64) {
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a method
+  --> crates/ruvector-core/src/lockfree.rs:66:5
+   |
+66 |     pub fn record_insert(&self) {
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a method
+  --> crates/ruvector-core/src/lockfree.rs:71:5
+   |
+71 |     pub fn record_delete(&self) {
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a method
+  --> crates/ruvector-core/src/lockfree.rs:75:5
+   |
+75 |     pub fn snapshot(&self) -> StatsSnapshot {
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct
+  --> crates/ruvector-core/src/lockfree.rs:99:1
+   |
+99 | pub struct StatsSnapshot {
+   | ^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> crates/ruvector-core/src/lockfree.rs:100:5
+    |
+100 |     pub queries: u64,
+    |     ^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> crates/ruvector-core/src/lockfree.rs:101:5
+    |
+101 |     pub inserts: u64,
+    |     ^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> crates/ruvector-core/src/lockfree.rs:102:5
+    |
+102 |     pub deletes: u64,
+    |     ^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> crates/ruvector-core/src/lockfree.rs:103:5
+    |
+103 |     pub avg_latency_ns: u64,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for an associated function
+   --> crates/ruvector-core/src/lockfree.rs:115:5
+    |
+115 | /     pub fn new<F>(capacity: usize, factory: F) -> Self
+116 | |     where
+117 | |         F: Fn() -> T + Send + Sync + 'static,
+    | |_____________________________________________^
+
+warning: missing documentation for a method
+   --> crates/ruvector-core/src/lockfree.rs:159:5
+    |
+159 |     pub fn get(&self) -> &T {
+    |     ^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a method
+   --> crates/ruvector-core/src/lockfree.rs:163:5
+    |
+163 |     pub fn get_mut(&mut self) -> &mut T {
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for an associated function
+   --> crates/ruvector-core/src/lockfree.rs:196:5
+    |
+196 |     pub fn new(capacity: usize) -> Self {
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a method
+   --> crates/ruvector-core/src/lockfree.rs:203:5
+    |
+203 |     pub fn try_push(&self, item: T) -> Result<(), T> {
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a method
+   --> crates/ruvector-core/src/lockfree.rs:208:5
+    |
+208 |     pub fn try_pop(&self) -> Option<T> {
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a method
+   --> crates/ruvector-core/src/lockfree.rs:213:5
+    |
+213 |     pub fn len(&self) -> usize {
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a method
+   --> crates/ruvector-core/src/lockfree.rs:218:5
+    |
+218 |     pub fn is_empty(&self) -> bool {
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a variant
+  --> crates/ruvector-core/src/advanced/hypergraph.rs:46:5
+   |
+46 |     Hourly,
+   |     ^^^^^^
+
+warning: missing documentation for a variant
+  --> crates/ruvector-core/src/advanced/hypergraph.rs:47:5
+   |
+47 |     Daily,
+   |     ^^^^^
+
+warning: missing documentation for a variant
+  --> crates/ruvector-core/src/advanced/hypergraph.rs:48:5
+   |
+48 |     Monthly,
+   |     ^^^^^^^
+
+warning: missing documentation for a variant
+  --> crates/ruvector-core/src/advanced/hypergraph.rs:49:5
+   |
+49 |     Yearly,
+   |     ^^^^^^
+
+warning: missing documentation for a struct field
+   --> crates/ruvector-core/src/advanced/hypergraph.rs:301:5
+    |
+301 |     pub total_entities: usize,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> crates/ruvector-core/src/advanced/hypergraph.rs:302:5
+    |
+302 |     pub total_hyperedges: usize,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> crates/ruvector-core/src/advanced/hypergraph.rs:303:5
+    |
+303 |     pub avg_entity_degree: f32,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+  --> crates/ruvector-core/src/advanced/learned_index.rs:29:5
+   |
+29 |     pub total_entries: usize,
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+  --> crates/ruvector-core/src/advanced/learned_index.rs:30:5
+   |
+30 |     pub model_size_bytes: usize,
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+  --> crates/ruvector-core/src/advanced/learned_index.rs:31:5
+   |
+31 |     pub avg_error: f32,
+   |     ^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+  --> crates/ruvector-core/src/advanced/learned_index.rs:32:5
+   |
+32 |     pub max_error: usize,
+   |     ^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> crates/ruvector-core/src/advanced/neural_hash.rs:345:5
+    |
+345 |     pub total_vectors: usize,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> crates/ruvector-core/src/advanced/neural_hash.rs:346:5
+    |
+346 |     pub num_buckets: usize,
+    |     ^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> crates/ruvector-core/src/advanced/neural_hash.rs:347:5
+    |
+347 |     pub avg_bucket_size: f32,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: missing documentation for a struct field
+   --> crates/ruvector-core/src/advanced/neural_hash.rs:348:5
+    |
+348 |     pub compression_ratio: f32,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+   Compiling serde-wasm-bindgen v0.6.5
+   Compiling wasm-bindgen-futures v0.4.55

@@ -187,11 +187,18 @@ impl GraphNeuralEngine {
         vec![0.0; self.config.hidden_dim]
     }
 
-    /// Apply activation function
+    /// Apply activation function with numerical stability
     fn activate(&self, x: f32) -> f32 {
         match self.config.activation {
             ActivationType::ReLU => x.max(0.0),
-            ActivationType::Sigmoid => 1.0 / (1.0 + (-x).exp()),
+            ActivationType::Sigmoid => {
+                if x > 0.0 {
+                    1.0 / (1.0 + (-x).exp())
+                } else {
+                    let ex = x.exp();
+                    ex / (1.0 + ex)
+                }
+            }
             ActivationType::Tanh => x.tanh(),
             ActivationType::GELU => {
                 // Approximate GELU

@@ -143,6 +143,18 @@ impl RecursiveModelIndex {
             ));
         }
 
+        if data[0].0.is_empty() {
+            return Err(RuvectorError::InvalidInput(
+                "Cannot build index from vectors with zero dimensions".into(),
+            ));
+        }
+
+        if self.leaf_models.is_empty() {
+            return Err(RuvectorError::InvalidInput(
+                "Cannot build index with zero leaf models".into(),
+            ));
+        }
+
         // Sort data by first dimension (simple heuristic)
         data.sort_by(|a, b| {
             a.0[0]
@@ -196,6 +208,18 @@ impl LearnedIndex for RecursiveModelIndex {
         if key.len() != self.dimensions {
             return Err(RuvectorError::InvalidInput(
                 "Key dimensions mismatch".into(),
+            ));
+        }
+
+        if self.leaf_models.is_empty() {
+            return Err(RuvectorError::InvalidInput(
+                "Index not built: no leaf models available".into(),
+            ));
+        }
+
+        if self.data.is_empty() {
+            return Err(RuvectorError::InvalidInput(
+                "Index not built: no data available".into(),
             ));
         }
 
