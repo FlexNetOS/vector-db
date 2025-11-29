@@ -29,8 +29,8 @@ use pqcrypto_traits::kem::{PublicKey, SecretKey, SharedSecret as PqSharedSecret,
 ///
 /// # Security Properties
 ///
-/// - Public key: 1184 bytes (safe to distribute)
-/// - Secret key: 2400 bytes (MUST be protected, auto-zeroized on drop)
+/// - Public key: 1568 bytes (safe to distribute)
+/// - Secret key: 3168 bytes (MUST be protected, auto-zeroized on drop)
 /// - Post-quantum security: 256 bits (NIST Level 5)
 ///
 /// # Example
@@ -91,7 +91,7 @@ impl PostQuantumKeypair {
     ///
     /// # Arguments
     ///
-    /// * `public_key` - Recipient's Kyber-1024 public key (1184 bytes)
+    /// * `public_key` - Recipient's Kyber-1024 public key (1568 bytes)
     ///
     /// # Returns
     ///
@@ -107,10 +107,10 @@ impl PostQuantumKeypair {
     /// The shared secret is cryptographically strong (256-bit entropy).
     /// The ciphertext is IND-CCA2 secure against quantum adversaries.
     pub fn encapsulate(public_key: &[u8]) -> Result<(SharedSecret, Vec<u8>)> {
-        // Validate public key size
-        if public_key.len() != 1184 {
+        // Validate public key size (Kyber1024 = 1568 bytes)
+        if public_key.len() != 1568 {
             return Err(FederationError::CryptoError(
-                format!("Invalid public key size: expected 1184 bytes, got {}", public_key.len())
+                format!("Invalid public key size: expected 1568 bytes, got {}", public_key.len())
             ));
         }
 
@@ -488,7 +488,7 @@ mod tests {
     #[test]
     fn test_keypair_generation() {
         let keypair = PostQuantumKeypair::generate();
-        assert_eq!(keypair.public.len(), 1184); // Kyber-1024 public key size
+        assert_eq!(keypair.public.len(), 1568); // Kyber-1024 public key size
     }
 
     #[test]

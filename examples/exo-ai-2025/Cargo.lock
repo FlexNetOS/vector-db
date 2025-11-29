@@ -607,6 +607,8 @@ name = "exo-backend-classical"
 version = "0.1.0"
 dependencies = [
  "exo-core",
+ "exo-federation",
+ "exo-temporal",
  "parking_lot",
  "ruvector-core",
  "ruvector-graph",

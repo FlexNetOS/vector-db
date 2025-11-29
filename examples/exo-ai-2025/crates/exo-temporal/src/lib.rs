@@ -365,14 +365,23 @@ mod tests {
 
     #[test]
     fn test_causal_query() {
-        let memory = TemporalMemory::default();
+        // Use low salience threshold to ensure all patterns are consolidated
+        let config = TemporalConfig {
+            consolidation: ConsolidationConfig {
+                salience_threshold: 0.0, // Accept all patterns
+                ..Default::default()
+            },
+            ..Default::default()
+        };
+        let memory = TemporalMemory::new(config);
 
         // Create causal chain: p1 -> p2 -> p3
+        let t1 = SubstrateTime::now();
         let p1 = Pattern {
             id: PatternId::new(),
             embedding: vec![1.0, 0.0, 0.0],
             metadata: Metadata::default(),
-            timestamp: SubstrateTime::now(),
+            timestamp: t1,
             antecedents: Vec::new(),
             salience: 1.0,
         };
@@ -401,16 +410,18 @@ mod tests {
         memory.store(p3, &[id2]).unwrap();
 
         // Consolidate to long-term
-        memory.consolidate();
+        let result = memory.consolidate();
+        assert!(result.num_consolidated >= 3, "Should consolidate all patterns");
 
-        // Query with causal context
+        // Query with causal context - use p1's timestamp as reference for future cone
         let query = Query::from_embedding(vec![1.0, 0.0, 0.0]).with_origin(id1);
         let results = memory.causal_query(
             &query,
-            SubstrateTime::now(),
+            t1, // Use p1's timestamp as reference, so p2 and p3 are in the future
             CausalConeType::Future,
         );
 
-        assert!(!results.is_empty());
+        // Should find patterns in the causal future of p1
+        assert!(!results.is_empty(), "Should find causal descendants in future cone");
     }
 }
