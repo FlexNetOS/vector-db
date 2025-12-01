@@ -75,7 +75,7 @@ describe('Ruvector Integration', () => {
       const uninitializedAdapter = new RuvectorAdapter();
 
       await expect(uninitializedAdapter.insert([]))
-        .rejects.toThrow('Ruvector adapter not initialized');
+        .rejects.toThrow('RuVector adapter not initialized');
     });
 
     it('should validate vector format', async () => {
@@ -158,7 +158,7 @@ describe('Ruvector Integration', () => {
       const query = new Array(128).fill(0);
 
       await expect(uninitializedAdapter.search(query, 5))
-        .rejects.toThrow('Ruvector adapter not initialized');
+        .rejects.toThrow('RuVector adapter not initialized');
     });
   });
 
@@ -188,7 +188,7 @@ describe('Ruvector Integration', () => {
       const uninitializedAdapter = new RuvectorAdapter();
 
       await expect(uninitializedAdapter.get('test'))
-        .rejects.toThrow('Ruvector adapter not initialized');
+        .rejects.toThrow('RuVector adapter not initialized');
     });
   });
 
