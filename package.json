@@ -53,5 +53,9 @@
   },
   "dependencies": {
     "psycho-symbolic-reasoner": "^1.0.7"
+  },
+  "overrides": {
+    "axios": "^1.13.2",
+    "body-parser": "^2.2.1"
   }
 }
