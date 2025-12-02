@@ -5547,7 +5547,7 @@ dependencies = [
  "ruvector-graph",
  "serde",
  "serde_json",
- "sysinfo",
+ "sysinfo 0.31.4",
  "thiserror 2.0.17",
  "tokio",
  "tower 0.4.13",
