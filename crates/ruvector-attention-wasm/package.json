@@ -1,5 +1,5 @@
 {
-  "name": "ruvector-attention-wasm",
+  "name": "@ruvector/attention-wasm",
   "version": "0.1.0",
   "description": "WebAssembly bindings for ruvector-attention - high-performance attention mechanisms",
   "main": "pkg/ruvector_attention_wasm.js",
