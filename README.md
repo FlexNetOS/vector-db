@@ -458,6 +458,14 @@ async fn main() -> anyhow::Result<()> {
 | [@ruvector/router](https://www.npmjs.com/package/@ruvector/router) | Semantic router with HNSW vector search | [![npm](https://img.shields.io/npm/v/@ruvector/router.svg)](https://www.npmjs.com/package/@ruvector/router) |
 | [@ruvector/agentic-synth](https://www.npmjs.com/package/@ruvector/agentic-synth) | Synthetic data generator for AI/ML | [![npm](https://img.shields.io/npm/v/@ruvector/agentic-synth.svg)](https://www.npmjs.com/package/@ruvector/agentic-synth) |
 | [@ruvector/attention](https://www.npmjs.com/package/@ruvector/attention) | 39 attention mechanisms for transformers & GNNs | [![npm](https://img.shields.io/npm/v/@ruvector/attention.svg)](https://www.npmjs.com/package/@ruvector/attention) |
+| [@ruvector/wasm](https://www.npmjs.com/package/@ruvector/wasm) | WASM fallback for core vector DB | [![npm](https://img.shields.io/npm/v/@ruvector/wasm.svg)](https://www.npmjs.com/package/@ruvector/wasm) |
+| [@ruvector/gnn-wasm](https://www.npmjs.com/package/@ruvector/gnn-wasm) | WASM fallback for GNN layers | [![npm](https://img.shields.io/npm/v/@ruvector/gnn-wasm.svg)](https://www.npmjs.com/package/@ruvector/gnn-wasm) |
+| [@ruvector/graph-wasm](https://www.npmjs.com/package/@ruvector/graph-wasm) | WASM fallback for graph DB | [![npm](https://img.shields.io/npm/v/@ruvector/graph-wasm.svg)](https://www.npmjs.com/package/@ruvector/graph-wasm) |
+| [@ruvector/attention-wasm](https://www.npmjs.com/package/@ruvector/attention-wasm) | WASM fallback for attention mechanisms | [![npm](https://img.shields.io/npm/v/@ruvector/attention-wasm.svg)](https://www.npmjs.com/package/@ruvector/attention-wasm) |
+| [@ruvector/tiny-dancer-wasm](https://www.npmjs.com/package/@ruvector/tiny-dancer-wasm) | WASM fallback for AI routing | [![npm](https://img.shields.io/npm/v/@ruvector/tiny-dancer-wasm.svg)](https://www.npmjs.com/package/@ruvector/tiny-dancer-wasm) |
+| [@ruvector/router-wasm](https://www.npmjs.com/package/@ruvector/router-wasm) | WASM fallback for semantic router | [![npm](https://img.shields.io/npm/v/@ruvector/router-wasm.svg)](https://www.npmjs.com/package/@ruvector/router-wasm) |
+| [@ruvector/cluster](https://www.npmjs.com/package/@ruvector/cluster) | Distributed clustering & sharding | [![npm](https://img.shields.io/npm/v/@ruvector/cluster.svg)](https://www.npmjs.com/package/@ruvector/cluster) |
+| [@ruvector/server](https://www.npmjs.com/package/@ruvector/server) | HTTP/gRPC server mode | [![npm](https://img.shields.io/npm/v/@ruvector/server.svg)](https://www.npmjs.com/package/@ruvector/server) |
 
 **Platform-specific native bindings** (auto-detected):
 - `@ruvector/node-linux-x64-gnu`, `@ruvector/node-linux-arm64-gnu`, `@ruvector/node-darwin-x64`, `@ruvector/node-darwin-arm64`, `@ruvector/node-win32-x64-msvc`
@@ -465,21 +473,6 @@ async fn main() -> anyhow::Result<()> {
 - `@ruvector/tiny-dancer-linux-x64-gnu`, `@ruvector/tiny-dancer-linux-arm64-gnu`, `@ruvector/tiny-dancer-darwin-x64`, `@ruvector/tiny-dancer-darwin-arm64`, `@ruvector/tiny-dancer-win32-x64-msvc`
 - `@ruvector/router-linux-x64-gnu`, `@ruvector/router-linux-arm64-gnu`, `@ruvector/router-darwin-x64`, `@ruvector/router-darwin-arm64`, `@ruvector/router-win32-x64-msvc`
 - `@ruvector/attention-linux-x64-gnu`, `@ruvector/attention-linux-arm64-gnu`, `@ruvector/attention-darwin-x64`, `@ruvector/attention-darwin-arm64`, `@ruvector/attention-win32-x64-msvc`
-
-#### 🔧 Ready to Publish (Crates Built)
-
-These packages have Rust crates ready and can be published on request:
-
-| Package | Description | Rust Crate | Status |
-|---------|-------------|------------|--------|
-| @ruvector/wasm | WASM fallback for core vector DB | `ruvector-wasm` | ✅ Built |
-| @ruvector/gnn-wasm | WASM fallback for GNN layers | `ruvector-gnn-wasm` | ✅ Built |
-| @ruvector/graph-wasm | WASM fallback for graph DB | `ruvector-graph-wasm` | ✅ Built |
-| @ruvector/attention-wasm | WASM fallback for attention | `ruvector-attention-wasm` | ✅ Built |
-| @ruvector/tiny-dancer-wasm | WASM fallback for AI routing | `ruvector-tiny-dancer-wasm` | ✅ Built |
-| @ruvector/router-wasm | WASM fallback for semantic router | `ruvector-router-wasm` | ✅ Built |
-| @ruvector/cluster | Distributed clustering & sharding | `ruvector-cluster` | ✅ Built |
-| @ruvector/server | HTTP/gRPC server mode | `ruvector-server` | ✅ Built |
 
 #### 🚧 Planned
 
