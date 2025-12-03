@@ -1,13 +1,17 @@
 [package]
 name = "ruvector-postgres"
-version = "0.1.0"
+version = "0.2.3"
 edition = "2021"
 license = "MIT"
-description = "High-performance PostgreSQL vector similarity search extension - pgvector drop-in replacement"
+description = "High-performance PostgreSQL vector database extension - pgvector drop-in replacement with 53+ SQL functions, SIMD acceleration, hyperbolic embeddings, GNN layers, and self-learning capabilities"
 repository = "https://github.com/ruvnet/ruvector"
-keywords = ["postgresql", "vector", "similarity", "search", "pgvector"]
-categories = ["database", "science"]
+homepage = "https://github.com/ruvnet/ruvector"
+documentation = "https://docs.rs/ruvector-postgres"
+authors = ["ruv.io Team <info@ruv.io>"]
+keywords = ["postgresql", "vector-database", "embeddings", "pgvector", "hnsw"]
+categories = ["database", "science", "algorithms"]
 readme = "README.md"
+exclude = ["docker/", "tests/", "benches/", "examples/"]
 
 [lib]
 crate-type = ["cdylib", "lib"]
@@ -40,8 +44,7 @@ quantization-all = ["quantization-scalar", "quantization-product", "quantization
 quant-all = ["quantization-all"]  # Alias for convenience
 
 # Optional features
-hybrid-search = []
-filtered-search = []
+# Note: hybrid-search and filtered-search are planned for future releases
 neon-compat = []  # Neon-specific optimizations
 
 # Advanced AI features (opt-in)

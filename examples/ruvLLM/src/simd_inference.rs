@@ -113,26 +113,140 @@ impl SimdOps {
         result
     }
 
-    /// SIMD-optimized softmax
+    /// SIMD-optimized softmax with vectorized max/sum
     #[inline]
     pub fn softmax(input: &mut [f32]) {
-        let max = input.iter().cloned().fold(f32::NEG_INFINITY, f32::max);
+        #[cfg(target_arch = "x86_64")]
+        {
+            if is_x86_feature_detected!("avx2") {
+                unsafe { Self::softmax_avx2(input) };
+                return;
+            }
+        }
 
+        // Scalar fallback
+        let max = input.iter().cloned().fold(f32::NEG_INFINITY, f32::max);
         let mut sum = 0.0f32;
         for x in input.iter_mut() {
             *x = (*x - max).exp();
             sum += *x;
         }
-
         let inv_sum = 1.0 / sum;
         for x in input.iter_mut() {
             *x *= inv_sum;
         }
     }
 
-    /// SIMD-optimized RMSNorm
+    #[cfg(target_arch = "x86_64")]
+    #[target_feature(enable = "avx2")]
+    unsafe fn softmax_avx2(input: &mut [f32]) {
+        let len = input.len();
+        let chunks = len / 8;
+
+        // Find max using AVX2
+        let mut max_vec = unsafe { _mm256_set1_ps(f32::NEG_INFINITY) };
+        for i in 0..chunks {
+            unsafe {
+                let v = _mm256_loadu_ps(input.as_ptr().add(i * 8));
+                max_vec = _mm256_max_ps(max_vec, v);
+            }
+        }
+
+        // Horizontal max reduction
+        let mut max_val = unsafe {
+            let high = _mm256_extractf128_ps(max_vec, 1);
+            let low = _mm256_castps256_ps128(max_vec);
+            let max128 = _mm_max_ps(high, low);
+            let max64 = _mm_max_ps(max128, _mm_movehl_ps(max128, max128));
+            let max32 = _mm_max_ss(max64, _mm_shuffle_ps(max64, max64, 1));
+            _mm_cvtss_f32(max32)
+        };
+
+        // Handle remainder for max
+        for i in (chunks * 8)..len {
+            max_val = max_val.max(input[i]);
+        }
+
+        let max_broadcast = unsafe { _mm256_set1_ps(max_val) };
+
+        // Subtract max and compute exp (approximate with fast exp)
+        let mut sum = 0.0f32;
+        for i in 0..chunks {
+            unsafe {
+                let ptr = input.as_mut_ptr().add(i * 8);
+                let v = _mm256_loadu_ps(ptr);
+                let shifted = _mm256_sub_ps(v, max_broadcast);
+
+                // Fast exp approximation for AVX2 using polynomial
+                let exp_v = Self::fast_exp_avx2(shifted);
+                _mm256_storeu_ps(ptr, exp_v);
+
+                // Sum reduction
+                let high = _mm256_extractf128_ps(exp_v, 1);
+                let low = _mm256_castps256_ps128(exp_v);
+                let sum128 = _mm_add_ps(high, low);
+                let sum64 = _mm_add_ps(sum128, _mm_movehl_ps(sum128, sum128));
+                let sum32 = _mm_add_ss(sum64, _mm_shuffle_ps(sum64, sum64, 1));
+                sum += _mm_cvtss_f32(sum32);
+            }
+        }
+
+        // Handle remainder
+        for i in (chunks * 8)..len {
+            input[i] = (input[i] - max_val).exp();
+            sum += input[i];
+        }
+
+        // Divide by sum
+        let inv_sum = 1.0 / sum;
+        let inv_sum_vec = unsafe { _mm256_set1_ps(inv_sum) };
+        for i in 0..chunks {
+            unsafe {
+                let ptr = input.as_mut_ptr().add(i * 8);
+                let v = _mm256_loadu_ps(ptr);
+                _mm256_storeu_ps(ptr, _mm256_mul_ps(v, inv_sum_vec));
+            }
+        }
+        for i in (chunks * 8)..len {
+            input[i] *= inv_sum;
+        }
+    }
+
+    #[cfg(target_arch = "x86_64")]
+    #[target_feature(enable = "avx2")]
+    #[inline]
+    unsafe fn fast_exp_avx2(x: __m256) -> __m256 {
+        // Fast exp approximation: exp(x) ≈ (1 + x/256)^256 simplified
+        // Using polynomial: exp(x) ≈ 1 + x + x²/2 + x³/6 for small x
+        unsafe {
+            let one = _mm256_set1_ps(1.0);
+            let half = _mm256_set1_ps(0.5);
+            let sixth = _mm256_set1_ps(1.0 / 6.0);
+
+            // Clamp to avoid overflow
+            let min_val = _mm256_set1_ps(-88.0);
+            let max_val = _mm256_set1_ps(88.0);
+            let x = _mm256_max_ps(_mm256_min_ps(x, max_val), min_val);
+
+            let x2 = _mm256_mul_ps(x, x);
+            let x3 = _mm256_mul_ps(x2, x);
+
+            // 1 + x + x²/2 + x³/6
+            _mm256_fmadd_ps(x3, sixth, _mm256_fmadd_ps(x2, half, _mm256_add_ps(one, x)))
+        }
+    }
+
+    /// SIMD-optimized RMSNorm with AVX2 acceleration
     #[inline]
     pub fn rms_norm(input: &[f32], weight: &[f32], eps: f32) -> Vec<f32> {
+        #[cfg(target_arch = "x86_64")]
+        {
+            if is_x86_feature_detected!("avx2") {
+                return unsafe { Self::rms_norm_avx2(input, weight, eps) };
+            }
+        }
+
+        // Scalar fallback
         let sum_sq: f32 = input.iter().map(|x| x * x).sum();
         let rms = (sum_sq / input.len() as f32 + eps).sqrt();
         let inv_rms = 1.0 / rms;
@@ -141,6 +255,58 @@ impl SimdOps {
             .zip(weight.iter())
             .map(|(x, w)| x * inv_rms * w)
             .collect()
+    }
+
+    #[cfg(target_arch = "x86_64")]
+    #[target_feature(enable = "avx2")]
+    unsafe fn rms_norm_avx2(input: &[f32], weight: &[f32], eps: f32) -> Vec<f32> {
+        let len = input.len();
+        let chunks = len / 8;
+        let mut result = vec![0.0f32; len];
+
+        // Compute sum of squares using AVX2
+        let mut sum_sq_vec = unsafe { _mm256_setzero_ps() };
+        for i in 0..chunks {
+            unsafe {
+                let v = _mm256_loadu_ps(input.as_ptr().add(i * 8));
+                sum_sq_vec = _mm256_fmadd_ps(v, v, sum_sq_vec);
+            }
+        }
+
+        // Horizontal sum
+        let mut sum_sq = unsafe {
+            let high = _mm256_extractf128_ps(sum_sq_vec, 1);
+            let low = _mm256_castps256_ps128(sum_sq_vec);
+            let sum128 = _mm_add_ps(high, low);
+            let sum64 = _mm_add_ps(sum128, _mm_movehl_ps(sum128, sum128));
+            let sum32 = _mm_add_ss(sum64, _mm_shuffle_ps(sum64, sum64, 1));
+            _mm_cvtss_f32(sum32)
+        };
+
+        // Handle remainder
+        for i in (chunks * 8)..len {
+            sum_sq += input[i] * input[i];
+        }
+
+        let inv_rms = 1.0 / (sum_sq / len as f32 + eps).sqrt();
+        let inv_rms_vec = unsafe { _mm256_set1_ps(inv_rms) };
+
+        // Apply normalization and weight
+        for i in 0..chunks {
+            unsafe {
+                let x = _mm256_loadu_ps(input.as_ptr().add(i * 8));
+                let w = _mm256_loadu_ps(weight.as_ptr().add(i * 8));
+                let normalized = _mm256_mul_ps(_mm256_mul_ps(x, inv_rms_vec), w);
+                _mm256_storeu_ps(result.as_mut_ptr().add(i * 8), normalized);
+            }
+        }
+
+        // Handle remainder
+        for i in (chunks * 8)..len {
+            result[i] = input[i] * inv_rms * weight[i];
+        }
+
+        result
     }
 
     /// SIMD-optimized GELU activation
@@ -215,19 +381,60 @@ impl Q4Weights {
         }
     }
 
-    /// Dequantize and multiply with vector
+    /// Dequantize and multiply with vector - optimized with block processing
     pub fn matmul_vec(&self, vec: &[f32]) -> Vec<f32> {
         let mut result = vec![0.0f32; self.rows];
 
         result.par_iter_mut().enumerate().for_each(|(row, out)| {
-            let row_start = row * self.cols;
-            let mut sum = 0.0f32;
+            *out = self.matmul_row_optimized(row, vec);
+        });
 
-            for (col, &v) in vec.iter().enumerate() {
+        result
+    }
+
+    /// Optimized single row multiplication with block-level dequantization
+    #[inline]
+    fn matmul_row_optimized(&self, row: usize, vec: &[f32]) -> f32 {
+        let row_start = row * self.cols;
+        let mut sum = 0.0f32;
+
+        // Process by blocks for better cache locality
+        let blocks_per_row = (self.cols + self.block_size - 1) / self.block_size;
+        let first_block = row_start / self.block_size;
+
+        for block_offset in 0..blocks_per_row {
+            let block_idx = first_block + block_offset;
+            let scale = self.scales.get(block_idx).copied().unwrap_or(1.0);
+
+            let block_start_in_row = block_offset * self.block_size;
+            let block_end_in_row = (block_start_in_row + self.block_size).min(self.cols);
+
+            // Process 8 elements at a time within the block
+            let mut col = block_start_in_row;
+            while col + 8 <= block_end_in_row {
                 let idx = row_start + col;
-                let block_idx = idx / self.block_size;
-                let scale = self.scales.get(block_idx).copied().unwrap_or(1.0);
+                let byte_start = idx / 2;
 
+                // Unpack 8 values (4 bytes)
+                let mut weights = [0.0f32; 8];
+                for i in 0..4 {
+                    let byte = self.data.get(byte_start + i).copied().unwrap_or(0);
+                    let q0 = (byte & 0x0F) as i8;
+                    let q1 = ((byte >> 4) & 0x0F) as i8;
+                    let q0 = if q0 > 7 { q0 - 16 } else { q0 };
+                    let q1 = if q1 > 7 { q1 - 16 } else { q1 };
+                    weights[i * 2] = q0 as f32 * scale;
+                    weights[i * 2 + 1] = q1 as f32 * scale;
+                }
+
+                // SIMD dot product for this block of 8
+                sum += SimdOps::dot_product(&weights, &vec[col..col + 8]);
+                col += 8;
+            }
+
+            // Handle remainder within block
+            while col < block_end_in_row {
+                let idx = row_start + col;
                 let byte_idx = idx / 2;
                 let byte = self.data.get(byte_idx).copied().unwrap_or(0);
                 let q = if idx % 2 == 0 {
@@ -235,16 +442,14 @@ impl Q4Weights {
                 } else {
                     ((byte >> 4) & 0x0F) as i8
                 };
-                // Sign extend from 4-bit
                 let q = if q > 7 { q - 16 } else { q };
                 let w = q as f32 * scale;
-                sum += w * v;
+                sum += w * vec[col];
+                col += 1;
             }
+        }
 
-            *out = sum;
-        });
-
-        result
+        sum
     }
 }
 

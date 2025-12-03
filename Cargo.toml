@@ -34,11 +34,13 @@ members = [
     "examples/refrag-pipeline",
     "examples/scipix",
     "examples/google-cloud",
+    "examples/ruvLLM",
+    "crates/sona",
 ]
 resolver = "2"
 
 [workspace.package]
-version = "0.1.19"
+version = "0.1.21"
 edition = "2021"
 rust-version = "1.77"
 license = "MIT"

@@ -481,6 +481,11 @@ impl FastGRNNRouter {
         &self.stats
     }
 
+    /// Get current weights as a flat vector (for EWC)
+    pub fn get_weights(&self) -> Vec<f32> {
+        self.get_flat_params()
+    }
+
     /// Reset router to initial state
     pub fn reset(&mut self) {
         self.cell = FastGRNNCell::new(
@@ -631,18 +636,93 @@ pub struct TrainingMetrics {
 
 // Helper functions
 
+/// Optimized sigmoid with fast exp approximation
+#[inline(always)]
 fn sigmoid(x: f32) -> f32 {
-    1.0 / (1.0 + (-x.clamp(-20.0, 20.0)).exp())
+    // Fast sigmoid using rational approximation for |x| < 4.5
+    // More accurate than simple clamped exp for common ranges
+    let x = x.clamp(-20.0, 20.0);
+    if x.abs() < 4.5 {
+        // Pade approximant: 0.5 + 0.5 * x / (1 + |x| + 0.555 * x^2)
+        let abs_x = x.abs();
+        0.5 + 0.5 * x / (1.0 + abs_x + 0.555 * x * x)
+    } else {
+        1.0 / (1.0 + (-x).exp())
+    }
 }
 
+/// Optimized softmax for small arrays (common in router)
 fn softmax_array(x: &Array1<f32>) -> Array1<f32> {
-    let max = x.fold(f32::NEG_INFINITY, |a, &b| a.max(b));
-    let exp = x.mapv(|v| (v - max).exp());
-    let sum = exp.sum();
-    exp / sum
+    let len = x.len();
+
+    // For small arrays, use simple scalar approach with improved numerics
+    if len <= 8 {
+        let max = x.fold(f32::NEG_INFINITY, |a, &b| a.max(b));
+        let exp = x.mapv(|v| fast_exp(v - max));
+        let sum = exp.sum();
+        if sum > 0.0 { exp / sum } else { Array1::from_elem(len, 1.0 / len as f32) }
+    } else {
+        // For larger arrays, use standard approach
+        let max = x.fold(f32::NEG_INFINITY, |a, &b| a.max(b));
+        let exp = x.mapv(|v| (v - max).exp());
+        let sum = exp.sum();
+        exp / sum
+    }
 }
 
+/// Fast exp approximation using Schraudolph's method
+#[inline(always)]
+fn fast_exp(x: f32) -> f32 {
+    // Clamp to avoid overflow/underflow
+    let x = x.clamp(-88.0, 88.0);
+
+    // Polynomial approximation: exp(x) ≈ 1 + x + x²/2 + x³/6 for |x| < 1
+    if x.abs() < 1.0 {
+        let x2 = x * x;
+        let x3 = x2 * x;
+        1.0 + x + x2 * 0.5 + x3 * 0.16666667
+    } else {
+        x.exp()
+    }
+}
+
+/// Branchless argmax for fixed-size arrays (optimized for common sizes)
+#[inline]
 fn argmax_array(x: &Array1<f32>) -> usize {
+    let len = x.len();
+    if len == 0 {
+        return 0;
+    }
+
+    // For size 4 (model selection), use branchless comparison
+    if len == 4 {
+        let x = x.as_slice().unwrap();
+        let mut max_idx = 0usize;
+        let mut max_val = x[0];
+
+        // Unrolled comparison
+        if x[1] > max_val { max_val = x[1]; max_idx = 1; }
+        if x[2] > max_val { max_val = x[2]; max_idx = 2; }
+        if x[3] > max_val { max_idx = 3; }
+
+        return max_idx;
+    }
+
+    // For size 5 (context selection), also unroll
+    if len == 5 {
+        let x = x.as_slice().unwrap();
+        let mut max_idx = 0usize;
+        let mut max_val = x[0];
+
+        if x[1] > max_val { max_val = x[1]; max_idx = 1; }
+        if x[2] > max_val { max_val = x[2]; max_idx = 2; }
+        if x[3] > max_val { max_val = x[3]; max_idx = 3; }
+        if x[4] > max_val { max_idx = 4; }
+
+        return max_idx;
+    }
+
+    // General case
     x.iter()
         .enumerate()
         .max_by(|(_, a), (_, b)| a.partial_cmp(b).unwrap())

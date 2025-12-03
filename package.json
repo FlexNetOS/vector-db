@@ -7,8 +7,7 @@
     "crates/ruvector-node",
     "crates/ruvector-wasm",
     "crates/ruvector-graph-node",
-    "crates/ruvector-graph-wasm",
-    "packages/*"
+    "crates/ruvector-graph-wasm"
   ],
   "scripts": {
     "build": "cargo build --release",
@@ -51,10 +50,7 @@
   "engines": {
     "node": ">=18.0.0"
   },
-  "dependencies": {
-    "psycho-symbolic-reasoner": "^1.0.7"
-  },
-  "overrides": {
+    "overrides": {
     "axios": "^1.13.2",
     "body-parser": "^2.2.1"
   }

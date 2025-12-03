@@ -47,6 +47,9 @@ byteorder = { version = "1.5", optional = true }
 half = { version = "2.4", features = ["num-traits", "serde"], optional = true }
 dirs = { version = "5.0", optional = true }
 
+# SONA Export (optional - for HuggingFace export)
+ruvector-sona = { path = "../../crates/sona", optional = true }
+
 # Utilities
 uuid = { version = "1.11", features = ["v4", "serde"] }
 chrono = { version = "0.4", features = ["serde"] }
@@ -74,6 +77,10 @@ axum = { version = "0.7", optional = true }
 tower = { version = "0.4", optional = true }
 tower-http = { version = "0.5", features = ["cors", "trace"], optional = true }
 
+# N-API bindings for Node.js
+napi = { version = "2.16", features = ["async", "serde-json"], optional = true }
+napi-derive = { version = "2.16", optional = true }
+
 [dev-dependencies]
 criterion = { version = "0.5", features = ["html_reports", "async_tokio"] }
 proptest = "1.5"
@@ -88,7 +95,11 @@ metrics = ["prometheus"]
 server = ["axum", "tower", "tower-http"]
 # Real LLM inference with CPU SIMD optimization
 real-inference = ["candle-core", "candle-nn", "candle-transformers", "hf-hub", "tokenizers", "memmap2", "byteorder", "half", "dirs"]
-full = ["storage", "metrics", "server", "real-inference"]
+# HuggingFace export for learned patterns and LoRA weights
+hf-export = ["ruvector-sona"]
+# N-API bindings for Node.js
+napi = ["dep:napi", "dep:napi-derive"]
+full = ["storage", "metrics", "server", "real-inference", "hf-export"]
 
 [[bench]]
 name = "pipeline"
@@ -106,9 +117,14 @@ harness = false
 name = "attention"
 harness = false
 
+[[bench]]
+name = "sona_bench"
+harness = false
+
 [lib]
 name = "ruvllm"
 path = "src/lib.rs"
+crate-type = ["cdylib", "rlib"]
 
 [[bin]]
 name = "ruvllm-demo"
@@ -134,6 +150,11 @@ path = "src/bin/simd_demo.rs"
 [[bin]]
 name = "ruvllm-pretrain"
 path = "src/bin/pretrain.rs"
+
+[[bin]]
+name = "ruvllm-export"
+path = "src/bin/export.rs"
+required-features = ["hf-export"]
 
 [[test]]
 name = "integration"

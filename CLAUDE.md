@@ -344,6 +344,64 @@ Message 4: Write "file.js"
 
 Remember: **Claude Flow coordinates, Claude Code creates!**
 
+## 🔑 Environment & Secrets
+
+**IMPORTANT**: The root `.env` file contains API keys for publishing:
+- `CRATES_API_KEY` - For publishing to crates.io
+- Other API keys as needed
+
+**Usage for publishing**:
+```bash
+# Source the .env and publish to crates.io
+source .env && CARGO_REGISTRY_TOKEN=$CRATES_API_KEY cargo publish --no-verify
+```
+
+**NEVER hardcode keys. ALWAYS use `.env` file.**
+
+## 📦 NPM Package Publishing
+
+### Quick Reference
+```bash
+# 1. Build native bindings (triggers CI workflow)
+git tag v0.1.XX && git push origin v0.1.XX
+
+# 2. Wait for build-native.yml workflow to complete, then download artifacts
+gh run download <RUN_ID> --repo ruvnet/ruvector --dir /tmp/artifacts
+
+# 3. Copy binaries to platform packages
+for platform in linux-x64-gnu linux-arm64-gnu darwin-x64 darwin-arm64 win32-x64-msvc; do
+  cp /tmp/artifacts/bindings-${platform}/ruvector.node npm/core/platforms/${platform}/
+done
+
+# 4. Publish platform packages first (update versions in package.json first!)
+for platform in linux-x64-gnu linux-arm64-gnu darwin-x64 darwin-arm64 win32-x64-msvc; do
+  cd npm/core/platforms/$platform && npm publish --access public && cd -
+done
+
+# 5. Publish main packages
+cd npm/packages/core && npm publish --access public
+cd npm/packages/ruvector && npm run build && npm publish --access public
+```
+
+### Full Process
+1. **Update Rust crates** - Fix bugs, bump version in root `Cargo.toml`
+2. **Publish to crates.io**: `source .env && CARGO_REGISTRY_TOKEN=$CRATES_API_KEY cargo publish -p <crate> --no-verify`
+3. **Update npm versions** in:
+   - `npm/packages/core/package.json` (version + optionalDependencies)
+   - `npm/packages/ruvector/package.json` (version + @ruvector/core dependency)
+   - `npm/core/platforms/*/package.json` (all 5 platforms)
+4. **Trigger native build** via git tag push
+5. **Download artifacts** from successful GitHub Actions run
+6. **Copy .node files** to `npm/core/platforms/<platform>/`
+7. **Publish in order**: platform packages → ruvector-core → ruvector
+
+### Package Dependencies
+```
+ruvector (main user package)
+  └── @ruvector/core (ruvector-core)
+        └── ruvector-core-<platform> (native bindings)
+```
+
 # important-instruction-reminders
 Do what has been asked; nothing more, nothing less.
 NEVER create files unless they're absolutely necessary for achieving your goal.

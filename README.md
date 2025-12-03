@@ -2,7 +2,10 @@
 
 [![MIT License](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![Crates.io](https://img.shields.io/crates/v/ruvector-core.svg)](https://crates.io/crates/ruvector-core)
+[![postgres](https://img.shields.io/crates/v/ruvector-postgres.svg?label=postgres)](https://crates.io/crates/ruvector-postgres)
+[![SONA](https://img.shields.io/crates/v/ruvector-sona.svg?label=sona)](https://crates.io/crates/ruvector-sona)
 [![npm](https://img.shields.io/npm/v/ruvector.svg)](https://www.npmjs.com/package/ruvector)
+[![@ruvector/sona](https://img.shields.io/npm/v/@ruvector/sona.svg?label=%40ruvector%2Fsona)](https://www.npmjs.com/package/@ruvector/sona)
 [![Rust](https://img.shields.io/badge/rust-1.77%2B-orange.svg)](https://www.rust-lang.org)
 [![Build](https://img.shields.io/github/actions/workflow/status/ruvnet/ruvector/ci.yml?branch=main)](https://github.com/ruvnet/ruvector/actions)
 [![Docs](https://img.shields.io/badge/docs-latest-brightgreen.svg)](./docs/)
@@ -30,8 +33,9 @@ Traditional vector databases just store and search. When you ask "find similar i
 7. **39 attention mechanisms** — Flash, linear, graph, hyperbolic for custom models
 8. **Drop into Postgres** — pgvector-compatible extension with SIMD acceleration
 9. **Run anywhere** — Node.js, browser (WASM), HTTP server, or native Rust
+10. **Continuous learning** — SONA enables runtime adaptation with LoRA, EWC++, and ReasoningBank
 
-Think of it as: **Pinecone + Neo4j + PyTorch + pgvector + etcd** in one Rust package.
+Think of it as: **Pinecone + Neo4j + PyTorch + postgres + etcd** in one Rust package.
 
 
 
@@ -83,6 +87,7 @@ npx ruvector
 | **Graph Queries** | ✅ Cypher | ❌ | ❌ | ❌ | ❌ |
 | **Hyperedges** | ✅ | ❌ | ❌ | ❌ | ❌ |
 | **Self-Learning (GNN)** | ✅ | ❌ | ❌ | ❌ | ❌ |
+| **Runtime Adaptation (SONA)** | ✅ LoRA+EWC++ | ❌ | ❌ | ❌ | ❌ |
 | **AI Agent Routing** | ✅ Tiny Dancer | ❌ | ❌ | ❌ | ❌ |
 | **Attention Mechanisms** | ✅ 39 types | ❌ | ❌ | ❌ | ❌ |
 | **Hyperbolic Embeddings** | ✅ Poincaré | ❌ | ❌ | ❌ | ❌ |
@@ -140,6 +145,7 @@ cargo add ruvector-raft ruvector-cluster ruvector-replication
 | **Semantic Router** | Route queries to optimal endpoints | Multi-model AI orchestration |
 | **Tiny Dancer** | FastGRNN neural inference | Optimize LLM inference costs |
 | **Adaptive Routing** | Learn optimal routing strategies | Minimize latency, maximize accuracy |
+| **SONA** | Two-tier LoRA + EWC++ + ReasoningBank | Runtime learning without retraining |
 
 ### Attention Mechanisms (`@ruvector/attention`)
 
@@ -305,8 +311,10 @@ RETURN related
 | Platform | Command |
 |----------|---------|
 | **npm** | `npm install ruvector` |
+| **npm (SONA)** | `npm install @ruvector/sona` |
 | **Browser/WASM** | `npm install ruvector-wasm` |
 | **Rust** | `cargo add ruvector-core ruvector-graph ruvector-gnn` |
+| **Rust (SONA)** | `cargo add ruvector-sona` |
 
 ## Documentation
 
@@ -379,13 +387,71 @@ All crates are published to [crates.io](https://crates.io) under the `ruvector-*
 | [ruvector-router-ffi](./crates/ruvector-router-ffi) | FFI bindings for other languages | [![crates.io](https://img.shields.io/crates/v/ruvector-router-ffi.svg)](https://crates.io/crates/ruvector-router-ffi) |
 | [ruvector-router-wasm](./crates/ruvector-router-wasm) | WASM bindings for browser routing | [![crates.io](https://img.shields.io/crates/v/ruvector-router-wasm.svg)](https://crates.io/crates/ruvector-router-wasm) |
 
+### Self-Optimizing Neural Architecture (SONA)
+
+| Crate | Description | crates.io | npm |
+|-------|-------------|-----------|-----|
+| [ruvector-sona](./crates/sona) | Runtime-adaptive learning with LoRA, EWC++, and ReasoningBank | [![crates.io](https://img.shields.io/crates/v/ruvector-sona.svg)](https://crates.io/crates/ruvector-sona) | [![npm](https://img.shields.io/npm/v/@ruvector/sona.svg)](https://www.npmjs.com/package/@ruvector/sona) |
+
+**SONA** enables AI systems to continuously improve from user feedback without expensive retraining:
+
+- **Two-tier LoRA**: MicroLoRA (rank 1-2) for instant adaptation, BaseLoRA (rank 4-16) for long-term learning
+- **EWC++**: Elastic Weight Consolidation prevents catastrophic forgetting
+- **ReasoningBank**: K-means++ clustering stores and retrieves successful reasoning patterns
+- **Lock-free Trajectories**: ~50ns overhead per step with crossbeam ArrayQueue
+- **Sub-millisecond Learning**: <0.8ms per trajectory processing
+
+```bash
+# Rust
+cargo add ruvector-sona
+
+# Node.js
+npm install @ruvector/sona
+```
+
+```rust
+use ruvector_sona::{SonaEngine, SonaConfig};
+
+let engine = SonaEngine::new(SonaConfig::default());
+let traj_id = engine.start_trajectory(query_embedding);
+engine.record_step(traj_id, node_id, 0.85, 150);
+engine.end_trajectory(traj_id, 0.90);
+engine.learn_from_feedback(LearningSignal::positive(50.0, 0.95));
+```
+
+```javascript
+// Node.js
+const { SonaEngine } = require('@ruvector/sona');
+
+const engine = new SonaEngine(256); // 256 hidden dimensions
+const trajId = engine.beginTrajectory([0.1, 0.2, ...]);
+engine.addTrajectoryStep(trajId, activations, attention, 0.9);
+engine.endTrajectory(trajId, 0.95);
+```
+
 ### PostgreSQL Extension
 
-| Crate | Description | crates.io |
-|-------|-------------|-----------|
-| [ruvector-postgres](./crates/ruvector-postgres) | pgvector-compatible PostgreSQL extension with SIMD optimization | [![crates.io](https://img.shields.io/crates/v/ruvector-postgres.svg)](https://crates.io/crates/ruvector-postgres) |
+| Crate | Description | crates.io | npm |
+|-------|-------------|-----------|-----|
+| [ruvector-postgres](./crates/ruvector-postgres) | pgvector-compatible PostgreSQL extension with SIMD optimization | [![crates.io](https://img.shields.io/crates/v/ruvector-postgres.svg)](https://crates.io/crates/ruvector-postgres) | [![npm](https://img.shields.io/npm/v/@ruvector/postgres-cli.svg)](https://www.npmjs.com/package/@ruvector/postgres-cli) |
 
-Drop-in replacement for pgvector with AVX-512/AVX2/NEON acceleration, HNSW and IVFFlat indexes, quantization support, and zero-copy operations. See [ruvector-postgres README](./crates/ruvector-postgres/README.md) for installation and usage.
+**v0.2.0** — Drop-in replacement for pgvector with **53+ SQL functions**, full **AVX-512/AVX2/NEON SIMD** acceleration (~2x faster than AVX2), HNSW and IVFFlat indexes, 39 attention mechanisms, GNN layers, hyperbolic embeddings, sparse vectors/BM25, and self-learning capabilities.
+
+```bash
+# Docker (recommended)
+docker run -d -e POSTGRES_PASSWORD=secret -p 5432:5432 ruvector/postgres:latest
+
+# From source
+cargo install cargo-pgrx --version "0.12.9" --locked
+cargo pgrx install --release
+
+# CLI tool for management
+npm install -g @ruvector/postgres-cli
+ruvector-pg install
+ruvector-pg vector create table --dim 1536 --index hnsw
+```
+
+See [ruvector-postgres README](./crates/ruvector-postgres/README.md) for full SQL API reference and advanced features.
 
 ### Tools & Utilities
 
@@ -496,12 +562,14 @@ Production-ready examples demonstrating RuVector integration patterns, from cogn
 | [@ruvector/router](https://www.npmjs.com/package/@ruvector/router) | Semantic router with HNSW vector search | [![npm](https://img.shields.io/npm/v/@ruvector/router.svg)](https://www.npmjs.com/package/@ruvector/router) |
 | [@ruvector/agentic-synth](https://www.npmjs.com/package/@ruvector/agentic-synth) | Synthetic data generator for AI/ML | [![npm](https://img.shields.io/npm/v/@ruvector/agentic-synth.svg)](https://www.npmjs.com/package/@ruvector/agentic-synth) |
 | [@ruvector/attention](https://www.npmjs.com/package/@ruvector/attention) | 39 attention mechanisms for transformers & GNNs | [![npm](https://img.shields.io/npm/v/@ruvector/attention.svg)](https://www.npmjs.com/package/@ruvector/attention) |
+| [@ruvector/postgres-cli](https://www.npmjs.com/package/@ruvector/postgres-cli) | CLI for ruvector-postgres extension management | [![npm](https://img.shields.io/npm/v/@ruvector/postgres-cli.svg)](https://www.npmjs.com/package/@ruvector/postgres-cli) |
 | [@ruvector/wasm](https://www.npmjs.com/package/@ruvector/wasm) | WASM fallback for core vector DB | [![npm](https://img.shields.io/npm/v/@ruvector/wasm.svg)](https://www.npmjs.com/package/@ruvector/wasm) |
 | [@ruvector/gnn-wasm](https://www.npmjs.com/package/@ruvector/gnn-wasm) | WASM fallback for GNN layers | [![npm](https://img.shields.io/npm/v/@ruvector/gnn-wasm.svg)](https://www.npmjs.com/package/@ruvector/gnn-wasm) |
 | [@ruvector/graph-wasm](https://www.npmjs.com/package/@ruvector/graph-wasm) | WASM fallback for graph DB | [![npm](https://img.shields.io/npm/v/@ruvector/graph-wasm.svg)](https://www.npmjs.com/package/@ruvector/graph-wasm) |
 | [@ruvector/attention-wasm](https://www.npmjs.com/package/@ruvector/attention-wasm) | WASM fallback for attention mechanisms | [![npm](https://img.shields.io/npm/v/@ruvector/attention-wasm.svg)](https://www.npmjs.com/package/@ruvector/attention-wasm) |
 | [@ruvector/tiny-dancer-wasm](https://www.npmjs.com/package/@ruvector/tiny-dancer-wasm) | WASM fallback for AI routing | [![npm](https://img.shields.io/npm/v/@ruvector/tiny-dancer-wasm.svg)](https://www.npmjs.com/package/@ruvector/tiny-dancer-wasm) |
 | [@ruvector/router-wasm](https://www.npmjs.com/package/@ruvector/router-wasm) | WASM fallback for semantic router | [![npm](https://img.shields.io/npm/v/@ruvector/router-wasm.svg)](https://www.npmjs.com/package/@ruvector/router-wasm) |
+| [@ruvector/sona](https://www.npmjs.com/package/@ruvector/sona) | Self-Optimizing Neural Architecture (SONA) | [![npm](https://img.shields.io/npm/v/@ruvector/sona.svg)](https://www.npmjs.com/package/@ruvector/sona) |
 | [@ruvector/cluster](https://www.npmjs.com/package/@ruvector/cluster) | Distributed clustering & sharding | [![npm](https://img.shields.io/npm/v/@ruvector/cluster.svg)](https://www.npmjs.com/package/@ruvector/cluster) |
 | [@ruvector/server](https://www.npmjs.com/package/@ruvector/server) | HTTP/gRPC server mode | [![npm](https://img.shields.io/npm/v/@ruvector/server.svg)](https://www.npmjs.com/package/@ruvector/server) |
 

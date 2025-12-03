@@ -66,11 +66,15 @@ pub mod memory;
 pub mod orchestrator;
 pub mod router;
 pub mod simd_inference;
+pub mod sona;
 pub mod training;
 pub mod types;
 
 #[cfg(feature = "real-inference")]
 pub mod inference_real;
+
+#[cfg(feature = "napi")]
+pub mod napi;
 
 // Re-exports
 pub use config::{Config, ConfigBuilder};
@@ -78,6 +82,7 @@ pub use error::{Error, Result};
 pub use inference::{GenerationConfig, GenerationResult, InferenceMode, InferencePool};
 pub use orchestrator::RuvLLM;
 pub use simd_inference::{SimdInferenceEngine, SimdGenerationConfig, SimdOps};
+pub use sona::{SonaConfig, LoopCoordinator, InstantLoop, BackgroundLoop};
 pub use types::{Feedback, Request, Response, RoutingInfo, Session};
 
 /// Library version

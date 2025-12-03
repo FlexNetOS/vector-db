@@ -49,16 +49,50 @@ impl VectorStorage {
     pub fn new<P: AsRef<Path>>(path: P, dimensions: usize) -> Result<Self> {
         // SECURITY: Validate path to prevent directory traversal attacks
         let path_ref = path.as_ref();
-        let path_buf = path_ref
-            .canonicalize()
-            .unwrap_or_else(|_| path_ref.to_path_buf());
 
-        // Ensure the path doesn't escape the current working directory
-        if let Ok(cwd) = std::env::current_dir() {
-            if !path_buf.starts_with(&cwd) && !path_buf.is_absolute() {
-                return Err(RuvectorError::InvalidPath(
-                    "Path traversal attempt detected".to_string()
-                ));
+        // Create parent directories if they don't exist (needed for canonicalize)
+        if let Some(parent) = path_ref.parent() {
+            if !parent.as_os_str().is_empty() && !parent.exists() {
+                std::fs::create_dir_all(parent).map_err(|e| {
+                    RuvectorError::InvalidPath(format!("Failed to create directory: {}", e))
+                })?;
+            }
+        }
+
+        // Convert to absolute path first, then validate
+        let path_buf = if path_ref.is_absolute() {
+            path_ref.to_path_buf()
+        } else {
+            std::env::current_dir()
+                .map_err(|e| RuvectorError::InvalidPath(format!("Failed to get cwd: {}", e)))?
+                .join(path_ref)
+        };
+
+        // SECURITY: Check for path traversal attempts (e.g., "../../../etc/passwd")
+        // Only reject paths that contain ".." components trying to escape
+        let path_str = path_ref.to_string_lossy();
+        if path_str.contains("..") {
+            // Verify the resolved path doesn't escape intended boundaries
+            // For absolute paths, we allow them as-is (user explicitly specified)
+            // For relative paths with "..", check they don't escape cwd
+            if !path_ref.is_absolute() {
+                if let Ok(cwd) = std::env::current_dir() {
+                    // Normalize the path by resolving .. components
+                    let mut normalized = cwd.clone();
+                    for component in path_ref.components() {
+                        match component {
+                            std::path::Component::ParentDir => {
+                                if !normalized.pop() || !normalized.starts_with(&cwd) {
+                                    return Err(RuvectorError::InvalidPath(
+                                        "Path traversal attempt detected".to_string()
+                                    ));
+                                }
+                            }
+                            std::path::Component::Normal(c) => normalized.push(c),
+                            _ => {}
+                        }
+                    }
+                }
             }
         }
 

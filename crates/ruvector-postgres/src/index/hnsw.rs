@@ -2,17 +2,20 @@
 //!
 //! Provides fast approximate nearest neighbor search with O(log n) complexity.
 
-use std::collections::{BinaryHeap, HashSet};
 use std::cmp::Ordering;
+use std::collections::{BinaryHeap, HashSet};
 use std::sync::atomic::{AtomicUsize, Ordering as AtomicOrdering};
 
 use dashmap::DashMap;
 use parking_lot::RwLock;
 use rand::Rng;
-use rand_chacha::ChaCha8Rng;
 use rand::SeedableRng;
+use rand_chacha::ChaCha8Rng;
 
-use crate::distance::{DistanceMetric, distance};
+use crate::distance::{distance, DistanceMetric};
+
+/// Maximum supported layers in HNSW graph (can be configured via max_layers)
+pub const DEFAULT_MAX_LAYERS: usize = 32;
 
 /// HNSW configuration parameters
 #[derive(Debug, Clone)]
@@ -31,6 +34,8 @@ pub struct HnswConfig {
     pub metric: DistanceMetric,
     /// Random seed for reproducibility
     pub seed: u64,
+    /// Maximum number of layers in the graph (default: 32)
+    pub max_layers: usize,
 }
 
 impl Default for HnswConfig {
@@ -43,6 +48,7 @@ impl Default for HnswConfig {
             max_elements: 1_000_000,
             metric: DistanceMetric::Euclidean,
             seed: 42,
+            max_layers: DEFAULT_MAX_LAYERS,
         }
     }
 }
@@ -74,7 +80,10 @@ impl PartialOrd for Neighbor {
 impl Ord for Neighbor {
     fn cmp(&self, other: &Self) -> Ordering {
         // Reverse ordering for max-heap (we want min distances first)
-        other.distance.partial_cmp(&self.distance).unwrap_or(Ordering::Equal)
+        other
+            .distance
+            .partial_cmp(&self.distance)
+            .unwrap_or(Ordering::Equal)
     }
 }
 
@@ -136,49 +145,59 @@ impl HnswIndex {
     }
 
     /// Calculate random level for new node
+    #[inline]
     fn random_level(&self) -> usize {
         let ml = 1.0 / (self.config.m as f64).ln();
         let mut rng = self.rng.write();
         let r: f64 = rng.gen();
         let level = (-r.ln() * ml).floor() as usize;
-        level.min(32) // Cap at 32 layers
+        level.min(self.config.max_layers) // Use configurable max layers
     }
 
     /// Calculate distance between two vectors
+    #[inline]
     fn calc_distance(&self, a: &[f32], b: &[f32]) -> f32 {
         distance(a, b, self.config.metric)
     }
 
     /// Insert a vector into the index
+    ///
+    /// Returns the assigned NodeId, or panics if the node ID space is exhausted.
     pub fn insert(&self, vector: Vec<f32>) -> NodeId {
         assert_eq!(vector.len(), self.dimensions, "Vector dimension mismatch");
 
-        let id = self.next_id.fetch_add(1, AtomicOrdering::Relaxed) as NodeId;
+        // Use checked arithmetic to detect overflow (theoretical for u64, but safe)
+        let next_id = self.next_id.fetch_add(1, AtomicOrdering::Relaxed);
+        if next_id == usize::MAX {
+            panic!("HNSW index node ID overflow - maximum capacity reached");
+        }
+        let id = next_id as NodeId;
         let level = self.random_level();
 
-        // Create node with empty neighbor lists for each layer
-        let mut neighbors = Vec::with_capacity(level + 1);
-        for _ in 0..=level {
-            neighbors.push(RwLock::new(Vec::new()));
-        }
-
-        let node = HnswNode {
-            vector: vector.clone(),
-            neighbors,
-            max_layer: level,
-        };
-
-        self.nodes.insert(id, node);
-
-        // Handle empty index
+        // Handle empty index (fast path - no searching needed, can avoid clone)
         let current_entry = *self.entry_point.read();
         if current_entry.is_none() {
+            // Create node with empty neighbor lists for each layer
+            let mut neighbors = Vec::with_capacity(level + 1);
+            for _ in 0..=level {
+                neighbors.push(RwLock::new(Vec::new()));
+            }
+
+            let node = HnswNode {
+                vector, // Move without clone - first node doesn't need search
+                neighbors,
+                max_layer: level,
+            };
+
+            self.nodes.insert(id, node);
             *self.entry_point.write() = Some(id);
             self.max_layer.store(level, AtomicOrdering::Relaxed);
             self.node_count.fetch_add(1, AtomicOrdering::Relaxed);
             return id;
         }
 
+        // For non-empty index: search FIRST with borrowed vector, then insert
+        // This avoids cloning the vector entirely - zero-copy insert path
         let entry_point_id = current_entry.unwrap();
         let current_max_layer = self.max_layer.load(AtomicOrdering::Relaxed);
 
@@ -190,17 +209,53 @@ impl HnswIndex {
             curr_id = self.search_layer_single(&vector, curr_id, layer);
         }
 
-        // Insert at each layer from the node's max layer down to 0
+        // Collect all neighbor selections before inserting the node
+        // This allows us to search with borrowed vector, then move it
+        let mut layer_neighbors: Vec<Vec<NodeId>> =
+            Vec::with_capacity(level.min(current_max_layer) + 1);
+
         for layer in (0..=level.min(current_max_layer)).rev() {
             let neighbors = self.search_layer(&vector, curr_id, self.config.ef_construction, layer);
 
             // Select best neighbors
-            let max_connections = if layer == 0 { self.config.m0 } else { self.config.m };
+            let max_connections = if layer == 0 {
+                self.config.m0
+            } else {
+                self.config.m
+            };
             let selected: Vec<NodeId> = neighbors
                 .into_iter()
                 .take(max_connections)
                 .map(|n| n.id)
                 .collect();
+
+            // Update curr_id for next layer
+            if !selected.is_empty() {
+                curr_id = selected[0];
+            }
+
+            layer_neighbors.push(selected);
+        }
+
+        // Reverse since we collected in reverse order
+        layer_neighbors.reverse();
+
+        // NOW create and insert the node (moving the vector - no clone needed)
+        let mut neighbors_vec = Vec::with_capacity(level + 1);
+        for _ in 0..=level {
+            neighbors_vec.push(RwLock::new(Vec::new()));
+        }
+
+        let node = HnswNode {
+            vector, // Move original into node - zero copy!
+            neighbors: neighbors_vec,
+            max_layer: level,
+        };
+        self.nodes.insert(id, node);
+
+        // Apply the pre-computed neighbor connections
+        for (layer_idx, selected) in layer_neighbors.iter().enumerate() {
+            let layer = layer_idx;
 
             // Set neighbors for new node
             if let Some(node) = self.nodes.get(&id) {
@@ -210,13 +265,8 @@ impl HnswIndex {
             }
 
             // Add bidirectional connections
-            for &neighbor_id in &selected {
+            for &neighbor_id in selected {
                 self.connect(neighbor_id, id, layer);
-            }
-
-            // Update curr_id for next layer
-            if !selected.is_empty() {
-                curr_id = selected[0];
             }
         }
 
@@ -231,6 +281,7 @@ impl HnswIndex {
     }
 
     /// Search for the single nearest neighbor in a layer (for descending)
+    #[inline]
     fn search_layer_single(&self, query: &[f32], entry_id: NodeId, layer: usize) -> NodeId {
         let entry_node = self.nodes.get(&entry_id).unwrap();
         let mut best_id = entry_id;
@@ -268,6 +319,7 @@ impl HnswIndex {
     }
 
     /// Search layer with beam search
+    #[inline]
     fn search_layer(
         &self,
         query: &[f32],
@@ -284,8 +336,14 @@ impl HnswIndex {
         drop(entry_node);
 
         visited.insert(entry_id);
-        candidates.push(Neighbor { id: entry_id, distance: entry_dist });
-        results.push(Neighbor { id: entry_id, distance: -entry_dist }); // Negative for max-heap
+        candidates.push(Neighbor {
+            id: entry_id,
+            distance: entry_dist,
+        });
+        results.push(Neighbor {
+            id: entry_id,
+            distance: -entry_dist,
+        }); // Negative for max-heap
 
         while let Some(current) = candidates.pop() {
             let furthest_result = results.peek().map(|n| -n.distance).unwrap_or(f32::MAX);
@@ -323,8 +381,14 @@ impl HnswIndex {
                 let furthest_result = results.peek().map(|n| -n.distance).unwrap_or(f32::MAX);
 
                 if dist < furthest_result || results.len() < ef {
-                    candidates.push(Neighbor { id: neighbor_id, distance: dist });
-                    results.push(Neighbor { id: neighbor_id, distance: -dist });
+                    candidates.push(Neighbor {
+                        id: neighbor_id,
+                        distance: dist,
+                    });
+                    results.push(Neighbor {
+                        id: neighbor_id,
+                        distance: -dist,
+                    });
 
                     if results.len() > ef {
                         results.pop();
@@ -336,9 +400,16 @@ impl HnswIndex {
         // Convert to positive distances and sort
         let mut result_vec: Vec<Neighbor> = results
             .into_iter()
-            .map(|n| Neighbor { id: n.id, distance: -n.distance })
+            .map(|n| Neighbor {
+                id: n.id,
+                distance: -n.distance,
+            })
             .collect();
-        result_vec.sort_by(|a, b| a.distance.partial_cmp(&b.distance).unwrap_or(Ordering::Equal));
+        result_vec.sort_by(|a, b| {
+            a.distance
+                .partial_cmp(&b.distance)
+                .unwrap_or(Ordering::Equal)
+        });
         result_vec
     }
 
@@ -347,7 +418,11 @@ impl HnswIndex {
         if let Some(node) = self.nodes.get(&from_id) {
             if layer < node.neighbors.len() {
                 let mut neighbors = node.neighbors[layer].write();
-                let max_connections = if layer == 0 { self.config.m0 } else { self.config.m };
+                let max_connections = if layer == 0 {
+                    self.config.m0
+                } else {
+                    self.config.m
+                };
 
                 if neighbors.len() < max_connections {
                     if !neighbors.contains(&to_id) {
@@ -370,7 +445,8 @@ impl HnswIndex {
                             .collect();
 
                         with_dist.sort_by(|a, b| a.1.partial_cmp(&b.1).unwrap_or(Ordering::Equal));
-                        *neighbors = with_dist.into_iter()
+                        *neighbors = with_dist
+                            .into_iter()
                             .take(max_connections)
                             .map(|(id, _)| id)
                             .collect();

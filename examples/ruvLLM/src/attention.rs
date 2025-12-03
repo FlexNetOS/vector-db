@@ -10,6 +10,7 @@ use crate::types::{EdgeType, MemoryNode};
 
 use ndarray::{Array1, Array2};
 use rand::Rng;
+use rayon::prelude::*;
 use std::collections::HashMap;
 
 /// Graph context after attention
@@ -153,54 +154,58 @@ impl GraphAttentionEngine {
         // Build edge feature matrix
         let edge_features = self.build_edge_features(subgraph);
 
-        // Compute multi-head attention
-        let mut all_head_weights = Vec::with_capacity(self.num_heads);
-        let mut head_outputs = Vec::with_capacity(self.num_heads);
+        // Compute multi-head attention in parallel
+        let head_results: Vec<(Vec<f32>, Array1<f32>)> = (0..self.num_heads)
+            .into_par_iter()
+            .map(|head| {
+                // Project query
+                let q = self.wq[head].t().dot(&query_arr);
 
-        for head in 0..self.num_heads {
-            // Project query
-            let q = self.wq[head].t().dot(&query_arr);
+                // Project all node keys and values
+                let mut keys = Array2::zeros((n, self.head_dim));
+                let mut values = Array2::zeros((n, self.head_dim));
 
-            // Project all node keys and values
-            let mut keys = Array2::zeros((n, self.head_dim));
-            let mut values = Array2::zeros((n, self.head_dim));
-
-            for (i, node) in subgraph.nodes.iter().enumerate() {
-                let node_vec = Array1::from_vec(node.vector.clone());
-                let k = self.wk[head].t().dot(&node_vec);
-                let v = self.wv[head].t().dot(&node_vec);
-                keys.row_mut(i).assign(&k);
-                values.row_mut(i).assign(&v);
-            }
-
-            // Compute attention scores: Q @ K^T / sqrt(d)
-            let mut scores: Vec<f32> = Vec::with_capacity(n);
-            for i in 0..n {
-                let k = keys.row(i);
-                let score = q.dot(&k) / (self.head_dim as f32).sqrt() / self.temperature;
-                scores.push(score);
-            }
-
-            // Add edge-based bias
-            for i in 0..n {
-                if let Some(edge_feat) = edge_features.get(&subgraph.nodes[i].id) {
-                    // Edge features modulate attention
-                    let bias = edge_feat.iter().sum::<f32>() / edge_feat.len() as f32 * 0.1;
-                    scores[i] += bias;
+                for (i, node) in subgraph.nodes.iter().enumerate() {
+                    let node_vec = Array1::from_vec(node.vector.clone());
+                    let k = self.wk[head].t().dot(&node_vec);
+                    let v = self.wv[head].t().dot(&node_vec);
+                    keys.row_mut(i).assign(&k);
+                    values.row_mut(i).assign(&v);
                 }
-            }
 
-            // Softmax
-            let weights = softmax(&scores);
-            all_head_weights.push(weights.clone());
+                // Compute attention scores: Q @ K^T / sqrt(d)
+                let mut scores: Vec<f32> = Vec::with_capacity(n);
+                let scale_factor = (self.head_dim as f32).sqrt() * self.temperature;
+                for i in 0..n {
+                    let k = keys.row(i);
+                    scores.push(q.dot(&k) / scale_factor);
+                }
 
-            // Weighted sum of values
-            let mut output = Array1::zeros(self.head_dim);
-            for (i, &w) in weights.iter().enumerate() {
-                output = output + &values.row(i).to_owned() * w;
-            }
-            head_outputs.push(output);
-        }
+                // Add edge-based bias
+                for i in 0..n {
+                    if let Some(edge_feat) = edge_features.get(&subgraph.nodes[i].id) {
+                        let bias = edge_feat.iter().sum::<f32>() / edge_feat.len() as f32 * 0.1;
+                        scores[i] += bias;
+                    }
+                }
+
+                // Softmax
+                let weights = softmax(&scores);
+
+                // Weighted sum of values
+                let mut output = Array1::zeros(self.head_dim);
+                for (i, &w) in weights.iter().enumerate() {
+                    if w > 1e-6 {  // Skip near-zero weights
+                        output = output + &values.row(i).to_owned() * w;
+                    }
+                }
+
+                (weights, output)
+            })
+            .collect();
+
+        let (all_head_weights, head_outputs): (Vec<Vec<f32>>, Vec<Array1<f32>>) =
+            head_results.into_iter().unzip();
 
         // Concatenate heads
         let mut concat = Array1::zeros(self.dim);

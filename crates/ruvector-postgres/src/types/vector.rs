@@ -9,18 +9,18 @@
 //! - unused (2 bytes for alignment)
 //! - data (4 bytes per dimension as f32)
 
-use pgrx::prelude::*;
 use pgrx::pgrx_sql_entity_graph::metadata::{
     ArgumentError, Returns, ReturnsError, SqlMapping, SqlTranslatable,
 };
+use pgrx::prelude::*;
 use serde::{Deserialize, Serialize};
 use std::ffi::{CStr, CString};
 use std::fmt;
 use std::ptr;
 use std::str::FromStr;
 
-use crate::MAX_DIMENSIONS;
 use super::VectorData;
+use crate::MAX_DIMENSIONS;
 
 // ============================================================================
 // Zero-Copy Varlena Structure
@@ -296,7 +296,9 @@ impl FromStr for RuVector {
         // Parse format: [1.0, 2.0, 3.0] or [1,2,3]
         let s = s.trim();
         if !s.starts_with('[') || !s.ends_with(']') {
-            return Err(format!("Invalid vector format: must be enclosed in brackets"));
+            return Err(format!(
+                "Invalid vector format: must be enclosed in brackets"
+            ));
         }
 
         let inner = &s[1..s.len() - 1];
@@ -308,7 +310,9 @@ impl FromStr for RuVector {
             .split(',')
             .map(|v| {
                 let trimmed = v.trim();
-                trimmed.parse::<f32>().map_err(|e| format!("Invalid number '{}': {}", trimmed, e))
+                trimmed
+                    .parse::<f32>()
+                    .map_err(|e| format!("Invalid number '{}': {}", trimmed, e))
             })
             .collect();
 
@@ -575,7 +579,8 @@ fn ruvector_typmod_in_fn(list: pgrx::Array<&CStr>) -> i32 {
     }
 
     // Get the first element
-    let dim_str = list.get(0)
+    let dim_str = list
+        .get(0)
         .flatten()
         .ok_or_else(|| pgrx::error!("ruvector dimension cannot be null"))
         .unwrap();
@@ -599,65 +604,89 @@ fn ruvector_typmod_in_fn(list: pgrx::Array<&CStr>) -> i32 {
 }
 
 /// Low-level wrapper for typmod_in (for CREATE TYPE)
+///
+/// This function parses dimension specifications like `ruvector(128)` from PostgreSQL.
+/// It uses PostgreSQL's array accessor macros for robust array element access.
 #[pg_guard]
 #[no_mangle]
 pub extern "C" fn ruvector_typmod_in(fcinfo: pg_sys::FunctionCallInfo) -> pg_sys::Datum {
     unsafe {
         // Get the cstring array argument
         let array_datum = (*fcinfo).args.as_ptr().add(0).read().value;
-
-        // Cast to ArrayType pointer and get first element directly
         let array_ptr = array_datum.cast_mut_ptr::<pg_sys::ArrayType>();
 
-        // Get array data section
-        let data_ptr = (array_ptr as *const u8).add(std::mem::size_of::<pg_sys::ArrayType>());
+        if array_ptr.is_null() {
+            pgrx::error!("ruvector type modifier cannot be null");
+        }
 
-        // First element offset is after the null bitmap (if any)
-        // For simple cstring arrays, data typically starts immediately
-        // This is a simplified approach - just read the first cstring
-
-        // The first element should be a pointer to the dimension string
-        // For a simple 1D cstring array: [ArrayType header][data offset][cstring1][cstring2]...
-
-        // Get the array bounds
+        // Validate array dimensionality using PostgreSQL's ARR_NDIM macro equivalent
         let ndim = (*array_ptr).ndim;
         if ndim != 1 {
-            pgrx::error!("ruvector type modifier must be a 1D array");
+            pgrx::error!("ruvector type modifier must be a 1D array, got {}D", ndim);
         }
 
-        // For text/cstring array, parse directly using pg_detoast if needed
-        let dims_ptr = (array_ptr as *const u8).add(std::mem::offset_of!(pg_sys::ArrayType, dataoffset) + 4) as *const i32;
-        let dim0 = *dims_ptr;
+        // Get array dimensions using ARR_DIMS macro equivalent
+        // ARR_DIMS returns pointer to first element of dims array (right after the header)
+        let dims_ptr =
+            (array_ptr as *const u8).add(std::mem::size_of::<pg_sys::ArrayType>()) as *const i32;
+        let nelems = *dims_ptr;
 
-        if dim0 != 1 {
-            pgrx::error!("ruvector type modifier must have exactly one dimension");
+        if nelems != 1 {
+            pgrx::error!(
+                "ruvector type modifier must have exactly one element, got {}",
+                nelems
+            );
         }
 
-        // Get array data - for cstring[], each element is null-terminated
-        let dataoffset = if (*array_ptr).dataoffset == 0 {
-            // No null bitmap, data follows header + dimensions + lower bounds
+        // Calculate data offset using ARR_DATA_OFFSET macro equivalent
+        // If dataoffset is 0, there's no null bitmap
+        let data_offset = if (*array_ptr).dataoffset == 0 {
+            // No null bitmap: header + dims + lbounds
+            // dims and lbounds each have ndim i32 elements
             let header_size = std::mem::size_of::<pg_sys::ArrayType>();
-            let dims_size = (ndim as usize) * std::mem::size_of::<i32>() * 2; // dims + lbounds
-            header_size + dims_size
+            let dims_lbounds_size = (ndim as usize) * std::mem::size_of::<i32>() * 2;
+            header_size + dims_lbounds_size
         } else {
+            // dataoffset includes the null bitmap size
             (*array_ptr).dataoffset as usize
         };
 
-        // First cstring element
-        let first_elem = (array_ptr as *const u8).add(dataoffset) as *const i8;
-        let dim_str = CStr::from_ptr(first_elem);
-        let dim_str_rust = dim_str.to_str().unwrap_or("0");
+        // Get pointer to first cstring element
+        let first_elem_ptr = (array_ptr as *const u8).add(data_offset) as *const i8;
 
-        let dimensions: i32 = dim_str_rust.parse().unwrap_or_else(|_| {
-            pgrx::error!("invalid dimension specification: {}", dim_str_rust);
+        if first_elem_ptr.is_null() {
+            pgrx::error!("ruvector type modifier element is null");
+        }
+
+        // Parse the dimension string safely
+        let dim_cstr = CStr::from_ptr(first_elem_ptr);
+        let dim_str = dim_cstr.to_str().unwrap_or_else(|_| {
+            pgrx::error!("ruvector type modifier contains invalid UTF-8");
         });
 
-        // Validate dimensions
-        if dimensions < 1 || dimensions > MAX_DIMENSIONS as i32 {
+        // Trim whitespace and parse
+        let dim_str_trimmed = dim_str.trim();
+        if dim_str_trimmed.is_empty() {
+            pgrx::error!("ruvector type modifier cannot be empty");
+        }
+
+        let dimensions: i32 = dim_str_trimmed.parse().unwrap_or_else(|e| {
             pgrx::error!(
-                "dimensions must be between 1 and {}, got {}",
-                MAX_DIMENSIONS,
-                dimensions
+                "invalid dimension specification '{}': {}",
+                dim_str_trimmed,
+                e
+            );
+        });
+
+        // Validate dimension range
+        if dimensions < 1 {
+            pgrx::error!("dimensions must be at least 1, got {}", dimensions);
+        }
+        if dimensions > MAX_DIMENSIONS as i32 {
+            pgrx::error!(
+                "dimensions {} exceeds maximum allowed {}",
+                dimensions,
+                MAX_DIMENSIONS
             );
         }
 
@@ -751,7 +780,10 @@ impl pgrx::FromDatum for RuVector {
         // Use pgrx varlena helpers to read the detoasted data
         let total_size = pgrx::varlena::varsize_any(detoasted_ptr as *const _);
         if total_size < RuVectorHeader::SIZE + pg_sys::VARHDRSZ {
-            pgrx::error!("Invalid vector from storage: size too small ({})", total_size);
+            pgrx::error!(
+                "Invalid vector from storage: size too small ({})",
+                total_size
+            );
         }
 
         let data_ptr = pgrx::varlena::vardata_any(detoasted_ptr as *const _) as *const u8;
@@ -795,7 +827,9 @@ unsafe impl<'fcx> pgrx::callconv::ArgAbi<'fcx> for RuVector {
             .expect("ruvector argument must not be null")
     }
 
-    unsafe fn unbox_nullable_arg(arg: pgrx::callconv::Arg<'_, 'fcx>) -> pgrx::nullable::Nullable<Self> {
+    unsafe fn unbox_nullable_arg(
+        arg: pgrx::callconv::Arg<'_, 'fcx>,
+    ) -> pgrx::nullable::Nullable<Self> {
         match arg.unbox_arg_using_from_datum::<RuVector>() {
             Some(v) => pgrx::nullable::Nullable::Valid(v),
             None => pgrx::nullable::Nullable::Null,
@@ -804,7 +838,10 @@ unsafe impl<'fcx> pgrx::callconv::ArgAbi<'fcx> for RuVector {
 }
 
 unsafe impl pgrx::callconv::BoxRet for RuVector {
-    unsafe fn box_into<'fcx>(self, fcinfo: &mut pgrx::callconv::FcInfo<'fcx>) -> pgrx::datum::Datum<'fcx> {
+    unsafe fn box_into<'fcx>(
+        self,
+        fcinfo: &mut pgrx::callconv::FcInfo<'fcx>,
+    ) -> pgrx::datum::Datum<'fcx> {
         match self.into_datum() {
             Some(datum) => fcinfo.return_raw_datum(datum),
             None => fcinfo.return_null(),

@@ -56,10 +56,40 @@ impl GraphStorage {
     /// Uses a global connection pool to allow multiple GraphStorage
     /// instances to share the same underlying database file
     pub fn new<P: AsRef<Path>>(path: P) -> Result<Self> {
-        let path_buf = path
-            .as_ref()
-            .canonicalize()
-            .unwrap_or_else(|_| path.as_ref().to_path_buf());
+        let path_ref = path.as_ref();
+
+        // Create parent directories if they don't exist
+        if let Some(parent) = path_ref.parent() {
+            if !parent.as_os_str().is_empty() && !parent.exists() {
+                std::fs::create_dir_all(parent)?;
+            }
+        }
+
+        // Convert to absolute path
+        let path_buf = if path_ref.is_absolute() {
+            path_ref.to_path_buf()
+        } else {
+            std::env::current_dir()?.join(path_ref)
+        };
+
+        // SECURITY: Check for path traversal attempts
+        let path_str = path_ref.to_string_lossy();
+        if path_str.contains("..") && !path_ref.is_absolute() {
+            if let Ok(cwd) = std::env::current_dir() {
+                let mut normalized = cwd.clone();
+                for component in path_ref.components() {
+                    match component {
+                        std::path::Component::ParentDir => {
+                            if !normalized.pop() || !normalized.starts_with(&cwd) {
+                                anyhow::bail!("Path traversal attempt detected");
+                            }
+                        }
+                        std::path::Component::Normal(c) => normalized.push(c),
+                        _ => {}
+                    }
+                }
+            }
+        }
 
         // Check if we already have a Database instance for this path
         let db = {

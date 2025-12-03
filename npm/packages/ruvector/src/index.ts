@@ -4,9 +4,16 @@
  * This package automatically detects and uses the best available implementation:
  * 1. Native (Rust-based, fastest) - if available for your platform
  * 2. WASM (WebAssembly, universal fallback) - works everywhere
+ *
+ * Also provides safe wrappers for GNN and Attention modules that handle
+ * array type conversions automatically.
  */
 
 export * from './types';
+
+// Export core wrappers (safe interfaces with automatic type conversion)
+export * from './core';
+export * from './services';
 
 let implementation: any;
 let implementationType: 'native' | 'wasm' = 'wasm';

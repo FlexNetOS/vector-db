@@ -22,18 +22,45 @@ pub struct Storage {
 impl Storage {
     /// Create a new storage instance
     pub fn new<P: AsRef<Path>>(path: P) -> Result<Self> {
-        // SECURITY: Validate and canonicalize path to prevent directory traversal
+        // SECURITY: Validate path to prevent directory traversal attacks
         let path_ref = path.as_ref();
-        let canonical_path = path_ref
-            .canonicalize()
-            .unwrap_or_else(|_| path_ref.to_path_buf());
 
-        // Ensure the path doesn't escape allowed directories
-        if let Ok(cwd) = std::env::current_dir() {
-            if !canonical_path.starts_with(&cwd) && !canonical_path.is_absolute() {
-                return Err(VectorDbError::InvalidPath(
-                    "Path traversal attempt detected".to_string()
-                ));
+        // Create parent directories if they don't exist
+        if let Some(parent) = path_ref.parent() {
+            if !parent.as_os_str().is_empty() && !parent.exists() {
+                std::fs::create_dir_all(parent).map_err(|e| {
+                    VectorDbError::InvalidPath(format!("Failed to create directory: {}", e))
+                })?;
+            }
+        }
+
+        // Convert to absolute path
+        let canonical_path = if path_ref.is_absolute() {
+            path_ref.to_path_buf()
+        } else {
+            std::env::current_dir()
+                .map_err(|e| VectorDbError::InvalidPath(format!("Failed to get cwd: {}", e)))?
+                .join(path_ref)
+        };
+
+        // SECURITY: Check for path traversal attempts
+        let path_str = path_ref.to_string_lossy();
+        if path_str.contains("..") && !path_ref.is_absolute() {
+            if let Ok(cwd) = std::env::current_dir() {
+                let mut normalized = cwd.clone();
+                for component in path_ref.components() {
+                    match component {
+                        std::path::Component::ParentDir => {
+                            if !normalized.pop() || !normalized.starts_with(&cwd) {
+                                return Err(VectorDbError::InvalidPath(
+                                    "Path traversal attempt detected".to_string()
+                                ));
+                            }
+                        }
+                        std::path::Component::Normal(c) => normalized.push(c),
+                        _ => {}
+                    }
+                }
             }
         }
 
@@ -47,18 +74,23 @@ impl Storage {
 
     /// Open an existing storage instance
     pub fn open<P: AsRef<Path>>(path: P) -> Result<Self> {
-        // SECURITY: Validate and canonicalize path to prevent directory traversal
+        // SECURITY: Validate path to prevent directory traversal attacks
         let path_ref = path.as_ref();
-        let canonical_path = path_ref
-            .canonicalize()
-            .unwrap_or_else(|_| path_ref.to_path_buf());
 
-        // Ensure the path doesn't escape allowed directories
-        if let Ok(cwd) = std::env::current_dir() {
-            if !canonical_path.starts_with(&cwd) && !canonical_path.is_absolute() {
-                return Err(VectorDbError::InvalidPath(
-                    "Path traversal attempt detected".to_string()
-                ));
+        // Convert to absolute path - file must exist for open
+        let canonical_path = path_ref.canonicalize().map_err(|e| {
+            VectorDbError::InvalidPath(format!("Path does not exist or cannot be resolved: {}", e))
+        })?;
+
+        // SECURITY: Check for path traversal attempts
+        let path_str = path_ref.to_string_lossy();
+        if path_str.contains("..") && !path_ref.is_absolute() {
+            if let Ok(cwd) = std::env::current_dir() {
+                if !canonical_path.starts_with(&cwd) {
+                    return Err(VectorDbError::InvalidPath(
+                        "Path traversal attempt detected".to_string()
+                    ));
+                }
             }
         }
 

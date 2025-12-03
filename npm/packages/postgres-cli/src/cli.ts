@@ -28,6 +28,7 @@ import { SparseCommands } from './commands/sparse.js';
 import { HyperbolicCommands } from './commands/hyperbolic.js';
 import { RoutingCommands } from './commands/routing.js';
 import { QuantizationCommands } from './commands/quantization.js';
+import { InstallCommands } from './commands/install.js';
 
 const program = new Command();
 
@@ -892,8 +893,8 @@ program
   });
 
 program
-  .command('install')
-  .description('Install the RuVector extension in a database')
+  .command('extension')
+  .description('Install/upgrade RuVector extension in existing PostgreSQL')
   .option('--upgrade', 'Upgrade existing installation')
   .action(async (options) => {
     const client = new RuVectorClient(program.opts().connection);
@@ -927,6 +928,130 @@ program
       console.error(chalk.red('Error:'), (err as Error).message);
     } finally {
       await client.disconnect();
+    }
+  });
+
+// ============================================================================
+// Installation & Server Management
+// ============================================================================
+
+program
+  .command('install')
+  .description('Install RuVector PostgreSQL (Docker or native)')
+  .option('-m, --method <type>', 'Installation method: docker, native, auto', 'auto')
+  .option('-p, --port <number>', 'PostgreSQL port', '5432')
+  .option('-u, --user <name>', 'Database user', 'ruvector')
+  .option('--password <pass>', 'Database password', 'ruvector')
+  .option('-d, --database <name>', 'Database name', 'ruvector')
+  .option('--data-dir <path>', 'Persistent data directory')
+  .option('--name <name>', 'Container name', 'ruvector-postgres')
+  .option('--version <version>', 'RuVector version', '0.2.3')
+  .action(async (options) => {
+    try {
+      await InstallCommands.install({
+        method: options.method,
+        port: parseInt(options.port),
+        user: options.user,
+        password: options.password,
+        database: options.database,
+        dataDir: options.dataDir,
+        name: options.name,
+        version: options.version,
+      });
+    } catch (err) {
+      console.error(chalk.red('Error:'), (err as Error).message);
+      process.exit(1);
+    }
+  });
+
+program
+  .command('uninstall')
+  .description('Uninstall RuVector PostgreSQL')
+  .option('--name <name>', 'Container name', 'ruvector-postgres')
+  .option('--remove-data', 'Also remove data volumes')
+  .action(async (options) => {
+    try {
+      await InstallCommands.uninstall({
+        name: options.name,
+        removeData: options.removeData,
+      });
+    } catch (err) {
+      console.error(chalk.red('Error:'), (err as Error).message);
+      process.exit(1);
+    }
+  });
+
+program
+  .command('status')
+  .description('Show RuVector PostgreSQL installation status')
+  .option('--name <name>', 'Container name', 'ruvector-postgres')
+  .action(async (options) => {
+    try {
+      await InstallCommands.printStatus({ name: options.name });
+    } catch (err) {
+      console.error(chalk.red('Error:'), (err as Error).message);
+      process.exit(1);
+    }
+  });
+
+program
+  .command('start')
+  .description('Start RuVector PostgreSQL')
+  .option('--name <name>', 'Container name', 'ruvector-postgres')
+  .action(async (options) => {
+    try {
+      await InstallCommands.start({ name: options.name });
+    } catch (err) {
+      console.error(chalk.red('Error:'), (err as Error).message);
+      process.exit(1);
+    }
+  });
+
+program
+  .command('stop')
+  .description('Stop RuVector PostgreSQL')
+  .option('--name <name>', 'Container name', 'ruvector-postgres')
+  .action(async (options) => {
+    try {
+      await InstallCommands.stop({ name: options.name });
+    } catch (err) {
+      console.error(chalk.red('Error:'), (err as Error).message);
+      process.exit(1);
+    }
+  });
+
+program
+  .command('logs')
+  .description('Show RuVector PostgreSQL logs')
+  .option('--name <name>', 'Container name', 'ruvector-postgres')
+  .option('-f, --follow', 'Follow log output')
+  .option('-n, --tail <lines>', 'Number of lines to show', '100')
+  .action(async (options) => {
+    try {
+      await InstallCommands.logs({
+        name: options.name,
+        follow: options.follow,
+        tail: parseInt(options.tail),
+      });
+    } catch (err) {
+      console.error(chalk.red('Error:'), (err as Error).message);
+      process.exit(1);
+    }
+  });
+
+program
+  .command('psql [command]')
+  .description('Connect to RuVector PostgreSQL or execute SQL')
+  .option('--name <name>', 'Container name', 'ruvector-postgres')
+  .action(async (command, options) => {
+    try {
+      await InstallCommands.psql({
+        name: options.name,
+        command: command,
+      });
+    } catch (err) {
+      console.error(chalk.red('Error:'), (err as Error).message);
+      process.exit(1);
     }
   });
 
