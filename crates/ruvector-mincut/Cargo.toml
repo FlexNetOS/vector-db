@@ -67,6 +67,10 @@ harness = false
 name = "paper_algorithms_bench"
 harness = false
 
+[[bench]]
+name = "snn_bench"
+harness = false
+
 [[example]]
 name = "mincut_neural_optimizer"
 path = "../../examples/mincut/neural_optimizer/main.rs"

@@ -143,6 +143,39 @@ pub mod parallel;
 pub mod pool;
 pub mod integration;
 
+/// Spiking Neural Network integration for deep MinCut optimization.
+///
+/// This module implements a six-layer integration architecture combining
+/// neuromorphic computing with subpolynomial graph algorithms:
+///
+/// 1. **Temporal Attractors**: Energy landscapes for graph optimization
+/// 2. **Strange Loop**: Self-modifying meta-cognitive protocols
+/// 3. **Causal Discovery**: Spike-timing based inference
+/// 4. **Time Crystal CPG**: Central pattern generators for coordination
+/// 5. **Morphogenetic Networks**: Bio-inspired self-organizing growth
+/// 6. **Neural Optimizer**: Reinforcement learning on graph structures
+///
+/// ## Quick Start
+///
+/// ```rust,no_run
+/// use ruvector_mincut::snn::{CognitiveMinCutEngine, EngineConfig, OperationMode};
+/// use ruvector_mincut::graph::DynamicGraph;
+///
+/// // Create a graph
+/// let graph = DynamicGraph::new();
+/// graph.insert_edge(0, 1, 1.0).unwrap();
+/// graph.insert_edge(1, 2, 1.0).unwrap();
+///
+/// // Create the cognitive engine
+/// let config = EngineConfig::default();
+/// let mut engine = CognitiveMinCutEngine::new(graph, config);
+///
+/// // Run optimization
+/// engine.set_mode(OperationMode::Optimize);
+/// let spikes = engine.run(100);
+/// ```
+pub mod snn;
+
 // Internal modules
 mod core;
 
@@ -202,6 +235,30 @@ pub use integration::{
     RuVectorGraphAnalyzer, CommunityDetector, GraphPartitioner,
 };
 
+// SNN Integration re-exports
+pub use snn::{
+    // Core SNN types
+    LIFNeuron, NeuronState, NeuronConfig, SpikeTrain,
+    Synapse, STDPConfig, SynapseMatrix,
+    SpikingNetwork, NetworkConfig, LayerConfig,
+    // Layer 1: Attractors
+    AttractorDynamics, EnergyLandscape, AttractorConfig,
+    // Layer 2: Strange Loop
+    MetaCognitiveMinCut, MetaAction, MetaLevel, StrangeLoopConfig,
+    // Layer 3: Causal Discovery
+    CausalDiscoverySNN, CausalGraph, CausalRelation, CausalConfig,
+    // Layer 4: Time Crystal
+    TimeCrystalCPG, OscillatorNeuron, PhaseTopology, CPGConfig,
+    // Layer 5: Morphogenetic
+    MorphogeneticSNN, GrowthRules, TuringPattern, MorphConfig,
+    // Layer 6: Neural Optimizer
+    NeuralGraphOptimizer, PolicySNN, ValueNetwork, OptimizerConfig, OptimizationResult,
+    // Unified Engine
+    CognitiveMinCutEngine, EngineConfig, EngineMetrics,
+    // Utilities
+    Spike, SimTime, SNNMinCutConfig,
+};
+
 #[cfg(feature = "agentic")]
 pub use integration::AgenticAnalyzer;
 
@@ -252,6 +309,12 @@ pub mod prelude {
         NUM_CORES, RANGES_PER_CORE, CoreStrategy, SharedCoordinator,
         CoreDistributor, CoreExecutor, ResultAggregator, compute_core_range,
         RuVectorGraphAnalyzer, CommunityDetector, GraphPartitioner,
+        // SNN Integration types
+        CognitiveMinCutEngine, EngineConfig, EngineMetrics,
+        AttractorDynamics, AttractorConfig,
+        TimeCrystalCPG, CPGConfig,
+        NeuralGraphOptimizer, OptimizerConfig,
+        Spike, SimTime,
     };
 
     #[cfg(feature = "agentic")]
