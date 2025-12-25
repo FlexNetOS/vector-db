@@ -176,6 +176,12 @@ pub mod integration;
 /// ```
 pub mod snn;
 
+/// Subpolynomial-time dynamic minimum cut algorithm.
+///
+/// This module implements the December 2024 breakthrough achieving n^{o(1)} update time.
+/// Integrates multi-level hierarchy, deterministic LocalKCut, and fragmenting algorithm.
+pub mod subpolynomial;
+
 // Internal modules
 mod core;
 
@@ -233,6 +239,10 @@ pub use parallel::{
 };
 pub use integration::{
     RuVectorGraphAnalyzer, CommunityDetector, GraphPartitioner,
+};
+pub use subpolynomial::{
+    SubpolynomialMinCut, SubpolyConfig, RecourseStats,
+    MinCutQueryResult, HierarchyStatistics, LevelExpander, HierarchyLevel,
 };
 
 // SNN Integration re-exports
@@ -309,6 +319,8 @@ pub mod prelude {
         NUM_CORES, RANGES_PER_CORE, CoreStrategy, SharedCoordinator,
         CoreDistributor, CoreExecutor, ResultAggregator, compute_core_range,
         RuVectorGraphAnalyzer, CommunityDetector, GraphPartitioner,
+        // Subpolynomial min-cut
+        SubpolynomialMinCut, SubpolyConfig, RecourseStats,
         // SNN Integration types
         CognitiveMinCutEngine, EngineConfig, EngineMetrics,
         AttractorDynamics, AttractorConfig,
