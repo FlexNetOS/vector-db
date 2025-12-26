@@ -36,6 +36,8 @@ use std::sync::atomic::{AtomicU64, Ordering as AtomicOrdering};
 
 use crate::distance::{distance, DistanceMetric};
 use crate::index::HnswConfig;
+use crate::types::RuVector;
+use pgrx::FromDatum;
 
 // ============================================================================
 // Constants
@@ -791,26 +793,106 @@ unsafe extern "C" fn hnsw_build(
     result.into_pg()
 }
 
+/// Build callback state for heap scan
+struct HnswBuildState {
+    index: Relation,
+    meta: *mut HnswMetaPage,
+    tuple_count: u64,
+}
+
+/// Build callback called for each heap tuple
+unsafe extern "C" fn hnsw_build_callback(
+    index: Relation,
+    ctid: ItemPointer,
+    values: *mut Datum,
+    isnull: *mut bool,
+    _tuple_is_alive: bool,
+    state: *mut ::std::os::raw::c_void,
+) {
+    let build_state = &mut *(state as *mut HnswBuildState);
+
+    // Skip null values
+    if *isnull {
+        return;
+    }
+
+    // Extract vector from datum
+    let datum = *values;
+    let vector = match RuVector::from_polymorphic_datum(datum, false, pg_sys::InvalidOid) {
+        Some(v) => v.as_slice().to_vec(),
+        None => {
+            // Fallback: try direct varlena extraction
+            let raw_ptr = datum.cast_mut_ptr::<pg_sys::varlena>();
+            if raw_ptr.is_null() {
+                return;
+            }
+            let detoasted = pg_sys::pg_detoast_datum(raw_ptr);
+            if detoasted.is_null() {
+                return;
+            }
+            let data_ptr = pgrx::varlena::vardata_any(detoasted as *const _) as *const u8;
+            let dims = ptr::read_unaligned(data_ptr as *const u16) as usize;
+            if dims == 0 {
+                return;
+            }
+            let f32_ptr = data_ptr.add(4) as *const f32;
+            std::slice::from_raw_parts(f32_ptr, dims).to_vec()
+        }
+    };
+
+    if vector.is_empty() {
+        return;
+    }
+
+    // Update dimensions on first tuple
+    let meta = &mut *build_state.meta;
+    if meta.node_count == 0 {
+        meta.dimensions = vector.len() as u32;
+    }
+
+    // Insert into graph
+    let tid = *ctid;
+    hnsw_insert_vector(index, &vector, tid, meta);
+    build_state.tuple_count += 1;
+}
+
 /// Build the index from heap table
 unsafe fn build_index_from_heap(
-    _heap: Relation,
-    _index: Relation,
-    _index_info: *mut IndexInfo,
+    heap: Relation,
+    index: Relation,
+    index_info: *mut IndexInfo,
     meta: &mut HnswMetaPage,
     _parallel: bool,
 ) -> u64 {
-    // TODO: Implement full heap scan with IndexBuildHeapScan
-    // For now, return empty
-    let tuple_count = 0u64;
+    pgrx::log!("HNSW v2: Scanning heap for vectors");
 
-    // In production, this would:
-    // 1. Scan heap using pg_sys::table_index_build_scan
-    // 2. Collect all vectors into memory or temp file
-    // 3. Use parallel construction if enabled and tuple_count > PARALLEL_BUILD_THRESHOLD
-    // 4. Build HNSW graph incrementally
+    // Create build state
+    let mut build_state = HnswBuildState {
+        index,
+        meta: meta as *mut HnswMetaPage,
+        tuple_count: 0,
+    };
 
-    meta.node_count = tuple_count;
-    tuple_count
+    // Scan heap using PostgreSQL's table scan API
+    // This calls our callback for each tuple
+    pg_sys::table_index_build_scan(
+        heap,
+        index,
+        index_info,
+        true, // allow_sync
+        false, // progress
+        Some(hnsw_build_callback),
+        &mut build_state as *mut HnswBuildState as *mut ::std::os::raw::c_void,
+        std::ptr::null_mut(), // snapshot (NULL = MVCC snapshot)
+    );
+
+    pgrx::log!(
+        "HNSW v2: Built index with {} vectors, dims={}",
+        build_state.tuple_count,
+        meta.dimensions
+    );
+
+    build_state.tuple_count
 }
 
 /// Build empty index callback (for CREATE INDEX CONCURRENTLY)
@@ -847,31 +929,62 @@ unsafe extern "C" fn hnsw_insert(
         return false;
     }
 
-    // Get metadata
-    let (meta_page, meta_buffer) = get_meta_page(index);
-    let meta = read_metadata(meta_page);
-    pg_sys::UnlockReleaseBuffer(meta_buffer);
+    // Get metadata with exclusive lock for modification
+    let (meta_page, meta_buffer) = get_meta_page_exclusive(index);
+    let mut meta = read_metadata(meta_page);
 
     // Check integrity gate if enabled
     if meta.flags & FLAG_INTEGRITY_ENABLED != 0 {
         if !check_integrity_gate(meta.integrity_contract_id, "insert") {
+            pg_sys::UnlockReleaseBuffer(meta_buffer);
             pgrx::warning!("HNSW insert blocked by integrity gate");
             return false;
         }
     }
 
-    // Extract vector from datum
+    // Extract vector from datum using RuVector::from_polymorphic_datum
     let datum = *values;
-    let dimensions = meta.dimensions as usize;
+    let vector = match RuVector::from_polymorphic_datum(datum, false, pg_sys::InvalidOid) {
+        Some(v) => v.as_slice().to_vec(),
+        None => {
+            // Fallback: try direct varlena extraction
+            let raw_ptr = datum.cast_mut_ptr::<pg_sys::varlena>();
+            if raw_ptr.is_null() {
+                pg_sys::UnlockReleaseBuffer(meta_buffer);
+                return false;
+            }
+            let detoasted = pg_sys::pg_detoast_datum(raw_ptr);
+            if detoasted.is_null() {
+                pg_sys::UnlockReleaseBuffer(meta_buffer);
+                return false;
+            }
+            let data_ptr = pgrx::varlena::vardata_any(detoasted as *const _) as *const u8;
+            let dims = ptr::read_unaligned(data_ptr as *const u16) as usize;
+            let f32_ptr = data_ptr.add(4) as *const f32;
+            std::slice::from_raw_parts(f32_ptr, dims).to_vec()
+        }
+    };
 
-    // TODO: Extract vector data from RuVector type
-    // For now, just acknowledge the insert
-    // let vector = extract_vector_from_datum(datum, dimensions);
+    if vector.is_empty() {
+        pg_sys::UnlockReleaseBuffer(meta_buffer);
+        return false;
+    }
 
-    // Would call:
-    // hnsw_insert_vector(index, &vector, *heap_tid, &meta)
+    // Update dimensions in metadata if this is first insert
+    if meta.node_count == 0 {
+        meta.dimensions = vector.len() as u32;
+    }
 
-    true
+    // Insert vector into graph
+    let tid = *heap_tid;
+    let success = hnsw_insert_vector(index, &vector, tid, &mut meta);
+
+    // Write updated metadata
+    write_metadata(meta_page, &meta);
+    pg_sys::MarkBufferDirty(meta_buffer);
+    pg_sys::UnlockReleaseBuffer(meta_buffer);
+
+    success
 }
 
 /// Insert a vector into the HNSW graph
@@ -1240,7 +1353,7 @@ unsafe extern "C" fn hnsw_rescan(
     orderbys: ScanKey,
     norderbys: ::std::os::raw::c_int,
 ) {
-    pgrx::debug1!("HNSW v2: Rescan");
+    pgrx::debug1!("HNSW v2: Rescan (norderbys={})", norderbys);
 
     let state = &mut *((*scan).opaque as *mut HnswScanState);
 
@@ -1252,17 +1365,47 @@ unsafe extern "C" fn hnsw_rescan(
     // Extract query vector from ORDER BY
     if norderbys > 0 && !orderbys.is_null() {
         let orderby = &*orderbys;
-        let _datum = orderby.sk_argument;
+        let datum = orderby.sk_argument;
 
-        // TODO: Extract vector from datum
-        // state.query_vector = extract_vector_from_datum(datum, state.dimensions);
+        // Extract RuVector from datum using FromDatum trait
+        if let Some(vector) = RuVector::from_polymorphic_datum(
+            datum,
+            false, // not null
+            pg_sys::InvalidOid,
+        ) {
+            state.query_vector = vector.as_slice().to_vec();
+            pgrx::debug1!(
+                "HNSW v2: Extracted query vector with {} dimensions",
+                state.query_vector.len()
+            );
+        } else {
+            // Fallback: try to interpret as raw pointer to varlena
+            let raw_ptr = datum.cast_mut_ptr::<pg_sys::varlena>();
+            if !raw_ptr.is_null() {
+                let detoasted = pg_sys::pg_detoast_datum(raw_ptr);
+                if !detoasted.is_null() {
+                    // Read dimensions and data from varlena
+                    let data_ptr = pgrx::varlena::vardata_any(detoasted as *const _) as *const u8;
+                    let dimensions = ptr::read_unaligned(data_ptr as *const u16) as usize;
+                    let f32_ptr = data_ptr.add(4) as *const f32;
+                    state.query_vector = std::slice::from_raw_parts(f32_ptr, dimensions).to_vec();
+                    pgrx::debug1!(
+                        "HNSW v2: Extracted query vector (fallback) with {} dimensions",
+                        dimensions
+                    );
+                }
+            }
+        }
+    }
 
-        // For now, use empty query (search won't work without real extraction)
+    // Use default if extraction failed
+    if state.query_vector.is_empty() {
+        pgrx::warning!("HNSW: Could not extract query vector, using zeros");
         state.query_vector = vec![0.0; state.dimensions];
     }
 
-    // Extract k from scan descriptor or use default
-    state.k = 10; // TODO: Extract from query LIMIT
+    // Get ef_search from GUC (ruvector.ef_search)
+    state.k = 10; // Default, will be overridden by LIMIT in executor
 }
 
 /// Get tuple callback - return next result

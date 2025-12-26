@@ -12,6 +12,7 @@ use super::isolation::{QueryRoute, get_isolation_manager};
 use super::quotas::{QuotaResult, get_quota_manager};
 use super::registry::{TenantConfig, TenantError, get_registry};
 use super::rls::RlsManager;
+use super::validation::{escape_string_literal, validate_tenant_id, validate_ip_address};
 
 /// Result of a tenant-aware operation
 #[derive(Debug, Clone)]
@@ -56,7 +57,7 @@ impl<T> OperationResult<T> {
 /// Tenant context for operations
 #[derive(Debug, Clone)]
 pub struct TenantContext {
-    /// Tenant ID
+    /// Tenant ID (validated)
     pub tenant_id: String,
     /// Tenant configuration
     pub config: TenantConfig,
@@ -64,6 +65,24 @@ pub struct TenantContext {
     pub route: QueryRoute,
     /// Whether this is an admin context
     pub is_admin: bool,
+}
+
+/// Represents a validated tenant ID
+#[derive(Debug, Clone)]
+pub struct ValidatedTenantId(String);
+
+impl ValidatedTenantId {
+    /// Create a new validated tenant ID
+    pub fn new(tenant_id: &str) -> Result<Self, TenantError> {
+        validate_tenant_id(tenant_id)
+            .map_err(|e| TenantError::InvalidId(format!("{}", e)))?;
+        Ok(Self(tenant_id.to_string()))
+    }
+
+    /// Get the tenant ID as a string
+    pub fn as_str(&self) -> &str {
+        &self.0
+    }
 }
 
 impl TenantContext {
@@ -80,6 +99,7 @@ impl TenantContext {
                 route: QueryRoute::SharedWithFilter {
                     table: "".to_string(),
                     filter: "true".to_string(), // No filter for admin
+                    tenant_param: None, // Admin doesn't need tenant param
                 },
                 is_admin: true,
             });
@@ -509,20 +529,78 @@ impl AuditLogEntry {
         self
     }
 
-    /// Generate SQL to insert this audit entry
+    /// Generate SQL to insert this audit entry (parameterized version)
+    ///
+    /// Returns the SQL with $1-$7 placeholders and the parameter values to bind.
+    /// This prevents SQL injection by using parameterized queries.
+    pub fn insert_sql_parameterized(&self) -> (String, Vec<Option<String>>) {
+        let sql = r#"
+INSERT INTO ruvector.tenant_audit_log (tenant_id, operation, user_id, details, ip_address, success, error)
+VALUES ($1, $2, $3, $4, $5, $6, $7)
+"#.to_string();
+
+        let params = vec![
+            Some(self.tenant_id.clone()),
+            Some(self.operation.clone()),
+            self.user_id.clone(),
+            Some(serde_json::to_string(&self.details).unwrap_or_else(|_| "{}".to_string())),
+            // Only include IP if it's a valid IP address (defense in depth)
+            self.ip_address.as_ref().and_then(|ip| {
+                if validate_ip_address(ip) { Some(ip.clone()) } else { None }
+            }),
+            Some(self.success.to_string()),
+            self.error.clone(),
+        ];
+
+        (sql, params)
+    }
+
+    /// Generate SQL to insert this audit entry (legacy - properly escaped)
+    ///
+    /// Note: Prefer `insert_sql_parameterized()` for new code.
+    /// This method properly escapes all values but parameterized queries are safer.
     pub fn insert_sql(&self) -> String {
+        // Validate tenant_id format
+        if validate_tenant_id(&self.tenant_id).is_err() {
+            // Log the attempt but don't execute with invalid tenant_id
+            return "SELECT 1 WHERE false".to_string(); // No-op query
+        }
+
+        // Escape all string values
+        let escaped_tenant_id = escape_string_literal(&self.tenant_id);
+        let escaped_operation = escape_string_literal(&self.operation);
+        let escaped_user_id = self.user_id.as_ref()
+            .map(|u| format!("'{}'", escape_string_literal(u)))
+            .unwrap_or_else(|| "NULL".to_string());
+        let escaped_details = escape_string_literal(
+            &serde_json::to_string(&self.details).unwrap_or_else(|_| "{}".to_string())
+        );
+        let escaped_ip = self.ip_address.as_ref()
+            .and_then(|ip| {
+                // Only include if valid IP format
+                if validate_ip_address(ip) {
+                    Some(format!("'{}'", escape_string_literal(ip)))
+                } else {
+                    None
+                }
+            })
+            .unwrap_or_else(|| "NULL".to_string());
+        let escaped_error = self.error.as_ref()
+            .map(|e| format!("'{}'", escape_string_literal(e)))
+            .unwrap_or_else(|| "NULL".to_string());
+
         format!(
             r#"
 INSERT INTO ruvector.tenant_audit_log (tenant_id, operation, user_id, details, ip_address, success, error)
 VALUES ('{}', '{}', {}, '{}', {}, {}, {})
 "#,
-            self.tenant_id,
-            self.operation,
-            self.user_id.as_ref().map(|u| format!("'{}'", u)).unwrap_or("NULL".to_string()),
-            serde_json::to_string(&self.details).unwrap_or("{}".to_string()),
-            self.ip_address.as_ref().map(|ip| format!("'{}'", ip)).unwrap_or("NULL".to_string()),
+            escaped_tenant_id,
+            escaped_operation,
+            escaped_user_id,
+            escaped_details,
+            escaped_ip,
             self.success,
-            self.error.as_ref().map(|e| format!("'{}'", e)).unwrap_or("NULL".to_string())
+            escaped_error
         )
     }
 }

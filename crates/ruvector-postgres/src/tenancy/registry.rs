@@ -541,6 +541,8 @@ pub enum TenantError {
     QuotaExceeded(String, String),
     /// Tenant mismatch (security violation)
     TenantMismatch { context: String, request: String },
+    /// Invalid tenant ID format (validation error)
+    InvalidId(String),
 }
 
 impl std::fmt::Display for TenantError {
@@ -559,6 +561,7 @@ impl std::fmt::Display for TenantError {
             Self::TenantMismatch { context, request } => {
                 write!(f, "Tenant mismatch: context='{}', request='{}'", context, request)
             }
+            Self::InvalidId(msg) => write!(f, "Invalid tenant ID: {}", msg),
         }
     }
 }

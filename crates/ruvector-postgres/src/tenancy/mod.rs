@@ -30,6 +30,7 @@ pub mod isolation;
 pub mod quotas;
 pub mod rls;
 pub mod operations;
+pub mod validation;
 
 // Re-export main types
 pub use registry::{
@@ -69,6 +70,16 @@ pub use operations::{
     TenantVectorDelete,
     TenantStats,
     get_tenant_stats,
+};
+pub use validation::{
+    validate_tenant_id,
+    validate_identifier,
+    sanitize_for_identifier,
+    quote_identifier,
+    escape_string_literal,
+    safe_partition_name,
+    safe_schema_name,
+    ValidationError,
 };
 
 use pgrx::prelude::*;

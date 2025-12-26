@@ -45,6 +45,8 @@ use std::sync::atomic::{AtomicU64, AtomicBool, Ordering as AtomicOrdering};
 
 use crate::distance::{DistanceMetric, distance};
 use crate::quantization::{QuantizationType, scalar, product, binary};
+use crate::types::RuVector;
+use pgrx::FromDatum;
 
 // ============================================================================
 // Constants
@@ -785,6 +787,54 @@ unsafe fn write_centroids(
     current_page
 }
 
+/// Rewrite centroids in-place (updates existing pages)
+unsafe fn rewrite_centroids(
+    index: Relation,
+    centroids: &[(CentroidEntry, Vec<f32>)],
+    start_page: u32,
+    dimensions: usize,
+) {
+    let centroid_size = size_of::<CentroidEntry>() + dimensions * 4;
+    let page_header_size = size_of::<pg_sys::PageHeaderData>();
+    let usable_space = pg_sys::BLCKSZ as usize - page_header_size;
+    let centroids_per_page = usable_space / centroid_size;
+
+    let mut current_page = start_page;
+    let mut written = 0;
+
+    while written < centroids.len() {
+        let buffer = pg_sys::ReadBuffer(index, current_page);
+        pg_sys::LockBuffer(buffer, pg_sys::BUFFER_LOCK_EXCLUSIVE as i32);
+
+        let page = pg_sys::BufferGetPage(buffer);
+        let header = page as *mut pg_sys::PageHeaderData;
+        let data_ptr = (header as *mut u8).add(page_header_size);
+
+        let batch_size = (centroids.len() - written).min(centroids_per_page);
+
+        for i in 0..batch_size {
+            let (entry, vector) = &centroids[written + i];
+            let entry_ptr = data_ptr.add(i * centroid_size);
+
+            // Write entry
+            ptr::write(entry_ptr as *mut CentroidEntry, *entry);
+
+            // Write vector
+            let vector_ptr = entry_ptr.add(size_of::<CentroidEntry>()) as *mut f32;
+            for (j, &val) in vector.iter().enumerate() {
+                ptr::write(vector_ptr.add(j), val);
+            }
+        }
+
+        written += batch_size;
+
+        pg_sys::MarkBufferDirty(buffer);
+        pg_sys::UnlockReleaseBuffer(buffer);
+
+        current_page += 1;
+    }
+}
+
 /// Read vectors from an inverted list
 unsafe fn read_inverted_list(
     index: Relation,
@@ -866,6 +916,114 @@ unsafe fn read_inverted_list(
     }
 
     result
+}
+
+/// Write vectors to an inverted list, returns (start_page, page_count)
+unsafe fn write_inverted_list(
+    index: Relation,
+    cluster_id: u32,
+    entries: &[(ItemPointerData, Vec<f32>)],
+    dimensions: usize,
+    quantization: QuantizationType,
+) -> (u32, u32) {
+    if entries.is_empty() {
+        return (0, 0);
+    }
+
+    let page_header_size = size_of::<pg_sys::PageHeaderData>();
+    let list_header_size = size_of::<ListPageHeader>();
+    let usable_space = pg_sys::BLCKSZ as usize - page_header_size - list_header_size;
+
+    // Calculate entry size based on quantization
+    let entry_size = match quantization {
+        QuantizationType::None => size_of::<VectorEntry>() + dimensions * 4,
+        QuantizationType::Scalar => size_of::<VectorEntry>() + dimensions + 8,
+        QuantizationType::Product => size_of::<VectorEntry>() + 48,
+        QuantizationType::Binary => size_of::<VectorEntry>() + (dimensions + 7) / 8,
+    };
+
+    let entries_per_page = usable_space / entry_size;
+    if entries_per_page == 0 {
+        pgrx::warning!("IVFFlat: Vector too large for page, entry_size={}", entry_size);
+        return (0, 0);
+    }
+
+    let mut start_page: u32 = 0;
+    let mut page_count: u32 = 0;
+    let mut prev_buffer: Buffer = pg_sys::InvalidBuffer as Buffer;
+    let mut prev_header_ptr: *mut ListPageHeader = std::ptr::null_mut();
+    let mut written = 0;
+
+    while written < entries.len() {
+        // Allocate new page
+        let buffer = pg_sys::ReadBuffer(index, P_NEW_BLOCK);
+        let actual_page = pg_sys::BufferGetBlockNumber(buffer);
+
+        pg_sys::LockBuffer(buffer, pg_sys::BUFFER_LOCK_EXCLUSIVE as i32);
+
+        let page = pg_sys::BufferGetPage(buffer);
+        pg_sys::PageInit(page, pg_sys::BLCKSZ as Size, 0);
+
+        // Track first page
+        if start_page == 0 {
+            start_page = actual_page;
+        }
+        page_count += 1;
+
+        // Link previous page to this one
+        if !prev_header_ptr.is_null() {
+            (*prev_header_ptr).next_page = actual_page;
+            pg_sys::MarkBufferDirty(prev_buffer);
+            pg_sys::UnlockReleaseBuffer(prev_buffer);
+        }
+
+        let header = page as *mut pg_sys::PageHeaderData;
+        let data_ptr = (header as *mut u8).add(page_header_size);
+
+        // Write list page header
+        let list_header = data_ptr as *mut ListPageHeader;
+        (*list_header).page_type = IVFFLAT_PAGE_LIST;
+        (*list_header).cluster_id = cluster_id as u8;
+        (*list_header)._padding = [0; 2];
+        (*list_header).next_page = 0; // Will be updated if there's a next page
+        (*list_header).dimensions = dimensions as u32;
+
+        let entry_data_ptr = data_ptr.add(list_header_size);
+        let batch_size = (entries.len() - written).min(entries_per_page);
+
+        for i in 0..batch_size {
+            let (tid, vector) = &entries[written + i];
+            let entry_ptr = entry_data_ptr.add(i * entry_size);
+
+            // Write VectorEntry header
+            let vec_entry = VectorEntry::from_item_pointer(*tid, 0);
+            ptr::write(entry_ptr as *mut VectorEntry, vec_entry);
+
+            // Write vector data (no quantization for now)
+            let vector_ptr = entry_ptr.add(size_of::<VectorEntry>()) as *mut f32;
+            for (j, &val) in vector.iter().enumerate() {
+                if j < dimensions {
+                    ptr::write(vector_ptr.add(j), val);
+                }
+            }
+        }
+
+        (*list_header).entry_count = batch_size as u32;
+        written += batch_size;
+
+        pg_sys::MarkBufferDirty(buffer);
+
+        // Keep reference for linking
+        prev_buffer = buffer;
+        prev_header_ptr = list_header;
+    }
+
+    // Release the last buffer
+    if prev_buffer != pg_sys::InvalidBuffer as Buffer {
+        pg_sys::UnlockReleaseBuffer(prev_buffer);
+    }
+
+    (start_page, page_count)
 }
 
 // ============================================================================
@@ -982,18 +1140,84 @@ unsafe extern "C" fn ivfflat_ambuild(
         ..Default::default()
     };
 
-    // Collect vectors from heap
-    let mut training_sample: Vec<Vec<f32>> = Vec::new();
+    // Collect vectors from heap using table scan
     let mut all_vectors: Vec<(ItemPointerData, Vec<f32>)> = Vec::new();
 
-    // TODO: Implement proper heap scan using table_beginscan
-    // For now, this is a placeholder
     pgrx::info!("IVFFlat v2: Scanning heap for vectors");
 
-    // Sample vectors for training (if we had vectors)
-    if !training_sample.is_empty() {
-        meta.dimensions = training_sample[0].len() as u32;
+    // Use build callback to collect vectors
+    struct IvfBuildState {
+        vectors: *mut Vec<(ItemPointerData, Vec<f32>)>,
     }
+
+    unsafe extern "C" fn ivf_build_callback(
+        _index: Relation,
+        ctid: ItemPointer,
+        values: *mut Datum,
+        isnull: *mut bool,
+        _tuple_is_alive: bool,
+        state: *mut ::std::os::raw::c_void,
+    ) {
+        let build_state = &mut *(state as *mut IvfBuildState);
+
+        if *isnull {
+            return;
+        }
+
+        let datum = *values;
+        let vector = match RuVector::from_polymorphic_datum(datum, false, pg_sys::InvalidOid) {
+            Some(v) => v.as_slice().to_vec(),
+            None => {
+                let raw_ptr = datum.cast_mut_ptr::<pg_sys::varlena>();
+                if raw_ptr.is_null() {
+                    return;
+                }
+                let detoasted = pg_sys::pg_detoast_datum(raw_ptr);
+                if detoasted.is_null() {
+                    return;
+                }
+                let data_ptr = pgrx::varlena::vardata_any(detoasted as *const _) as *const u8;
+                let dims = std::ptr::read_unaligned(data_ptr as *const u16) as usize;
+                if dims == 0 {
+                    return;
+                }
+                let f32_ptr = data_ptr.add(4) as *const f32;
+                std::slice::from_raw_parts(f32_ptr, dims).to_vec()
+            }
+        };
+
+        if !vector.is_empty() {
+            (*build_state.vectors).push((*ctid, vector));
+        }
+    }
+
+    let mut build_state = IvfBuildState {
+        vectors: &mut all_vectors as *mut Vec<(ItemPointerData, Vec<f32>)>,
+    };
+
+    pg_sys::table_index_build_scan(
+        heap,
+        index,
+        index_info,
+        true,
+        false,
+        Some(ivf_build_callback),
+        &mut build_state as *mut IvfBuildState as *mut ::std::os::raw::c_void,
+        std::ptr::null_mut(),
+    );
+
+    pgrx::info!("IVFFlat v2: Collected {} vectors from heap", all_vectors.len());
+
+    // Set dimensions from first vector
+    if !all_vectors.is_empty() {
+        meta.dimensions = all_vectors[0].1.len() as u32;
+    }
+
+    // Sample vectors for training
+    let training_sample: Vec<Vec<f32>> = all_vectors.iter()
+        .take(10000.min(all_vectors.len()))
+        .map(|(_, v)| v.clone())
+        .collect();
 
     pgrx::info!("IVFFlat v2: Training with {} samples, {} lists",
         training_sample.len(), lists);
@@ -1020,17 +1244,17 @@ unsafe extern "C" fn ivfflat_ambuild(
     meta.min_list_size = *list_sizes.iter().filter(|&&s| s > 0).min().unwrap_or(&0) as u32;
     meta.health_score = (meta.calculate_health() * 1000.0) as u32;
 
-    // Write metadata page
+    // Write initial metadata page
     write_meta_page(index, &meta);
 
-    // Write centroids
-    let centroid_entries: Vec<(CentroidEntry, Vec<f32>)> = centroids
+    // Write centroids first (to reserve pages)
+    let centroid_entries_temp: Vec<(CentroidEntry, Vec<f32>)> = centroids
         .iter()
         .enumerate()
         .map(|(i, c)| {
             (CentroidEntry {
                 cluster_id: i as u32,
-                list_start_page: 0, // Will be filled later
+                list_start_page: 0, // Will be updated after writing lists
                 list_page_count: 0,
                 vector_count: cluster_lists.get(i).map(|l| l.len()).unwrap_or(0) as u32,
                 distance_sum: 0.0,
@@ -1039,15 +1263,59 @@ unsafe extern "C" fn ivfflat_ambuild(
         })
         .collect();
 
-    let lists_start = write_centroids(
+    let lists_start_page = write_centroids(
         index,
-        &centroid_entries,
+        &centroid_entries_temp,
         meta.centroid_start_page,
         meta.dimensions as usize,
     );
 
-    // Update metadata with lists start page
-    meta.lists_start_page = lists_start;
+    // Write inverted lists for each cluster
+    pgrx::info!("IVFFlat v2: Writing inverted lists for {} clusters", n_clusters);
+    let mut list_info: Vec<(u32, u32)> = Vec::with_capacity(n_clusters);
+    let mut total_vectors_written = 0u64;
+
+    for (cluster_id, entries) in cluster_lists.iter().enumerate() {
+        let (start_page, page_count) = write_inverted_list(
+            index,
+            cluster_id as u32,
+            entries,
+            meta.dimensions as usize,
+            quantization,
+        );
+        list_info.push((start_page, page_count));
+        total_vectors_written += entries.len() as u64;
+    }
+
+    pgrx::info!("IVFFlat v2: Written {} vectors to inverted lists", total_vectors_written);
+
+    // Re-write centroids with correct list_start_page values
+    let centroid_entries_final: Vec<(CentroidEntry, Vec<f32>)> = centroids
+        .iter()
+        .enumerate()
+        .map(|(i, c)| {
+            let (start_page, page_count) = list_info.get(i).copied().unwrap_or((0, 0));
+            (CentroidEntry {
+                cluster_id: i as u32,
+                list_start_page: start_page,
+                list_page_count: page_count,
+                vector_count: cluster_lists.get(i).map(|l| l.len()).unwrap_or(0) as u32,
+                distance_sum: 0.0,
+                reserved: 0,
+            }, c.clone())
+        })
+        .collect();
+
+    // Overwrite centroids with updated list_start_page values
+    rewrite_centroids(
+        index,
+        &centroid_entries_final,
+        meta.centroid_start_page,
+        meta.dimensions as usize,
+    );
+
+    // Update metadata
+    meta.lists_start_page = lists_start_page;
     meta.trained = 1;
     meta.vector_count = all_vectors.len() as u64;
     write_meta_page(index, &meta);
@@ -1241,7 +1509,7 @@ unsafe extern "C" fn ivfflat_amrescan(
     orderbys: ScanKey,
     norderbys: ::std::os::raw::c_int,
 ) {
-    pgrx::debug1!("IVFFlat v2: Rescan");
+    pgrx::debug1!("IVFFlat v2: Rescan (norderbys={})", norderbys);
 
     let state = (*scan).opaque as *mut IvfFlatScanState;
     if state.is_null() {
@@ -1255,10 +1523,40 @@ unsafe extern "C" fn ivfflat_amrescan(
 
     // Extract query vector from ORDER BY
     if norderbys > 0 && !orderbys.is_null() {
-        // TODO: Extract query vector from scan key
-        // The ORDER BY operator's argument contains the query vector
+        let orderby = &*orderbys;
+        let datum = orderby.sk_argument;
 
-        // Calculate adaptive probes if enabled
+        // Extract RuVector from datum using FromDatum trait
+        if let Some(vector) = RuVector::from_polymorphic_datum(
+            datum,
+            false, // not null
+            pg_sys::InvalidOid,
+        ) {
+            (*state).query = vector.as_slice().to_vec();
+            pgrx::debug1!(
+                "IVFFlat v2: Extracted query vector with {} dimensions",
+                (*state).query.len()
+            );
+        } else {
+            // Fallback: try to interpret as raw pointer to varlena
+            let raw_ptr = datum.cast_mut_ptr::<pg_sys::varlena>();
+            if !raw_ptr.is_null() {
+                let detoasted = pg_sys::pg_detoast_datum(raw_ptr);
+                if !detoasted.is_null() {
+                    // Read dimensions and data from varlena
+                    let data_ptr = pgrx::varlena::vardata_any(detoasted as *const _) as *const u8;
+                    let dimensions = std::ptr::read_unaligned(data_ptr as *const u16) as usize;
+                    let f32_ptr = data_ptr.add(4) as *const f32;
+                    (*state).query = std::slice::from_raw_parts(f32_ptr, dimensions).to_vec();
+                    pgrx::debug1!(
+                        "IVFFlat v2: Extracted query vector (fallback) with {} dimensions",
+                        dimensions
+                    );
+                }
+            }
+        }
+
+        // Calculate adaptive probes if query was extracted
         if !(*state).query.is_empty() {
             let query_norm = vector_norm(&(*state).query);
             (*state).probes = compute_adaptive_probes(

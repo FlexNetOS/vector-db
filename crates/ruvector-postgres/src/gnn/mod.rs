@@ -2,6 +2,16 @@
 //!
 //! Provides GNN-based embeddings and graph-aware vector operations.
 
+// GNN sub-modules
+pub mod aggregators;
+pub mod gcn;
+pub mod graphsage;
+pub mod message_passing;
+pub mod operators;
+
+// Re-export operator functions for PostgreSQL
+pub use operators::*;
+
 use pgrx::prelude::*;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;

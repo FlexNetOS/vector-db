@@ -14,6 +14,10 @@ use pgrx::prelude::*;
 use serde::{Deserialize, Serialize};
 
 use super::registry::{IsolationLevel, TenantConfig, TenantError, get_registry};
+use super::validation::{
+    validate_tenant_id, validate_identifier, quote_identifier,
+    escape_string_literal, safe_partition_name, safe_schema_name, ValidationError
+};
 
 /// Partition configuration for tenant
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -118,7 +122,17 @@ impl IsolationManager {
         table_name: &str,
         tenant_column: &str,
     ) -> Result<String, IsolationError> {
-        // Generate SQL for RLS setup
+        // Validate identifiers to prevent SQL injection
+        validate_identifier(table_name)
+            .map_err(|e| IsolationError::SqlError(format!("Invalid table name: {}", e)))?;
+        validate_identifier(tenant_column)
+            .map_err(|e| IsolationError::SqlError(format!("Invalid column name: {}", e)))?;
+
+        // Use quoted identifiers for safety
+        let quoted_table = quote_identifier(table_name);
+        let quoted_column = quote_identifier(tenant_column);
+
+        // Generate SQL for RLS setup with quoted identifiers
         let sql = format!(
             r#"
 -- Enable RLS on the table
@@ -145,8 +159,8 @@ CREATE POLICY ruvector_admin_wildcard ON {table}
     FOR SELECT
     USING (current_setting('ruvector.tenant_id', true) = '*');
 "#,
-            table = table_name,
-            column = tenant_column
+            table = quoted_table,
+            column = quoted_column
         );
 
         self.rls_tables.insert(table_name.to_string(), tenant_column.to_string());
@@ -174,15 +188,19 @@ CREATE POLICY ruvector_admin_wildcard ON {table}
         tenant_id: &str,
         parent_table: &str,
     ) -> Result<PartitionConfig, IsolationError> {
-        let partition_name = format!(
-            "{}_{}",
-            parent_table,
-            tenant_id.replace('-', "_").replace('.', "_")
-        );
+        // Validate inputs to prevent SQL injection
+        validate_tenant_id(tenant_id)
+            .map_err(|e| IsolationError::SqlError(format!("Invalid tenant ID: {}", e)))?;
+        validate_identifier(parent_table)
+            .map_err(|e| IsolationError::SqlError(format!("Invalid table name: {}", e)))?;
+
+        // Generate safe partition name
+        let partition_name = safe_partition_name(tenant_id, parent_table)
+            .map_err(|e| IsolationError::SqlError(format!("Invalid partition name: {}", e)))?;
 
         let config = PartitionConfig {
             tenant_id: tenant_id.to_string(),
-            partition_name: partition_name.clone(),
+            partition_name,
             parent_table: parent_table.to_string(),
             partition_key: tenant_id.to_string(),
             created_at: chrono_now_millis(),
@@ -199,6 +217,12 @@ CREATE POLICY ruvector_admin_wildcard ON {table}
 
     /// Generate SQL for creating a partition
     pub fn generate_partition_sql(&self, config: &PartitionConfig) -> String {
+        // Use quoted identifiers for safety
+        let quoted_partition = quote_identifier(&config.partition_name);
+        let quoted_parent = quote_identifier(&config.parent_table);
+        let escaped_tenant_id = escape_string_literal(&config.partition_key);
+        let safe_index_name = format!("idx_{}_vec", config.partition_name);
+
         format!(
             r#"
 -- Create partition for tenant
@@ -206,12 +230,13 @@ CREATE TABLE IF NOT EXISTS {partition} PARTITION OF {parent}
     FOR VALUES IN ('{tenant_id}');
 
 -- Create indexes on partition
-CREATE INDEX IF NOT EXISTS idx_{partition}_vec
+CREATE INDEX IF NOT EXISTS {index_name}
     ON {partition} USING ruhnsw (vec vector_cosine_ops);
 "#,
-            partition = config.partition_name,
-            parent = config.parent_table,
-            tenant_id = config.partition_key
+            partition = quoted_partition,
+            parent = quoted_parent,
+            tenant_id = escaped_tenant_id,
+            index_name = quote_identifier(&safe_index_name)
         )
     }
 
@@ -225,12 +250,29 @@ CREATE INDEX IF NOT EXISTS idx_{partition}_vec
 
     /// Drop partition for a tenant
     pub fn drop_partition(&self, tenant_id: &str, partition_name: &str) -> Result<String, IsolationError> {
+        // Validate inputs to prevent SQL injection
+        validate_tenant_id(tenant_id)
+            .map_err(|e| IsolationError::SqlError(format!("Invalid tenant ID: {}", e)))?;
+        validate_identifier(partition_name)
+            .map_err(|e| IsolationError::SqlError(format!("Invalid partition name: {}", e)))?;
+
+        // Verify partition belongs to this tenant (security check)
+        let partition_exists = self.partitions
+            .get(tenant_id)
+            .map(|partitions| partitions.iter().any(|p| p.partition_name == partition_name))
+            .unwrap_or(false);
+
+        if !partition_exists {
+            return Err(IsolationError::PartitionNotFound(partition_name.to_string()));
+        }
+
         // Remove from tracking
         if let Some(mut partitions) = self.partitions.get_mut(tenant_id) {
             partitions.retain(|p| p.partition_name != partition_name);
         }
 
-        Ok(format!("DROP TABLE IF EXISTS {} CASCADE;", partition_name))
+        // Use quoted identifier for safety
+        Ok(format!("DROP TABLE IF EXISTS {} CASCADE;", quote_identifier(partition_name)))
     }
 
     // =========================================================================
@@ -242,14 +284,17 @@ CREATE INDEX IF NOT EXISTS idx_{partition}_vec
         &self,
         tenant_id: &str,
     ) -> Result<DedicatedSchemaConfig, IsolationError> {
-        let schema_name = format!(
-            "tenant_{}",
-            tenant_id.replace('-', "_").replace('.', "_")
-        );
+        // Validate tenant ID to prevent SQL injection
+        validate_tenant_id(tenant_id)
+            .map_err(|e| IsolationError::SqlError(format!("Invalid tenant ID: {}", e)))?;
+
+        // Generate safe schema name
+        let schema_name = safe_schema_name(tenant_id)
+            .map_err(|e| IsolationError::SqlError(format!("Invalid schema name: {}", e)))?;
 
         let config = DedicatedSchemaConfig {
             tenant_id: tenant_id.to_string(),
-            schema_name: schema_name.clone(),
+            schema_name,
             tables: Vec::new(),
             indexes: Vec::new(),
             created_at: chrono_now_millis(),
@@ -262,6 +307,11 @@ CREATE INDEX IF NOT EXISTS idx_{partition}_vec
 
     /// Generate SQL for creating dedicated schema
     pub fn generate_schema_sql(&self, config: &DedicatedSchemaConfig) -> String {
+        // Use quoted identifiers for safety
+        let quoted_schema = quote_identifier(&config.schema_name);
+        let index_name = format!("idx_{}_embeddings_vec", config.schema_name);
+        let quoted_index = quote_identifier(&index_name);
+
         format!(
             r#"
 -- Create dedicated schema for tenant
@@ -271,7 +321,7 @@ CREATE SCHEMA IF NOT EXISTS {schema};
 -- (Application should SET search_path = {schema}, public;)
 
 -- Create embeddings table in tenant schema
-CREATE TABLE IF NOT EXISTS {schema}.embeddings (
+CREATE TABLE IF NOT EXISTS {schema}."embeddings" (
     id          BIGSERIAL PRIMARY KEY,
     content     TEXT,
     vec         vector(1536),
@@ -280,15 +330,16 @@ CREATE TABLE IF NOT EXISTS {schema}.embeddings (
 );
 
 -- Create HNSW index
-CREATE INDEX IF NOT EXISTS idx_{schema}_embeddings_vec
-    ON {schema}.embeddings USING ruhnsw (vec vector_cosine_ops);
+CREATE INDEX IF NOT EXISTS {index_name}
+    ON {schema}."embeddings" USING ruhnsw (vec vector_cosine_ops);
 
 -- Grant usage to tenant role
 GRANT USAGE ON SCHEMA {schema} TO ruvector_users;
 GRANT ALL ON ALL TABLES IN SCHEMA {schema} TO ruvector_users;
 GRANT ALL ON ALL SEQUENCES IN SCHEMA {schema} TO ruvector_users;
 "#,
-            schema = config.schema_name
+            schema = quoted_schema,
+            index_name = quoted_index
         )
     }
 
@@ -319,6 +370,10 @@ GRANT ALL ON ALL SEQUENCES IN SCHEMA {schema} TO ruvector_users;
 
     /// Drop dedicated schema
     pub fn drop_dedicated_schema(&self, tenant_id: &str, cascade: bool) -> Result<String, IsolationError> {
+        // Validate tenant ID
+        validate_tenant_id(tenant_id)
+            .map_err(|e| IsolationError::SqlError(format!("Invalid tenant ID: {}", e)))?;
+
         let config = self.dedicated_schemas
             .remove(tenant_id)
             .map(|(_, v)| v)
@@ -326,9 +381,10 @@ GRANT ALL ON ALL SEQUENCES IN SCHEMA {schema} TO ruvector_users;
 
         let cascade_clause = if cascade { "CASCADE" } else { "RESTRICT" };
 
+        // Use quoted identifier for safety
         Ok(format!(
             "DROP SCHEMA IF EXISTS {} {};",
-            config.schema_name, cascade_clause
+            quote_identifier(&config.schema_name), cascade_clause
         ))
     }
 
@@ -446,19 +502,37 @@ GRANT ALL ON ALL SEQUENCES IN SCHEMA {schema} TO ruvector_users;
     // =========================================================================
 
     /// Get the appropriate table/schema for a tenant's query
+    ///
+    /// Returns a QueryRoute that uses parameterized placeholders ($1) instead of
+    /// directly interpolating tenant_id values to prevent SQL injection.
     pub fn route_query(&self, tenant_id: &str, base_table: &str) -> QueryRoute {
+        // Validate tenant_id to prevent SQL injection even when using parameterized queries
+        // This provides defense-in-depth
+        if validate_tenant_id(tenant_id).is_err() {
+            // Invalid tenant_id - return a safe filter that will match nothing
+            return QueryRoute::SharedWithFilter {
+                table: base_table.to_string(),
+                filter: "false".to_string(), // Safe - matches nothing
+                tenant_param: None,
+            };
+        }
+
         let config = match get_registry().get(tenant_id) {
             Some(c) => c,
             None => return QueryRoute::SharedWithFilter {
                 table: base_table.to_string(),
-                filter: format!("tenant_id = '{}'", tenant_id),
+                // Use parameterized query placeholder - caller must bind tenant_id
+                filter: "tenant_id = $1".to_string(),
+                tenant_param: Some(tenant_id.to_string()),
             },
         };
 
         match config.isolation_level {
             IsolationLevel::Shared => QueryRoute::SharedWithFilter {
                 table: base_table.to_string(),
-                filter: format!("tenant_id = '{}'", tenant_id),
+                // Use parameterized query placeholder
+                filter: "tenant_id = $1".to_string(),
+                tenant_param: Some(tenant_id.to_string()),
             },
             IsolationLevel::Partition => {
                 // Check if partition exists
@@ -471,10 +545,11 @@ GRANT ALL ON ALL SEQUENCES IN SCHEMA {schema} TO ruvector_users;
                         };
                     }
                 }
-                // Fall back to shared with filter
+                // Fall back to shared with filter (parameterized)
                 QueryRoute::SharedWithFilter {
                     table: base_table.to_string(),
-                    filter: format!("tenant_id = '{}'", tenant_id),
+                    filter: "tenant_id = $1".to_string(),
+                    tenant_param: Some(tenant_id.to_string()),
                 }
             }
             IsolationLevel::Dedicated => {
@@ -485,10 +560,11 @@ GRANT ALL ON ALL SEQUENCES IN SCHEMA {schema} TO ruvector_users;
                         table: base_table.to_string(),
                     };
                 }
-                // Fall back to shared with filter
+                // Fall back to shared with filter (parameterized)
                 QueryRoute::SharedWithFilter {
                     table: base_table.to_string(),
-                    filter: format!("tenant_id = '{}'", tenant_id),
+                    filter: "tenant_id = $1".to_string(),
+                    tenant_param: Some(tenant_id.to_string()),
                 }
             }
         }
@@ -505,9 +581,15 @@ impl Default for IsolationManager {
 #[derive(Debug, Clone)]
 pub enum QueryRoute {
     /// Use shared table with tenant filter (RLS handles this automatically)
+    ///
+    /// The filter uses parameterized query placeholders ($1) for safety.
+    /// The tenant_param contains the actual value to bind.
     SharedWithFilter {
         table: String,
+        /// SQL filter clause using $1 placeholder for tenant_id
         filter: String,
+        /// The tenant_id value to bind to $1 (None if filter is static like "false")
+        tenant_param: Option<String>,
     },
     /// Use dedicated partition table
     Partition {
@@ -526,14 +608,37 @@ impl QueryRoute {
         match self {
             Self::SharedWithFilter { table, .. } => table.clone(),
             Self::Partition { partition_table } => partition_table.clone(),
-            Self::DedicatedSchema { schema, table } => format!("{}.{}", schema, table),
+            Self::DedicatedSchema { schema, table } => {
+                format!("{}.{}", quote_identifier(schema), quote_identifier(table))
+            }
         }
     }
 
-    /// Get additional WHERE clause if needed
+    /// Get additional WHERE clause if needed (parameterized)
+    ///
+    /// Returns the filter clause and the parameter value to bind.
+    /// The filter uses $1 placeholder for the tenant_id.
     pub fn where_clause(&self) -> Option<String> {
         match self {
             Self::SharedWithFilter { filter, .. } => Some(filter.clone()),
+            _ => None,
+        }
+    }
+
+    /// Get the tenant parameter value to bind to $1
+    pub fn tenant_param(&self) -> Option<String> {
+        match self {
+            Self::SharedWithFilter { tenant_param, .. } => tenant_param.clone(),
+            _ => None,
+        }
+    }
+
+    /// Get WHERE clause and parameter together for convenience
+    pub fn where_clause_with_param(&self) -> Option<(String, Option<String>)> {
+        match self {
+            Self::SharedWithFilter { filter, tenant_param, .. } => {
+                Some((filter.clone(), tenant_param.clone()))
+            }
             _ => None,
         }
     }
@@ -621,13 +726,31 @@ mod tests {
         let manager = IsolationManager::new();
 
         // Default routing (no config) should use shared with filter
-        let route = manager.route_query("unknown-tenant", "embeddings");
+        let route = manager.route_query("unknown_tenant", "embeddings");
         match route {
-            QueryRoute::SharedWithFilter { table, filter } => {
+            QueryRoute::SharedWithFilter { table, filter, tenant_param } => {
                 assert_eq!(table, "embeddings");
-                assert!(filter.contains("unknown-tenant"));
+                // Filter should use parameterized placeholder
+                assert_eq!(filter, "tenant_id = $1");
+                // Tenant param should contain the tenant_id
+                assert_eq!(tenant_param, Some("unknown_tenant".to_string()));
             }
             _ => panic!("Expected SharedWithFilter"),
+        }
+    }
+
+    #[test]
+    fn test_query_routing_invalid_tenant() {
+        let manager = IsolationManager::new();
+
+        // Invalid tenant_id should return safe "false" filter
+        let route = manager.route_query("'; DROP TABLE users;--", "embeddings");
+        match route {
+            QueryRoute::SharedWithFilter { filter, tenant_param, .. } => {
+                assert_eq!(filter, "false");
+                assert!(tenant_param.is_none());
+            }
+            _ => panic!("Expected SharedWithFilter with false filter"),
         }
     }
 
