@@ -332,6 +332,11 @@ pub fn ruvector_attention_scores(
 mod tests {
     use super::*;
 
+    // Helper to convert Vec<Vec<f32>> to JsonB for tests
+    fn to_json(data: Vec<Vec<f32>>) -> JsonB {
+        JsonB(serde_json::json!(data))
+    }
+
     #[pg_test]
     fn test_ruvector_attention_score() {
         let query = vec![1.0, 0.0, 0.0];
@@ -362,8 +367,8 @@ mod tests {
     #[pg_test]
     fn test_ruvector_multi_head_attention() {
         let query = vec![1.0, 0.0, 0.0, 0.0];
-        let keys = vec![vec![1.0, 0.0, 0.0, 0.0], vec![0.0, 1.0, 0.0, 0.0]];
-        let values = vec![vec![1.0, 2.0], vec![3.0, 4.0]];
+        let keys = to_json(vec![vec![1.0, 0.0, 0.0, 0.0], vec![0.0, 1.0, 0.0, 0.0]]);
+        let values = to_json(vec![vec![1.0, 2.0], vec![3.0, 4.0]]);
 
         let result = ruvector_multi_head_attention(query, keys, values, 2);
 
@@ -375,8 +380,8 @@ mod tests {
     #[pg_test]
     fn test_ruvector_flash_attention() {
         let query = vec![1.0, 0.0, 0.0, 0.0];
-        let keys = vec![vec![1.0, 0.0, 0.0, 0.0]];
-        let values = vec![vec![5.0, 10.0]];
+        let keys = to_json(vec![vec![1.0, 0.0, 0.0, 0.0]]);
+        let values = to_json(vec![vec![5.0, 10.0]]);
 
         let result = ruvector_flash_attention(query, keys, values, 64);
 
@@ -388,11 +393,11 @@ mod tests {
     #[pg_test]
     fn test_ruvector_attention_scores() {
         let query = vec![1.0, 0.0, 0.0];
-        let keys = vec![
+        let keys = to_json(vec![
             vec![1.0, 0.0, 0.0],
             vec![0.0, 1.0, 0.0],
             vec![0.0, 0.0, 1.0],
-        ];
+        ]);
 
         let scores = ruvector_attention_scores(query, keys, "scaled_dot");
 

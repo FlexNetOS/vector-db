@@ -433,7 +433,7 @@ mod tests {
 
     #[pg_test]
     fn test_auto_tune() {
-        ruvector_enable_learning("test_autotune", 1000).unwrap();
+        ruvector_enable_learning("test_autotune", None).unwrap();
 
         // Record some trajectories
         for i in 0..10 {
@@ -448,14 +448,14 @@ mod tests {
             .unwrap();
         }
 
-        let result = ruvector_auto_tune("test_autotune", "balanced", 1.0);
+        let result = ruvector_auto_tune("test_autotune", "balanced", None);
 
         assert!(result.is_ok());
     }
 
     #[pg_test]
     fn test_get_search_params() {
-        ruvector_enable_learning("test_search_params", 1000).unwrap();
+        ruvector_enable_learning("test_search_params", None).unwrap();
 
         // Record and extract patterns first
         for i in 0..20 {
@@ -494,7 +494,7 @@ mod tests {
             .unwrap();
         }
 
-        ruvector_extract_patterns("test_consolidate", Some(10)).unwrap();
+        ruvector_extract_patterns("test_consolidate", 10).unwrap();
 
         let result = ruvector_consolidate_patterns("test_consolidate", Some(0.95));
         assert!(result.is_ok());

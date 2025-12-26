@@ -179,9 +179,9 @@ jobs:
         run: cargo build --no-default-features --features pg${{ matrix.pg_version }} --release
         working-directory: crates/ruvector-postgres
 
-      - name: Run unit tests
-        run: cargo test --no-default-features --features pg${{ matrix.pg_version }} --lib -- --nocapture
-        working-directory: crates/ruvector-postgres
+      # Note: cargo test --lib is skipped because #[pg_test] tests require PostgreSQL runtime
+      # and cause linker errors (undefined symbols) when compiled outside pgrx test harness.
+      # All tests are run via cargo pgrx test instead.
 
       - name: Run pgrx tests
         run: cargo pgrx test pg${{ matrix.pg_version }} --no-default-features
