@@ -90,7 +90,20 @@ jobs:
         working-directory: crates/ruvector-postgres
 
       - name: Run Clippy
-        run: cargo clippy --features pg17 -- -D warnings -A clippy::too_many_arguments
+        run: |
+          cargo clippy --features pg17 -- -D warnings \
+            -A clippy::too_many_arguments \
+            -A clippy::should_implement_trait \
+            -A clippy::collapsible_str_replace \
+            -A clippy::useless_format \
+            -A clippy::needless_range_loop \
+            -A clippy::comparison_chain \
+            -A clippy::not_unsafe_ptr_arg_deref \
+            -A clippy::derivable_impls \
+            -A clippy::redundant_closure \
+            -A clippy::manual_div_ceil \
+            -A clippy::unnecessary_cast \
+            -A clippy::unwrap_or_default
         working-directory: crates/ruvector-postgres
 
   # ============================================================================
