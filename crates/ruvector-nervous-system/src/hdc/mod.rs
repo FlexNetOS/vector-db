@@ -9,7 +9,7 @@ mod similarity;
 mod memory;
 
 pub use vector::{Hypervector, HdcError};
-pub use ops::{bind, bundle};
+pub use ops::{bind, bind_multiple, bundle, invert, permute};
 pub use similarity::{
     batch_similarities, cosine_similarity, find_similar, hamming_distance,
     jaccard_similarity, normalized_hamming, pairwise_similarities, top_k_similar,

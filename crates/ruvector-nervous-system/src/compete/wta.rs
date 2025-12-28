@@ -20,7 +20,7 @@ use crate::compete::inhibition::LateralInhibition;
 /// ```
 /// use ruvector_nervous_system::compete::WTALayer;
 ///
-/// let mut wta = WTALayer::new(100, 0.5, 0.8);
+/// let mut wta = WTALayer::new(5, 0.5, 0.8);  // 5 neurons to match input size
 /// let inputs = vec![0.1, 0.3, 0.9, 0.2, 0.4];
 /// let winner = wta.compete(&inputs);
 /// assert_eq!(winner, Some(2)); // Index 2 has highest activation (0.9)

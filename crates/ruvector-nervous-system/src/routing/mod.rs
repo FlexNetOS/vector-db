@@ -95,12 +95,14 @@
 //! let winners = workspace.retrieve_top_k(3);
 //! ```
 
-pub mod predictive;
+pub mod circadian;
 pub mod coherence;
+pub mod predictive;
 pub mod workspace;
 
-pub use predictive::PredictiveLayer;
+pub use circadian::{CircadianController, CircadianPhase, CircadianScheduler};
 pub use coherence::OscillatoryRouter;
+pub use predictive::PredictiveLayer;
 pub use workspace::{GlobalWorkspace, Representation};
 
 /// Integrated coherence-gated system combining all routing mechanisms

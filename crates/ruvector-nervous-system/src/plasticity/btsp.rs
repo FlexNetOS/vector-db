@@ -293,6 +293,13 @@ impl BTSPLayer {
         // Compute required weight change
         let error = target - current;
 
+        // Compute sum of squared inputs for proper gradient normalization
+        // This ensures single-step convergence: delta = error * x / sum(x^2)
+        let sum_squared: f32 = pattern.iter().map(|&x| x * x).sum();
+        if sum_squared < 1e-8 {
+            return; // No active inputs
+        }
+
         // Set eligibility traces and update weights
         for (synapse, &input_val) in self.synapses.iter_mut().zip(pattern.iter()) {
             if input_val.abs() > 0.01 {
@@ -300,7 +307,8 @@ impl BTSPLayer {
                 synapse.eligibility_trace = input_val;
 
                 // Direct weight update for one-shot learning
-                let delta = error * input_val / pattern.len() as f32;
+                // Using proper gradient: delta = error * x / sum(x^2)
+                let delta = error * input_val / sum_squared;
                 synapse.weight += delta;
                 synapse.weight = synapse.weight.clamp(0.0, 1.0);
             }

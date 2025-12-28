@@ -243,8 +243,8 @@ impl ModernHopfield {
     /// ```rust
     /// use ruvector_nervous_system::hopfield::ModernHopfield;
     ///
-    /// let hopfield = ModernHopfield::new(128, 1.0);
-    /// assert_eq!(hopfield.capacity(), 2_u64.pow(64)); // 2^(128/2)
+    /// let hopfield = ModernHopfield::new(32, 1.0);
+    /// assert_eq!(hopfield.capacity(), 2_u64.pow(16)); // 2^(32/2) = 65536
     /// ```
     pub fn capacity(&self) -> u64 {
         super::capacity::theoretical_capacity(self.dimension)

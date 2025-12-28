@@ -243,7 +243,7 @@ impl Hypervector {
     /// let v2 = Hypervector::random();
     /// let v3 = Hypervector::random();
     ///
-    /// let bundled = Hypervector::bundle(&[v1.clone(), v2, v3]);
+    /// let bundled = Hypervector::bundle(&[v1.clone(), v2, v3]).unwrap();
     /// // Bundled vector is similar to all inputs
     /// assert!(bundled.similarity(&v1) > 0.3);
     /// ```

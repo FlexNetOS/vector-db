@@ -92,9 +92,10 @@ pub use hdc::{Hypervector, HdcMemory, HdcError};
 pub use hopfield::ModernHopfield;
 pub use plasticity::eprop::{EpropLIF, EpropNetwork, EpropSynapse, LearningSignal};
 pub use routing::{
-    CoherenceGatedSystem, GlobalWorkspace, OscillatoryRouter, PredictiveLayer, Representation,
+    CircadianController, CircadianPhase, CircadianScheduler, CoherenceGatedSystem, GlobalWorkspace,
+    OscillatoryRouter, PredictiveLayer, Representation,
 };
-pub use separate::DentateGyrus;
+pub use separate::{DentateGyrus, SparseProjection, SparseBitVector};
 
 #[derive(Debug, thiserror::Error)]
 pub enum NervousSystemError {
