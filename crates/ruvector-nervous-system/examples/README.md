@@ -10,6 +10,8 @@ Bio-inspired nervous system architecture examples demonstrating the transition f
 
 These examples show how nervous system thinking unlocks new products, markets, and research categories. The architecture enables systems that **age well** instead of breaking under complexity.
 
+All tier examples are organized in the unified `tiers/` folder with prefixed names for easy navigation.
+
 ## Application Tiers
 
 ### Tier 1: Immediate Practical Applications
@@ -17,39 +19,39 @@ These examples show how nervous system thinking unlocks new products, markets, a
 
 | Example | Domain | Key Benefit |
 |---------|--------|-------------|
-| [anomaly_detection](tier1/anomaly_detection.rs) | Infrastructure, Finance, Security | Detection before failure, microsecond response |
-| [edge_autonomy](tier1/edge_autonomy.rs) | Drones, Vehicles, Robotics | Lower power, certified reflex paths |
-| [medical_wearable](tier1/medical_wearable.rs) | Monitoring, Assistive Devices | Adapts to the person, always-on, private |
+| [t1_anomaly_detection](tiers/t1_anomaly_detection.rs) | Infrastructure, Finance, Security | Detection before failure, microsecond response |
+| [t1_edge_autonomy](tiers/t1_edge_autonomy.rs) | Drones, Vehicles, Robotics | Lower power, certified reflex paths |
+| [t1_medical_wearable](tiers/t1_medical_wearable.rs) | Monitoring, Assistive Devices | Adapts to the person, always-on, private |
 
 ### Tier 2: Near-Term Transformative Applications
 *Possible once local learning and coherence routing mature*
 
 | Example | Domain | Key Benefit |
 |---------|--------|-------------|
-| [self_optimizing_systems](tier2/self_optimizing_systems.rs) | Agents Monitoring Agents | Self-stabilizing software, structural witnesses |
-| [swarm_intelligence](tier2/swarm_intelligence.rs) | IoT Fleets, Sensor Meshes | Scale without fragility, emergent intelligence |
-| [adaptive_simulation](tier2/adaptive_simulation.rs) | Digital Twins, Logistics | Always-warm simulation, costs scale with relevance |
+| [t2_self_optimizing](tiers/t2_self_optimizing.rs) | Agents Monitoring Agents | Self-stabilizing software, structural witnesses |
+| [t2_swarm_intelligence](tiers/t2_swarm_intelligence.rs) | IoT Fleets, Sensor Meshes | Scale without fragility, emergent intelligence |
+| [t2_adaptive_simulation](tiers/t2_adaptive_simulation.rs) | Digital Twins, Logistics | Always-warm simulation, costs scale with relevance |
 
 ### Tier 3: Exotic But Real Applications
 *Technically grounded, novel research directions*
 
 | Example | Domain | Key Benefit |
 |---------|--------|-------------|
-| [machine_self_awareness](tier3/machine_self_awareness.rs) | Structural Self-Sensing | Systems say "I am becoming unstable" |
-| [synthetic_nervous_systems](tier3/synthetic_nervous_systems.rs) | Buildings, Factories, Cities | Environments respond like organisms |
-| [bio_machine_interface](tier3/bio_machine_interface.rs) | Prosthetics, Rehabilitation | Machines stop fighting biology |
+| [t3_self_awareness](tiers/t3_self_awareness.rs) | Structural Self-Sensing | Systems say "I am becoming unstable" |
+| [t3_synthetic_nervous](tiers/t3_synthetic_nervous.rs) | Buildings, Factories, Cities | Environments respond like organisms |
+| [t3_bio_machine](tiers/t3_bio_machine.rs) | Prosthetics, Rehabilitation | Machines stop fighting biology |
 
 ## Quick Start
 
 ```bash
 # Run a Tier 1 example
-cargo run --example anomaly_detection
+cargo run --example t1_anomaly_detection
 
 # Run a Tier 2 example
-cargo run --example swarm_intelligence
+cargo run --example t2_swarm_intelligence
 
 # Run a Tier 3 example
-cargo run --example machine_self_awareness
+cargo run --example t3_self_awareness
 ```
 
 ## Architecture Principles

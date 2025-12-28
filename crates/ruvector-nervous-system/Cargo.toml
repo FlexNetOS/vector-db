@@ -57,41 +57,42 @@ harness = false
 name = "latency_benchmarks"
 harness = false
 
+# Unified Tier Examples (in examples/tiers/)
 # Tier 1: Immediate Practical Applications
 [[example]]
-name = "anomaly_detection"
-path = "examples/tier1/anomaly_detection.rs"
+name = "t1_anomaly_detection"
+path = "examples/tiers/t1_anomaly_detection.rs"
 
 [[example]]
-name = "edge_autonomy"
-path = "examples/tier1/edge_autonomy.rs"
+name = "t1_edge_autonomy"
+path = "examples/tiers/t1_edge_autonomy.rs"
 
 [[example]]
-name = "medical_wearable"
-path = "examples/tier1/medical_wearable.rs"
+name = "t1_medical_wearable"
+path = "examples/tiers/t1_medical_wearable.rs"
 
 # Tier 2: Near-Term Transformative Applications
 [[example]]
-name = "self_optimizing_systems"
-path = "examples/tier2/self_optimizing_systems.rs"
+name = "t2_self_optimizing"
+path = "examples/tiers/t2_self_optimizing.rs"
 
 [[example]]
-name = "swarm_intelligence"
-path = "examples/tier2/swarm_intelligence.rs"
+name = "t2_swarm_intelligence"
+path = "examples/tiers/t2_swarm_intelligence.rs"
 
 [[example]]
-name = "adaptive_simulation"
-path = "examples/tier2/adaptive_simulation.rs"
+name = "t2_adaptive_simulation"
+path = "examples/tiers/t2_adaptive_simulation.rs"
 
 # Tier 3: Exotic But Real Applications
 [[example]]
-name = "machine_self_awareness"
-path = "examples/tier3/machine_self_awareness.rs"
+name = "t3_self_awareness"
+path = "examples/tiers/t3_self_awareness.rs"
 
 [[example]]
-name = "synthetic_nervous_systems"
-path = "examples/tier3/synthetic_nervous_systems.rs"
+name = "t3_synthetic_nervous"
+path = "examples/tiers/t3_synthetic_nervous.rs"
 
 [[example]]
-name = "bio_machine_interface"
-path = "examples/tier3/bio_machine_interface.rs"
+name = "t3_bio_machine"
+path = "examples/tiers/t3_bio_machine.rs"
