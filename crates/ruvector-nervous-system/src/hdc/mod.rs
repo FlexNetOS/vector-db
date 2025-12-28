@@ -16,8 +16,8 @@ pub use memory::HdcMemory;
 /// Number of bits in a hypervector (10,000)
 pub const HYPERVECTOR_BITS: usize = 10_000;
 
-/// Number of u64 words needed to store HYPERVECTOR_BITS (156 = ceil(10000/64))
-pub const HYPERVECTOR_U64_LEN: usize = 156;
+/// Number of u64 words needed to store HYPERVECTOR_BITS (157 = ceil(10000/64))
+pub const HYPERVECTOR_U64_LEN: usize = 157;
 
 #[cfg(test)]
 mod tests {
@@ -25,7 +25,7 @@ mod tests {
 
     #[test]
     fn test_constants() {
-        assert_eq!(HYPERVECTOR_U64_LEN, 156);
+        assert_eq!(HYPERVECTOR_U64_LEN, 157);
         assert_eq!(HYPERVECTOR_BITS, 10_000);
         assert!(HYPERVECTOR_U64_LEN * 64 >= HYPERVECTOR_BITS);
     }
