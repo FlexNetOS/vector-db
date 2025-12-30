@@ -2267,7 +2267,14 @@ class Intelligence {
 // Hooks command group
 const hooksCmd = program.command('hooks').description('Self-learning intelligence hooks for Claude Code');
 
-hooksCmd.command('init').description('Initialize hooks in current project').option('--force', 'Force overwrite').option('--no-claude-md', 'Skip CLAUDE.md creation').action((opts) => {
+hooksCmd.command('init')
+  .description('Initialize hooks in current project')
+  .option('--force', 'Force overwrite existing settings')
+  .option('--minimal', 'Only basic hooks (no env, permissions, or advanced hooks)')
+  .option('--no-claude-md', 'Skip CLAUDE.md creation')
+  .option('--no-permissions', 'Skip permissions configuration')
+  .option('--no-env', 'Skip environment variables')
+  .action((opts) => {
   const settingsPath = path.join(process.cwd(), '.claude', 'settings.json');
   const settingsDir = path.dirname(settingsPath);
   if (!fs.existsSync(settingsDir)) fs.mkdirSync(settingsDir, { recursive: true });
@@ -2275,15 +2282,61 @@ hooksCmd.command('init').description('Initialize hooks in current project').opti
   if (fs.existsSync(settingsPath) && !opts.force) {
     try { settings = JSON.parse(fs.readFileSync(settingsPath, 'utf-8')); } catch {}
   }
+
   // Fix schema if present
   if (settings.$schema) {
     settings.$schema = 'https://json.schemastore.org/claude-code-settings.json';
   }
+
   // Clean up invalid hook names
   if (settings.hooks) {
     if (settings.hooks.Start) { delete settings.hooks.Start; }
     if (settings.hooks.End) { delete settings.hooks.End; }
   }
+
+  // Environment variables for intelligence (unless --minimal or --no-env)
+  if (!opts.minimal && opts.env !== false) {
+    settings.env = settings.env || {};
+    settings.env.RUVECTOR_INTELLIGENCE_ENABLED = settings.env.RUVECTOR_INTELLIGENCE_ENABLED || 'true';
+    settings.env.RUVECTOR_LEARNING_RATE = settings.env.RUVECTOR_LEARNING_RATE || '0.1';
+    settings.env.RUVECTOR_MEMORY_BACKEND = settings.env.RUVECTOR_MEMORY_BACKEND || 'rvlite';
+    settings.env.INTELLIGENCE_MODE = settings.env.INTELLIGENCE_MODE || 'treatment';
+    console.log(chalk.blue('  ✓ Environment variables configured'));
+  }
+
+  // Permissions (unless --minimal or --no-permissions)
+  if (!opts.minimal && opts.permissions !== false) {
+    settings.permissions = settings.permissions || {};
+    settings.permissions.allow = settings.permissions.allow || [
+      'Bash(npm run:*)',
+      'Bash(npm test:*)',
+      'Bash(npm install:*)',
+      'Bash(npx:*)',
+      'Bash(git status)',
+      'Bash(git diff:*)',
+      'Bash(git log:*)',
+      'Bash(git add:*)',
+      'Bash(git commit:*)',
+      'Bash(git push)',
+      'Bash(git branch:*)',
+      'Bash(git checkout:*)',
+      'Bash(ls:*)',
+      'Bash(pwd)',
+      'Bash(cat:*)',
+      'Bash(mkdir:*)',
+      'Bash(which:*)',
+      'Bash(node:*)',
+      'Bash(ruvector:*)'
+    ];
+    settings.permissions.deny = settings.permissions.deny || [
+      'Bash(rm -rf /)',
+      'Bash(sudo rm:*)',
+      'Bash(chmod 777:*)'
+    ];
+    console.log(chalk.blue('  ✓ Permissions configured'));
+  }
+
+  // Core hooks (always included)
   settings.hooks = settings.hooks || {};
   settings.hooks.PreToolUse = [
     { matcher: 'Edit|Write|MultiEdit', hooks: [{ type: 'command', command: 'npx ruvector hooks pre-edit "$TOOL_INPUT_file_path"' }] },
@@ -2295,53 +2348,135 @@ hooksCmd.command('init').description('Initialize hooks in current project').opti
   ];
   settings.hooks.SessionStart = [{ hooks: [{ type: 'command', command: 'npx ruvector hooks session-start' }] }];
   settings.hooks.Stop = [{ hooks: [{ type: 'command', command: 'npx ruvector hooks session-end' }] }];
+  console.log(chalk.blue('  ✓ Core hooks (PreToolUse, PostToolUse, SessionStart, Stop)'));
+
+  // Advanced hooks (unless --minimal)
+  if (!opts.minimal) {
+    // UserPromptSubmit - context suggestions on each prompt
+    settings.hooks.UserPromptSubmit = [{
+      hooks: [{
+        type: 'command',
+        timeout: 2000,
+        command: 'npx ruvector hooks suggest-context'
+      }]
+    }];
+
+    // PreCompact - preserve important context before compaction
+    settings.hooks.PreCompact = [
+      {
+        matcher: 'auto',
+        hooks: [{
+          type: 'command',
+          timeout: 3000,
+          command: 'npx ruvector hooks pre-compact --auto'
+        }]
+      },
+      {
+        matcher: 'manual',
+        hooks: [{
+          type: 'command',
+          timeout: 3000,
+          command: 'npx ruvector hooks pre-compact'
+        }]
+      }
+    ];
+
+    // Notification - track all notifications for learning
+    settings.hooks.Notification = [{
+      matcher: '.*',
+      hooks: [{
+        type: 'command',
+        timeout: 1000,
+        command: 'npx ruvector hooks track-notification'
+      }]
+    }];
+    console.log(chalk.blue('  ✓ Advanced hooks (UserPromptSubmit, PreCompact, Notification)'));
+  }
+
   fs.writeFileSync(settingsPath, JSON.stringify(settings, null, 2));
-  console.log(chalk.green('✅ Hooks initialized in .claude/settings.json'));
+  console.log(chalk.green('\n✅ Hooks initialized in .claude/settings.json'));
 
   // Create CLAUDE.md if it doesn't exist (or force)
   const claudeMdPath = path.join(process.cwd(), 'CLAUDE.md');
   if (opts.claudeMd !== false && (!fs.existsSync(claudeMdPath) || opts.force)) {
     const claudeMdContent = `# Claude Code Project Configuration
 
-## RuVector Self-Learning Hooks
+## RuVector Self-Learning Intelligence
 
-This project uses RuVector's self-learning intelligence hooks for enhanced AI-assisted development.
+This project uses RuVector's self-learning intelligence hooks for enhanced AI-assisted development with Q-learning, vector memory, and automatic agent routing.
 
 ### Active Hooks
 
 | Hook | Trigger | Purpose |
 |------|---------|---------|
-| PreToolUse | Before Edit/Write/Bash | Agent routing, command analysis |
-| PostToolUse | After Edit/Write/Bash | Q-learning update, pattern recording |
-| SessionStart | Conversation begins | Load intelligence, display stats |
-| Stop | Conversation ends | Save learning data |
+| **PreToolUse** | Before Edit/Write/Bash | Agent routing, file analysis, command risk assessment |
+| **PostToolUse** | After Edit/Write/Bash | Q-learning update, pattern recording, outcome tracking |
+| **SessionStart** | Conversation begins | Load intelligence state, display learning stats |
+| **Stop** | Conversation ends | Save learning data, export metrics |
+| **UserPromptSubmit** | User sends message | Context suggestions, pattern recommendations |
+| **PreCompact** | Before context compaction | Preserve important context and memories |
+| **Notification** | Any notification | Track events for learning |
+
+### Environment Variables
+
+| Variable | Default | Description |
+|----------|---------|-------------|
+| \`RUVECTOR_INTELLIGENCE_ENABLED\` | \`true\` | Enable/disable intelligence layer |
+| \`RUVECTOR_LEARNING_RATE\` | \`0.1\` | Q-learning rate (0.0-1.0) |
+| \`RUVECTOR_MEMORY_BACKEND\` | \`rvlite\` | Memory storage backend |
+| \`INTELLIGENCE_MODE\` | \`treatment\` | A/B testing mode (treatment/control) |
 
 ### Commands
 
 \`\`\`bash
+# Initialize hooks in a project
+npx ruvector hooks init
+
 # View learning statistics
 npx ruvector hooks stats
 
 # Route a task to best agent
 npx ruvector hooks route "implement feature X"
 
-# Store context in memory
+# Store context in vector memory
 npx ruvector hooks remember "important context" -t project
 
-# Recall from memory
+# Recall from memory (semantic search)
 npx ruvector hooks recall "context query"
+
+# Manual session management
+npx ruvector hooks session-start
+npx ruvector hooks session-end
 \`\`\`
 
 ### How It Works
 
-1. **Pre-edit hooks** analyze files and suggest the best agent for the task
+1. **Pre-edit hooks** analyze files and suggest the best agent based on learned patterns
 2. **Post-edit hooks** record outcomes to improve future suggestions via Q-learning
-3. **Memory hooks** store and retrieve context using vector embeddings
+3. **Memory hooks** store and retrieve context using vector embeddings (cosine similarity)
 4. **Session hooks** manage learning state across conversations
+5. **UserPromptSubmit** provides context suggestions on each message
+6. **PreCompact** preserves critical context before conversation compaction
+7. **Notification** tracks all events for continuous learning
 
-### Configuration
+### Learning Data
 
-Settings are stored in \`.claude/settings.json\`. Run \`npx ruvector hooks init\` to regenerate.
+Stored in \`.ruvector/intelligence.json\`:
+- **Q-table patterns**: State-action values for agent routing
+- **Vector memories**: Embeddings for semantic recall
+- **Trajectories**: Learning history for improvement tracking
+- **Error patterns**: Known issues and suggested fixes
+
+### Init Options
+
+\`\`\`bash
+npx ruvector hooks init              # Full configuration
+npx ruvector hooks init --minimal    # Basic hooks only
+npx ruvector hooks init --no-env     # Skip environment variables
+npx ruvector hooks init --no-permissions  # Skip permissions
+npx ruvector hooks init --no-claude-md    # Skip this file
+npx ruvector hooks init --force      # Overwrite existing
+\`\`\`
 
 ---
 *Powered by [RuVector](https://github.com/ruvnet/ruvector) self-learning intelligence*
