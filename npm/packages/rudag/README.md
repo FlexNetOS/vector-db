@@ -49,6 +49,38 @@ Imagine you're building a system where **Task C** can't start until **Task A** a
 | Hard to find bottlenecks | **Attention scores** highlight important nodes |
 | Complex setup | `npm install` and go |
 
+## Key Capabilities
+
+### 🧠 Self-Learning Optimization
+rudag uses **ML-inspired attention mechanisms** to learn which nodes matter most. The more you use it, the smarter it gets at identifying bottlenecks and suggesting optimizations.
+
+```typescript
+// Get importance scores for each node
+const scores = dag.attention(AttentionMechanism.CRITICAL_PATH);
+// Nodes on the critical path score higher → optimize these first!
+```
+
+### ⚡ WASM-Accelerated Performance
+Core algorithms run in **Rust compiled to WebAssembly** - the same technology powering Figma, Google Earth, and AutoCAD in the browser. Get native-like speed without leaving JavaScript.
+
+### 🔄 Automatic Cycle Detection
+DAGs can't have cycles by definition. rudag **automatically prevents** invalid edges that would create loops:
+
+```typescript
+dag.addEdge(a, b);  // ✅ OK
+dag.addEdge(b, c);  // ✅ OK
+dag.addEdge(c, a);  // ❌ Returns false - would create cycle!
+```
+
+### 📊 Critical Path Analysis
+Instantly find the **longest path** through your graph - the sequence of tasks that determines total execution time. This is what you need to optimize first.
+
+### 💾 Zero-Config Persistence
+Your DAGs automatically save to **IndexedDB** in browsers or **files** in Node.js. No database setup, no configuration - just works.
+
+### 🔌 Serialization & Interop
+Export to **JSON** (human-readable) or **binary** (compact, fast). Share DAGs between services, store in databases, or send over the network.
+
 ## Installation
 
 ```bash
