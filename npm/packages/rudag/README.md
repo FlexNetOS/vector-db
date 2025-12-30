@@ -661,6 +661,34 @@ async function executeWithRxJS(dag: RuDag) {
 
 Requires WebAssembly support.
 
+## Comparison with Alternatives
+
+| Feature | rudag | graphlib | dagre | d3-dag |
+|---------|-------|----------|-------|--------|
+| **Performance** | ⚡ WASM (10-100x faster) | JS | JS | JS |
+| **Critical Path** | ✅ Built-in | ❌ Manual | ❌ Manual | ❌ Manual |
+| **Attention/Scoring** | ✅ ML-inspired | ❌ | ❌ | ❌ |
+| **Cycle Detection** | ✅ Automatic | ✅ | ✅ | ✅ |
+| **Topological Sort** | ✅ | ✅ | ✅ | ✅ |
+| **Persistence** | ✅ IndexedDB + Files | ❌ | ❌ | ❌ |
+| **Browser + Node.js** | ✅ Both | ✅ Both | ✅ Both | ⚠️ Browser |
+| **TypeScript** | ✅ Native | ⚠️ @types | ⚠️ @types | ✅ Native |
+| **Bundle Size** | ~50KB (WASM) | ~15KB | ~30KB | ~20KB |
+| **Self-Learning** | ✅ | ❌ | ❌ | ❌ |
+| **Serialization** | ✅ JSON + Binary | ✅ JSON | ✅ JSON | ❌ |
+| **CLI Tool** | ✅ | ❌ | ❌ | ❌ |
+
+### When to Use What
+
+| Use Case | Recommendation |
+|----------|----------------|
+| **Query optimization / Task scheduling** | **rudag** - Critical path + attention scoring |
+| **Graph visualization / Layout** | **dagre** - Designed for layout algorithms |
+| **Simple dependency tracking** | **graphlib** - Lightweight, no WASM overhead |
+| **D3 integration** | **d3-dag** - Native D3 compatibility |
+| **Large graphs (10k+ nodes)** | **rudag** - WASM performance advantage |
+| **Offline-first apps** | **rudag** - Built-in persistence |
+
 ## API Reference
 
 ### RuDag
