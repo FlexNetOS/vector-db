@@ -49,13 +49,19 @@
       {
         "matcher": "Edit|Write|MultiEdit",
         "hooks": [
-          "ruvector hooks pre-edit \"$TOOL_INPUT_file_path\""
+          {
+            "type": "command",
+            "command": "ruvector hooks pre-edit \"$TOOL_INPUT_file_path\""
+          }
         ]
       },
       {
         "matcher": "Bash",
         "hooks": [
-          "ruvector hooks pre-command \"$TOOL_INPUT_command\""
+          {
+            "type": "command",
+            "command": "ruvector hooks pre-command \"$TOOL_INPUT_command\""
+          }
         ]
       }
     ],
@@ -63,21 +69,41 @@
       {
         "matcher": "Edit|Write|MultiEdit",
         "hooks": [
-          "ruvector hooks post-edit \"$TOOL_INPUT_file_path\""
+          {
+            "type": "command",
+            "command": "ruvector hooks post-edit \"$TOOL_INPUT_file_path\""
+          }
         ]
       },
       {
         "matcher": "Bash",
         "hooks": [
-          "ruvector hooks post-command \"$TOOL_INPUT_command\""
+          {
+            "type": "command",
+            "command": "ruvector hooks post-command \"$TOOL_INPUT_command\""
+          }
         ]
       }
     ],
     "SessionStart": [
-      "ruvector hooks session-start"
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "ruvector hooks session-start"
+          }
+        ]
+      }
     ],
     "Stop": [
-      "ruvector hooks session-end"
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "ruvector hooks session-end"
+          }
+        ]
+      }
     ],
     "PreCompact": [
       {
