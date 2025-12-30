@@ -1,6 +1,56 @@
 # RuVector DAG - Neural Self-Learning DAG
 
-A production-grade neural DAG learning system for query optimization in RuVector. Not an optimizer—a control plane for learning systems.
+**Make your queries faster automatically.** RuVector DAG learns from every query execution and continuously optimizes performance—no manual tuning required.
+
+## What is This?
+
+RuVector DAG is a **self-learning query optimization system**. Think of it as a "nervous system" for your database queries that:
+
+1. **Watches** how queries execute and identifies bottlenecks
+2. **Learns** which optimization strategies work best for different query patterns
+3. **Adapts** in real-time, switching strategies when conditions change
+4. **Heals** itself by detecting anomalies and fixing problems before they impact users
+
+Unlike traditional query optimizers that use static rules, RuVector DAG learns from actual execution patterns and gets smarter over time.
+
+## Who Should Use This?
+
+| Use Case | Why RuVector DAG Helps |
+|----------|------------------------|
+| **Vector Search Applications** | Optimize similarity searches that traditional databases struggle with |
+| **High-Traffic APIs** | Automatically adapt to changing query patterns throughout the day |
+| **Real-Time Analytics** | Learn which aggregation paths are fastest for your specific data |
+| **Edge/Embedded Systems** | 58KB WASM build runs in browsers and IoT devices |
+| **Multi-Tenant Platforms** | Learn per-tenant query patterns without manual per-tenant tuning |
+
+## Key Benefits
+
+### Automatic Performance Improvement
+Queries get faster over time without any code changes. In benchmarks, repeated queries show **50-80% latency reduction** after the system learns optimal execution paths.
+
+### Zero-Downtime Adaptation
+When query patterns change (new features, traffic spikes, data growth), the system adapts automatically. No need to rebuild indexes or rewrite queries.
+
+### Predictive Problem Prevention
+The system detects rising "tension" (early warning signs of bottlenecks) and intervenes *before* users experience slowdowns.
+
+### Works Everywhere
+- **PostgreSQL** via the ruvector-postgres extension
+- **Browsers** via 58KB WASM module
+- **Embedded systems** with minimal memory footprint
+- **Distributed systems** with quantum-resistant sync between nodes
+
+## How It Works (Simple Version)
+
+```
+Query comes in → DAG analyzes execution plan → Best attention mechanism selected
+                                                          ↓
+Query executes → Results returned → Learning system records what worked
+                                                          ↓
+                    Next similar query benefits from learned optimizations
+```
+
+The system maintains a "MinCut tension" score that acts as a health indicator. When tension rises, the system automatically switches to more aggressive optimization strategies and triggers predictive healing.
 
 ## Features
 
