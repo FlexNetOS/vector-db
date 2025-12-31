@@ -301,7 +301,8 @@ class ArbitrageDetector {
         // Flash loan cost
         const flashFee = this.config.params.flashLoanFee;
 
-        const spread = Math.abs(p1.mid - p2.mid) / Math.min(p1.mid, p2.mid);
+        const minMid = Math.min(p1.mid, p2.mid);
+        const spread = minMid > 0 ? Math.abs(p1.mid - p2.mid) / minMid : 0;
         const profitBps = (spread - flashFee) * 10000;
 
         if (profitBps > this.config.params.minProfitBps) {

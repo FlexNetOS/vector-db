@@ -42,11 +42,21 @@ const attentionConfig = {
   }
 };
 
-// Softmax function
+// Softmax function (handles empty arrays and edge cases)
 function softmax(arr) {
+  if (!arr || arr.length === 0) {
+    return [];
+  }
+  if (arr.length === 1) {
+    return [1.0];
+  }
   const max = Math.max(...arr);
   const exp = arr.map(x => Math.exp(x - max));
   const sum = exp.reduce((a, b) => a + b, 0);
+  // Guard against sum being 0 (all -Infinity inputs)
+  if (sum === 0 || !isFinite(sum)) {
+    return arr.map(() => 1.0 / arr.length);  // Uniform distribution
+  }
   return exp.map(x => x / sum);
 }
 
@@ -69,8 +79,11 @@ function matmul(a, b) {
   return result;
 }
 
-// Transpose matrix
+// Transpose matrix (handles empty matrices)
 function transpose(matrix) {
+  if (!matrix || matrix.length === 0 || !matrix[0]) {
+    return [];
+  }
   return matrix[0].map((_, i) => matrix.map(row => row[i]));
 }
 

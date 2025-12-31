@@ -50,6 +50,7 @@ class TradingAgent {
     this.signals = [];
     this.confidence = 0.5;
     this.performance = { wins: 0, losses: 0, pnl: 0 };
+    this.maxSignals = 1000;  // Bound signals array to prevent memory leak
   }
 
   // Analyze market data and generate signal
@@ -111,9 +112,13 @@ class MomentumAgent extends TradingAgent {
       sumXY += i * prices[i].close;
       sumX2 += i * i;
     }
-    const slope = (n * sumXY - sumX * sumY) / (n * sumX2 - sumX * sumX);
+    const denominator = n * sumX2 - sumX * sumX;
+    // Guard against division by zero (all prices identical)
+    const slope = Math.abs(denominator) > 1e-10
+      ? (n * sumXY - sumX * sumY) / denominator
+      : 0;
     const avgPrice = sumY / n;
-    const normalizedSlope = slope / avgPrice;
+    const normalizedSlope = avgPrice > 0 ? slope / avgPrice : 0;
 
     // Signal strength based on momentum and trend alignment
     let signal = 0;
@@ -136,6 +141,10 @@ class MomentumAgent extends TradingAgent {
     };
 
     this.signals.push(result);
+    // Bound signals array to prevent memory leak
+    if (this.signals.length > this.maxSignals) {
+      this.signals = this.signals.slice(-this.maxSignals);
+    }
     return result;
   }
 }
@@ -154,12 +163,13 @@ class MeanReversionAgent extends TradingAgent {
       return { signal: 0, confidence: 0, reason: 'insufficient data' };
     }
 
-    // Calculate z-score
+    // Calculate z-score with division-by-zero guard
     const mean = prices.reduce((a, b) => a + b, 0) / prices.length;
     const variance = prices.reduce((sum, p) => sum + Math.pow(p - mean, 2), 0) / prices.length;
     const std = Math.sqrt(variance);
     const currentPrice = prices[prices.length - 1];
-    const zscore = (currentPrice - mean) / std;
+    // Guard against zero standard deviation (constant prices)
+    const zscore = std > 1e-10 ? (currentPrice - mean) / std : 0;
 
     let signal = 0;
     let confidence = 0;
@@ -475,6 +485,11 @@ class SwarmCoordinator {
       signalCount: signals.length
     });
 
+    // Bound consensus history to prevent memory leak
+    if (this.consensusHistory.length > 1000) {
+      this.consensusHistory = this.consensusHistory.slice(-500);
+    }
+
     return consensus;
   }
 
@@ -538,10 +553,11 @@ class SwarmCoordinator {
       stats.totalPnL += agent.performance.pnl;
     }
 
-    stats.avgConfidence /= this.agents.length;
+    stats.avgConfidence /= this.agents.length || 1;
 
-    for (const [key, value] of stats.byType) {
-      stats.byType[key].avgConfidence /= value.count;
+    // Use Object.entries for object iteration (stats.byType is an object, not Map)
+    for (const [key, value] of Object.entries(stats.byType)) {
+      stats.byType[key].avgConfidence /= value.count || 1;
     }
 
     for (const [key, trail] of this.pheromoneTrails) {

@@ -312,10 +312,10 @@ class CorrelationNetwork {
       }
     }
 
-    // Normalize
+    // Normalize (avoid division by zero when n < 3)
     const norm = (n - 1) * (n - 2) / 2;
     for (let i = 0; i < n; i++) {
-      this.nodes.get(symbols[i]).features.betweenness = betweenness[i] / norm;
+      this.nodes.get(symbols[i]).features.betweenness = norm > 0 ? betweenness[i] / norm : 0;
     }
   }
 
@@ -331,9 +331,9 @@ class CorrelationNetwork {
     }
     edgeCount /= 2;  // Undirected
 
-    // Density
+    // Density (avoid division by zero when n < 2)
     const maxEdges = n * (n - 1) / 2;
-    const density = edgeCount / maxEdges;
+    const density = maxEdges > 0 ? edgeCount / maxEdges : 0;
 
     // Average clustering coefficient
     let totalClustering = 0;
@@ -361,14 +361,14 @@ class CorrelationNetwork {
       totalClustering += node.features.clusteringCoeff;
     }
 
-    const avgClustering = totalClustering / n;
+    const avgClustering = n > 0 ? totalClustering / n : 0;
 
     return {
       nodes: n,
       edges: edgeCount,
       density,
       avgClustering,
-      avgDegree: (2 * edgeCount) / n
+      avgDegree: n > 0 ? (2 * edgeCount) / n : 0
     };
   }
 

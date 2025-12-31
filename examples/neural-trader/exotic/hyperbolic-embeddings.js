@@ -59,17 +59,26 @@ class PoincareOperations {
     });
   }
 
-  // Poincaré distance
+  // Poincaré distance with numerical stability
   distance(x, y) {
     const diff = x.map((v, i) => v - y[i]);
     const diffNorm2 = diff.reduce((s, v) => s + v * v, 0);
     const xNorm2 = x.reduce((s, v) => s + v * v, 0);
     const yNorm2 = y.reduce((s, v) => s + v * v, 0);
 
-    const num = 2 * diffNorm2;
-    const denom = (1 - xNorm2) * (1 - yNorm2) + hyperbolicConfig.poincare.epsilon;
+    // Ensure points are inside the ball
+    const eps = hyperbolicConfig.poincare.epsilon;
+    const safeXNorm2 = Math.min(xNorm2, 1 - eps);
+    const safeYNorm2 = Math.min(yNorm2, 1 - eps);
 
-    return Math.acosh(1 + num / denom) / this.sqrtC;
+    const num = 2 * diffNorm2;
+    const denom = (1 - safeXNorm2) * (1 - safeYNorm2);
+
+    // Guard against numerical issues with Math.acosh (arg must be >= 1)
+    const arg = 1 + num / Math.max(denom, eps);
+    const safeArg = Math.max(1, arg);  // acosh domain is [1, inf)
+
+    return Math.acosh(safeArg) / this.sqrtC;
   }
 
   // Exponential map: tangent space → manifold
@@ -89,13 +98,16 @@ class PoincareOperations {
   // Logarithmic map: manifold → tangent space
   logMap(x, y) {
     const c = this.c;
-    const xNorm2 = x.reduce((s, xi) => s + xi * xi, 0);
-    const lambda = 2 / (1 - c * xNorm2);
+    const eps = hyperbolicConfig.poincare.epsilon;
+    const xNorm2 = Math.min(x.reduce((s, xi) => s + xi * xi, 0), 1 - eps);
+    const lambda = 2 / Math.max(1 - c * xNorm2, eps);
 
     const mxy = this.mobiusAdd(x.map(v => -v), y);
-    const mxyNorm = Math.sqrt(mxy.reduce((s, v) => s + v * v, 0)) + hyperbolicConfig.poincare.epsilon;
+    const mxyNorm = Math.sqrt(mxy.reduce((s, v) => s + v * v, 0)) + eps;
 
-    const t = Math.atanh(this.sqrtC * mxyNorm);
+    // Guard atanh domain: argument must be in (-1, 1)
+    const atanhArg = Math.min(this.sqrtC * mxyNorm, 1 - eps);
+    const t = Math.atanh(atanhArg);
 
     return mxy.map(v => 2 * t * v / (lambda * this.sqrtC * mxyNorm));
   }
@@ -207,24 +219,37 @@ class HyperbolicEmbedding {
     }
   }
 
-  // Simplified gradient update
+  // Riemannian gradient descent update
   updateEmbedding(parent, child, lr) {
     const pEmb = this.embeddings.get(parent);
     const cEmb = this.embeddings.get(child);
+    const eps = hyperbolicConfig.poincare.epsilon;
 
-    // Move parent toward origin
-    const pNorm = Math.sqrt(pEmb.reduce((s, v) => s + v * v, 0)) + 0.001;
-    const newPEmb = pEmb.map(v => v * (1 - lr * 0.5 / pNorm));
+    // Compute Euclidean gradients
+    const pNorm2 = pEmb.reduce((s, v) => s + v * v, 0);
+    const cNorm2 = cEmb.reduce((s, v) => s + v * v, 0);
 
-    // Move child away from origin but toward parent
+    // Gradient for parent: move toward origin (hierarchy constraint)
+    const pGradEuclid = pEmb.map(v => v);  // gradient of ||x||^2 is 2x
+
+    // Gradient for child: move toward parent but stay farther from origin
     const direction = cEmb.map((v, i) => pEmb[i] - v);
-    const newCEmb = cEmb.map((v, i) => v + lr * direction[i] * 0.1);
+    const dirNorm = Math.sqrt(direction.reduce((s, d) => s + d * d, 0)) + eps;
+    const normalizedDir = direction.map(d => d / dirNorm);
 
-    // Also push child slightly outward
-    const cNorm = Math.sqrt(cEmb.reduce((s, v) => s + v * v, 0)) + 0.001;
-    for (let i = 0; i < newCEmb.length; i++) {
-      newCEmb[i] += lr * 0.1 * cEmb[i] / cNorm;
-    }
+    // Child gradient: toward parent + outward from origin
+    const cGradEuclid = cEmb.map((v, i) => -normalizedDir[i] * 0.3 - v * 0.1);
+
+    // Convert to Riemannian gradients using metric tensor
+    const pRiemannGrad = this.poincare.riemannianGrad(pEmb, pGradEuclid);
+    const cRiemannGrad = this.poincare.riemannianGrad(cEmb, cGradEuclid);
+
+    // Update using exponential map (proper Riemannian SGD)
+    const pTangent = pRiemannGrad.map(g => -lr * g);
+    const cTangent = cRiemannGrad.map(g => -lr * g);
+
+    const newPEmb = this.poincare.expMap(pEmb, pTangent);
+    const newCEmb = this.poincare.expMap(cEmb, cTangent);
 
     this.embeddings.set(parent, this.poincare.project(newPEmb));
     this.embeddings.set(child, this.poincare.project(newCEmb));

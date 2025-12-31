@@ -140,10 +140,22 @@ class DQN {
 
   forward(state) {
     let x = state;
+    // Store activations for backpropagation
+    this.activations = [state];
     for (const layer of this.layers) {
       x = layer.forward(x);
+      this.activations.push(x);
     }
     return x;
+  }
+
+  // Get the activation before the output layer (for gradient computation)
+  getPreOutputActivation() {
+    if (!this.activations || this.activations.length < 2) {
+      return null;
+    }
+    // Return activation just before output layer
+    return this.activations[this.activations.length - 2];
   }
 
   copyFrom(other) {
@@ -360,6 +372,10 @@ class TradingEnvironment {
     const newValue = this.getPortfolioValue();
     const stepReturn = (newValue - prevValue) / prevValue;
     this.returns.push(stepReturn);
+    // Bound returns array to prevent memory leak
+    if (this.returns.length > 1000) {
+      this.returns = this.returns.slice(-500);
+    }
 
     // Shape reward
     let reward = stepReturn * 100;  // Scale returns
@@ -536,15 +552,60 @@ class DQNAgent {
   updateQNetwork(state, action, tdError) {
     const lr = this.config.learning.learningRate;
 
-    // Simplified update for output layer
-    const outputLayer = this.qNetwork.layers[this.qNetwork.layers.length - 1];
-    const hiddenOutput = state;  // Simplified - should be actual hidden output
+    // Get the actual hidden layer output (activation before output layer)
+    const hiddenOutput = this.qNetwork.getPreOutputActivation();
 
-    // This is a placeholder - real implementation needs full backprop
+    if (!hiddenOutput) {
+      // Fallback: run forward pass to get activations
+      this.qNetwork.forward(state);
+      return this.updateQNetwork(state, action, tdError);
+    }
+
+    // Update output layer using actual hidden activations
+    const outputLayer = this.qNetwork.layers[this.qNetwork.layers.length - 1];
+
+    // Gradient for output layer: dL/dW = tdError * hiddenOutput
     for (let i = 0; i < outputLayer.inputDim; i++) {
-      outputLayer.weights[i][action] += lr * tdError * (hiddenOutput[i] || 0.1);
+      outputLayer.weights[i][action] += lr * tdError * hiddenOutput[i];
     }
     outputLayer.bias[action] += lr * tdError;
+
+    // Simplified backprop through hidden layers (gradient clipping for stability)
+    const maxGrad = 1.0;
+    let delta = tdError * outputLayer.weights.map(row => row[action]);
+
+    for (let l = this.qNetwork.layers.length - 2; l >= 0; l--) {
+      const layer = this.qNetwork.layers[l];
+      const prevActivation = this.qNetwork.activations[l];
+      const currentActivation = this.qNetwork.activations[l + 1];
+
+      // ReLU derivative: 1 if activation > 0, else 0
+      const reluGrad = currentActivation.map(a => a > 0 ? 1 : 0);
+
+      // Apply ReLU gradient
+      delta = delta.map((d, i) => d * (reluGrad[i] || 0));
+
+      // Clip gradients for stability
+      delta = delta.map(d => Math.max(-maxGrad, Math.min(maxGrad, d)));
+
+      // Update weights for this layer
+      for (let i = 0; i < layer.inputDim; i++) {
+        for (let j = 0; j < layer.outputDim; j++) {
+          layer.weights[i][j] += lr * 0.1 * delta[j] * (prevActivation[i] || 0);
+        }
+      }
+
+      // Propagate delta to previous layer
+      if (l > 0) {
+        const newDelta = new Array(layer.inputDim).fill(0);
+        for (let i = 0; i < layer.inputDim; i++) {
+          for (let j = 0; j < layer.outputDim; j++) {
+            newDelta[i] += delta[j] * layer.weights[i][j];
+          }
+        }
+        delta = newDelta;
+      }
+    }
   }
 
   updateTargetNetwork() {

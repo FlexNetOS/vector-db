@@ -110,34 +110,44 @@ class QuantumState {
   }
 
   // Apply mixer Hamiltonian (exploration)
+  // Implements exp(-i * beta * sum_j X_j) where X_j is Pauli-X on qubit j
   applyMixerPhase(beta) {
-    // Simplified: Apply Rx(2*beta) rotations (approximation)
     const cos = Math.cos(beta);
     const sin = Math.sin(beta);
 
-    const newAmps = new Array(this.dim).fill(null).map(() => new Complex(0));
+    // Apply Rx(2*beta) to each qubit individually
+    // Rx(theta) = cos(theta/2)*I - i*sin(theta/2)*X
+    for (let q = 0; q < this.numQubits; q++) {
+      const newAmps = new Array(this.dim).fill(null).map(() => new Complex(0));
 
-    for (let i = 0; i < this.dim; i++) {
-      // Mix with neighbors (Hamming distance 1)
-      for (let q = 0; q < this.numQubits; q++) {
-        const neighbor = i ^ (1 << q);
+      for (let i = 0; i < this.dim; i++) {
+        const neighbor = i ^ (1 << q);  // Flip qubit q
 
+        // |i⟩ -> cos(beta)|i⟩ - i*sin(beta)|neighbor⟩
         newAmps[i] = newAmps[i].add(this.amplitudes[i].scale(cos));
         newAmps[i] = newAmps[i].add(
           new Complex(0, -sin).multiply(this.amplitudes[neighbor])
         );
       }
+
+      // Update amplitudes after each qubit rotation
+      for (let i = 0; i < this.dim; i++) {
+        this.amplitudes[i] = newAmps[i];
+      }
     }
 
-    // Normalize
+    // Normalize to handle numerical errors
     let norm = 0;
-    for (const amp of newAmps) {
+    for (const amp of this.amplitudes) {
       norm += amp.magnitude() ** 2;
     }
     norm = Math.sqrt(norm);
 
-    for (let i = 0; i < this.dim; i++) {
-      this.amplitudes[i] = newAmps[i].scale(1 / norm);
+    // Guard against division by zero
+    if (norm > 1e-10) {
+      for (let i = 0; i < this.dim; i++) {
+        this.amplitudes[i] = this.amplitudes[i].scale(1 / norm);
+      }
     }
   }
 
@@ -145,8 +155,12 @@ class QuantumState {
   measure() {
     const probabilities = this.amplitudes.map(a => a.magnitude() ** 2);
 
-    // Normalize probabilities
+    // Normalize probabilities with guard against zero total
     const total = probabilities.reduce((a, b) => a + b, 0);
+    if (total < 1e-10) {
+      // Fallback to uniform distribution
+      return Math.floor(Math.random() * this.dim);
+    }
     const normalized = probabilities.map(p => p / total);
 
     // Sample
