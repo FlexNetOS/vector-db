@@ -2836,26 +2836,87 @@ hooksCmd.command('init')
   // StatusLine configuration (unless --minimal or --no-statusline)
   if (!opts.minimal && opts.statusline !== false) {
     if (!settings.statusLine) {
-      // Create a simple statusline script
-      const statuslineScript = path.join(settingsDir, 'statusline.sh');
-      const statuslineContent = `#!/bin/bash
-# RuVector Status Line - shows intelligence stats
-INTEL_FILE=".ruvector/intelligence.json"
-if [ -f "$INTEL_FILE" ]; then
-  PATTERNS=$(jq -r '.patterns | length // 0' "$INTEL_FILE" 2>/dev/null || echo "0")
-  MEMORIES=$(jq -r '.memories | length // 0' "$INTEL_FILE" 2>/dev/null || echo "0")
-  echo "🧠 $PATTERNS patterns | 💾 $MEMORIES memories"
+      const isWindows = process.platform === 'win32';
+
+      if (isWindows) {
+        // Windows: PowerShell statusline
+        const statuslineScript = path.join(settingsDir, 'statusline-command.ps1');
+        const statuslineContent = `# RuVector Intelligence Statusline for Windows PowerShell
+# Compatible with PowerShell 5.1+ and PowerShell Core
+$ErrorActionPreference = "SilentlyContinue"
+$e = [char]27
+$inputData = [Console]::In.ReadToEnd()
+$data = $inputData | ConvertFrom-Json
+$Model = if ($data.model.display_name) { $data.model.display_name } else { "Claude" }
+$CWD = if ($data.workspace.current_dir) { $data.workspace.current_dir } else { $data.cwd }
+$Dir = Split-Path -Leaf $CWD
+$Branch = $null
+try { Push-Location $CWD -ErrorAction Stop; $Branch = git branch --show-current 2>$null; Pop-Location } catch {}
+Write-Host "$e[1m$Model$e[0m in $e[36m$Dir$e[0m$(if($Branch){" on $e[33m$Branch$e[0m"})"
+$IntelFile = Join-Path $CWD ".ruvector\intelligence.json"
+if (Test-Path $IntelFile) {
+  $Intel = Get-Content $IntelFile -Raw | ConvertFrom-Json
+  $Mem = if ($Intel.memories) { $Intel.memories.Count } else { 0 }
+  $Traj = if ($Intel.trajectories) { $Intel.trajectories.Count } else { 0 }
+  $Sess = if ($Intel.stats -and $Intel.stats.session_count) { $Intel.stats.session_count } else { 0 }
+  $Pat = if ($Intel.patterns) { ($Intel.patterns | Get-Member -MemberType NoteProperty).Count } else { 0 }
+  $Line2 = "$e[35m RuVector$e[0m"
+  if ($Pat -gt 0) { $Line2 += " $e[32m$Pat patterns$e[0m" } else { $Line2 += " $e[2mlearning$e[0m" }
+  if ($Mem -gt 0) { $Line2 += " $e[34m$Mem mem$e[0m" }
+  if ($Traj -gt 0) { $Line2 += " $e[33m$Traj traj$e[0m" }
+  if ($Sess -gt 0) { $Line2 += " $e[2m#$Sess$e[0m" }
+  Write-Host $Line2
+} else {
+  Write-Host "$e[2m RuVector: run 'npx ruvector hooks session-start'$e[0m"
+}
+`;
+        fs.writeFileSync(statuslineScript, statuslineContent);
+        settings.statusLine = {
+          type: 'command',
+          command: 'powershell -NoProfile -ExecutionPolicy Bypass -File .claude/statusline-command.ps1'
+        };
+      } else {
+        // Unix (macOS, Linux): Bash statusline
+        const statuslineScript = path.join(settingsDir, 'statusline-command.sh');
+        const statuslineContent = `#!/bin/bash
+# RuVector Intelligence Statusline - Multi-line display
+INPUT=\$(cat)
+MODEL=\$(echo "\$INPUT" | jq -r '.model.display_name // "Claude"')
+CWD=\$(echo "\$INPUT" | jq -r '.workspace.current_dir // .cwd')
+DIR=\$(basename "\$CWD")
+BRANCH=\$(cd "\$CWD" 2>/dev/null && git branch --show-current 2>/dev/null)
+RESET="\\033[0m"; BOLD="\\033[1m"; CYAN="\\033[36m"; YELLOW="\\033[33m"; GREEN="\\033[32m"; MAGENTA="\\033[35m"; BLUE="\\033[34m"; DIM="\\033[2m"; RED="\\033[31m"
+printf "\$BOLD\$MODEL\$RESET in \$CYAN\$DIR\$RESET"
+[ -n "\$BRANCH" ] && printf " on \$YELLOW⎇ \$BRANCH\$RESET"
+echo
+INTEL_FILE=""
+for P in "\$CWD/.ruvector/intelligence.json" "\$CWD/npm/packages/ruvector/.ruvector/intelligence.json" "\$HOME/.ruvector/intelligence.json"; do
+  [ -f "\$P" ] && INTEL_FILE="\$P" && break
+done
+if [ -n "\$INTEL_FILE" ]; then
+  INTEL=\$(cat "\$INTEL_FILE" 2>/dev/null)
+  MEMORY_COUNT=\$(echo "\$INTEL" | jq -r '.memories | length // 0' 2>/dev/null)
+  TRAJ_COUNT=\$(echo "\$INTEL" | jq -r '.trajectories | length // 0' 2>/dev/null)
+  SESSION_COUNT=\$(echo "\$INTEL" | jq -r '.stats.session_count // 0' 2>/dev/null)
+  PATTERN_COUNT=\$(echo "\$INTEL" | jq -r '.patterns | length // 0' 2>/dev/null)
+  printf "\$MAGENTA🧠 RuVector\$RESET"
+  [ "\$PATTERN_COUNT" != "null" ] && [ "\$PATTERN_COUNT" -gt 0 ] 2>/dev/null && printf " \$GREEN◆\$RESET \$PATTERN_COUNT patterns" || printf " \$DIM◇ learning\$RESET"
+  [ "\$MEMORY_COUNT" != "null" ] && [ "\$MEMORY_COUNT" -gt 0 ] 2>/dev/null && printf " \$BLUE⬡\$RESET \$MEMORY_COUNT mem"
+  [ "\$TRAJ_COUNT" != "null" ] && [ "\$TRAJ_COUNT" -gt 0 ] 2>/dev/null && printf " \$YELLOW↝\$RESET\$TRAJ_COUNT"
+  [ "\$SESSION_COUNT" != "null" ] && [ "\$SESSION_COUNT" -gt 0 ] 2>/dev/null && printf " \$DIM#\$SESSION_COUNT\$RESET"
+  echo
 else
-  echo "🧠 RuVector"
+  printf "\$DIM🧠 RuVector: run 'npx ruvector hooks session-start' to initialize\$RESET\\n"
 fi
 `;
-      fs.writeFileSync(statuslineScript, statuslineContent);
-      fs.chmodSync(statuslineScript, '755');
-      settings.statusLine = {
-        type: 'command',
-        command: '.claude/statusline.sh'
-      };
-      console.log(chalk.blue('  ✓ StatusLine configured'));
+        fs.writeFileSync(statuslineScript, statuslineContent);
+        fs.chmodSync(statuslineScript, '755');
+        settings.statusLine = {
+          type: 'command',
+          command: '.claude/statusline-command.sh'
+        };
+      }
+      console.log(chalk.blue(`  ✓ StatusLine configured (${isWindows ? 'PowerShell' : 'Bash'})`));
     }
   }
 

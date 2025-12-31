@@ -1212,22 +1212,32 @@ pub fn init_hooks(force: bool, postgres: bool, _config: &Config) -> Result<()> {
 
     fs::create_dir_all(&claude_dir)?;
 
-    // Create statusline script
-    let statusline_path = claude_dir.join("statusline-command.sh");
-    let statusline_script = include_str!("../../scripts/statusline-command.sh");
-    fs::write(&statusline_path, statusline_script)?;
+    // Create platform-specific statusline script
+    let (statusline_path, statusline_config) = if cfg!(windows) {
+        // Windows: Use PowerShell script
+        let path = claude_dir.join("statusline-command.ps1");
+        let script = include_str!("../../scripts/statusline-command.ps1");
+        fs::write(&path, script)?;
+        (Some(path), Some(".claude/statusline-command.ps1"))
+    } else {
+        // Unix (macOS, Linux): Use bash script
+        let path = claude_dir.join("statusline-command.sh");
+        let script = include_str!("../../scripts/statusline-command.sh");
+        fs::write(&path, script)?;
 
-    // Make executable on Unix
-    #[cfg(unix)]
-    {
-        use std::os::unix::fs::PermissionsExt;
-        let mut perms = fs::metadata(&statusline_path)?.permissions();
-        perms.set_mode(0o755);
-        fs::set_permissions(&statusline_path, perms)?;
-    }
+        // Make executable
+        #[cfg(unix)]
+        {
+            use std::os::unix::fs::PermissionsExt;
+            let mut perms = fs::metadata(&path)?.permissions();
+            perms.set_mode(0o755);
+            fs::set_permissions(&path, perms)?;
+        }
+        (Some(path), Some(".claude/statusline-command.sh"))
+    };
 
     let hooks_config = serde_json::json!({
-        "statusline": ".claude/statusline-command.sh",
+        "statusline": statusline_config,
         "hooks": {
             // Pre-tool hooks: provide guidance before actions
             "PreToolUse": [{
@@ -1352,7 +1362,9 @@ pub fn init_hooks(force: bool, postgres: bool, _config: &Config) -> Result<()> {
 
     println!("{}", "✅ Hooks initialized!".green().bold());
     println!("   Created: {}", settings_path.display());
-    println!("   Created: {}", statusline_path.display());
+    if let Some(ref path) = statusline_path {
+        println!("   Created: {}", path.display());
+    }
     println!("\n{}", "Next steps:".bold());
     println!("   1. Restart Claude Code to activate hooks");
     println!("   2. Run 'npx ruvector hooks stats' to verify");
