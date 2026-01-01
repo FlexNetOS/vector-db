@@ -211,6 +211,57 @@ if [ -n "$INTEL_FILE" ]; then
 
   echo
 
+  # ═══════════════════════════════════════════════════════════════════════════════
+  # LINE 4: Four Attention Mechanisms
+  # ═══════════════════════════════════════════════════════════════════════════════
+  # Show attention status based on what's been learned
+
+  # Get top Q-value pattern for confidence indicator
+  TOP_Q=$(echo "$INTEL" | jq -r '
+    .patterns // {} | to_entries |
+    sort_by(-.value.q_value) | .[0].value.q_value // 0
+  ' 2>/dev/null | awk '{printf "%.0f", $1 * 100}')
+
+  # Calculate attention indicators
+  if [ "$TOP_Q" -ge 80 ]; then
+    NEURAL_STATUS="${GREEN}●${RESET}"
+  elif [ "$TOP_Q" -ge 50 ]; then
+    NEURAL_STATUS="${YELLOW}◐${RESET}"
+  else
+    NEURAL_STATUS="${DIM}○${RESET}"
+  fi
+
+  if [ "$TRAJ_COUNT" -ge 100 ]; then
+    DAG_STATUS="${GREEN}●${RESET}"
+  elif [ "$TRAJ_COUNT" -ge 10 ]; then
+    DAG_STATUS="${YELLOW}◐${RESET}"
+  else
+    DAG_STATUS="${DIM}○${RESET}"
+  fi
+
+  if [ "$AGENT_COUNT" -gt 0 ]; then
+    GRAPH_STATUS="${GREEN}●${RESET}"
+  elif [ "$FILE_SEQ_COUNT" -gt 0 ]; then
+    GRAPH_STATUS="${YELLOW}◐${RESET}"
+  else
+    GRAPH_STATUS="${DIM}○${RESET}"
+  fi
+
+  if [ "$SESSION_COUNT" -ge 5 ]; then
+    SSM_STATUS="${GREEN}●${RESET}"
+  elif [ "$SESSION_COUNT" -ge 1 ]; then
+    SSM_STATUS="${YELLOW}◐${RESET}"
+  else
+    SSM_STATUS="${DIM}○${RESET}"
+  fi
+
+  printf "${DIM}⚡ Attention:${RESET}"
+  printf " ${NEURAL_STATUS}${CYAN}Neural${RESET}"
+  printf " ${DAG_STATUS}${YELLOW}DAG${RESET}"
+  printf " ${GRAPH_STATUS}${MAGENTA}Graph${RESET}"
+  printf " ${SSM_STATUS}${BLUE}SSM${RESET}"
+  echo
+
 else
   # No intelligence file - show initialization hint
   printf "${DIM}🧠 RuVector: run 'npx ruvector hooks session-start' to initialize${RESET}\n"

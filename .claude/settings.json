@@ -10,7 +10,11 @@
     "RUVECTOR_WASM_SIZE_LIMIT_KB": "3072",
     "RUVECTOR_INTELLIGENCE_ENABLED": "true",
     "RUVECTOR_LEARNING_RATE": "0.1",
-    "INTELLIGENCE_MODE": "treatment"
+    "INTELLIGENCE_MODE": "treatment",
+    "RUVECTOR_TELEMETRY_ENDPOINT": "",
+    "RUVECTOR_RETENTION_DAYS": "30",
+    "RUVECTOR_PERMISSION_MODE": "acceptEdits",
+    "RUVECTOR_SDK_INTEGRATION": "true"
   },
   "permissions": {
     "allow": [
@@ -70,7 +74,7 @@
           {
             "type": "command",
             "timeout": 1000,
-            "command": "/usr/local/bin/ruvector-cli hooks remember \"Reading: $TOOL_INPUT_file_path\" -t file_access --silent"
+            "command": "/usr/local/bin/ruvector-cli hooks remember \"Reading: $TOOL_INPUT_file_path\" -t file_access 2>/dev/null || true"
           }
         ]
       },
@@ -80,7 +84,7 @@
           {
             "type": "command",
             "timeout": 1000,
-            "command": "/usr/local/bin/ruvector-cli hooks remember \"Search: $TOOL_INPUT_pattern\" -t search_pattern --silent"
+            "command": "/usr/local/bin/ruvector-cli hooks remember \"Search: $TOOL_INPUT_pattern\" -t search_pattern 2>/dev/null || true"
           }
         ]
       },
@@ -90,7 +94,7 @@
           {
             "type": "command",
             "timeout": 1000,
-            "command": "/usr/local/bin/ruvector-cli hooks remember \"Agent: $TOOL_INPUT_subagent_type\" -t agent_spawn --silent"
+            "command": "/usr/local/bin/ruvector-cli hooks remember \"Agent: $TOOL_INPUT_subagent_type\" -t agent_spawn 2>/dev/null || true"
           }
         ]
       }
