@@ -29,25 +29,61 @@ Most vector databases are static—they store embeddings and search them. That's
 **One package. Everything included:** vector search, graph queries, GNN learning, distributed clustering, local LLMs, 39 attention mechanisms, and WASM support.
 
 <details>
-<summary>📋 See Full Capabilities (14 features)</summary>
+<summary>📋 See Full Capabilities (30+ features)</summary>
 
+**Core Vector Database**
 | # | Capability | What It Does |
 |---|------------|--------------|
-| 1 | **Store vectors** | Like any vector DB (embeddings from OpenAI, Cohere, local ONNX) |
+| 1 | **Store vectors** | Embeddings from OpenAI, Cohere, local ONNX with HNSW indexing |
 | 2 | **Query with Cypher** | Graph queries like Neo4j (`MATCH (a)-[:SIMILAR]->(b)`) |
 | 3 | **The index learns** | GNN layers make search results improve over time |
-| 4 | **Scale horizontally** | Raft consensus, multi-master replication, auto-sharding |
-| 5 | **Route AI requests** | Semantic routing + FastGRNN for LLM optimization |
-| 6 | **Run LLMs locally** | ruvllm with GGUF, Metal/CUDA, save $250+/month on API costs |
-| 6a | **RuvLTRA models** | Pre-trained GGUF models for routing & embeddings (<10ms, $0) → [HuggingFace](https://huggingface.co/ruv/ruvltra) |
-| 7 | **Self-learning hooks** | Q-learning, neural patterns, HNSW memory, swarm coordination |
-| 8 | **Compress automatically** | 2-32x memory reduction with adaptive tiered compression |
-| 9 | **39 attention mechanisms** | Flash, linear, graph, hyperbolic, mincut-gated (50% compute) |
-| 10 | **Drop into Postgres** | pgvector-compatible extension with SIMD acceleration |
-| 11 | **Run anywhere** | Node.js, browser (WASM), edge (rvLite), HTTP server, Rust |
-| 12 | **Continuous learning** | SONA with LoRA, EWC++, ReasoningBank for runtime adaptation |
-| 13 | **MCP integration** | Model Context Protocol server for AI assistant tools |
-| 14 | **Quantum coherence** | ruQu for quantum error correction via dynamic min-cut |
+| 4 | **Hyperbolic HNSW** | Hierarchical data in hyperbolic space for better tree structures |
+| 5 | **Compress automatically** | 2-32x memory reduction with adaptive tiered compression |
+
+**Distributed Systems**
+| # | Capability | What It Does |
+|---|------------|--------------|
+| 6 | **Raft consensus** | Leader election, log replication, fault-tolerant coordination |
+| 7 | **Multi-master replication** | Vector clocks, conflict resolution, geo-distributed sync |
+| 8 | **Burst scaling** | 10-50x capacity scaling for traffic spikes |
+| 9 | **Auto-sharding** | Automatic data partitioning across nodes |
+
+**AI & Machine Learning**
+| # | Capability | What It Does |
+|---|------------|--------------|
+| 10 | **Run LLMs locally** | ruvllm with GGUF, Metal/CUDA/ANE acceleration |
+| 11 | **RuvLTRA models** | Pre-trained GGUF for routing & embeddings (<10ms) → [HuggingFace](https://huggingface.co/ruv/ruvltra) |
+| 12 | **SONA learning** | Self-Optimizing Neural Architecture with LoRA, EWC++ |
+| 13 | **39 attention mechanisms** | Flash, linear, graph, hyperbolic, mincut-gated (50% compute) |
+| 14 | **Spiking neural networks** | Event-driven neuromorphic computing |
+| 15 | **Mincut-gated transformer** | Dynamic attention via graph min-cut optimization |
+| 16 | **Route AI requests** | Semantic routing + FastGRNN for LLM optimization |
+
+**Specialized Processing**
+| # | Capability | What It Does |
+|---|------------|--------------|
+| 17 | **SciPix OCR** | LaTeX/MathML extraction from scientific documents |
+| 18 | **DAG workflows** | Self-learning directed acyclic graph execution |
+| 19 | **Cognitum Gate** | Cognitive AI gateway with TileZero acceleration |
+| 20 | **FPGA transformer** | Hardware-accelerated transformer inference |
+| 21 | **Quantum coherence** | ruQu for quantum error correction via dynamic min-cut |
+
+**Platform & Integration**
+| # | Capability | What It Does |
+|---|------------|--------------|
+| 22 | **Run anywhere** | Node.js, browser (WASM), edge (rvLite), HTTP server, Rust |
+| 23 | **Drop into Postgres** | pgvector-compatible extension with SIMD acceleration |
+| 24 | **MCP integration** | Model Context Protocol server for AI assistant tools |
+| 25 | **Cloud deployment** | One-click deploy to Cloud Run, Kubernetes |
+
+**Self-Learning & Adaptation**
+| # | Capability | What It Does |
+|---|------------|--------------|
+| 26 | **Self-learning hooks** | Q-learning, neural patterns, HNSW memory |
+| 27 | **ReasoningBank** | Trajectory learning with verdict judgment |
+| 28 | **Economy system** | Tokenomics, CRDT-based distributed state |
+| 29 | **Nervous system** | Event-driven reactive architecture |
+| 30 | **Agentic synthesis** | Multi-agent workflow composition |
 
 </details>
 
