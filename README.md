@@ -860,9 +860,31 @@ engine.endTrajectory(trajId, 0.95);
 
 [![crates.io](https://img.shields.io/crates/v/ruvector-postgres.svg)](https://crates.io/crates/ruvector-postgres)
 [![npm](https://img.shields.io/npm/v/@ruvector/postgres-cli.svg)](https://www.npmjs.com/package/@ruvector/postgres-cli)
-[![Docker](https://img.shields.io/docker/v/ruvector/postgres?label=docker)](https://hub.docker.com/r/ruvector/postgres)
+[![Docker Hub](https://img.shields.io/docker/pulls/ruvnet/ruvector-postgres?label=docker%20pulls)](https://hub.docker.com/r/ruvnet/ruvector-postgres)
+[![Docker](https://img.shields.io/docker/v/ruvnet/ruvector-postgres?label=docker)](https://hub.docker.com/r/ruvnet/ruvector-postgres)
 
-**Drop-in pgvector replacement** with 230+ SQL functions, SIMD acceleration, and AI capabilities.
+**The most advanced PostgreSQL vector extension** — a drop-in pgvector replacement with 230+ SQL functions, hardware-accelerated SIMD operations, and built-in AI capabilities. Transform your existing PostgreSQL database into a full-featured vector search engine with GNN layers, attention mechanisms, and self-learning capabilities.
+
+```bash
+# Quick Install from Docker Hub
+docker run -d --name ruvector \
+  -e POSTGRES_PASSWORD=secret \
+  -p 5432:5432 \
+  ruvnet/ruvector-postgres:latest
+
+# Connect and use
+psql -h localhost -U ruvector -d ruvector_test
+
+# Create extension
+CREATE EXTENSION ruvector;
+```
+
+**Why RuVector Postgres?**
+- **Zero Migration** — Works with existing pgvector code, just swap the extension
+- **10x More Functions** — 230+ SQL functions vs pgvector's ~20
+- **2x Faster** — AVX-512/AVX2/NEON SIMD acceleration
+- **AI-Native** — GNN layers, 39 attention mechanisms, local embeddings
+- **Self-Learning** — Improves search quality over time with ReasoningBank
 
 | Feature | pgvector | RuVector Postgres |
 |---------|----------|-------------------|
@@ -874,35 +896,44 @@ engine.endTrajectory(trajId, 0.95);
 | Sparse Vectors | ❌ | BM25, TF-IDF, SPLADE |
 | Self-Learning | ❌ | ReasoningBank, trajectory learning |
 | Local Embeddings | ❌ | 6 fastembed models built-in |
+| Multi-Tenancy | ❌ | Built-in namespace isolation |
+| Quantization | ❌ | Scalar, Product, Binary (4-32x compression) |
 
 <details>
-<summary><strong>🐳 Docker (Recommended)</strong></summary>
+<summary><strong>🐳 Docker Hub (Recommended)</strong></summary>
+
+**Pull from Docker Hub:** [hub.docker.com/r/ruvnet/ruvector-postgres](https://hub.docker.com/r/ruvnet/ruvector-postgres)
 
 ```bash
 # Quick start
-docker run -d \
-  --name ruvector-pg \
+docker run -d --name ruvector \
   -e POSTGRES_PASSWORD=secret \
   -p 5432:5432 \
-  ruvector/postgres:latest
+  ruvnet/ruvector-postgres:latest
 
 # Connect
-psql -h localhost -U postgres -d postgres
+psql -h localhost -U ruvector -d ruvector_test
 
-# Verify extension
+# Create extension
 CREATE EXTENSION ruvector;
-SELECT ruvector_version();  -- Returns '2.0.0'
 ```
+
+**Environment Variables:**
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `POSTGRES_USER` | `ruvector` | Database user |
+| `POSTGRES_PASSWORD` | `ruvector` | Database password |
+| `POSTGRES_DB` | `ruvector_test` | Default database |
 
 **Docker Compose:**
 ```yaml
 version: '3.8'
 services:
   ruvector-postgres:
-    image: ruvector/postgres:latest
+    image: ruvnet/ruvector-postgres:latest
     environment:
       POSTGRES_PASSWORD: secret
-      POSTGRES_DB: vectors
+      POSTGRES_DB: ruvector_test
     ports:
       - "5432:5432"
     volumes:
@@ -913,9 +944,8 @@ volumes:
 ```
 
 **Available Tags:**
-- `ruvector/postgres:latest` - PostgreSQL 17 + RuVector 2.0
-- `ruvector/postgres:pg16` - PostgreSQL 16 + RuVector 2.0
-- `ruvector/postgres:pg15` - PostgreSQL 15 + RuVector 2.0
+- `ruvnet/ruvector-postgres:latest` - PostgreSQL + RuVector 2.0
+- `ruvnet/ruvector-postgres:2.0.0` - Specific version
 
 </details>
 
