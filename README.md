@@ -853,29 +853,233 @@ engine.addTrajectoryStep(trajId, activations, attention, 0.9);
 engine.endTrajectory(trajId, 0.95);
 ```
 
-### PostgreSQL Extension
+### 🐘 PostgreSQL Extension
 
-| Crate | Description | crates.io | npm |
-|-------|-------------|-----------|-----|
-| [ruvector-postgres](./crates/ruvector-postgres) | pgvector-compatible PostgreSQL extension with SIMD optimization | [![crates.io](https://img.shields.io/crates/v/ruvector-postgres.svg)](https://crates.io/crates/ruvector-postgres) | [![npm](https://img.shields.io/npm/v/@ruvector/postgres-cli.svg)](https://www.npmjs.com/package/@ruvector/postgres-cli) |
+[![crates.io](https://img.shields.io/crates/v/ruvector-postgres.svg)](https://crates.io/crates/ruvector-postgres)
+[![npm](https://img.shields.io/npm/v/@ruvector/postgres-cli.svg)](https://www.npmjs.com/package/@ruvector/postgres-cli)
+[![Docker](https://img.shields.io/docker/v/ruvector/postgres?label=docker)](https://hub.docker.com/r/ruvector/postgres)
 
-**v0.2.0** — Drop-in replacement for pgvector with **77+ SQL functions**, full **AVX-512/AVX2/NEON SIMD** acceleration (~2x faster than AVX2), HNSW and IVFFlat indexes, 39 attention mechanisms, GNN layers, hyperbolic embeddings (Poincaré + Lorentz), sparse vectors/BM25, **W3C SPARQL 1.1** with 50+ RDF functions, **local embeddings** (6 fastembed models), and self-learning capabilities.
+**Drop-in pgvector replacement** with 230+ SQL functions, SIMD acceleration, and AI capabilities.
+
+| Feature | pgvector | RuVector Postgres |
+|---------|----------|-------------------|
+| SQL Functions | ~20 | **230+** |
+| SIMD Acceleration | Basic | AVX-512/AVX2/NEON (~2x faster) |
+| Index Types | HNSW, IVFFlat | HNSW, IVFFlat + Hyperbolic |
+| Attention Mechanisms | ❌ | 39 types (Flash, Linear, Graph) |
+| GNN Layers | ❌ | GCN, GraphSAGE, GAT, GIN |
+| Sparse Vectors | ❌ | BM25, TF-IDF, SPLADE |
+| Self-Learning | ❌ | ReasoningBank, trajectory learning |
+| Local Embeddings | ❌ | 6 fastembed models built-in |
+
+<details>
+<summary><strong>🐳 Docker (Recommended)</strong></summary>
 
 ```bash
-# Docker (recommended)
-docker run -d -e POSTGRES_PASSWORD=secret -p 5432:5432 ruvector/postgres:latest
+# Quick start
+docker run -d \
+  --name ruvector-pg \
+  -e POSTGRES_PASSWORD=secret \
+  -p 5432:5432 \
+  ruvector/postgres:latest
 
-# From source
-cargo install cargo-pgrx --version "0.12.9" --locked
-cargo pgrx install --release
+# Connect
+psql -h localhost -U postgres -d postgres
 
-# CLI tool for management
-npm install -g @ruvector/postgres-cli
-ruvector-pg install
-ruvector-pg vector create table --dim 1536 --index hnsw
+# Verify extension
+CREATE EXTENSION ruvector;
+SELECT ruvector_version();  -- Returns '2.0.0'
 ```
 
-See [ruvector-postgres README](./crates/ruvector-postgres/README.md) for full SQL API reference and advanced features.
+**Docker Compose:**
+```yaml
+version: '3.8'
+services:
+  ruvector-postgres:
+    image: ruvector/postgres:latest
+    environment:
+      POSTGRES_PASSWORD: secret
+      POSTGRES_DB: vectors
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+volumes:
+  pgdata:
+```
+
+**Available Tags:**
+- `ruvector/postgres:latest` - PostgreSQL 17 + RuVector 2.0
+- `ruvector/postgres:pg16` - PostgreSQL 16 + RuVector 2.0
+- `ruvector/postgres:pg15` - PostgreSQL 15 + RuVector 2.0
+
+</details>
+
+<details>
+<summary><strong>📦 npm CLI</strong></summary>
+
+```bash
+# Install globally
+npm install -g @ruvector/postgres-cli
+
+# Or use npx
+npx @ruvector/postgres-cli --help
+
+# Commands available as 'ruvector-pg' or 'rvpg'
+ruvector-pg --version
+rvpg --help
+```
+
+**CLI Commands:**
+```bash
+# Install extension to existing PostgreSQL
+ruvector-pg install
+
+# Create vector table with HNSW index
+ruvector-pg vector create table embeddings --dim 1536 --index hnsw
+
+# Import vectors from file
+ruvector-pg vector import embeddings data.json
+
+# Search vectors
+ruvector-pg vector search embeddings --query "0.1,0.2,..." --limit 10
+
+# Benchmark performance
+ruvector-pg bench --iterations 1000
+
+# Check extension status
+ruvector-pg status
+```
+
+**Programmatic Usage:**
+```typescript
+import { RuvectorPG } from '@ruvector/postgres-cli';
+
+const client = new RuvectorPG({
+  host: 'localhost',
+  port: 5432,
+  database: 'vectors',
+  user: 'postgres',
+  password: 'secret'
+});
+
+// Create table with HNSW index
+await client.createTable('embeddings', {
+  dimensions: 1536,
+  indexType: 'hnsw',
+  distanceMetric: 'cosine'
+});
+
+// Insert vectors
+await client.insert('embeddings', {
+  id: '1',
+  vector: [0.1, 0.2, ...],
+  metadata: { source: 'openai' }
+});
+
+// Search
+const results = await client.search('embeddings', queryVector, { limit: 10 });
+```
+
+</details>
+
+<details>
+<summary><strong>🦀 Rust Crate</strong></summary>
+
+```bash
+# Install pgrx (PostgreSQL extension framework)
+cargo install cargo-pgrx --version "0.12.9" --locked
+cargo pgrx init
+
+# Build and install extension
+cd crates/ruvector-postgres
+cargo pgrx install --release
+
+# Or install specific PostgreSQL version
+cargo pgrx install --release --pg-config /usr/lib/postgresql/17/bin/pg_config
+```
+
+**Cargo.toml:**
+```toml
+[dependencies]
+ruvector-postgres = "2.0"
+
+# Optional features
+[features]
+default = ["pg17"]
+pg16 = ["ruvector-postgres/pg16"]
+pg15 = ["ruvector-postgres/pg15"]
+
+# AI features (opt-in)
+ai-complete = ["ruvector-postgres/ai-complete"]  # All AI features
+learning = ["ruvector-postgres/learning"]         # Self-learning
+attention = ["ruvector-postgres/attention"]       # 39 attention mechanisms
+gnn = ["ruvector-postgres/gnn"]                   # Graph neural networks
+hyperbolic = ["ruvector-postgres/hyperbolic"]     # Hyperbolic embeddings
+embeddings = ["ruvector-postgres/embeddings"]     # Local embedding generation
+```
+
+**Build with all features:**
+```bash
+cargo pgrx install --release --features "ai-complete,embeddings"
+```
+
+</details>
+
+<details>
+<summary><strong>📝 SQL Examples</strong></summary>
+
+```sql
+-- Enable extension
+CREATE EXTENSION ruvector;
+
+-- Create table with vector column
+CREATE TABLE documents (
+  id SERIAL PRIMARY KEY,
+  content TEXT,
+  embedding VECTOR(1536)
+);
+
+-- Create HNSW index
+CREATE INDEX ON documents USING hnsw (embedding vector_cosine_ops)
+  WITH (m = 16, ef_construction = 200);
+
+-- Insert vectors
+INSERT INTO documents (content, embedding)
+VALUES ('Hello world', '[0.1, 0.2, ...]'::vector);
+
+-- Semantic search (cosine similarity)
+SELECT id, content, embedding <=> '[0.1, 0.2, ...]'::vector AS distance
+FROM documents
+ORDER BY distance
+LIMIT 10;
+
+-- Hybrid search (vector + full-text)
+SELECT id, content
+FROM documents
+WHERE to_tsvector(content) @@ to_tsquery('machine & learning')
+ORDER BY embedding <=> query_embedding
+LIMIT 10;
+
+-- GNN-enhanced search (with learning)
+SELECT * FROM ruvector_gnn_search(
+  'documents',
+  '[0.1, 0.2, ...]'::vector,
+  10,  -- limit
+  'gcn' -- gnn_type: gcn, graphsage, gat, gin
+);
+
+-- Generate embeddings locally (no API needed)
+SELECT ruvector_embed('all-MiniLM-L6-v2', 'Your text here');
+
+-- Flash attention
+SELECT ruvector_flash_attention(query, key, value);
+```
+
+</details>
+
+See [ruvector-postgres README](./crates/ruvector-postgres/README.md) for full SQL API reference (230+ functions).
 
 ### Tools & Utilities
 
