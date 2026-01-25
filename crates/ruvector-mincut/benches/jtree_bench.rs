@@ -96,6 +96,7 @@ fn generate_dense_graph(n: usize, seed: u64) -> Vec<(u64, u64, f64)> {
 }
 
 /// Generate a graph with known minimum cut (two cliques connected by k edges)
+#[allow(dead_code)]
 fn generate_known_mincut_graph(n_per_side: usize, mincut_value: usize, seed: u64) -> Vec<(u64, u64, f64)> {
     let mut edges = Vec::new();
     let mut rng = StdRng::seed_from_u64(seed);
@@ -129,6 +130,7 @@ fn generate_known_mincut_graph(n_per_side: usize, mincut_value: usize, seed: u64
 }
 
 /// Generate a path graph (useful for testing min-cut = 1)
+#[allow(dead_code)]
 fn generate_path_graph(n: usize) -> Vec<(u64, u64, f64)> {
     (0..n as u64 - 1).map(|i| (i, i + 1, 1.0)).collect()
 }
