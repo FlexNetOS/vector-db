@@ -183,7 +183,8 @@ impl BenchmarkSuite {
             // Baseline: process all edges
             let baseline_start = Instant::now();
             for _ in 0..self.iterations {
-                let _edges: Vec<_> = graph.edges().collect();
+                let edges = graph.edges();
+                let _count = edges.len();
             }
             let baseline_us = baseline_start.elapsed().as_micros() as u64 / self.iterations as u64;
 

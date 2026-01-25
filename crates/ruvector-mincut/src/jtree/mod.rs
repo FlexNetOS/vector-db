@@ -67,11 +67,15 @@
 //! - arXiv:2601.09139 (Goranci/Henzinger/Kiss/Momeni/Zöcklein, SODA 2026)
 //! - arXiv:2501.00660 (BMSSP: Breaking the Sorting Barrier)
 
+pub mod coordinator;
 pub mod hierarchy;
 pub mod level;
 pub mod sparsifier;
 
 // Re-exports for convenient access
+pub use coordinator::{
+    EscalationPolicy, EscalationTrigger, QueryResult, TierMetrics, TwoTierCoordinator,
+};
 pub use hierarchy::{
     ApproximateCut, CutResult, JTreeConfig, JTreeHierarchy, JTreeStatistics, Tier,
 };

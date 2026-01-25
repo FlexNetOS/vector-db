@@ -299,9 +299,10 @@ pub use optimization::{
 #[cfg(feature = "jtree")]
 pub use jtree::{
     ApproximateCut, BmsspJTreeLevel, ContractedGraph, CutResult as JTreeCutResult,
-    DynamicCutSparsifier, JTreeConfig, JTreeError, JTreeHierarchy, JTreeLevel, JTreeStatistics,
-    LevelConfig, LevelStatistics, PathCutResult, RecourseTracker, SparsifierConfig,
-    SparsifierStatistics, Tier, VertexSplitResult,
+    DynamicCutSparsifier, EscalationPolicy, EscalationTrigger, JTreeConfig, JTreeError,
+    JTreeHierarchy, JTreeLevel, JTreeStatistics, LevelConfig, LevelStatistics, PathCutResult,
+    QueryResult as CoordinatorQueryResult, RecourseTracker, SparsifierConfig, SparsifierStatistics,
+    Tier, TierMetrics, TwoTierCoordinator, VertexSplitResult,
 };
 
 // Re-export ForestPacking with explicit disambiguation (also defined in localkcut)
@@ -482,10 +483,11 @@ pub mod prelude {
 
     #[cfg(feature = "jtree")]
     pub use crate::{
-        ApproximateCut, BmsspJTreeLevel, ContractedGraph, DynamicCutSparsifier,
-        JTreeConfig, JTreeCutResult, JTreeError, JTreeForestPacking, JTreeHierarchy,
-        JTreeLevel, JTreeStatistics, LevelConfig, LevelStatistics, PathCutResult,
-        RecourseTracker, SparsifierConfig, SparsifierStatistics, Tier, VertexSplitResult,
+        ApproximateCut, BmsspJTreeLevel, ContractedGraph, CoordinatorQueryResult,
+        DynamicCutSparsifier, EscalationPolicy, EscalationTrigger, JTreeConfig, JTreeCutResult,
+        JTreeError, JTreeForestPacking, JTreeHierarchy, JTreeLevel, JTreeStatistics, LevelConfig,
+        LevelStatistics, PathCutResult, RecourseTracker, SparsifierConfig, SparsifierStatistics,
+        Tier, TierMetrics, TwoTierCoordinator, VertexSplitResult,
     };
 }
 
