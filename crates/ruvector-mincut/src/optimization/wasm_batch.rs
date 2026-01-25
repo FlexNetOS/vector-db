@@ -233,10 +233,13 @@ impl WasmBatchOps {
 
     /// Execute all pending operations
     pub fn execute_batch(&mut self) -> Vec<BatchResult> {
-        let start = std::time::Instant::now();
-        let mut results = Vec::with_capacity(self.pending.len());
+        let _start = std::time::Instant::now();
 
-        for op in self.pending.drain(..) {
+        // Drain pending operations to avoid borrow conflict
+        let pending_ops: Vec<_> = self.pending.drain(..).collect();
+        let mut results = Vec::with_capacity(pending_ops.len());
+
+        for op in pending_ops {
             let op_start = std::time::Instant::now();
             let result = self.execute_operation(op);
             let elapsed = op_start.elapsed().as_micros() as u64;
@@ -422,8 +425,11 @@ impl WasmMemoryRegion {
         }
     }
 
-    /// Allocate bytes from region
-    pub fn alloc(&mut self, size: usize, align: usize) -> Option<*mut u8> {
+    /// Allocate bytes from region, returns the offset
+    ///
+    /// Returns the starting offset of the allocated region.
+    /// Use `get_slice` to access the allocated memory safely.
+    pub fn alloc(&mut self, size: usize, align: usize) -> Option<usize> {
         // Align offset
         let aligned_offset = (self.offset + align - 1) & !(align - 1);
 
@@ -431,9 +437,27 @@ impl WasmMemoryRegion {
             return None;
         }
 
-        let ptr = unsafe { self.data.as_mut_ptr().add(aligned_offset) };
+        let result = aligned_offset;
         self.offset = aligned_offset + size;
-        Some(ptr)
+        Some(result)
+    }
+
+    /// Get a slice at the given offset
+    pub fn get_slice(&self, offset: usize, len: usize) -> Option<&[u8]> {
+        if offset + len <= self.capacity {
+            Some(&self.data[offset..offset + len])
+        } else {
+            None
+        }
+    }
+
+    /// Get a mutable slice at the given offset
+    pub fn get_slice_mut(&mut self, offset: usize, len: usize) -> Option<&mut [u8]> {
+        if offset + len <= self.capacity {
+            Some(&mut self.data[offset..offset + len])
+        } else {
+            None
+        }
     }
 
     /// Reset region for reuse
