@@ -558,12 +558,16 @@ mod tests {
         let mut region = WasmMemoryRegion::new(1024);
 
         // Allocate 64-byte aligned
-        let ptr1 = region.alloc(100, 64);
-        assert!(ptr1.is_some());
-        assert_eq!((ptr1.unwrap() as usize) % 64, 0);
+        let offset1 = region.alloc(100, 64);
+        assert!(offset1.is_some());
+        assert_eq!(offset1.unwrap() % 64, 0);
 
-        let ptr2 = region.alloc(200, 64);
-        assert!(ptr2.is_some());
+        let offset2 = region.alloc(200, 64);
+        assert!(offset2.is_some());
+
+        // Verify we can get slices
+        let slice1 = region.get_slice(offset1.unwrap(), 100);
+        assert!(slice1.is_some());
 
         assert!(region.used() > 0);
         assert!(region.remaining() < 1024);
