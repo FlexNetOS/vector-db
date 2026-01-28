@@ -1413,8 +1413,7 @@ unsafe extern "C" fn hnsw_rescan(
 
         // Method 1: Try direct RuVector extraction (works for literals and some casts)
         if let Some(vector) = RuVector::from_polymorphic_datum(
-            datum,
-            false, // not null
+            datum, false, // not null
             typoid,
         ) {
             state.query_vector = vector.as_slice().to_vec();
@@ -1529,8 +1528,7 @@ unsafe fn try_convert_text_to_ruvector(datum: Datum) -> Option<Vec<f32>> {
     }
 
     // Extract the text content
-    let text_len =
-        pgrx::varlena::varsize_any_exhdr(detoasted as *const _);
+    let text_len = pgrx::varlena::varsize_any_exhdr(detoasted as *const _);
     let text_data = pgrx::varlena::vardata_any(detoasted as *const _) as *const u8;
 
     if text_len == 0 {
