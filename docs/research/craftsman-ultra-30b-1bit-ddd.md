@@ -1,0 +1,816 @@
+# Domain-Driven Design: Craftsman Ultra 30b 1bit
+
+**Version:** 1.0
+**Date:** 2026-02-03
+**Relates to:** ADR-017-craftsman-ultra-30b-1bit-bitnet-integration
+**Status:** Research / Pre-Implementation
+
+---
+
+## 1. Strategic Domain Vision
+
+Craftsman Ultra 30b 1bit is a CPU-native, 1-bit quantized coding/agentic LLM that merges BitNet b1.58 ternary inference with GLM-4.7-Flash's 30B-A3B MoE architecture. It operates within the RuvLLM serving runtime and leverages Ruvector for intelligent memory.
+
+### Core Domain
+
+**Ternary-Quantized Mixture-of-Experts Language Model Inference on CPU**
+
+The domain encompasses:
+- Loading and managing ternary-quantized model weights in GGUF format
+- Routing tokens to sparse expert subsets via a gating network
+- Executing forward passes using integer-addition-only GEMM kernels
+- Managing mixed-precision compute across router (FP16), experts (ternary), and attention (FP16/ternary)
+- Integrating with the SONA self-learning framework for per-session adaptation
+- Serving inference results through the RuvLLM backend abstraction
+
+### Subdomains
+
+| Subdomain | Type | Description |
+|-----------|------|-------------|
+| Ternary Inference Engine | Core | BitNet kernel execution, GEMM, weight management |
+| MoE Routing | Core | Expert gating, load balancing, capacity management |
+| Model Lifecycle | Supporting | GGUF loading, weight initialization, memory mapping |
+| Quantization Pipeline | Supporting | BitLinear training/distillation, ternary conversion |
+| Kernel Dispatch | Supporting | Hardware detection, SIMD kernel selection |
+| Adaptation Layer | Supporting | SONA MicroLoRA on ternary base, EWC++ consolidation |
+| Serving Integration | Generic | Backend trait, NAPI bindings, session management |
+
+---
+
+## 2. Ubiquitous Language
+
+The following terms have precise meaning within the Craftsman Ultra domain. All code, documentation, and communication must use these terms consistently.
+
+| Term | Definition |
+|------|-----------|
+| **BitLinear** | A linear layer replacement where weights are ternary {-1, 0, +1} and activations are INT8. Forward pass uses integer addition only. |
+| **Ternary Weight** | A model weight constrained to exactly three values: -1, 0, or +1. Encoded using 2 bits per weight. |
+| **Absmean Quantization** | The method of converting FP16/BF16 weights to ternary: `W_t = RoundClip(W / mean(\|W\|), -1, 1)`. |
+| **Absmax Activation** | Per-token INT8 quantization of activations: `X_q = round(X * 127 / max(\|X\|))`. |
+| **Expert** | A sparse MLP sub-network within a MoE layer. Only K experts activate per token out of N total. |
+| **Router / Gating Network** | FP16 linear layer that computes softmax scores to select which experts process each token. |
+| **Active Parameters** | The ~3B parameters actually executing computation for any given token (selected experts + shared layers). |
+| **Total Parameters** | The full ~30B parameter count across all experts and shared layers. |
+| **TL1 Kernel** | Ternary Lookup Table kernel: packs 2 weights into a 4-bit LUT index. Balanced CPU performance. |
+| **TL2 Kernel** | Ternary Lookup Table kernel: packs 3 weights into a 5-bit LUT index. Higher compression, lower bandwidth. |
+| **I2_S Kernel** | Integer-2 with Scale kernel: stores ternary as 2-bit, unpacks to compute. Best for high-bandwidth hardware. |
+| **Pack-and-Unpack** | Technique to maintain INT16 accumulation precision during LUT-based GEMM without lossy int8 requantization. |
+| **Feature Filtering** | Zero-valued ternary weights effectively mask input features, providing implicit sparsity within dense layers. |
+| **Shadow Weights** | FP16 weights maintained during training that are quantized to ternary for forward passes (dropped after training). |
+| **Straight-Through Estimator (STE)** | Gradient approximation that passes gradients through the ternary rounding operation during backpropagation. |
+| **Scale Factor** | Per-block FP16 value (the absmean) used to rescale ternary GEMM output back to float. |
+| **Block** | A group of 256 contiguous weights sharing one scale factor. The fundamental unit of ternary storage. |
+| **Mixed-Precision Forward** | A forward pass where different components use different precisions (FP16 router, ternary experts, Q8 activations). |
+| **Capacity Factor** | MoE parameter controlling maximum tokens per expert to prevent routing collapse. |
+| **Expert Parallelism** | Distributing different experts across different CPU cores for concurrent execution. |
+
+---
+
+## 3. Bounded Contexts
+
+### 3.1 Ternary Inference Context (Core)
+
+**Responsibility**: Execute BitNet forward passes using ternary GEMM kernels.
+
+**Owns:**
+- BitLinear layer implementation
+- TL1/TL2/I2_S kernel dispatch and execution
+- Lookup table generation and caching
+- INT8 activation quantization/dequantization
+- Per-block scale factor management
+- Pack-and-unpack accumulation
+
+**Key Entities:**
+- `TernaryTensor` — Packed 2-bit weight storage with per-block FP16 scales
+- `BitLinearLayer` — Forward pass implementation using ternary GEMM
+- `LookupTable` — Pre-computed activation sums for TL1/TL2 kernels
+- `ActivationBuffer` — INT8 per-token quantized activation storage
+
+**Invariants:**
+- Ternary weights are immutable after model load (no in-place modification)
+- GEMM output must be bit-exact with reference float implementation
+- Accumulation uses INT16 minimum (no INT8 intermediate quantization)
+- Scale factors are always FP16 (never quantized further)
+
+**Interfaces:**
+- **Inbound**: Receives FP16 activations from attention/router, quantizes to INT8
+- **Outbound**: Produces FP16 output after dequantization with scale factors
+- **Anti-corruption layer**: Validates tensor shapes match expected block alignment (mod 256)
+
+```
+┌─────────────────────────────────────────────┐
+│         Ternary Inference Context            │
+│                                             │
+│  ┌──────────────┐    ┌──────────────────┐   │
+│  │ TernaryTensor │───▶│  BitLinearLayer  │   │
+│  │  (2-bit pack) │    │  (ternary GEMM)  │   │
+│  └──────────────┘    └────────┬─────────┘   │
+│                               │              │
+│  ┌──────────────┐    ┌───────▼──────────┐   │
+│  │ LookupTable  │───▶│ KernelDispatcher │   │
+│  │ (TL1/TL2)    │    │ (SIMD selection) │   │
+│  └──────────────┘    └──────────────────┘   │
+│                                             │
+│  ┌──────────────────────────────────────┐   │
+│  │        ActivationBuffer              │   │
+│  │  (INT8 per-token, absmax scaling)    │   │
+│  └──────────────────────────────────────┘   │
+└─────────────────────────────────────────────┘
+```
+
+---
+
+### 3.2 MoE Routing Context (Core)
+
+**Responsibility**: Select which experts process each token and manage load balancing.
+
+**Owns:**
+- Gating network (FP16 linear + softmax)
+- Top-K expert selection per token
+- Capacity factor enforcement
+- Load balancing loss computation (for training/distillation)
+- Expert output aggregation (weighted sum)
+
+**Key Entities:**
+- `MoERouter` — Gating network computing expert selection scores
+- `ExpertSelector` — Top-K selection with capacity constraints
+- `ExpertPool` — Registry of available expert BitLinear layers
+- `RoutingDecision` — Per-token mapping of token → selected experts + weights
+
+**Invariants:**
+- Router weights are always FP16 (never quantized to ternary)
+- Exactly K experts are selected per token (no fallback to fewer)
+- Expert output weights sum to 1.0 after normalization
+- Capacity factor prevents any single expert from processing >CF× its fair share
+
+**Interfaces:**
+- **Inbound**: Receives hidden states from attention output (FP16)
+- **Outbound**: Dispatches tokens to selected expert BitLinear layers, receives expert outputs, produces weighted sum
+- **Upstream**: Consumes `BitLinearLayer` from Ternary Inference Context
+
+```
+┌─────────────────────────────────────────────┐
+│           MoE Routing Context               │
+│                                             │
+│  ┌──────────────┐    ┌──────────────────┐   │
+│  │  MoERouter   │───▶│ ExpertSelector   │   │
+│  │ (FP16 gate)  │    │ (top-K + cap)    │   │
+│  └──────────────┘    └────────┬─────────┘   │
+│                               │              │
+│            ┌──────────────────┼──────┐       │
+│            ▼                  ▼      ▼       │
+│  ┌─────────────┐  ┌──────────┐  ┌────────┐  │
+│  │  Expert 0   │  │ Expert 1 │  │Expert N│  │
+│  │(BitLinear)  │  │(BitLinear│  │(BitLin)│  │
+│  └──────┬──────┘  └────┬─────┘  └───┬────┘  │
+│         │              │             │       │
+│         └──────────┬───┘─────────────┘       │
+│                    ▼                         │
+│           ┌────────────────┐                 │
+│           │ WeightedSum    │                 │
+│           │ (expert agg)   │                 │
+│           └────────────────┘                 │
+└─────────────────────────────────────────────┘
+```
+
+---
+
+### 3.3 Model Lifecycle Context (Supporting)
+
+**Responsibility**: Load, validate, and manage model artifacts in GGUF format.
+
+**Owns:**
+- GGUF file parsing and validation
+- Tensor extraction and type detection (ternary vs FP16)
+- Memory-mapped file management for large models
+- Model metadata extraction (architecture config, BitNet version)
+- Weight conversion between formats (distillation export)
+
+**Key Entities:**
+- `CraftsmanModel` — Root aggregate for the loaded model
+- `GGUFModelFile` — Parsed GGUF container with tensor access
+- `TensorMap` — Name → TernaryTensor/FP16Tensor mapping
+- `ModelConfig` — Deserialized architecture configuration
+- `MemoryMapper` — Memory-mapped tensor access for demand paging
+
+**Invariants:**
+- Model file must pass GGUF v3 magic/version validation
+- All expected tensors must be present (fail-fast on missing layers)
+- Ternary tensors must have correct block alignment (256 elements)
+- FP16 tensors (router, embed, head) must not be loaded as ternary
+
+**Interfaces:**
+- **Inbound**: File path or HuggingFace model ID
+- **Outbound**: Hydrated `CraftsmanModel` ready for inference
+- **Downstream**: Provides tensors to Ternary Inference and MoE Routing contexts
+
+```
+┌─────────────────────────────────────────────┐
+│        Model Lifecycle Context              │
+│                                             │
+│  ┌──────────────┐    ┌──────────────────┐   │
+│  │ GGUFParser   │───▶│  TensorLoader    │   │
+│  │ (validate)   │    │ (mmap + extract) │   │
+│  └──────────────┘    └────────┬─────────┘   │
+│                               │              │
+│  ┌──────────────┐    ┌───────▼──────────┐   │
+│  │ ModelConfig  │◀───│ CraftsmanModel   │   │
+│  │ (metadata)   │    │ (root aggregate) │   │
+│  └──────────────┘    └──────────────────┘   │
+│                                             │
+│  ┌──────────────────────────────────────┐   │
+│  │        MemoryMapper                  │   │
+│  │  (demand-page inactive experts)      │   │
+│  └──────────────────────────────────────┘   │
+└─────────────────────────────────────────────┘
+```
+
+---
+
+### 3.4 Quantization Pipeline Context (Supporting)
+
+**Responsibility**: Convert full-precision weights to ternary format during training/distillation.
+
+**Owns:**
+- Absmean quantization implementation
+- Straight-through estimator for backpropagation
+- Shadow weight management (FP16 ↔ ternary)
+- Distillation loss computation (teacher vs student)
+- GGUF export with ternary tensor metadata
+- Calibration dataset management
+
+**Key Entities:**
+- `DistillationPipeline` — End-to-end teacher→student training loop
+- `BitLinearTrainer` — BitLinear layer with shadow weights and STE
+- `AbsmeanQuantizer` — Converts FP16 block → ternary + scale
+- `TeacherModel` — FP16 GLM-4.7-Flash reference model
+- `CalibrationDataset` — Token sequences for quantization calibration
+
+**Invariants:**
+- Shadow weights are FP16 throughout training (never accumulated in ternary)
+- Quantization is deterministic: same FP16 input → same ternary output
+- Teacher model is frozen during distillation (no gradient updates)
+- Distillation loss includes both KL divergence and hard-label cross-entropy
+
+**Interfaces:**
+- **Inbound**: Teacher model weights + training dataset
+- **Outbound**: Trained ternary weights exported as GGUF
+- **Downstream**: Feeds Model Lifecycle Context with final artifacts
+
+```
+┌─────────────────────────────────────────────┐
+│      Quantization Pipeline Context          │
+│                                             │
+│  ┌──────────────┐    ┌──────────────────┐   │
+│  │TeacherModel  │───▶│DistillPipeline   │   │
+│  │(GLM-4.7-Flash│    │(KD loss + STE)   │   │
+│  └──────────────┘    └────────┬─────────┘   │
+│                               │              │
+│  ┌──────────────┐    ┌───────▼──────────┐   │
+│  │AbsmeanQuant  │◀───│BitLinearTrainer  │   │
+│  │(FP16→ternary)│    │(shadow weights)  │   │
+│  └──────┬───────┘    └──────────────────┘   │
+│         │                                    │
+│  ┌──────▼───────────────────────────────┐   │
+│  │         GGUFExporter                 │   │
+│  │  (ternary tensors + metadata)        │   │
+│  └──────────────────────────────────────┘   │
+└─────────────────────────────────────────────┘
+```
+
+---
+
+### 3.5 Kernel Dispatch Context (Supporting)
+
+**Responsibility**: Detect hardware capabilities and select optimal ternary GEMM kernels.
+
+**Owns:**
+- CPU feature detection (AVX512, AVX2, NEON, SSE4.1, SVE)
+- Cache hierarchy analysis (L1/L2/L3 sizes)
+- Kernel selection heuristics
+- Kernel code generation (optional, for runtime specialization)
+- Benchmark-based kernel tuning
+
+**Key Entities:**
+- `HardwareCaps` — Detected CPU features and cache topology
+- `KernelRegistry` — Available kernel implementations per platform
+- `KernelSelector` — Decision logic for kernel choice
+- `KernelConfig` — Tile sizes, unroll factors, prefetch distances
+
+**Invariants:**
+- Kernel selection happens once at model load time (not per-token)
+- Selected kernel must be validated against reference implementation
+- Fallback to scalar kernel must always exist
+- Kernel config is immutable after selection
+
+**Interfaces:**
+- **Inbound**: System hardware information (CPUID, /proc/cpuinfo)
+- **Outbound**: Configured kernel function pointers to Ternary Inference Context
+
+```
+┌─────────────────────────────────────────────┐
+│        Kernel Dispatch Context              │
+│                                             │
+│  ┌──────────────┐    ┌──────────────────┐   │
+│  │HardwareCaps  │───▶│ KernelSelector   │   │
+│  │(CPUID/NEON)  │    │ (heuristics)     │   │
+│  └──────────────┘    └────────┬─────────┘   │
+│                               │              │
+│  ┌──────────────┐    ┌───────▼──────────┐   │
+│  │KernelRegistry│◀───│ KernelConfig     │   │
+│  │(impl table)  │    │ (tile/unroll)    │   │
+│  └──────────────┘    └──────────────────┘   │
+└─────────────────────────────────────────────┘
+```
+
+---
+
+### 3.6 Adaptation Layer Context (Supporting)
+
+**Responsibility**: Apply SONA MicroLoRA corrections on top of ternary base weights.
+
+**Owns:**
+- MicroLoRA adapter creation and management
+- FP16 delta computation (LoRA_B @ LoRA_A @ X)
+- EWC++ Fisher information for catastrophic forgetting prevention
+- Adapter composition (merging multiple adapters)
+- Adapter hot-swap without model reload
+
+**Key Entities:**
+- `TernaryAdapter` — MicroLoRA adapter for a specific BitLinear layer
+- `AdaptationManager` — Coordinates adapter lifecycle across layers
+- `FisherDiagonal` — EWC++ regularization weights per adapter
+- `AdaptFeedback` — Quality signal from inference results driving adaptation
+
+**Invariants:**
+- Adapters never modify base ternary weights (additive only)
+- Adapter rank is 1-2 maximum (memory constraint: <1MB per module)
+- EWC++ prevents adapter weights from drifting too far from initial values
+- Hot-swap is atomic (no partially-loaded adapter state)
+
+**Interfaces:**
+- **Inbound**: Inference quality feedback (SONA instant loop)
+- **Outbound**: FP16 corrections added to ternary GEMM output
+- **Upstream**: Interacts with Ternary Inference Context at BitLinear output
+
+```
+┌─────────────────────────────────────────────┐
+│        Adaptation Layer Context             │
+│                                             │
+│  ┌──────────────┐    ┌──────────────────┐   │
+│  │AdaptManager  │───▶│TernaryAdapter    │   │
+│  │(lifecycle)   │    │(MicroLoRA FP16)  │   │
+│  └──────────────┘    └────────┬─────────┘   │
+│                               │              │
+│  ┌──────────────┐    ┌───────▼──────────┐   │
+│  │FisherDiag   │◀───│ AdaptFeedback    │   │
+│  │(EWC++ reg)   │    │ (quality signal) │   │
+│  └──────────────┘    └──────────────────┘   │
+└─────────────────────────────────────────────┘
+```
+
+---
+
+### 3.7 Serving Integration Context (Generic)
+
+**Responsibility**: Expose Craftsman Ultra as a standard RuvLLM backend.
+
+**Owns:**
+- `BitNetBackend` implementation of `InferenceBackend` trait
+- Session management (multi-turn conversation state)
+- KV cache allocation and management
+- Token streaming and generation parameters
+- NAPI bindings for Node.js access
+
+**Key Entities:**
+- `BitNetBackend` — Backend trait implementation
+- `InferenceSession` — Per-conversation state including KV cache
+- `GenerationConfig` — Temperature, top-k, top-p, repetition penalty
+- `TokenStream` — Async iterator for streaming token output
+
+**Invariants:**
+- Backend must satisfy all `InferenceBackend` trait methods
+- Sessions are isolated (no cross-session state leakage)
+- KV cache eviction follows LRU policy when memory pressure detected
+- Token generation is deterministic given same seed + config
+
+**Interfaces:**
+- **Inbound**: RuvLLM backend dispatcher, NAPI calls from Node.js
+- **Outbound**: Generated tokens, embeddings, model metadata
+- **Downstream**: Orchestrates all other contexts for end-to-end inference
+
+---
+
+## 4. Aggregates and Entities
+
+### 4.1 CraftsmanModel (Root Aggregate)
+
+The `CraftsmanModel` is the root aggregate that owns the entire loaded model state.
+
+```
+CraftsmanModel
+├── config: ModelConfig
+│   ├── num_layers: u32 (transformer depth)
+│   ├── hidden_size: u32
+│   ├── num_experts: u32 (total experts per MoE layer)
+│   ├── active_experts: u32 (K experts selected per token)
+│   ├── num_attention_heads: u32
+│   ├── num_kv_heads: u32
+│   ├── vocab_size: u32
+│   ├── max_context: u32 (200K)
+│   ├── rope_theta: f32
+│   └── bitnet_version: u8 (1 = b1.58)
+│
+├── embedding: EmbeddingTable (FP16)
+│   ├── weights: Tensor<f16> [vocab_size × hidden_size]
+│   └── position_encoding: RoPEConfig
+│
+├── layers: Vec<TransformerLayer>
+│   └── TransformerLayer
+│       ├── attention: AttentionBlock
+│       │   ├── q_proj: BitLinearLayer | FP16Linear (phase-dependent)
+│       │   ├── k_proj: BitLinearLayer | FP16Linear
+│       │   ├── v_proj: BitLinearLayer | FP16Linear
+│       │   ├── o_proj: BitLinearLayer | FP16Linear
+│       │   └── norm: RMSNorm (FP16 params)
+│       │
+│       ├── moe: MoEBlock
+│       │   ├── router: MoERouter
+│       │   │   ├── gate: FP16Linear [hidden_size × num_experts]
+│       │   │   └── top_k: u32
+│       │   ├── experts: Vec<Expert>
+│       │   │   └── Expert
+│       │   │       ├── gate_proj: BitLinearLayer
+│       │   │       ├── up_proj: BitLinearLayer
+│       │   │       └── down_proj: BitLinearLayer
+│       │   └── norm: RMSNorm (FP16 params)
+│       │
+│       └── adapter: Option<TernaryAdapter> (SONA MicroLoRA)
+│
+├── lm_head: FP16Linear [hidden_size × vocab_size]
+│
+├── kernel: SelectedKernel
+│   ├── variant: KernelType (TL1/TL2/I2_S)
+│   ├── lookup_tables: Vec<LookupTable>
+│   └── config: KernelConfig
+│
+└── memory_map: Option<MemoryMapper>
+    └── file_handle: MmapFile
+```
+
+### 4.2 BitLinearLayer (Entity)
+
+Core compute entity representing a single ternary linear layer.
+
+```
+BitLinearLayer
+├── ternary_weights: TernaryTensor
+│   ├── packed_data: Vec<u8>  (2 bits per weight, packed)
+│   ├── scales: Vec<f16>      (one per 256-element block)
+│   ├── shape: [out_features, in_features]
+│   └── num_blocks: u32
+│
+├── kernel_fn: fn(&TernaryTensor, &[i8]) -> Vec<f16>
+│   └── (function pointer to selected SIMD kernel)
+│
+└── stats: LayerStats
+    ├── sparsity: f32          (fraction of zero weights)
+    ├── mean_abs_scale: f32    (average block scale)
+    └── compute_flops: u64     (additions per forward)
+```
+
+**Forward pass pseudocode:**
+```
+fn forward(input: &[f16]) -> Vec<f16> {
+    let x_int8 = absmax_quantize(input);       // FP16 → INT8
+    let y_int = (self.kernel_fn)(&self.ternary_weights, &x_int8);  // Ternary GEMM (addition only)
+    let y_fp16 = dequantize_with_scales(y_int, &self.scales);      // INT → FP16
+    y_fp16
+}
+```
+
+### 4.3 TernaryTensor (Value Object)
+
+Immutable packed ternary weight storage.
+
+```
+TernaryTensor
+├── encoding: TernaryEncoding
+│   ├── I2S  — 2 bits per weight: 00=0, 01=+1, 10=-1, 11=reserved
+│   ├── TL1  — 4 bits per 2 weights (lookup index)
+│   └── TL2  — 5 bits per 3 weights (lookup index)
+│
+├── packed_bytes: &[u8]  (immutable, potentially memory-mapped)
+├── scales: &[f16]       (per-block absmean values)
+├── shape: (usize, usize)
+├── block_size: usize    (256 default)
+└── total_weights: u64
+```
+
+**Storage calculation:**
+- I2_S: `ceil(total_weights / 4)` bytes for weights + `ceil(total_weights / 256) * 2` bytes for scales
+- TL1: `ceil(total_weights / 2) * 0.5` bytes + scales
+- TL2: `ceil(total_weights / 3) * 0.625` bytes + scales
+
+### 4.4 MoERouter (Entity)
+
+Expert selection mechanism. Always FP16.
+
+```
+MoERouter
+├── gate_weights: Tensor<f16> [hidden_size × num_experts]
+├── gate_bias: Option<Tensor<f16>> [num_experts]
+├── top_k: u32
+├── capacity_factor: f32
+├── balance_loss_weight: f32
+│
+└── fn route(hidden: &[f16]) -> RoutingDecision
+    RoutingDecision
+    ├── selected_experts: Vec<(usize, f32)>  // (expert_idx, weight)
+    ├── expert_mask: BitVec                   // which experts are active
+    └── balance_loss: f32                     // for training feedback
+```
+
+### 4.5 LookupTable (Value Object)
+
+Pre-computed activation sums for TL1/TL2 kernels.
+
+```
+LookupTable
+├── variant: LutVariant
+│   ├── TL1 — 16 entries per table (2^4 for 2-weight combinations)
+│   └── TL2 — 32 entries per table (2^5 for 3-weight combinations)
+│
+├── tables: Vec<Vec<i16>>  (one table per activation group)
+├── num_tables: usize
+└── activation_group_size: usize
+```
+
+**Generation (TL1 example):**
+For each pair of ternary weights (w0, w1) and each possible pair of INT8 activations (a0, a1):
+```
+table[index(w0, w1)] = w0*a0 + w1*a1
+```
+Since w ∈ {-1, 0, +1}, this becomes addition/subtraction only.
+
+---
+
+## 5. Context Map (Inter-Context Relationships)
+
+```
+┌─────────────────────────────────────────────────────────┐
+│                                                         │
+│    ┌──────────────┐         ┌──────────────────┐        │
+│    │   Kernel     │────────▶│    Ternary       │        │
+│    │   Dispatch   │ kernel  │    Inference      │        │
+│    │   Context    │ config  │    Engine         │        │
+│    └──────────────┘         └────────┬─────────┘        │
+│                                      │                   │
+│    ┌──────────────┐         ┌───────▼──────────┐        │
+│    │  Model       │────────▶│     MoE          │        │
+│    │  Lifecycle   │ tensors │     Routing       │        │
+│    │  Context     │         │     Context       │        │
+│    └──────┬───────┘         └────────┬─────────┘        │
+│           │                          │                   │
+│    ┌──────▼───────┐         ┌───────▼──────────┐        │
+│    │Quantization  │         │   Adaptation     │        │
+│    │  Pipeline    │────────▶│     Layer         │        │
+│    │  Context     │ weights │   (SONA)          │        │
+│    └──────────────┘         └────────┬─────────┘        │
+│                                      │                   │
+│                             ┌───────▼──────────┐        │
+│                             │    Serving        │        │
+│                             │    Integration    │        │
+│                             │    Context        │        │
+│                             └──────────────────┘        │
+│                                                         │
+│  ──── Relationship Types ────                           │
+│  ────▶  Conformist (downstream conforms to upstream)    │
+│  ─ ─ ▶  Anti-Corruption Layer (translates at boundary)  │
+│  ══════  Shared Kernel (common types/interfaces)        │
+│                                                         │
+└─────────────────────────────────────────────────────────┘
+```
+
+### Relationship Details
+
+| Upstream | Downstream | Type | Interface |
+|----------|-----------|------|-----------|
+| Kernel Dispatch | Ternary Inference | Conformist | `KernelConfig` + function pointers |
+| Model Lifecycle | Ternary Inference | Conformist | `TernaryTensor`, `FP16Tensor` |
+| Model Lifecycle | MoE Routing | Conformist | `MoERouter` weights, `ExpertPool` |
+| Ternary Inference | MoE Routing | Shared Kernel | `BitLinearLayer` entity shared |
+| MoE Routing | Serving Integration | Conformist | Forward pass API |
+| Adaptation Layer | Ternary Inference | ACL | FP16 deltas translated to output corrections |
+| Quantization Pipeline | Model Lifecycle | Conformist | GGUF export format |
+
+### External System Integrations
+
+| External System | Integration Point | Pattern |
+|----------------|-------------------|---------|
+| RuvLLM Backends | Serving Integration | `InferenceBackend` trait (published language) |
+| SONA Learning Loops | Adaptation Layer | Event-driven (quality feedback signals) |
+| Ruvector HNSW | Serving Integration | Pattern retrieval for routing optimization |
+| HuggingFace Hub | Model Lifecycle | Model download/upload API |
+| Claude Flow | Serving Integration | Agent routing task delegation |
+| NAPI/Node.js | Serving Integration | FFI boundary (NAPI-RS bindings) |
+
+---
+
+## 6. Domain Events
+
+Events drive communication between bounded contexts without tight coupling.
+
+| Event | Producer | Consumers | Payload |
+|-------|----------|-----------|---------|
+| `ModelLoaded` | Model Lifecycle | Kernel Dispatch, Serving | model_id, config, tensor_count |
+| `KernelSelected` | Kernel Dispatch | Ternary Inference | kernel_type, config, lut_size |
+| `ExpertRouted` | MoE Routing | Ternary Inference | token_id, expert_ids[], weights[] |
+| `InferenceCompleted` | Serving Integration | Adaptation Layer | session_id, quality_score, latency_ms |
+| `AdapterUpdated` | Adaptation Layer | Ternary Inference | layer_id, adapter_version |
+| `DistillationCheckpoint` | Quantization Pipeline | Model Lifecycle | epoch, loss, checkpoint_path |
+| `MemoryPressure` | Serving Integration | MoE Routing, Model Lifecycle | available_mb, action (evict/compact) |
+
+---
+
+## 7. Module Structure (Proposed Crate Layout)
+
+```
+crates/ruvllm/src/
+├── bitnet/                          # NEW: Ternary Inference Context
+│   ├── mod.rs                       # Module exports
+│   ├── bit_linear.rs                # BitLinearLayer implementation
+│   ├── ternary_tensor.rs            # TernaryTensor value object
+│   ├── quantizer.rs                 # Absmean + absmax quantization
+│   ├── kernels/                     # Platform-specific GEMM kernels
+│   │   ├── mod.rs
+│   │   ├── tl1_avx2.rs             # TL1 kernel for x86 AVX2
+│   │   ├── tl1_avx512.rs           # TL1 kernel for x86 AVX512
+│   │   ├── tl1_neon.rs             # TL1 kernel for ARM NEON
+│   │   ├── tl2_neon.rs             # TL2 kernel for memory-constrained ARM
+│   │   ├── i2s_avx512.rs           # I2_S kernel for high-bandwidth x86
+│   │   ├── i2s_scalar.rs           # Scalar fallback
+│   │   └── lookup_table.rs         # LUT generation for TL1/TL2
+│   └── tests/
+│       ├── kernel_correctness.rs    # Bit-exact validation vs reference
+│       ├── gemm_benchmark.rs        # Performance regression tests
+│       └── quantizer_roundtrip.rs   # FP16 → ternary → verify
+│
+├── moe/                             # NEW: MoE Routing Context
+│   ├── mod.rs
+│   ├── router.rs                    # MoERouter gating network
+│   ├── expert_pool.rs               # Expert registry and dispatch
+│   ├── load_balancer.rs             # Capacity factor enforcement
+│   └── tests/
+│       └── routing_tests.rs
+│
+├── craftsman/                       # NEW: Craftsman Ultra integration
+│   ├── mod.rs
+│   ├── model.rs                     # CraftsmanModel root aggregate
+│   ├── config.rs                    # ModelConfig deserialization
+│   ├── forward.rs                   # End-to-end forward pass pipeline
+│   └── tests/
+│       └── integration_tests.rs
+│
+├── backends/
+│   ├── bitnet_backend.rs            # NEW: BitNetBackend implementation
+│   └── ... (existing backends)
+│
+├── distillation/                    # NEW: Quantization Pipeline Context
+│   ├── mod.rs
+│   ├── pipeline.rs                  # DistillationPipeline
+│   ├── teacher.rs                   # TeacherModel wrapper
+│   ├── bit_linear_trainer.rs        # Shadow weights + STE
+│   └── gguf_export.rs              # GGUF ternary export
+│
+├── gguf/
+│   ├── quantization.rs              # EXISTING: Add BITNET_T158 type
+│   └── ... (existing files)
+│
+├── autodetect.rs                    # EXISTING: Add ternary kernel detection
+├── kernels/                         # EXISTING: Add bitnet kernel dispatch
+└── ...
+```
+
+---
+
+## 8. Performance Model
+
+### Compute Analysis (Per Token, Phase 1)
+
+Assuming GLM-4.7-Flash architecture with ~3B active parameters per token:
+
+| Component | Precision | Operations | Estimated Latency |
+|-----------|-----------|-----------|-------------------|
+| Embedding lookup | FP16 | 1 lookup | <0.01 ms |
+| Attention Q/K/V/O (FP16) | FP16 | ~1.2B FP multiply-add | ~30 ms (CPU) |
+| RMSNorm (per layer) | FP16 | Negligible | <0.1 ms |
+| MoE Router (per layer) | FP16 | ~1M FP multiply-add | <0.5 ms |
+| Expert FFN (ternary) | INT8/ternary | ~1.8B INT additions | ~15 ms (TL1 AVX2) |
+| LM Head | FP16 | ~vocab_size FP multiply-add | ~2 ms |
+| **Total per token** | — | — | **~50 ms → ~20 tok/s** |
+
+### Phase 2 (Full Ternary) Projection
+
+| Component | Precision | Estimated Latency |
+|-----------|-----------|-------------------|
+| Attention (ternary) | INT8/ternary | ~12 ms |
+| Expert FFN (ternary) | INT8/ternary | ~15 ms |
+| Router + norms | FP16 | ~1 ms |
+| **Total per token** | — | **~30 ms → ~33 tok/s** |
+
+### Memory Budget
+
+| Component | Phase 1 | Phase 2 |
+|-----------|---------|---------|
+| Expert weights (ternary) | 5.5 GB | 5.5 GB |
+| Attention weights | 2.0 GB (FP16) | 0.7 GB (ternary) |
+| Shared (embed/head/router/norm) | 1.5 GB | 1.5 GB |
+| Lookup tables | 0.2 GB | 0.3 GB |
+| KV cache (4K context) | 1.5 GB | 1.5 GB |
+| **Total** | **~10.7 GB** | **~9.5 GB** |
+
+---
+
+## 9. Testing Strategy
+
+### Unit Tests (Per Context)
+
+| Context | Test Focus | Examples |
+|---------|-----------|---------|
+| Ternary Inference | Kernel correctness | Bit-exact GEMM vs reference float impl |
+| Ternary Inference | Quantizer roundtrip | FP16 → ternary → verify scale preservation |
+| MoE Routing | Router selection | Top-K selection, capacity enforcement |
+| MoE Routing | Load balancing | No expert starvation under varied inputs |
+| Model Lifecycle | GGUF parsing | Valid/invalid/corrupt file handling |
+| Kernel Dispatch | Hardware detection | Mock CPUID, verify kernel selection |
+| Adaptation Layer | LoRA correctness | Adapter output matches FP16 reference |
+
+### Integration Tests
+
+| Test | Contexts Involved | Validation |
+|------|------------------|-----------|
+| End-to-end generation | All | Generate coherent text from prompt |
+| Mixed-precision forward | Ternary + MoE + Serving | Output matches reference within tolerance |
+| Model load + inference | Lifecycle + Inference | Cold-start to first token <5s |
+| Adapter hot-swap | Adaptation + Inference | Zero downtime, correct output switch |
+
+### Benchmark Tests
+
+| Benchmark | Target | Pass Criteria |
+|-----------|--------|--------------|
+| HumanEval pass@1 | >=50% (Phase 1), >=58% (Phase 2) | >= threshold |
+| MBPP pass@1 | >=55% | >= threshold |
+| Decode tok/s (AVX2) | >=10 (Phase 1), >=20 (Phase 2) | >= threshold |
+| Memory peak (4K ctx) | <=12 GB (Phase 1), <=10 GB (Phase 2) | <= threshold |
+| Kernel GEMM (1024x1024) | <=2ms (TL1 AVX2) | <= threshold |
+
+---
+
+## 10. Migration Path from Existing RuvLLM
+
+### Compatibility Matrix
+
+| Existing Feature | Impact | Action |
+|-----------------|--------|--------|
+| GGUF parser | Low | Add BITNET_T158 type to `GgufQuantType` enum |
+| `InferenceBackend` trait | None | New `BitNetBackend` implements existing trait |
+| KV cache (`kv_cache.rs`) | None | Reused as-is (FP16/Q8 cache unchanged) |
+| Autodetect (`autodetect.rs`) | Low | Add ternary kernel capability flags |
+| SIMD kernels (`kernels/`) | Medium | New ternary kernels alongside existing |
+| MicroLoRA (`lora/`) | Low | Adapter applied to BitLinear output |
+| SONA (`sona/`) | None | Instant loop drives adapter feedback |
+| Claude Flow (`claude_flow/`) | Low | Add `BitNetModel` to model router |
+| NAPI bindings | Low | Expose `BitNetBackend` via existing pattern |
+| tokenizer | None | Reused (GLM-4 tokenizer, 151K vocab) |
+
+### Non-Breaking Changes
+
+All changes are additive. No existing backend, model, or API is modified. The `BitNetBackend` is a new backend option that coexists with Candle, mistral-rs, and CoreML.
+
+---
+
+## 11. Open Questions
+
+| # | Question | Impact | Notes |
+|---|----------|--------|-------|
+| 1 | Exact expert count in GLM-4.7-Flash? | Architecture config | Need to inspect `config.json` from HF or wait for technical report |
+| 2 | MLA (Multi-head Latent Attention) compatibility with ternary? | Phase 2 design | MLA's compressed KV may conflict with ternary attention |
+| 3 | GLM-4.7-Flash tokenizer reuse or custom? | Model Lifecycle | Likely reuse GLM-4 tokenizer (151K vocab) |
+| 4 | Distillation compute budget approved? | Phase 1 timeline | 800-1600 A100-hours needed |
+| 5 | WASM target for ternary kernels? | Portability | LUT-based kernels may not map to WASM SIMD efficiently |
+| 6 | HuggingFace model name reservation? | Distribution | Reserve `ruv/craftsman-ultra-30b-1bit` |
+| 7 | BitNet patent/license status? | Legal | MIT license for bitnet.cpp; research papers are open |
+| 8 | Multi-Token Prediction (MTP) compat? | Speculative decoding | GLM-4.7-Flash uses MTP; unclear if ternary draft model works |
+
+---
+
+## 12. References
+
+- ADR-017: Craftsman Ultra 30b 1bit — BitNet Integration with RuvLLM
+- ADR-002: RuvLLM Integration with Ruvector
+- Microsoft Research, "The Era of 1-bit LLMs" (arXiv:2402.17764)
+- Microsoft Research, "bitnet.cpp: Efficient Edge Inference for Ternary LLMs" (arXiv:2502.11880)
+- Zhipu AI, GLM-4.7-Flash (https://huggingface.co/zai-org/GLM-4.7-Flash)
+- Evans, Eric. "Domain-Driven Design: Tackling Complexity in the Heart of Software" (2003)
+- Vernon, Vaughn. "Implementing Domain-Driven Design" (2013)
