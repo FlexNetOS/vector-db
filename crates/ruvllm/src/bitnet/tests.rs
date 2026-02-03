@@ -617,6 +617,185 @@ fn test_mixed_magnitudes() {
 }
 
 // ============================================================================
+// 8. Layer Filter Tests (per ADR-017 AD-2)
+// ============================================================================
+
+#[test]
+fn test_should_quantize_expert_layers() {
+    // MoE expert FFN layers (gate_proj, up_proj, down_proj) should be quantized
+    use super::LayerMask;
+
+    let layer_mask = LayerMask::ExpertsOnly;
+
+    assert!(
+        should_quantize_layer("model.layers.0.mlp.gate_proj.weight", &layer_mask),
+        "gate_proj should be quantized"
+    );
+    assert!(
+        should_quantize_layer("model.layers.0.mlp.up_proj.weight", &layer_mask),
+        "up_proj should be quantized"
+    );
+    assert!(
+        should_quantize_layer("model.layers.0.mlp.down_proj.weight", &layer_mask),
+        "down_proj should be quantized"
+    );
+    assert!(
+        should_quantize_layer("model.layers.15.block_sparse_moe.experts.7.w3.weight", &layer_mask),
+        "Expert w3 (up_proj) should be quantized"
+    );
+}
+
+#[test]
+fn test_should_not_quantize_router() {
+    // Router and gate layers must remain in FP16 per ADR-017 (AD-2)
+    use super::LayerMask;
+
+    let layer_mask = LayerMask::ExpertsOnly;
+
+    assert!(
+        !should_quantize_layer("model.layers.0.mlp.router.weight", &layer_mask),
+        "Router should NOT be quantized"
+    );
+    assert!(
+        !should_quantize_layer("model.layers.0.block_sparse_moe.gate.weight", &layer_mask),
+        "MoE gate should NOT be quantized"
+    );
+}
+
+#[test]
+fn test_should_not_quantize_embed() {
+    // Embeddings and LM head must remain in FP16 per ADR-017 (AD-2)
+    use super::LayerMask;
+
+    let layer_mask = LayerMask::ExpertsOnly;
+
+    assert!(
+        !should_quantize_layer("model.embed_tokens.weight", &layer_mask),
+        "Embed tokens should NOT be quantized"
+    );
+    assert!(
+        !should_quantize_layer("lm_head.weight", &layer_mask),
+        "LM head should NOT be quantized"
+    );
+    assert!(
+        !should_quantize_layer("model.embeddings.word_embeddings", &layer_mask),
+        "Word embeddings should NOT be quantized"
+    );
+}
+
+#[test]
+fn test_should_not_quantize_norm() {
+    // Normalization layers must remain in FP16 per ADR-017 (AD-2)
+    use super::LayerMask;
+
+    let layer_mask = LayerMask::ExpertsOnly;
+
+    assert!(
+        !should_quantize_layer("model.layers.0.input_layernorm.weight", &layer_mask),
+        "Input layernorm should NOT be quantized"
+    );
+    assert!(
+        !should_quantize_layer("model.layers.0.post_attention_layernorm.weight", &layer_mask),
+        "Post-attention layernorm should NOT be quantized"
+    );
+    assert!(
+        !should_quantize_layer("model.norm.weight", &layer_mask),
+        "Final norm should NOT be quantized"
+    );
+    assert!(
+        !should_quantize_layer("model.layers.0.self_attn.layer_norm", &layer_mask),
+        "Self-attention layer_norm should NOT be quantized"
+    );
+}
+
+#[test]
+fn test_layer_mask_all() {
+    // LayerMask::All should quantize all linear layers except protected ones
+    use super::LayerMask;
+
+    let layer_mask = LayerMask::All;
+
+    // Should quantize attention projections
+    assert!(
+        should_quantize_layer("model.layers.0.self_attn.q_proj.weight", &layer_mask),
+        "Query projection should be quantized with LayerMask::All"
+    );
+    assert!(
+        should_quantize_layer("model.layers.0.self_attn.k_proj.weight", &layer_mask),
+        "Key projection should be quantized with LayerMask::All"
+    );
+
+    // Should still protect router/embed/norm
+    assert!(
+        !should_quantize_layer("model.layers.0.mlp.router.weight", &layer_mask),
+        "Router should be protected even with LayerMask::All"
+    );
+    assert!(
+        !should_quantize_layer("model.embed_tokens.weight", &layer_mask),
+        "Embeddings should be protected even with LayerMask::All"
+    );
+}
+
+#[test]
+fn test_layer_mask_custom() {
+    // LayerMask::Custom should match specified patterns only
+    use super::LayerMask;
+
+    let layer_mask = LayerMask::Custom(vec!["w1".to_string(), "w3".to_string()]);
+
+    assert!(
+        should_quantize_layer("model.layers.0.mlp.experts.0.w1.weight", &layer_mask),
+        "w1 should match custom pattern"
+    );
+    assert!(
+        should_quantize_layer("model.layers.0.mlp.experts.0.w3.weight", &layer_mask),
+        "w3 should match custom pattern"
+    );
+    assert!(
+        !should_quantize_layer("model.layers.0.mlp.experts.0.w2.weight", &layer_mask),
+        "w2 should NOT match custom pattern"
+    );
+}
+
+/// Helper function for layer filtering logic (matches ADR-017 AD-2 specification)
+fn should_quantize_layer(layer_name: &str, mask: &super::LayerMask) -> bool {
+    use super::LayerMask;
+
+    match mask {
+        LayerMask::ExpertsOnly => {
+            // Quantize MoE expert FFN layers only (gate_proj, up_proj, down_proj, w1, w2, w3)
+            // Exclude: router, gate, embed, norm, lm_head
+            let is_expert_ffn = layer_name.contains("gate_proj")
+                || layer_name.contains("up_proj")
+                || layer_name.contains("down_proj")
+                || (layer_name.contains("experts")
+                    && (layer_name.contains(".w1.") || layer_name.contains(".w2.") || layer_name.contains(".w3.")));
+
+            let is_protected = layer_name.contains("router")
+                || layer_name.contains(".gate.") // MoE gate (not gate_proj)
+                || layer_name.contains("embed")
+                || layer_name.contains("lm_head")
+                || layer_name.contains("norm");
+
+            is_expert_ffn && !is_protected
+        }
+        LayerMask::All => {
+            // Quantize all linear layers except protected ones
+            let is_protected = layer_name.contains("router")
+                || layer_name.contains("embed")
+                || layer_name.contains("lm_head")
+                || layer_name.contains("norm");
+
+            !is_protected
+        }
+        LayerMask::Custom(patterns) => {
+            // Match any custom pattern
+            patterns.iter().any(|p| layer_name.contains(p))
+        }
+    }
+}
+
+// ============================================================================
 // Helper Functions
 // ============================================================================
 
