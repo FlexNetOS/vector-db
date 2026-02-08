@@ -27,7 +27,7 @@
 //! assert_eq!(store.block_count(), 1);
 //!
 //! let mut out = vec![0.0f32; 64];
-//! let n = store.get(key, &mut out).unwrap();
+//! let n = store.get(key, &mut out, 1).unwrap();
 //! assert_eq!(n, 64);
 //! ```
 
@@ -338,6 +338,63 @@ fn block_checksum(packed: &[u8], scale: f32) -> u32 {
 }
 
 // ---------------------------------------------------------------------------
+// TickResult
+// ---------------------------------------------------------------------------
+
+/// Summary of actions taken during a budgeted maintenance tick.
+#[derive(Debug, Default)]
+pub struct TickResult {
+    /// Number of blocks promoted to a hotter tier.
+    pub upgrades: u32,
+    /// Number of blocks demoted to a colder tier.
+    pub downgrades: u32,
+    /// Number of blocks evicted to Tier0.
+    pub evictions: u32,
+    /// Total bytes freed by evictions and downgrades.
+    pub bytes_freed: usize,
+    /// Number of budget operations consumed.
+    pub ops_used: u32,
+    /// Total migration candidates identified before budget limits.
+    pub candidates_found: u32,
+}
+
+// ---------------------------------------------------------------------------
+// Type adapters: store types <-> tiering types
+// ---------------------------------------------------------------------------
+
+/// Convert a store [`Tier`] to a [`crate::tiering::Tier`].
+fn to_tiering_tier(tier: Tier) -> crate::tiering::Tier {
+    match tier {
+        Tier::Tier0 => crate::tiering::Tier::Tier0,
+        Tier::Tier1 => crate::tiering::Tier::Tier1,
+        Tier::Tier2 => crate::tiering::Tier::Tier2,
+        Tier::Tier3 => crate::tiering::Tier::Tier3,
+    }
+}
+
+/// Convert a [`crate::tiering::Tier`] to a store [`Tier`].
+fn from_tiering_tier(tier: crate::tiering::Tier) -> Tier {
+    match tier {
+        crate::tiering::Tier::Tier0 => Tier::Tier0,
+        crate::tiering::Tier::Tier1 => Tier::Tier1,
+        crate::tiering::Tier::Tier2 => Tier::Tier2,
+        crate::tiering::Tier::Tier3 => Tier::Tier3,
+    }
+}
+
+/// Build a [`crate::tiering::BlockMeta`] from a store [`BlockMeta`] at time `now`.
+fn to_tiering_meta(meta: &BlockMeta, now: u64) -> crate::tiering::BlockMeta {
+    crate::tiering::BlockMeta {
+        ema_rate: meta.ema_rate,
+        access_window: meta.window,
+        last_access: meta.last_access_at,
+        access_count: meta.access_count as u64,
+        current_tier: to_tiering_tier(meta.tier),
+        tier_since: now.saturating_sub(meta.tier_age as u64),
+    }
+}
+
+// ---------------------------------------------------------------------------
 // TieredStore
 // ---------------------------------------------------------------------------
 
@@ -365,6 +422,9 @@ pub struct TieredStore {
     tier1_keys: Vec<BlockKey>,
     tier2_keys: Vec<BlockKey>,
     tier3_keys: Vec<BlockKey>,
+
+    /// Witness log for auditing tiering decisions.
+    witness_log: crate::metrics::WitnessLog,
 }
 
 /// Smoothing constant for the exponential moving average of access rate.
@@ -382,6 +442,7 @@ impl TieredStore {
             tier1_keys: Vec::new(),
             tier2_keys: Vec::new(),
             tier3_keys: Vec::new(),
+            witness_log: crate::metrics::WitnessLog::new(10_000),
         }
     }
 
@@ -389,6 +450,32 @@ impl TieredStore {
     #[inline]
     pub fn block_bytes(&self) -> usize {
         self.block_bytes
+    }
+
+    /// Access the witness log.
+    pub fn witness_log(&self) -> &crate::metrics::WitnessLog {
+        &self.witness_log
+    }
+
+    /// Access the witness log mutably.
+    pub fn witness_log_mut(&mut self) -> &mut crate::metrics::WitnessLog {
+        &mut self.witness_log
+    }
+
+    /// Compute current aggregate metrics.
+    pub fn metrics(&self) -> crate::metrics::StoreMetrics {
+        let mut m = crate::metrics::StoreMetrics::new();
+        m.total_blocks = self.index.len() as u64;
+        m.tier0_blocks = self.index.values().filter(|b| b.tier == Tier::Tier0).count() as u64;
+        m.tier1_blocks = self.tier1_keys.len() as u64;
+        m.tier2_blocks = self.tier2_keys.len() as u64;
+        m.tier3_blocks = self.tier3_keys.len() as u64;
+        m.tier1_bytes = self.tier1_data.values().map(|d| d.packed.len() as u64).sum();
+        m.tier2_bytes = self.tier2_data.values().map(|d| d.packed.len() as u64).sum();
+        m.tier3_bytes = self.tier3_data.values().map(|d| d.packed.len() as u64).sum();
+        m.total_evictions = self.witness_log.count_evictions() as u64;
+        m.tier_flips_last_minute = self.witness_log.tier_flip_rate(60, self.index.len() as u64);
+        m
     }
 
     /// Quantize `data` at the bit width for `tier` and store the block.
@@ -454,10 +541,20 @@ impl TieredStore {
         };
         self.index.insert(key, meta);
 
+        // Record witness event for the write.
+        self.witness_log.record(now, crate::metrics::WitnessEvent::Access {
+            key,
+            score: 0.0,
+            tier,
+        });
+
         Ok(())
     }
 
     /// Dequantize the block identified by `key` into `out`.
+    ///
+    /// `now` is the current tick counter, used to update access statistics
+    /// and record a witness event.
     ///
     /// Returns the number of f32 elements written to `out`.
     ///
@@ -467,31 +564,47 @@ impl TieredStore {
     /// - [`StoreError::BlockNotFound`] if no block exists for `key`.
     /// - [`StoreError::ChecksumMismatch`] if the stored checksum does not
     ///   match a freshly computed checksum of the payload.
-    pub fn get(&self, key: BlockKey, out: &mut [f32]) -> Result<usize, StoreError> {
+    pub fn get(&mut self, key: BlockKey, out: &mut [f32], now: u64) -> Result<usize, StoreError> {
         let meta = self.index.get(&key).ok_or(StoreError::BlockNotFound)?;
 
         if meta.tier == Tier::Tier0 {
             return Err(StoreError::TensorEvicted);
         }
 
+        let tier = meta.tier;
+        let scale = meta.scale;
+        let bits = meta.bits;
+        let checksum = meta.checksum;
+
         let block = self
-            .data_map(meta.tier)
+            .data_map(tier)
             .and_then(|m| m.get(&key))
             .ok_or(StoreError::BlockNotFound)?;
 
         // Verify integrity.
-        let actual_crc = block_checksum(&block.packed, meta.scale);
-        if actual_crc != meta.checksum {
+        let actual_crc = block_checksum(&block.packed, scale);
+        if actual_crc != checksum {
             return Err(StoreError::ChecksumMismatch);
         }
 
         let n = dequantize_block(
             &block.packed,
-            meta.scale,
-            meta.bits,
+            scale,
+            bits,
             block.element_count as usize,
             out,
         );
+
+        // Update access statistics.
+        self.touch(key, now);
+
+        // Record witness event.
+        self.witness_log.record(now, crate::metrics::WitnessEvent::Access {
+            key,
+            score: 0.0, // score not computed during basic get
+            tier,
+        });
+
         Ok(n)
     }
 
@@ -588,6 +701,9 @@ impl TieredStore {
             return Ok(());
         }
 
+        let bytes_freed = meta.block_bytes as usize;
+        let evict_ts = meta.last_access_at;
+
         // Mutate metadata before touching the data maps (avoids a second
         // lookup since we already have the mutable reference).
         meta.tier = Tier::Tier0;
@@ -599,6 +715,13 @@ impl TieredStore {
         // Drop the mutable borrow so we can call helper methods.
         self.remove_data(old_tier, key);
         self.remove_from_bucket(old_tier, key);
+
+        // Record witness event for the eviction.
+        self.witness_log.record(evict_ts, crate::metrics::WitnessEvent::Eviction {
+            key,
+            score: 0.0,
+            bytes_freed,
+        });
 
         Ok(())
     }
@@ -645,6 +768,292 @@ impl TieredStore {
             Tier::Tier2 => self.tier2_keys.push(key),
             Tier::Tier3 => self.tier3_keys.push(key),
             Tier::Tier0 => {}
+        }
+    }
+
+    // -- tiering-aware methods -----------------------------------------------
+
+    /// Run a budgeted maintenance tick.
+    ///
+    /// Evaluates all blocks, selects migration candidates, and executes
+    /// tier transitions within the given byte and operation budgets.
+    /// Returns a summary of actions taken.
+    pub fn tick(
+        &mut self,
+        config: &crate::tiering::TierConfig,
+        now: u64,
+        budget_bytes: usize,
+        budget_ops: u32,
+    ) -> TickResult {
+        let mut result = TickResult::default();
+
+        // Step 1: Collect all blocks and convert to tiering types.
+        // Use sequential indices as tiering::BlockKey values to avoid collisions.
+        let store_keys: Vec<BlockKey> = self.index.keys().copied().collect();
+        if store_keys.is_empty() {
+            return result;
+        }
+
+        let tiering_blocks: Vec<(crate::tiering::BlockKey, crate::tiering::BlockMeta)> =
+            store_keys
+                .iter()
+                .enumerate()
+                .map(|(idx, key)| {
+                    let meta = &self.index[key];
+                    (
+                        crate::tiering::BlockKey(idx as u64),
+                        to_tiering_meta(meta, now),
+                    )
+                })
+                .collect();
+
+        let blocks_ref: Vec<(crate::tiering::BlockKey, &crate::tiering::BlockMeta)> =
+            tiering_blocks.iter().map(|(k, m)| (*k, m)).collect();
+
+        // Step 2: Select migration candidates (upgrades first by highest score,
+        // then downgrades by lowest score).
+        let candidates = crate::tiering::select_candidates(config, now, &blocks_ref);
+        result.candidates_found = candidates.len() as u32;
+
+        // Step 3: Process candidates within budget.
+        let mut remaining_bytes = budget_bytes;
+        let mut remaining_ops = budget_ops;
+        let mut migrated = std::collections::HashSet::new();
+
+        for candidate in &candidates {
+            if remaining_ops == 0 {
+                break;
+            }
+
+            let store_key = store_keys[candidate.key.0 as usize];
+            let target_tier = from_tiering_tier(candidate.target_tier);
+            let current_tier = from_tiering_tier(candidate.current_tier);
+
+            let old_bytes = self
+                .index
+                .get(&store_key)
+                .map(|m| m.block_bytes as usize)
+                .unwrap_or(0);
+
+            // Check byte budget.
+            if old_bytes > remaining_bytes {
+                continue;
+            }
+
+            if target_tier == Tier::Tier0 {
+                // Eviction.
+                if self.evict(store_key, ReconstructPolicy::None).is_ok() {
+                    result.evictions += 1;
+                    result.bytes_freed += old_bytes;
+                    remaining_ops -= 1;
+                    result.ops_used += 1;
+                    remaining_bytes = remaining_bytes.saturating_sub(old_bytes);
+                    migrated.insert(store_key);
+                }
+            } else {
+                // Tier migration.
+                let warm_bytes: usize =
+                    self.tier2_data.values().map(|b| b.packed.len()).sum();
+                let target_bits = crate::tiering::bits_for_tier(
+                    config,
+                    to_tiering_tier(target_tier),
+                    warm_bytes,
+                );
+
+                let old_tier_u8 = current_tier as u8;
+                let new_tier_u8 = target_tier as u8;
+
+                if self.migrate_block(store_key, target_tier, target_bits).is_ok() {
+                    let new_bytes = self
+                        .index
+                        .get(&store_key)
+                        .map(|m| m.block_bytes as usize)
+                        .unwrap_or(0);
+
+                    if new_tier_u8 < old_tier_u8 {
+                        // Upgrade (hotter tier).
+                        result.upgrades += 1;
+                    } else {
+                        // Downgrade (colder tier).
+                        result.downgrades += 1;
+                        result.bytes_freed += old_bytes.saturating_sub(new_bytes);
+                    }
+
+                    // Record witness event for the tier change.
+                    let reason = if new_tier_u8 < old_tier_u8 {
+                        crate::metrics::TierChangeReason::ScoreUpgrade
+                    } else {
+                        crate::metrics::TierChangeReason::ScoreDowngrade
+                    };
+                    self.witness_log.record(
+                        now,
+                        crate::metrics::WitnessEvent::TierChange {
+                            key: store_key,
+                            from_tier: current_tier,
+                            to_tier: target_tier,
+                            score: candidate.score,
+                            reason,
+                        },
+                    );
+
+                    remaining_ops -= 1;
+                    result.ops_used += 1;
+                    remaining_bytes = remaining_bytes.saturating_sub(old_bytes);
+                    migrated.insert(store_key);
+                }
+            }
+        }
+
+        // Step 4: For blocks not migrated, increment tier_age and call tick_decay.
+        for key in &store_keys {
+            if migrated.contains(key) {
+                continue;
+            }
+            if let Some(meta) = self.index.get_mut(key) {
+                meta.tier_age = meta.tier_age.saturating_add(1);
+                // Apply tick_decay via the tiering module.
+                let mut tm = crate::tiering::BlockMeta {
+                    ema_rate: meta.ema_rate,
+                    access_window: meta.window,
+                    last_access: meta.last_access_at,
+                    access_count: meta.access_count as u64,
+                    current_tier: to_tiering_tier(meta.tier),
+                    tier_since: now.saturating_sub(meta.tier_age as u64),
+                };
+                crate::tiering::tick_decay(config, &mut tm);
+                meta.ema_rate = tm.ema_rate;
+                meta.window = tm.access_window;
+            }
+        }
+
+        // Record a maintenance witness event.
+        self.witness_log.record(
+            now,
+            crate::metrics::WitnessEvent::Maintenance {
+                upgrades: result.upgrades,
+                downgrades: result.downgrades,
+                evictions: result.evictions,
+                bytes_freed: result.bytes_freed,
+                budget_remaining_bytes: remaining_bytes.min(u32::MAX as usize) as u32,
+                budget_remaining_ops: remaining_ops,
+            },
+        );
+
+        result
+    }
+
+    /// Migrate a single block from one tier to another.
+    ///
+    /// Re-quantizes the data at the target tier's bit width. The block's
+    /// metadata is updated with the new tier, bits, scale, checksum, and
+    /// `tier_age` is reset to 0.
+    fn migrate_block(
+        &mut self,
+        key: BlockKey,
+        target_tier: Tier,
+        target_bits: u8,
+    ) -> Result<(), StoreError> {
+        // Read current metadata (copy fields to release the borrow).
+        let meta = self.index.get(&key).ok_or(StoreError::BlockNotFound)?;
+        let old_tier = meta.tier;
+        let old_bits = meta.bits;
+        let old_scale = meta.scale;
+
+        if old_tier == Tier::Tier0 {
+            return Err(StoreError::TensorEvicted);
+        }
+        if target_tier == Tier::Tier0 {
+            return Err(StoreError::InvalidBlock);
+        }
+
+        // Dequantize the old data to f32 within a limited scope so the
+        // immutable borrow on self (through data_map) is released before
+        // we need mutable access.
+        let (element_count, f32_data) = {
+            let block = self
+                .data_map(old_tier)
+                .and_then(|m| m.get(&key))
+                .ok_or(StoreError::BlockNotFound)?;
+            let ec = block.element_count;
+            let mut data = vec![0.0f32; ec as usize];
+            dequantize_block(&block.packed, old_scale, old_bits, ec as usize, &mut data);
+            (ec, data)
+        };
+
+        // Re-quantize at the target bit width.
+        let (packed, scale) = quantize_block(&f32_data, target_bits);
+        let checksum = block_checksum(&packed, scale);
+        let byte_count = packed.len() as u32;
+        let new_block = BlockData {
+            element_count,
+            packed,
+        };
+
+        // Remove from old tier.
+        self.remove_data(old_tier, key);
+        self.remove_from_bucket(old_tier, key);
+
+        // Insert into target tier.
+        match target_tier {
+            Tier::Tier1 => { self.tier1_data.insert(key, new_block); }
+            Tier::Tier2 => { self.tier2_data.insert(key, new_block); }
+            Tier::Tier3 => { self.tier3_data.insert(key, new_block); }
+            Tier::Tier0 => unreachable!(),
+        }
+        self.add_to_bucket(target_tier, key);
+
+        // Update metadata.
+        let meta = self.index.get_mut(&key).unwrap();
+        meta.tier = target_tier;
+        meta.bits = target_bits;
+        meta.scale = scale;
+        meta.checksum = checksum;
+        meta.tier_age = 0;
+        meta.block_bytes = byte_count;
+
+        Ok(())
+    }
+
+    /// Compute the current score for a block using the enhanced tiering
+    /// algorithm (EMA + popcount + recency).
+    ///
+    /// Returns `None` if the block does not exist.
+    pub fn score_block(
+        &self,
+        key: BlockKey,
+        config: &crate::tiering::TierConfig,
+        now: u64,
+    ) -> Option<f32> {
+        let meta = self.index.get(&key)?;
+        let tm = to_tiering_meta(meta, now);
+        Some(crate::tiering::compute_score(config, now, &tm))
+    }
+
+    /// Record an access event using the enhanced tiering algorithm.
+    ///
+    /// Updates `ema_rate`, `access_window`, `last_access_at`, and
+    /// `access_count` using the configurable alpha from [`TierConfig`].
+    /// Does nothing if the key is not present.
+    pub fn touch_block(
+        &mut self,
+        key: BlockKey,
+        config: &crate::tiering::TierConfig,
+        now: u64,
+    ) {
+        if let Some(meta) = self.index.get_mut(&key) {
+            let mut tm = crate::tiering::BlockMeta {
+                ema_rate: meta.ema_rate,
+                access_window: meta.window,
+                last_access: meta.last_access_at,
+                access_count: meta.access_count as u64,
+                current_tier: to_tiering_tier(meta.tier),
+                tier_since: now.saturating_sub(meta.tier_age as u64),
+            };
+            crate::tiering::touch(config, now, &mut tm);
+            meta.ema_rate = tm.ema_rate;
+            meta.window = tm.access_window;
+            meta.last_access_at = tm.last_access;
+            meta.access_count = tm.access_count.min(u32::MAX as u64) as u32;
         }
     }
 }
@@ -851,7 +1260,7 @@ mod tests {
         store.put(key, &data, Tier::Tier1, 0).unwrap();
 
         let mut out = vec![0.0f32; 64];
-        let n = store.get(key, &mut out).unwrap();
+        let n = TieredStore::get(&mut store, key, &mut out, 1).unwrap();
         assert_eq!(n, 64);
 
         for (i, (&orig, &dec)) in data.iter().zip(out.iter()).enumerate() {
@@ -875,7 +1284,7 @@ mod tests {
         assert_eq!(meta.created_at, 100);
 
         let mut out = vec![0.0f32; 32];
-        let n = store.get(key, &mut out).unwrap();
+        let n = TieredStore::get(&mut store, key, &mut out, 101).unwrap();
         assert_eq!(n, 32);
 
         let max_val = data.iter().map(|v| v.abs()).fold(0.0f32, f32::max);
@@ -887,10 +1296,10 @@ mod tests {
 
     #[test]
     fn test_store_get_not_found() {
-        let store = TieredStore::new(4096);
+        let mut store = TieredStore::new(4096);
         let key = make_key(99, 0);
         let mut out = vec![0.0f32; 8];
-        assert_eq!(store.get(key, &mut out), Err(StoreError::BlockNotFound));
+        assert_eq!(TieredStore::get(&mut store, key, &mut out, 0), Err(StoreError::BlockNotFound));
     }
 
     #[test]
@@ -927,7 +1336,7 @@ mod tests {
 
         // Data is gone; read should fail with TensorEvicted.
         let mut out = vec![0.0f32; 64];
-        assert_eq!(store.get(key, &mut out), Err(StoreError::TensorEvicted));
+        assert_eq!(TieredStore::get(&mut store, key, &mut out, 1), Err(StoreError::TensorEvicted));
 
         // Tier1 should be empty; Tier0 count should be 1.
         assert_eq!(store.tier_count(Tier::Tier1), 0);
@@ -1259,7 +1668,127 @@ mod tests {
 
         // Read back a hot block.
         let mut out = vec![0.0f32; 32];
-        let n = store.get(make_key(1, 0), &mut out).unwrap();
+        let n = TieredStore::get(&mut store, make_key(1, 0), &mut out, 30).unwrap();
         assert_eq!(n, 32);
+    }
+
+    // -- tick / score / touch_block -----------------------------------------
+
+    #[test]
+    fn test_tick_empty_store() {
+        let mut store = TieredStore::new(4096);
+        let config = crate::tiering::TierConfig::default();
+        let result = store.tick(&config, 100, 1_000_000, 100);
+        assert_eq!(result.upgrades, 0);
+        assert_eq!(result.downgrades, 0);
+        assert_eq!(result.evictions, 0);
+        assert_eq!(result.bytes_freed, 0);
+        assert_eq!(result.ops_used, 0);
+        assert_eq!(result.candidates_found, 0);
+    }
+
+    #[test]
+    fn test_tick_migrates_cold_to_hot() {
+        let mut store = TieredStore::new(4096);
+        let key = make_key(1, 0);
+        let data: Vec<f32> = (0..64).map(|i| i as f32 * 0.1).collect();
+
+        // Put block in Tier3 (cold).
+        store.put(key, &data, Tier::Tier3, 0).unwrap();
+        assert_eq!(store.tier_count(Tier::Tier3), 1);
+
+        // Simulate a highly-accessed block by directly setting metadata
+        // fields so that the tiering score exceeds t1 + hysteresis.
+        if let Some(meta) = store.index.get_mut(&key) {
+            meta.ema_rate = 1.0;
+            meta.window = u64::MAX; // all 64 bits set
+            meta.last_access_at = 100;
+            meta.access_count = 100;
+            meta.tier_age = 10; // past default min_residency (5)
+        }
+
+        let config = crate::tiering::TierConfig::default();
+        let result = store.tick(&config, 100, 1_000_000, 100);
+
+        assert!(result.upgrades > 0, "expected at least one upgrade, got {}", result.upgrades);
+        assert_eq!(result.downgrades, 0);
+        assert!(result.candidates_found > 0);
+
+        let meta = store.meta(key).unwrap();
+        assert_eq!(meta.tier, Tier::Tier1, "block should be in Tier1 after upgrade");
+        assert_eq!(meta.bits, 8, "Tier1 should use 8-bit quantization");
+        assert_eq!(meta.tier_age, 0, "tier_age should reset after migration");
+
+        // The block should still be readable.
+        let mut out = vec![0.0f32; 64];
+        let n = TieredStore::get(&mut store, key, &mut out, 101).unwrap();
+        assert_eq!(n, 64);
+    }
+
+    #[test]
+    fn test_tick_respects_budget_ops() {
+        let mut store = TieredStore::new(4096);
+        let data: Vec<f32> = (0..64).map(|i| i as f32 * 0.1).collect();
+
+        // Create 5 blocks in Tier3, all hot enough to warrant migration.
+        for i in 0..5u32 {
+            let key = make_key(i as u128 + 1, 0);
+            store.put(key, &data, Tier::Tier3, 0).unwrap();
+            if let Some(meta) = store.index.get_mut(&key) {
+                meta.ema_rate = 1.0;
+                meta.window = u64::MAX;
+                meta.last_access_at = 100;
+                meta.access_count = 100;
+                meta.tier_age = 10;
+            }
+        }
+
+        let config = crate::tiering::TierConfig::default();
+        // Budget only 2 ops.
+        let result = store.tick(&config, 100, 1_000_000, 2);
+
+        assert_eq!(result.ops_used, 2, "should use exactly 2 ops");
+        assert_eq!(result.upgrades, 2, "should upgrade only 2 blocks");
+        assert!(result.candidates_found >= 5, "should find all 5 candidates");
+    }
+
+    #[test]
+    fn test_touch_block_updates_ema_and_window() {
+        let mut store = TieredStore::new(4096);
+        let key = make_key(1, 0);
+        store.put(key, &[1.0; 16], Tier::Tier1, 0).unwrap();
+
+        let config = crate::tiering::TierConfig::default();
+
+        // Initial state: ema_rate is 0 after put.
+        let meta = store.meta(key).unwrap();
+        assert_eq!(meta.ema_rate, 0.0);
+
+        // Touch at tick 5.
+        store.touch_block(key, &config, 5);
+        let meta = store.meta(key).unwrap();
+
+        // tiering::touch sets ema_rate = alpha + (1 - alpha) * old_ema
+        // = 0.3 + 0.7 * 0.0 = 0.3
+        assert!(
+            (meta.ema_rate - config.alpha).abs() < 1e-6,
+            "ema_rate={}, expected={}",
+            meta.ema_rate,
+            config.alpha,
+        );
+        assert_eq!(meta.last_access_at, 5);
+        // Window should have bit 0 set after touch.
+        assert_ne!(meta.window & 1, 0, "bit 0 should be set");
+        // Elapsed = 5 ticks from 0, so window = (initial << 5) | 1.
+        // Initial window from put is 1, so: (1 << 5) | 1 = 0b100001.
+        assert_eq!(meta.window, (1u64 << 5) | 1);
+    }
+
+    #[test]
+    fn test_score_block_none_for_missing() {
+        let store = TieredStore::new(4096);
+        let config = crate::tiering::TierConfig::default();
+        let result = store.score_block(make_key(99, 0), &config, 100);
+        assert_eq!(result, None);
     }
 }

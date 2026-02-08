@@ -113,7 +113,8 @@ pub fn quantize_and_pack_f32(
             for &v in chunk {
                 let mut q: i32 = 0;
                 if v.is_finite() {
-                    q = (v * inv_scale).round() as i32;
+                    let scaled = v * inv_scale;
+                    q = if scaled >= 0.0 { (scaled + 0.5) as i32 } else { (scaled - 0.5) as i32 };
                     q = q.clamp(-127, 127);
                 }
                 out.push((q + 127) as u8);
@@ -145,7 +146,7 @@ pub fn quantize_and_pack_f32(
             let mut q: i32 = 0;
             if v.is_finite() {
                 let scaled = v * inv_scale;
-                q = scaled.round() as i32;
+                q = if scaled >= 0.0 { (scaled + 0.5) as i32 } else { (scaled - 0.5) as i32 };
                 q = q.clamp(-qmax_i, qmax_i);
             }
 
@@ -211,6 +212,72 @@ pub fn dequantize_f32(
                     out_idx += 1;
                     byte_idx += 1;
                     pos += 1;
+                }
+                group_idx += 1;
+            }
+        }
+        return;
+    }
+
+    // Fast path: 3-bit dequantization processes 8 values from 3 bytes.
+    // 8 values * 3 bits = 24 bits = 3 bytes exactly, avoiding the bit accumulator.
+    // LSB-first packing layout for 8 values in 3 bytes:
+    //   byte0 = v0 | (v1 << 3) | ((v2 & 0x3) << 6)
+    //   byte1 = (v2 >> 2) | (v3 << 1) | (v4 << 4) | ((v5 & 0x1) << 7)
+    //   byte2 = (v5 >> 1) | (v6 << 2) | (v7 << 5)
+    if bits == 3 {
+        let bias = 3i32; // qmax for 3-bit
+        let mut out_idx = 0usize;
+        let mut byte_idx = 0usize;
+        for _frame in 0..frame_count {
+            let mut pos = 0usize;
+            let mut group_idx = 0usize;
+            while pos < tensor_len {
+                let group_end = (pos + group_len).min(tensor_len);
+                let scale = if group_idx < scales_f32.len() {
+                    scales_f32[group_idx]
+                } else {
+                    0.0
+                };
+                // Process 8 values at a time from 3 bytes
+                while pos + 8 <= group_end && byte_idx + 3 <= data.len() {
+                    let b0 = data[byte_idx] as u32;
+                    let b1 = data[byte_idx + 1] as u32;
+                    let b2 = data[byte_idx + 2] as u32;
+                    byte_idx += 3;
+
+                    out[out_idx]     = ((b0 & 0x7) as i32 - bias) as f32 * scale;
+                    out[out_idx + 1] = (((b0 >> 3) & 0x7) as i32 - bias) as f32 * scale;
+                    out[out_idx + 2] = ((((b0 >> 6) | (b1 << 2)) & 0x7) as i32 - bias) as f32 * scale;
+                    out[out_idx + 3] = (((b1 >> 1) & 0x7) as i32 - bias) as f32 * scale;
+                    out[out_idx + 4] = (((b1 >> 4) & 0x7) as i32 - bias) as f32 * scale;
+                    out[out_idx + 5] = ((((b1 >> 7) | (b2 << 1)) & 0x7) as i32 - bias) as f32 * scale;
+                    out[out_idx + 6] = (((b2 >> 2) & 0x7) as i32 - bias) as f32 * scale;
+                    out[out_idx + 7] = (((b2 >> 5) & 0x7) as i32 - bias) as f32 * scale;
+                    out_idx += 8;
+                    pos += 8;
+                }
+                // Handle remaining values (< 8) with a local bit accumulator
+                if pos < group_end {
+                    let remaining = group_end - pos;
+                    let mut acc: u64 = 0;
+                    let mut acc_bits: u32 = 0;
+                    while acc_bits < (remaining as u32) * 3 && byte_idx < data.len() {
+                        acc |= (data[byte_idx] as u64) << acc_bits;
+                        acc_bits += 8;
+                        byte_idx += 1;
+                    }
+                    for _ in 0..remaining {
+                        if acc_bits < 3 {
+                            break;
+                        }
+                        let u = (acc & 0x7) as i32;
+                        acc >>= 3;
+                        acc_bits -= 3;
+                        out[out_idx] = (u - bias) as f32 * scale;
+                        out_idx += 1;
+                        pos += 1;
+                    }
                 }
                 group_idx += 1;
             }
