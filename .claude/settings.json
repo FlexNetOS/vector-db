@@ -96,6 +96,12 @@
             "command": "[ -n \"$SESSION_ID\" ] && npx @claude-flow/cli@latest hooks session-restore --session-id \"$SESSION_ID\" 2>/dev/null || true",
             "timeout": 10000,
             "continueOnError": true
+          },
+          {
+            "type": "command",
+            "command": "node .claude/helpers/auto-memory-hook.mjs import 2>/dev/null || true",
+            "timeout": 6000,
+            "continueOnError": true
           }
         ]
       }
@@ -118,6 +124,42 @@
             "type": "command",
             "command": "[ -n \"$NOTIFICATION_MESSAGE\" ] && npx @claude-flow/cli@latest memory store --namespace notifications --key \"notify-$(date +%s)\" --value \"$NOTIFICATION_MESSAGE\" 2>/dev/null || true",
             "timeout": 3000,
+            "continueOnError": true
+          }
+        ]
+      }
+    ],
+    "SessionEnd": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node .claude/helpers/auto-memory-hook.mjs sync 2>/dev/null || true",
+            "timeout": 8000,
+            "continueOnError": true
+          }
+        ]
+      }
+    ],
+    "TeammateIdle": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "npx @claude-flow/cli@latest hooks teammate-idle --auto-assign true 2>/dev/null || true",
+            "timeout": 5000,
+            "continueOnError": true
+          }
+        ]
+      }
+    ],
+    "TaskCompleted": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "[ -n \"$TASK_ID\" ] && npx @claude-flow/cli@latest hooks task-completed --task-id \"$TASK_ID\" --train-patterns true 2>/dev/null || true",
+            "timeout": 5000,
             "continueOnError": true
           }
         ]
@@ -151,7 +193,16 @@
     },
     "memory": {
       "backend": "hybrid",
-      "enableHNSW": true
+      "enableHNSW": true,
+      "learningBridge": {
+        "enabled": true
+      },
+      "memoryGraph": {
+        "enabled": true
+      },
+      "agentScopes": {
+        "enabled": true
+      }
     },
     "neural": {
       "enabled": true
@@ -232,6 +283,35 @@
       "scanOnEdit": true,
       "cveCheck": true,
       "threatModel": true
+    },
+    "agentTeams": {
+      "enabled": true,
+      "teammateMode": "auto",
+      "taskListEnabled": true,
+      "mailboxEnabled": true,
+      "coordination": {
+        "autoAssignOnIdle": true,
+        "trainPatternsOnComplete": true,
+        "notifyLeadOnComplete": true,
+        "sharedMemoryNamespace": "agent-teams"
+      },
+      "hooks": {
+        "teammateIdle": {
+          "enabled": true,
+          "autoAssign": true,
+          "checkTaskList": true
+        },
+        "taskCompleted": {
+          "enabled": true,
+          "trainPatterns": true,
+          "notifyLead": true
+        }
+      }
     }
+  },
+  "env": {
+    "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1",
+    "CLAUDE_FLOW_V3_ENABLED": "true",
+    "CLAUDE_FLOW_HOOKS_ENABLED": "true"
   }
 }

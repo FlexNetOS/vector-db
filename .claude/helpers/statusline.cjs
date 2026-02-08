@@ -24,7 +24,7 @@ const CONFIG = {
   showPerformance: true,
   refreshInterval: 5000,
   maxAgents: 15,
-  topology: 'hierarchical',
+  topology: 'hierarchical-mesh',
 };
 
 // ANSI colors
@@ -131,56 +131,8 @@ function getUserInfo() {
   return { name, gitBranch, modelName };
 }
 
-// Get RuVector intelligence data (primary source of learning)
-function getRuVectorIntelligence() {
-  const intelPaths = [
-    path.join(process.cwd(), '.ruvector', 'intelligence.json'),
-    path.join(process.cwd(), 'npm', 'packages', 'ruvector', '.ruvector', 'intelligence.json'),
-    path.join(require('os').homedir(), '.ruvector', 'intelligence.json'),
-  ];
-
-  for (const intelPath of intelPaths) {
-    if (fs.existsSync(intelPath)) {
-      try {
-        const data = JSON.parse(fs.readFileSync(intelPath, 'utf-8'));
-        return {
-          patterns: data.patterns ? Object.keys(data.patterns).length : 0,
-          memories: data.memories ? data.memories.length : 0,
-          trajectories: data.trajectories ? data.trajectories.length : 0,
-          sessions: data.stats?.session_count || 0,
-          fileSequences: data.file_sequences ? Object.keys(data.file_sequences).length : 0,
-          agents: data.agents ? Object.keys(data.agents).length : 0,
-          errors: data.errors ? data.errors.length : 0,
-          learning: data.learning || null,
-          tensorCompress: data.tensorCompress || null,
-          raw: data,
-        };
-      } catch (e) {
-        // Ignore parse errors
-      }
-    }
-  }
-  return null;
-}
-
 // Get learning stats from memory database
 function getLearningStats() {
-  // First try RuVector intelligence (primary source)
-  const ruVector = getRuVectorIntelligence();
-  if (ruVector && (ruVector.patterns > 0 || ruVector.memories > 0)) {
-    return {
-      patterns: ruVector.patterns,
-      sessions: ruVector.sessions,
-      trajectories: ruVector.trajectories,
-      memories: ruVector.memories,
-      fileSequences: ruVector.fileSequences,
-      agents: ruVector.agents,
-      errors: ruVector.errors,
-      learning: ruVector.learning,
-      tensorCompress: ruVector.tensorCompress,
-    };
-  }
-
   const memoryPaths = [
     path.join(process.cwd(), '.swarm', 'memory.db'),
     path.join(process.cwd(), '.claude-flow', 'memory.db'),
@@ -223,63 +175,55 @@ function getLearningStats() {
     }
   }
 
-  return { patterns, sessions, trajectories, memories: 0, fileSequences: 0, agents: 0, errors: 0 };
+  return { patterns, sessions, trajectories };
 }
 
-// Get V3 progress from learning state (grows as system learns)
+// Get V3 progress from REAL metrics files
 function getV3Progress() {
   const learning = getLearningStats();
+  const totalDomains = 5;
 
-  // Check for metrics file first (created by init)
-  const metricsPath = path.join(process.cwd(), '.claude-flow', 'metrics', 'v3-progress.json');
-  let metricsData = null;
-  if (fs.existsSync(metricsPath)) {
+  let dddProgress = 0;
+  let dddScore = 0;
+  let dddMaxScore = 100;
+  let moduleCount = 0;
+
+  // Check ddd-progress.json for REAL DDD analysis
+  const dddPath = path.join(process.cwd(), '.claude-flow', 'metrics', 'ddd-progress.json');
+  if (fs.existsSync(dddPath)) {
     try {
-      metricsData = JSON.parse(fs.readFileSync(metricsPath, 'utf-8'));
+      const data = JSON.parse(fs.readFileSync(dddPath, 'utf-8'));
+      dddProgress = data.progress || 0;
+      dddScore = data.score || 0;
+      dddMaxScore = data.maxScore || 100;
+      moduleCount = data.modules ? Object.keys(data.modules).length : 0;
     } catch (e) {
-      // Ignore
+      // Ignore - use fallback
     }
   }
 
-  // Use RuVector patterns if available and greater than metrics file
-  const actualPatterns = Math.max(learning.patterns, metricsData?.learning?.patternsLearned || 0);
-  const actualSessions = Math.max(learning.sessions, metricsData?.learning?.sessionsCompleted || 0);
+  // Calculate domains completed from DDD progress (each 20% = 1 domain)
+  let domainsCompleted = Math.min(5, Math.floor(dddProgress / 20));
 
-  // DDD progress based on actual learned patterns + memories + trajectories
-  // Combined learning score = patterns + (memories/10) + (trajectories/5) + (agents*5)
-  const learningScore = actualPatterns +
-    Math.floor((learning.memories || 0) / 10) +
-    Math.floor((learning.trajectories || 0) / 5) +
-    ((learning.agents || 0) * 5);
-
-  // Domain completion thresholds based on combined score
-  let domainsCompleted = 0;
-  if (learningScore >= 500) domainsCompleted = 5;
-  else if (learningScore >= 200) domainsCompleted = 4;
-  else if (learningScore >= 100) domainsCompleted = 3;
-  else if (learningScore >= 50) domainsCompleted = 2;
-  else if (learningScore >= 10) domainsCompleted = 1;
-
-  // Override with metrics file if it has higher values
-  if (metricsData?.domains?.completed > domainsCompleted) {
-    domainsCompleted = metricsData.domains.completed;
+  // Fallback: if no DDD data, use pattern-based calculation
+  if (dddProgress === 0 && learning.patterns > 0) {
+    if (learning.patterns >= 500) domainsCompleted = 5;
+    else if (learning.patterns >= 200) domainsCompleted = 4;
+    else if (learning.patterns >= 100) domainsCompleted = 3;
+    else if (learning.patterns >= 50) domainsCompleted = 2;
+    else if (learning.patterns >= 10) domainsCompleted = 1;
+    dddProgress = Math.floor((domainsCompleted / totalDomains) * 100);
   }
-
-  const totalDomains = metricsData?.domains?.total || 5;
-  const dddProgress = metricsData?.ddd?.progress > 0
-    ? metricsData.ddd.progress
-    : Math.min(100, Math.floor((domainsCompleted / totalDomains) * 100));
 
   return {
     domainsCompleted,
     totalDomains,
     dddProgress,
-    patternsLearned: actualPatterns,
-    sessionsCompleted: actualSessions,
-    memories: learning.memories || 0,
-    trajectories: learning.trajectories || 0,
-    fileSequences: learning.fileSequences || 0,
-    agents: learning.agents || 0,
+    dddScore,
+    dddMaxScore,
+    moduleCount,
+    patternsLearned: learning.patterns,
+    sessionsCompleted: learning.sessions
   };
 }
 
@@ -412,15 +356,16 @@ function getSystemMetrics() {
   let memoryMB = 0;
   let subAgents = 0;
 
-  // Check learning.json first (works on all platforms)
+  // Check learning.json first for REAL intelligence metrics
   const learningMetricsPath = path.join(process.cwd(), '.claude-flow', 'metrics', 'learning.json');
   let intelligenceFromFile = null;
   let contextFromFile = null;
   if (fs.existsSync(learningMetricsPath)) {
     try {
       const data = JSON.parse(fs.readFileSync(learningMetricsPath, 'utf-8'));
-      if (data.routing?.accuracy !== undefined) {
-        intelligenceFromFile = Math.min(100, Math.floor(data.routing.accuracy));
+      // Use intelligence.score (the REAL metric) instead of routing.accuracy
+      if (data.intelligence?.score !== undefined) {
+        intelligenceFromFile = Math.min(100, Math.floor(data.intelligence.score));
       }
       if (data.sessions?.total !== undefined) {
         contextFromFile = Math.min(100, data.sessions.total * 5);
@@ -460,36 +405,14 @@ function getSystemMetrics() {
   // Calculate all sources and take the maximum
   let intelligencePct = 0;
 
-  // Calculate intelligence from RuVector learning data (primary source)
-  // Weighted formula: patterns*2 + memories/5 + trajectories/2 + sessions*3 + agents*10
-  if (learning.patterns > 0 || learning.memories > 0 || learning.trajectories > 0) {
-    const ruVectorScore =
-      (learning.patterns * 2) +
-      Math.floor((learning.memories || 0) / 5) +
-      Math.floor((learning.trajectories || 0) / 2) +
-      ((learning.sessions || 0) * 3) +
-      ((learning.agents || 0) * 10);
-    // Scale: 0-50 score = 0-50%, 50-200 = 50-90%, 200+ = 90-100%
-    if (ruVectorScore >= 200) {
-      intelligencePct = Math.min(100, 90 + Math.floor((ruVectorScore - 200) / 50));
-    } else if (ruVectorScore >= 50) {
-      intelligencePct = 50 + Math.floor((ruVectorScore - 50) * 40 / 150);
-    } else {
-      intelligencePct = Math.floor(ruVectorScore);
-    }
-  }
-
-  // Fallback to metrics file if higher
-  if (intelligenceFromFile !== null && intelligenceFromFile > intelligencePct) {
+  if (intelligenceFromFile !== null) {
     intelligencePct = intelligenceFromFile;
-  }
+  } else {
+    // Calculate from multiple sources and take the best
+    const fromPatterns = learning.patterns > 0 ? Math.min(100, Math.floor(learning.patterns / 10)) : 0;
+    const fromVectors = agentdbStats.vectorCount > 0 ? Math.min(100, Math.floor(agentdbStats.vectorCount / 100)) : 0;
 
-  // Fallback to AgentDB vectors if higher
-  if (agentdbStats.vectorCount > 0) {
-    const fromVectors = Math.min(100, Math.floor(agentdbStats.vectorCount / 100));
-    if (fromVectors > intelligencePct) {
-      intelligencePct = fromVectors;
-    }
+    intelligencePct = Math.max(fromPatterns, fromVectors);
   }
 
   // If still 0, use project maturity fallback
@@ -593,8 +516,29 @@ function getSystemMetrics() {
   };
 }
 
-// Get ADR (Architecture Decision Records) status
+// Get ADR (Architecture Decision Records) status from REAL compliance data
 function getADRStatus() {
+  let compliance = 0;
+  let totalChecks = 0;
+  let compliantChecks = 0;
+  let checks = {};
+
+  // Check adr-compliance.json for REAL compliance data
+  const compliancePath = path.join(process.cwd(), '.claude-flow', 'metrics', 'adr-compliance.json');
+  if (fs.existsSync(compliancePath)) {
+    try {
+      const data = JSON.parse(fs.readFileSync(compliancePath, 'utf-8'));
+      compliance = data.compliance || 0;
+      checks = data.checks || {};
+      totalChecks = Object.keys(checks).length;
+      compliantChecks = Object.values(checks).filter(c => c.compliant).length;
+      return { count: totalChecks, implemented: compliantChecks, compliance };
+    } catch (e) {
+      // Fall through to file-based detection
+    }
+  }
+
+  // Fallback: count ADR files directly
   const adrPaths = [
     path.join(process.cwd(), 'docs', 'adrs'),
     path.join(process.cwd(), 'docs', 'adr'),
@@ -616,7 +560,6 @@ function getADRStatus() {
         );
         count = files.length;
 
-        // Check for implemented status in ADR files
         for (const file of files) {
           try {
             const content = fs.readFileSync(path.join(adrPath, file), 'utf-8');
@@ -635,7 +578,8 @@ function getADRStatus() {
     }
   }
 
-  return { count, implemented };
+  compliance = count > 0 ? Math.floor((implemented / count) * 100) : 0;
+  return { count, implemented, compliance };
 }
 
 // Get hooks status (enabled/registered hooks)
@@ -789,34 +733,6 @@ function getAgentDBStats() {
       }
     } catch (e) {
       // Ignore
-    }
-  }
-
-  // Check RuVector intelligence for vectors (memories with embeddings)
-  if (vectorCount === 0) {
-    const ruVector = getRuVectorIntelligence();
-    if (ruVector) {
-      // Memories with embeddings count as vectors
-      vectorCount = ruVector.memories || 0;
-      // Calculate size from intelligence file
-      const intelPaths = [
-        path.join(process.cwd(), '.ruvector', 'intelligence.json'),
-        path.join(require('os').homedir(), '.ruvector', 'intelligence.json'),
-      ];
-      for (const intelPath of intelPaths) {
-        if (fs.existsSync(intelPath)) {
-          try {
-            const stats = fs.statSync(intelPath);
-            dbSizeKB = Math.floor(stats.size / 1024);
-            namespaces = 1;
-            // Check if we have trajectories (indicates HNSW-like indexing)
-            if (ruVector.trajectories > 10) {
-              hasHnsw = true;
-            }
-            break;
-          } catch (e) { /* ignore */ }
-        }
-      }
     }
   }
 
@@ -1154,30 +1070,28 @@ function generateStatusline() {
   // Separator
   lines.push(`${c.dim}─────────────────────────────────────────────────────${c.reset}`);
 
-  // Line 1: DDD Domain Progress with learning indicators
+  // Line 1: DDD Domain Progress with dynamic performance indicator
   const domainsColor = progress.domainsCompleted >= 3 ? c.brightGreen : progress.domainsCompleted > 0 ? c.yellow : c.red;
-  // Build learning indicator with patterns, memories, trajectories
-  let learningIndicator = '';
-  const hasLearning = progress.patternsLearned > 0 || progress.memories > 0 || progress.trajectories > 0;
+  // Show HNSW speedup if enabled, otherwise show patterns learned
+  let perfIndicator = '';
   if (agentdb.hasHnsw && agentdb.vectorCount > 0) {
-    // HNSW enabled: show estimated speedup
+    // HNSW enabled: show estimated speedup (150x-12500x based on vector count)
     const speedup = agentdb.vectorCount > 10000 ? '12500x' : agentdb.vectorCount > 1000 ? '150x' : '10x';
-    learningIndicator = `${c.brightGreen}⚡ HNSW ${speedup}${c.reset}`;
-  } else if (hasLearning) {
-    // Show learning metrics: patterns/memories/trajectories
-    const parts = [];
-    if (progress.patternsLearned > 0) parts.push(`${c.brightYellow}◆${progress.patternsLearned}${c.reset}`);
-    if (progress.memories > 0) parts.push(`${c.brightBlue}⬡${progress.memories}${c.reset}`);
-    if (progress.trajectories > 0) parts.push(`${c.brightCyan}↝${progress.trajectories}${c.reset}`);
-    learningIndicator = `${c.brightPurple}🧠 Learning${c.reset} ${parts.join(' ')}`;
+    perfIndicator = `${c.brightGreen}⚡ HNSW ${speedup}${c.reset}`;
+  } else if (progress.patternsLearned > 0) {
+    // Show patterns learned
+    const patternsK = progress.patternsLearned >= 1000
+      ? `${(progress.patternsLearned / 1000).toFixed(1)}k`
+      : String(progress.patternsLearned);
+    perfIndicator = `${c.brightYellow}📚 ${patternsK} patterns${c.reset}`;
   } else {
     // New project: show target
-    learningIndicator = `${c.dim}⚡ target: 150x-12500x${c.reset}`;
+    perfIndicator = `${c.dim}⚡ target: 150x-12500x${c.reset}`;
   }
   lines.push(
     `${c.brightCyan}🏗️  DDD Domains${c.reset}    ${progressBar(progress.domainsCompleted, progress.totalDomains)}  ` +
     `${domainsColor}${progress.domainsCompleted}${c.reset}/${c.brightWhite}${progress.totalDomains}${c.reset}    ` +
-    learningIndicator
+    perfIndicator
   );
 
   // Line 2: Swarm + Hooks + CVE + Memory + Context + Intelligence
@@ -1187,29 +1101,12 @@ function generateStatusline() {
   let securityColor = security.status === 'CLEAN' ? c.brightGreen : security.status === 'IN_PROGRESS' ? c.brightYellow : c.brightRed;
   const hooksColor = hooks.enabled > 0 ? c.brightGreen : c.dim;
 
-  // Get RuVector intelligence file size for memory indicator
-  let intelSizeKB = 0;
-  const intelFilePaths = [
-    path.join(process.cwd(), '.ruvector', 'intelligence.json'),
-    path.join(require('os').homedir(), '.ruvector', 'intelligence.json'),
-  ];
-  for (const intelPath of intelFilePaths) {
-    if (fs.existsSync(intelPath)) {
-      try {
-        const stats = fs.statSync(intelPath);
-        intelSizeKB = Math.floor(stats.size / 1024);
-        break;
-      } catch (e) { /* ignore */ }
-    }
-  }
-  const memoryDisplay = intelSizeKB > 0 ? `${intelSizeKB}KB` : `${system.memoryMB}MB`;
-
   lines.push(
     `${c.brightYellow}🤖 Swarm${c.reset}  ${swarmIndicator} [${agentsColor}${String(swarm.activeAgents).padStart(2)}${c.reset}/${c.brightWhite}${swarm.maxAgents}${c.reset}]  ` +
     `${c.brightPurple}👥 ${system.subAgents}${c.reset}    ` +
     `${c.brightBlue}🪝 ${hooksColor}${hooks.enabled}${c.reset}/${c.brightWhite}${hooks.total}${c.reset}    ` +
     `${securityIcon} ${securityColor}CVE ${security.cvesFixed}${c.reset}/${c.brightWhite}${security.totalCves}${c.reset}    ` +
-    `${c.brightCyan}💾 ${memoryDisplay}${c.reset}    ` +
+    `${c.brightCyan}💾 ${system.memoryMB}MB${c.reset}    ` +
     `${system.intelligencePct >= 80 ? c.brightGreen : system.intelligencePct >= 40 ? c.brightYellow : c.dim}🧠 ${String(system.intelligencePct).padStart(3)}%${intellTrend}${c.reset}`
   );
 
@@ -1219,9 +1116,14 @@ function generateStatusline() {
   const vectorColor = agentdb.vectorCount > 0 ? c.brightGreen : c.dim;
   const testColor = tests.testFiles > 0 ? c.brightGreen : c.dim;
 
+  // Show ADR compliance % if from real data, otherwise show count
+  const adrDisplay = adrs.compliance > 0
+    ? `${adrColor}●${adrs.compliance}%${c.reset}`
+    : `${adrColor}●${adrs.implemented}/${adrs.count}${c.reset}`;
+
   lines.push(
     `${c.brightPurple}🔧 Architecture${c.reset}    ` +
-    `${c.cyan}ADRs${c.reset} ${adrColor}●${adrs.implemented}/${adrs.count}${c.reset}  ${c.dim}│${c.reset}  ` +
+    `${c.cyan}ADRs${c.reset} ${adrDisplay}  ${c.dim}│${c.reset}  ` +
     `${c.cyan}DDD${c.reset} ${dddColor}●${String(progress.dddProgress).padStart(3)}%${c.reset}  ${c.dim}│${c.reset}  ` +
     `${c.cyan}Security${c.reset} ${securityColor}●${security.status}${c.reset}`
   );

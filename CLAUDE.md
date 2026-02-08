@@ -826,6 +826,105 @@ gcloud run deploy ruvbot --source npm/packages/ruvbot --region us-central1
 - `qwen/qwq-32b` (reasoning)
 - `deepseek/deepseek-r1` (reasoning)
 
+## 🔧 Operational Guidance (Verified 2026-02-08)
+
+### Required Local Dependencies
+
+The auto-memory bridge requires `@claude-flow/memory` installed as a **local** dependency.
+Without it, SessionStart/SessionEnd hooks silently skip with "Memory package not available".
+
+```bash
+# Verify: should show "Package: Available", not "Not available"
+node .claude/helpers/auto-memory-hook.mjs status
+
+# Fix if missing:
+npm install @claude-flow/memory@latest
+```
+
+### Package Path Differences
+
+When installing packages, the `.claude/` directory location varies by install method:
+
+| Install Method | Settings path |
+|----------------|---------------|
+| `npm install claude-flow@latest` | `node_modules/claude-flow/.claude/settings.json` |
+| `npm install @claude-flow/cli@latest` | `node_modules/@claude-flow/cli/.claude/settings.json` |
+| `npx @claude-flow/cli@latest init upgrade --settings` | `.claude/settings.json` (project root, preferred) |
+
+Always use `init upgrade --settings` to copy/merge settings into the project's `.claude/` directory.
+
+### Upgrade Procedure
+
+```bash
+# 1. Upgrade packages
+npm install @claude-flow/memory@latest
+
+# 2. Merge new settings (safe, preserves existing)
+npx @claude-flow/cli@latest init upgrade --settings
+
+# 3. Verify
+npx @claude-flow/cli@latest doctor
+node .claude/helpers/auto-memory-hook.mjs status
+```
+
+### Disk Space Management
+
+Rust `target/` directories and npm/cargo caches are the primary disk consumers.
+All are fully rebuildable. Clean when disk exceeds 85%:
+
+```bash
+# Check usage
+df -h /
+
+# Clean Rust build caches (safe, rebuilds on next cargo build)
+rm -rf examples/*/target target/debug target/release target/wasm32-*
+
+# Clean package caches
+npm cache clean --force
+rm -rf ~/.cargo/registry/cache
+
+# Verify
+npx @claude-flow/cli@latest doctor
+```
+
+**Common offenders in this repo:**
+- `examples/*/target/` — 20G+ (Rust builds in example projects)
+- `target/debug/` — 18G+ (main project debug builds)
+- `~/.cargo/registry/cache` — 1-2G
+- `~/.npm/_cacache` — ~1G
+
+### Health Check Quick Reference
+
+```bash
+# Full system check (should show 9+ passed, 0 failures)
+npx @claude-flow/cli@latest doctor
+
+# Memory system (should show all enabled)
+node .claude/helpers/auto-memory-hook.mjs status
+
+# Daemon workers (should show RUNNING)
+npx @claude-flow/cli@latest daemon status
+
+# Memory round-trip test
+npx @claude-flow/cli@latest memory store --key "ping" --value "pong" --namespace test
+npx @claude-flow/cli@latest memory search --query "pong" --namespace test
+```
+
+### Verified Working Configuration (v3.1.0-alpha.16)
+
+| Component | Status | Details |
+|-----------|--------|---------|
+| Memory backend | sql.js + HNSW | 384-dim vectors, semantic search |
+| Auto-memory bridge | Active | Import on SessionStart, sync on SessionEnd |
+| LearningBridge | Enabled | Pattern training on edits |
+| MemoryGraph | Enabled | PageRank, community detection |
+| AgentScopes | Enabled | Agent memory isolation |
+| Agent Teams | Active | `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1` |
+| Teammate auto-assign | Active | TeammateIdle hook wired |
+| Pattern training | Active | TaskCompleted hook wired |
+| Daemon workers | 5 active | map, audit, optimize, consolidate, testgaps |
+| Neural + autoTrain | Enabled | Coordination, optimization, prediction patterns |
+
 ## Support
 
 - Documentation: https://github.com/ruvnet/claude-flow

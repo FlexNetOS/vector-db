@@ -50,8 +50,11 @@
   "engines": {
     "node": ">=18.0.0"
   },
-    "overrides": {
+  "overrides": {
     "axios": "^1.13.2",
     "body-parser": "^2.2.1"
+  },
+  "dependencies": {
+    "@claude-flow/memory": "^3.0.0-alpha.7"
   }
 }
