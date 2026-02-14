@@ -13,6 +13,7 @@ rvf-index = { path = "../../rvf-index" }
 rvf-quant = { path = "../../rvf-quant" }
 rvf-crypto = { path = "../../rvf-crypto" }
 rvf-runtime = { path = "../../rvf-runtime" }
+rvf-adapter-rvlite = { path = "../../rvf-adapters/rvlite" }
 ed25519-dalek = { version = "2", features = ["rand_core"] }
 rand = "0.8"
 tempfile = "3"

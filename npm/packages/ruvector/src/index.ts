@@ -3,7 +3,8 @@
  *
  * This package automatically detects and uses the best available implementation:
  * 1. Native (Rust-based, fastest) - if available for your platform
- * 2. WASM (WebAssembly, universal fallback) - works everywhere
+ * 2. RVF (persistent store) - if @ruvector/rvf is installed
+ * 3. Stub (testing fallback) - limited functionality
  *
  * Also provides safe wrappers for GNN and Attention modules that handle
  * array type conversions automatically.
@@ -16,44 +17,69 @@ export * from './core';
 export * from './services';
 
 let implementation: any;
-let implementationType: 'native' | 'wasm' = 'wasm';
+let implementationType: 'native' | 'rvf' | 'wasm' = 'wasm';
 
-try {
-  // Try to load native module first
-  implementation = require('@ruvector/core');
-  implementationType = 'native';
+// Check for explicit --backend rvf flag or RUVECTOR_BACKEND env var
+const rvfRequested = process.env.RUVECTOR_BACKEND === 'rvf' ||
+  process.argv.includes('--backend') && process.argv[process.argv.indexOf('--backend') + 1] === 'rvf';
 
-  // Verify it's actually working (native module exports VectorDb, not VectorDB)
-  if (typeof implementation.VectorDb !== 'function') {
-    throw new Error('Native module loaded but VectorDb class not found');
+if (rvfRequested) {
+  // Explicit rvf backend requested - fail hard if not available
+  try {
+    implementation = require('@ruvector/rvf');
+    implementationType = 'rvf';
+  } catch (e: any) {
+    throw new Error(
+      '@ruvector/rvf is not installed.\n' +
+      '  Run: npm install @ruvector/rvf\n' +
+      '  The --backend rvf flag requires this package.'
+    );
   }
-} catch (e: any) {
-  // Graceful fallback - don't crash, just warn
-  console.warn('[RuVector] Native module not available:', e.message);
-  console.warn('[RuVector] Vector operations will be limited. Install @ruvector/core for full functionality.');
+} else {
+  try {
+    // Try to load native module first
+    implementation = require('@ruvector/core');
+    implementationType = 'native';
 
-  // Create a stub implementation that provides basic functionality
-  implementation = {
-    VectorDb: class StubVectorDb {
-      constructor() {
-        console.warn('[RuVector] Using stub VectorDb - install @ruvector/core for native performance');
-      }
-      async insert() { return 'stub-id-' + Date.now(); }
-      async insertBatch(entries: any[]) { return entries.map(() => 'stub-id-' + Date.now()); }
-      async search() { return []; }
-      async delete() { return true; }
-      async get() { return null; }
-      async len() { return 0; }
-      async isEmpty() { return true; }
+    // Verify it's actually working (native module exports VectorDb, not VectorDB)
+    if (typeof implementation.VectorDb !== 'function') {
+      throw new Error('Native module loaded but VectorDb class not found');
     }
-  };
-  implementationType = 'wasm'; // Mark as fallback mode
+  } catch (e: any) {
+    // Try rvf (persistent store) as second fallback
+    try {
+      implementation = require('@ruvector/rvf');
+      implementationType = 'rvf';
+    } catch (rvfErr: any) {
+      // Graceful fallback - don't crash, just warn
+      console.warn('[RuVector] Native module not available:', e.message);
+      console.warn('[RuVector] RVF module not available:', rvfErr.message);
+      console.warn('[RuVector] Vector operations will be limited. Install @ruvector/core or @ruvector/rvf for full functionality.');
+
+      // Create a stub implementation that provides basic functionality
+      implementation = {
+        VectorDb: class StubVectorDb {
+          constructor() {
+            console.warn('[RuVector] Using stub VectorDb - install @ruvector/core for native performance');
+          }
+          async insert() { return 'stub-id-' + Date.now(); }
+          async insertBatch(entries: any[]) { return entries.map(() => 'stub-id-' + Date.now()); }
+          async search() { return []; }
+          async delete() { return true; }
+          async get() { return null; }
+          async len() { return 0; }
+          async isEmpty() { return true; }
+        }
+      };
+      implementationType = 'wasm'; // Mark as fallback mode
+    }
+  }
 }
 
 /**
  * Get the current implementation type
  */
-export function getImplementationType(): 'native' | 'wasm' {
+export function getImplementationType(): 'native' | 'rvf' | 'wasm' {
   return implementationType;
 }
 
@@ -65,7 +91,14 @@ export function isNative(): boolean {
 }
 
 /**
- * Check if WASM implementation is being used
+ * Check if RVF implementation is being used
+ */
+export function isRvf(): boolean {
+  return implementationType === 'rvf';
+}
+
+/**
+ * Check if stub/fallback implementation is being used
  */
 export function isWasm(): boolean {
   return implementationType === 'wasm';

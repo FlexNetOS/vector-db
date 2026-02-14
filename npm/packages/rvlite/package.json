@@ -1,6 +1,6 @@
 {
   "name": "rvlite",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "type": "module",
   "description": "Lightweight vector database with SQL, SPARQL, and Cypher - runs everywhere (Node.js, Browser, Edge)",
   "main": "dist/index.js",
@@ -71,11 +71,18 @@
     "@types/node": "^20.0.0"
   },
   "peerDependencies": {
-    "@anthropic-ai/sdk": ">=0.20.0"
+    "@anthropic-ai/sdk": ">=0.20.0",
+    "@ruvector/rvf-wasm": ">=0.1.0"
   },
   "peerDependenciesMeta": {
     "@anthropic-ai/sdk": {
       "optional": true
+    },
+    "@ruvector/rvf-wasm": {
+      "optional": true
     }
+  },
+  "optionalDependencies": {
+    "@ruvector/rvf-wasm": "^0.1.0"
   }
 }

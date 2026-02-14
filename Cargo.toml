@@ -79,6 +79,7 @@ members = [
     "crates/ruqu-exotic",
     "examples/dna",
     "examples/OSpipe",
+    "crates/rvf/rvf-adapters/rvlite",
     "crates/rvf/rvf-types",
     "crates/rvf/rvf-wire",
     "crates/rvf/rvf-quant",
