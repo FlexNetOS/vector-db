@@ -19,6 +19,7 @@ pub mod agi_contract;
 pub mod intelligence_metrics;
 pub mod logging;
 pub mod loop_gating;
+pub mod publishable_rvf;
 pub mod reasoning_bank;
 pub mod rvf_artifact;
 pub mod rvf_intelligence_bench;
