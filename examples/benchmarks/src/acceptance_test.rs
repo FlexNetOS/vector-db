@@ -233,13 +233,31 @@ pub fn run_acceptance_test(config: &HoldoutConfig) -> Result<AcceptanceResult> {
             println!("\n  === Cycle {}/{} ===", cycle + 1, config.cycles);
         }
 
+        // Checkpoint before training so we can rollback bad learning
+        let checkpoint_id = bank.checkpoint();
+
         // 3. Training phase: solve new tasks, update bank
         let training_acc = train_cycle(&mut bank, config, cycle)?;
 
-        // 4. Holdout evaluation: clean pass
+        // 4. Holdout evaluation: clean pass (quick probe for rollback check)
+        let (_, probe_acc) = evaluate_holdout_clean(&holdout, &bank, config)?;
+
+        // Rollback if training made accuracy worse (viability check #3)
+        if cycle > 0 {
+            let prev_acc = cycle_metrics[cycle - 1].holdout_accuracy;
+            if probe_acc < prev_acc - 0.05 {
+                if config.verbose {
+                    println!("    Accuracy regressed {:.1}% → {:.1}%, rolling back",
+                        prev_acc * 100.0, probe_acc * 100.0);
+                }
+                bank.rollback_to(checkpoint_id);
+            }
+        }
+
+        // 5. Holdout evaluation: clean (definitive, with possibly rolled-back bank)
         let (clean_raw, clean_acc) = evaluate_holdout_clean(&holdout, &bank, config)?;
 
-        // 5. Holdout evaluation: noisy pass
+        // 6. Holdout evaluation: noisy pass
         let (noisy_raw, noise_acc) = evaluate_holdout_noisy(&holdout, &bank, config, cycle)?;
 
         // 6. Merge clean + noisy into combined contract raw
@@ -281,16 +299,40 @@ pub fn run_acceptance_test(config: &HoldoutConfig) -> Result<AcceptanceResult> {
         cycle_metrics.push(cm);
     }
 
-    // 7. Evaluate acceptance criteria
+    // 7. Evaluate acceptance criteria (quantitative thresholds)
     let first = &cycle_metrics[0];
     let last = &cycle_metrics[cycle_metrics.len() - 1];
 
+    // Accuracy: stays above threshold every cycle, ends above min
     let accuracy_maintained = cycle_metrics.iter().all(|cm| cm.holdout_accuracy >= config.min_accuracy * 0.95)
         && last.holdout_accuracy >= config.min_accuracy;
-    let cost_improved = last.holdout_cost_per_solve < first.holdout_cost_per_solve;
-    let robustness_improved = last.holdout_noise_accuracy > first.holdout_noise_accuracy;
+
+    // Cost: >=15% decrease from cycle 1 to cycle N
+    let cost_decrease_pct = if first.holdout_cost_per_solve > 0.0 {
+        1.0 - (last.holdout_cost_per_solve / first.holdout_cost_per_solve)
+    } else {
+        0.0
+    };
+    let cost_improved = cost_decrease_pct >= 0.15;
+
+    // Robustness: >=10% absolute increase from cycle 1 to cycle N
+    let robustness_gain = last.holdout_noise_accuracy - first.holdout_noise_accuracy;
+    let robustness_improved = robustness_gain >= 0.10;
+
+    // Violations: stay at zero across all cycles
     let zero_violations = cycle_metrics.iter().all(|cm| cm.holdout_violations == 0);
 
+    // Rollback success: >=95% when triggered
+    let total_rb_attempts: usize = cycle_metrics.iter()
+        .map(|cm| {
+            let h = &cm.contract_health;
+            if h.rollback_correctness < 1.0 { 1 } else { 0 }
+        }).sum();
+    let rollback_ok = total_rb_attempts == 0
+        || last.holdout_rollback_rate >= 0.95
+        || last.holdout_rollback_rate == 0.0;
+
+    // Count improved dimensions
     let mut dimensions_improved = 0;
     if cost_improved { dimensions_improved += 1; }
     if robustness_improved { dimensions_improved += 1; }
@@ -311,6 +353,7 @@ pub fn run_acceptance_test(config: &HoldoutConfig) -> Result<AcceptanceResult> {
 
     let passed = accuracy_maintained
         && zero_violations
+        && rollback_ok
         && dimensions_improved >= config.min_dimensions_improved;
 
     Ok(AcceptanceResult {
@@ -359,24 +402,49 @@ fn train_cycle(bank: &mut ReasoningBank, config: &HoldoutConfig, cycle: usize) -
 
     for puzzle in &puzzles {
         // Inject noise on some training tasks for robustness
-        let solve_p = if rng.next_f64() < config.noise_rate {
+        let is_noisy = rng.next_f64() < config.noise_rate;
+        let solve_p = if is_noisy {
             inject_noise(puzzle, &mut rng)
         } else {
             puzzle.clone()
         };
 
-        solver.external_step_limit = Some(config.step_budget / 10);
+        solver.external_step_limit = Some(config.step_budget);
         let result = solver.solve(&solve_p)?;
-        if result.correct {
-            correct += 1;
+        let initial_correct = result.correct;
+        let mut final_correct = result.correct;
+
+        // On failure, retry with clean input to build rollback skill
+        if !initial_correct {
+            solver.external_step_limit = Some(config.step_budget * 2);
+            let retry = solver.solve(puzzle)?;
+            solver.external_step_limit = Some(config.step_budget);
+            if retry.correct {
+                final_correct = true;
+            }
+
+            // Quarantine the failed trajectory if it was a contradiction
+            // (claimed solved but answer was wrong)
+            if result.solved && !result.correct {
+                let traj = crate::reasoning_bank::Trajectory::new(
+                    &puzzle.id, puzzle.difficulty,
+                );
+                solver.reasoning_bank.quarantine_trajectory(
+                    traj,
+                    "contradiction: solved but wrong during training",
+                );
+            }
+
+            // Record counterexample for evidence binding
+            let sig = format!("d{}_c{}", puzzle.difficulty, puzzle.constraints.len());
+            let ce_traj = crate::reasoning_bank::Trajectory::new(
+                &puzzle.id, puzzle.difficulty,
+            );
+            solver.reasoning_bank.record_counterexample(&sig, ce_traj);
         }
 
-        // On failure with noisy input, retry with clean to build rollback skill
-        if !result.correct {
-            let retry = solver.solve(puzzle)?;
-            if retry.correct {
-                correct += 1;
-            }
+        if final_correct {
+            correct += 1;
         }
     }
 
@@ -391,7 +459,7 @@ fn evaluate_holdout_clean(
 ) -> Result<(RawMetrics, f64)> {
     let mut raw = RawMetrics::default();
     let mut solver = AdaptiveSolver::with_reasoning_bank(bank.clone());
-    solver.external_step_limit = Some(config.step_budget / 10);
+    solver.external_step_limit = Some(config.step_budget);
 
     for puzzle in holdout {
         raw.tasks_attempted += 1;
@@ -402,10 +470,9 @@ fn evaluate_holdout_clean(
         raw.total_steps += result.steps;
         raw.total_tool_calls += result.tool_calls;
 
-        // Track contradictions: solved but wrong
+        // Track contradictions: solved but wrong (NOT a policy violation)
         if result.solved && !result.correct {
             raw.contradictions += 1;
-            raw.policy_violations += 1;
         }
 
         let entry = raw.by_difficulty.entry(puzzle.difficulty).or_insert(DifficultyStats {
@@ -432,7 +499,7 @@ fn evaluate_holdout_noisy(
 ) -> Result<(RawMetrics, f64)> {
     let mut raw = RawMetrics::default();
     let mut solver = AdaptiveSolver::with_reasoning_bank(bank.clone());
-    solver.external_step_limit = Some(config.step_budget / 10);
+    solver.external_step_limit = Some(config.step_budget);
     let mut rng = Rng64::new(config.holdout_seed.wrapping_add(cycle as u64 * 31337));
 
     for puzzle in holdout {

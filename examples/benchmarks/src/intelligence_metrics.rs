@@ -780,13 +780,13 @@ impl IntelligenceCalculator {
 
         // Three equal pillars: graded outcomes (~0.34), cost (~0.33), robustness (~0.33)
         // Graded outcomes = capabilities + reasoning + learning + tool + meta
-        (cap_score * 0.12
+        cap_score * 0.12
             + reasoning_score * 0.10
             + learning_score * 0.06
             + tool_score * 0.03
             + meta_score * 0.03
             + cost_score * 0.33
-            + robustness_score * 0.33)
+            + robustness_score * 0.33
     }
 }
 

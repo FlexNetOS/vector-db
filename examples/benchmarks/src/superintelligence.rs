@@ -624,8 +624,9 @@ fn run_level_1(config: &SIConfig, bank: &mut ReasoningBank) -> Result<LevelRaw> 
             };
 
             let mut result = solver.solve(&solve_p)?;
+            let initial_correct = result.correct;
 
-            // Retry on failure
+            // Retry on failure (rollback from noisy to clean)
             if !result.correct && is_noisy {
                 for _ in 0..config.max_retries {
                     let retry = solver.solve(puzzle)?;
@@ -638,7 +639,7 @@ fn run_level_1(config: &SIConfig, bank: &mut ReasoningBank) -> Result<LevelRaw> 
             if is_noisy {
                 raw.noise_tasks_attempted += 1;
                 if result.correct { raw.noise_tasks_correct += 1; }
-                if !result.correct {
+                if !initial_correct {
                     raw.rollback_attempts += 1;
                     if result.correct { raw.rollback_successes += 1; }
                 }
@@ -745,9 +746,8 @@ fn run_level_2(config: &SIConfig, bank: &mut ReasoningBank, meta: &mut MetaParam
             if is_noisy {
                 raw.noise_tasks_attempted += 1;
                 if result.correct { raw.noise_tasks_correct += 1; }
-                if !result.correct && retried {
+                if retried {
                     raw.rollback_attempts += 1;
-                    // Check if retry succeeded (retry overwrites result)
                     if result.correct { raw.rollback_successes += 1; }
                 }
             }
