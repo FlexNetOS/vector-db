@@ -14,11 +14,13 @@
 
 pub mod adversarial;
 pub mod compaction;
+pub mod compress;
 pub mod cow;
 pub mod cow_compact;
 pub mod cow_map;
 pub mod deletion;
 pub mod dos;
+pub mod ffi;
 pub mod filter;
 pub mod locking;
 pub mod membership;
@@ -26,6 +28,7 @@ pub mod options;
 pub mod qr_seed;
 pub mod read_path;
 pub mod safety_net;
+pub mod seed_crypto;
 pub mod status;
 pub mod store;
 pub mod write_path;
@@ -44,9 +47,14 @@ pub use options::{
     CompactionResult, DeleteResult, IngestResult, MetadataEntry, MetadataValue, QueryOptions,
     QualityEnvelope, RvfOptions, SearchResult, WitnessConfig,
 };
+pub use compress::{compress, decompress, CompressError};
 pub use qr_seed::{
     BootstrapProgress, DownloadManifest, ParsedSeed, SeedBuilder, SeedError,
     make_host_entry,
+};
+pub use seed_crypto::{
+    seed_content_hash, layer_content_hash, full_content_hash,
+    sign_seed, verify_seed, verify_layer, SIG_ALGO_HMAC_SHA256,
 };
 pub use safety_net::{
     selective_safety_net_scan, should_activate_safety_net, Candidate, SafetyNetResult,

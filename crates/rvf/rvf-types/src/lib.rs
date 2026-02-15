@@ -35,6 +35,7 @@ pub mod lineage;
 pub mod quality;
 pub mod qr_seed;
 pub mod security;
+pub mod sha256;
 pub mod wasm_bootstrap;
 
 pub use attestation::{AttestationHeader, AttestationWitnessType, TeePlatform, KEY_TYPE_TEE_BOUND};
@@ -86,6 +87,7 @@ pub use qr_seed::{
     SEED_HAS_VECTORS, SEED_STREAM_UPGRADE,
 };
 pub use security::{HardeningFields, SecurityError, SecurityPolicy};
+pub use sha256::{sha256, hmac_sha256, Sha256};
 pub use wasm_bootstrap::{
     WasmHeader, WasmRole, WasmTarget, WASM_MAGIC,
     WASM_FEAT_SIMD, WASM_FEAT_BULK_MEMORY, WASM_FEAT_MULTI_VALUE,

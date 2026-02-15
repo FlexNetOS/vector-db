@@ -5,10 +5,13 @@
 //! microkernel, a TLV download manifest, and a signature into a
 //! payload that fits within a single QR code (≤2,953 bytes).
 
-use std::io::{self, Write};
+use std::io;
 use std::time::{SystemTime, UNIX_EPOCH};
 
 use rvf_types::qr_seed::*;
+
+use crate::compress;
+use crate::seed_crypto;
 
 /// Errors specific to QR seed operations.
 #[derive(Debug)]
@@ -173,6 +176,12 @@ impl SeedBuilder {
     /// Set the content hash (SHAKE-256-64 of expanded RVF).
     pub fn with_content_hash(mut self, hash: [u8; 8]) -> Self {
         self.content_hash = hash;
+        self
+    }
+
+    /// Compress raw WASM bytes using the built-in LZ compressor and set as microkernel.
+    pub fn compress_microkernel(mut self, raw_wasm: &[u8]) -> Self {
+        self.microkernel = Some(compress::compress(raw_wasm));
         self
     }
 
@@ -341,6 +350,83 @@ impl SeedBuilder {
         payload.extend_from_slice(&manifest);
         payload.extend_from_slice(sig_data);
 
+        debug_assert_eq!(payload.len(), total_seed_size as usize);
+
+        Ok((payload, header))
+    }
+
+    /// Build with automatic SHA-256 content hashing and HMAC-SHA256 signing.
+    ///
+    /// This is the production path: content hash is computed from the payload,
+    /// and the signature covers the entire unsigned payload.
+    /// Uses sig_algo=2 (HMAC-SHA256, 32-byte signature).
+    pub fn build_and_sign(self, signing_key: &[u8]) -> Result<(Vec<u8>, SeedHeader), SeedError> {
+        let manifest = self.build_manifest();
+        let microkernel_data = self.microkernel.as_deref().unwrap_or(&[]);
+        let flags = self.compute_flags() | SEED_SIGNED;
+
+        // Compute content hash over data (microkernel + manifest).
+        let mut hash_input = Vec::with_capacity(microkernel_data.len() + manifest.len());
+        hash_input.extend_from_slice(microkernel_data);
+        hash_input.extend_from_slice(&manifest);
+        let content_hash = seed_crypto::seed_content_hash(&hash_input);
+
+        let sig_length: u16 = 32; // HMAC-SHA256.
+        let microkernel_offset = SEED_HEADER_SIZE as u32;
+        let microkernel_size = microkernel_data.len() as u32;
+        let download_manifest_offset = microkernel_offset + microkernel_size;
+        let download_manifest_size = manifest.len() as u32;
+        let total_seed_size = SEED_HEADER_SIZE as u32
+            + microkernel_size
+            + download_manifest_size
+            + sig_length as u32;
+
+        if total_seed_size as usize > QR_MAX_BYTES {
+            return Err(SeedError::TooLarge {
+                size: total_seed_size as usize,
+                max: QR_MAX_BYTES,
+            });
+        }
+
+        let created_ns = SystemTime::now()
+            .duration_since(UNIX_EPOCH)
+            .unwrap_or_default()
+            .as_nanos() as u64;
+
+        let header = SeedHeader {
+            seed_magic: SEED_MAGIC,
+            seed_version: 1,
+            flags,
+            file_id: self.file_id,
+            total_vector_count: self.total_vector_count,
+            dimension: self.dimension,
+            base_dtype: self.base_dtype,
+            profile_id: self.profile_id,
+            created_ns,
+            microkernel_offset,
+            microkernel_size,
+            download_manifest_offset,
+            download_manifest_size,
+            sig_algo: seed_crypto::SIG_ALGO_HMAC_SHA256,
+            sig_length,
+            total_seed_size,
+            content_hash,
+        };
+
+        // Build unsigned payload.
+        let unsigned_size = total_seed_size as usize - sig_length as usize;
+        let mut unsigned = Vec::with_capacity(unsigned_size);
+        unsigned.extend_from_slice(&header.to_bytes());
+        unsigned.extend_from_slice(microkernel_data);
+        unsigned.extend_from_slice(&manifest);
+        debug_assert_eq!(unsigned.len(), unsigned_size);
+
+        // Sign.
+        let signature = seed_crypto::sign_seed(signing_key, &unsigned);
+
+        // Final payload.
+        let mut payload = unsigned;
+        payload.extend_from_slice(&signature);
         debug_assert_eq!(payload.len(), total_seed_size as usize);
 
         Ok((payload, header))
@@ -558,6 +644,57 @@ impl<'a> ParsedSeed<'a> {
         } else {
             None
         }
+    }
+
+    /// Verify the HMAC-SHA256 signature against the unsigned payload.
+    pub fn verify_signature(&self, key: &[u8], full_data: &[u8]) -> Result<(), SeedError> {
+        let signature = self.signature.ok_or(SeedError::MissingComponent("signature"))?;
+        let signed_payload = self
+            .signed_payload(full_data)
+            .ok_or(SeedError::MissingComponent("signed payload"))?;
+        if seed_crypto::verify_seed(key, signed_payload, signature) {
+            Ok(())
+        } else {
+            Err(SeedError::SignatureInvalid)
+        }
+    }
+
+    /// Verify the content hash matches the microkernel + manifest data.
+    pub fn verify_content_hash(&self) -> bool {
+        let microkernel = self.microkernel.unwrap_or(&[]);
+        let manifest = self.manifest_bytes.unwrap_or(&[]);
+
+        let mut hash_input = Vec::with_capacity(microkernel.len() + manifest.len());
+        hash_input.extend_from_slice(microkernel);
+        hash_input.extend_from_slice(manifest);
+
+        seed_crypto::verify_content_hash(&self.header.content_hash, &hash_input)
+    }
+
+    /// Decompress the microkernel using the built-in LZ decompressor.
+    pub fn decompress_microkernel(&self) -> Result<Vec<u8>, SeedError> {
+        match self.microkernel {
+            Some(data) => compress::decompress(data)
+                .map_err(|e| SeedError::InvalidManifest(format!("decompress: {e}"))),
+            None => Err(SeedError::MissingComponent("microkernel")),
+        }
+    }
+
+    /// Full verification: check magic, content hash, and signature in one call.
+    pub fn verify_all(&self, key: &[u8], full_data: &[u8]) -> Result<(), SeedError> {
+        if !self.header.is_valid_magic() {
+            return Err(SeedError::InvalidHeader(rvf_types::RvfError::BadMagic {
+                expected: SEED_MAGIC,
+                got: self.header.seed_magic,
+            }));
+        }
+        if !self.verify_content_hash() {
+            return Err(SeedError::InvalidManifest("content hash mismatch".into()));
+        }
+        if self.header.is_signed() {
+            self.verify_signature(key, full_data)?;
+        }
+        Ok(())
     }
 }
 
