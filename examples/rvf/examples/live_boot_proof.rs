@@ -142,9 +142,14 @@ fn main() {
     ).expect("build initramfs");
     println!("  [INITRAMFS]   {} bytes (real gzipped cpio archive)", initramfs.len());
 
-    // Use prebuilt minimal kernel (no Docker needed for kernel itself)
-    let kernel = KernelBuilder::from_builtin_minimal().expect("builtin kernel");
-    println!("  [KERNEL]      {} bytes (bzImage stub, x86_64)", kernel.bzimage.len());
+    // Try Docker-built real kernel first, fall back to builtin stub
+    let tmpdir = std::env::temp_dir().join("rvf-kernel-build");
+    fs::create_dir_all(&tmpdir).ok();
+    let builder_for_kernel = KernelBuilder::new(KernelArch::X86_64)
+        .with_initramfs(&["sshd", "rvf-server"]);
+    let kernel = builder_for_kernel.build(&tmpdir).expect("build kernel");
+    let kernel_label = if kernel.bzimage.len() > 8192 { "real bzImage" } else { "builtin stub" };
+    println!("  [KERNEL]      {} bytes ({}, x86_64)", kernel.bzimage.len(), kernel_label);
 
     // Embed kernel
     let cmdline = "console=ttyS0 quiet rvf.ssh_port=2222 rvf.api_port=8080";
