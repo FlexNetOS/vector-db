@@ -57,12 +57,16 @@ This is not a database format. It is an **executable knowledge unit**.
 
 #### 🔐 Security & Trust
 
+RVF treats security as a structural property of the format, not an afterthought. Every segment can be individually signed, every operation is hash-chained into a tamper-evident ledger, and every derived file carries a cryptographic link to its parent. The result: you can hand someone a `.rvf` file and they can independently verify what data is inside, who produced it, what operations were performed, and whether anything was altered — without trusting the sender.
+
 | Capability | How | Segment |
 |------------|-----|---------|
-| 🔗 **Tamper-evident audit trail** | Every insert, query, and deletion is recorded in a hash-linked chain. Change one byte anywhere and the entire chain fails verification. | `WITNESS_SEG` (0x0A) |
-| 🔐 **Kernel locked to its data** | A cryptographic binding prevents anyone from swapping a signed kernel from one file into another. The kernel only boots if the data matches. | `KERNEL_SEG` + `CRYPTO_SEG` |
-| 🛡️ **Quantum-safe signatures** | Files can be signed with ML-DSA-65 (post-quantum) alongside Ed25519, so signatures survive future quantum computers. | `CRYPTO_SEG` (0x0C) |
-| 🧬 **Track where data came from** | Every file records its parent, grandparent, and full derivation history with cryptographic hashes. Like DNA for data. | `MANIFEST_SEG` |
+| 🔗 **Tamper-evident audit trail** | Every insert, query, and deletion is recorded in a SHAKE-256 hash-linked chain. Change one byte anywhere and the entire chain fails verification. | `WITNESS_SEG` (0x0A) |
+| 🔐 **Kernel locked to its data** | A 128-byte `KernelBinding` footer ties each signed kernel to its manifest hash. Prevents segment-swap attacks — the kernel only boots if the data it was built for is present and unmodified. | `KERNEL_SEG` + `CRYPTO_SEG` |
+| 🛡️ **Quantum-safe signatures** | Segments can be signed with ML-DSA-65 (FIPS 204) and SLH-DSA-128s alongside Ed25519. Dual-signing means files stay trustworthy even after quantum computers break classical crypto. | `CRYPTO_SEG` (0x0C) |
+| 🧬 **Track where data came from** | Every file records its parent, grandparent, and full derivation history with cryptographic hashes — DNA-style lineage. Verify that a child was legitimately derived from its parent without accessing the parent file. | `MANIFEST_SEG` |
+| 🏛️ **TEE attestation** | Record hardware attestation quotes from Intel SGX, AMD SEV-SNP, Intel TDX, and ARM CCA. Proves vector operations ran inside a verified secure enclave. | `CRYPTO_SEG` |
+| 🛡️ **Adversarial hardening** | Input validation, rate limiting, and resource exhaustion guards. Declarative `SecurityPolicy` configuration prevents denial-of-service and malformed-input attacks. | Runtime |
 
 #### 📦 Ecosystem & Tooling
 
@@ -467,12 +471,16 @@ The same `.rvf` file format runs on cloud servers, Firecracker microVMs, TEE enc
 
 ### Security & Trust
 
+Every layer of RVF is designed to answer: *"Can I verify this file hasn't been tampered with, and can I prove who produced it?"*
+
 | Feature | Description |
 |---------|-------------|
-| **Confidential Core attestation** | Record TEE attestation quotes (SGX, SEV-SNP, TDX, ARM CCA) alongside your vectors. |
-| **Post-quantum signatures** | ML-DSA-65 and SLH-DSA-128s segment signing alongside classical Ed25519. |
-| **DNA-style lineage** | FileIdentity tracks parent/child derivation chains with cryptographic hash verification. |
-| **Witness chains** | Tamper-evident hash-linked audit trails. Every operation cryptographically recorded. |
+| **Witness chains** | SHAKE-256 hash-linked audit trails. Every insert, query, deletion, and derivation is chained — one altered byte breaks the entire chain. |
+| **Dual-era signatures** | Ed25519 (classical) + ML-DSA-65/SLH-DSA-128s (post-quantum, FIPS 204). Files are signed for today and for the post-quantum era. |
+| **KernelBinding** | 128-byte signed footer binds each kernel to its manifest hash. Prevents cross-file segment-swap attacks. |
+| **TEE attestation** | Record hardware attestation quotes from SGX, SEV-SNP, TDX, and ARM CCA alongside vector data — proving operations ran inside a verified enclave. |
+| **DNA-style lineage** | `FileIdentity` records parent hash, derivation type, and generation depth. Verify chain of custody without accessing parent files. |
+| **Adversarial hardening** | `SecurityPolicy` + `HardeningFields` for input validation, rate limiting, and resource exhaustion guards at the format level. |
 
 ### Ecosystem & Tooling
 
@@ -1039,11 +1047,15 @@ The quality system tracks retrieval fidelity across progressive index layers and
 
 ## 🛡️ Security Hardening
 
-Built-in defenses against adversarial inputs and resource exhaustion:
+RVF defends against adversarial inputs, resource exhaustion, and supply-chain attacks at the format level:
 
-- `SecurityPolicy` / `HardeningFields` — declarative security configuration (rvf-types)
-- `adversarial` module — input validation and tamper detection (rvf-runtime)
-- `dos` module — rate limiting and resource exhaustion guards (rvf-runtime)
+| Defense | Module | What It Does |
+|---------|--------|-------------|
+| **Declarative policy** | `SecurityPolicy` / `HardeningFields` (rvf-types) | Define allowed operations, max segment sizes, and signing requirements per file. Policies travel with the file. |
+| **Input validation** | `adversarial` (rvf-runtime) | Validates vector dimensions, metadata sizes, and segment headers before any write. Rejects malformed inputs at the boundary. |
+| **Rate limiting** | `dos` (rvf-runtime) | Per-operation rate limits and resource budgets prevent query floods and memory exhaustion. |
+| **Kernel binding** | `KernelBinding` (rvf-types) | Ties signed kernels to specific manifest hashes. A kernel extracted from one file will not boot inside another. |
+| **Witness integrity** | `verify_witness_chain` (rvf-crypto) | Any modification to any recorded operation breaks the SHAKE-256 chain, making tampering immediately detectable. |
 
 ## 🧬 WASM Self-Bootstrapping (0x10)
 
@@ -1060,7 +1072,7 @@ The `rvf-solver-wasm` crate implements a Thompson Sampling temporal solver as a 
 ---
 
 <details>
-<summary><strong>45 Runnable Examples</strong></summary>
+<summary><strong>46 Runnable Examples</strong></summary>
 
 Every example uses real RVF APIs end-to-end &mdash; no mocks, no stubs. Run any example with:
 
