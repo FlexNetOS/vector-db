@@ -16,11 +16,11 @@ name = "rvf"
 path = "src/main.rs"
 
 [dependencies]
-rvf-runtime = { version = "0.1.0", path = "../rvf-runtime" }
-rvf-types = { version = "0.1.0", path = "../rvf-types", features = ["std"] }
+rvf-runtime = { version = "0.2.0", path = "../rvf-runtime" }
+rvf-types = { version = "0.2.0", path = "../rvf-types", features = ["std"] }
 rvf-wire = { version = "0.1.0", path = "../rvf-wire" }
 rvf-manifest = { version = "0.1.0", path = "../rvf-manifest" }
-rvf-crypto = { version = "0.1.0", path = "../rvf-crypto" }
+rvf-crypto = { version = "0.2.0", path = "../rvf-crypto" }
 rvf-server = { version = "0.1.0", path = "../rvf-server", optional = true }
 clap = { version = "4", features = ["derive"] }
 serde = { version = "1", features = ["derive"] }

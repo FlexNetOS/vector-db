@@ -9480,7 +9480,7 @@ dependencies = [
 
 [[package]]
 name = "rvf-crypto"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "ed25519-dalek",
  "rand 0.8.5",
@@ -9575,7 +9575,7 @@ dependencies = [
 
 [[package]]
 name = "rvf-runtime"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "rand 0.8.5",
  "rvf-types",
@@ -9601,7 +9601,7 @@ dependencies = [
 
 [[package]]
 name = "rvf-types"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "ed25519-dalek",
  "rand_core 0.6.4",
