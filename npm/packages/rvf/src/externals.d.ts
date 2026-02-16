@@ -8,22 +8,11 @@
 
 declare module '@ruvector/rvf-node' {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const mod: any;
-  export = mod;
+  export const RvfDatabase: any;
 }
 
 declare module '@ruvector/rvf-wasm' {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const mod: any;
-  export default mod;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  export const create: any;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  export const open: any;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  export const open_readonly: any;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  export const ingest_batch: any;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  export const query: any;
+  const init: (...args: any[]) => Promise<any>;
+  export default init;
 }

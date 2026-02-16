@@ -28,7 +28,7 @@
 </p>
 
 ---
-
+dsp
 ## 🧠 What is RVF? A Cognitive Container
 
 **RVF (RuVector Format)** is a universal binary substrate that merges database, model, graph engine, kernel, and attestation into a single deployable file. 

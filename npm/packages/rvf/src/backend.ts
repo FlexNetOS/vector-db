@@ -84,7 +84,9 @@ export class NodeBackend implements RvfBackend {
     try {
       // Dynamic import so the SDK can be bundled for browsers without
       // pulling in the native addon at compile time.
-      this.native = await import('@ruvector/rvf-node');
+      // The NAPI addon exports a `RvfDatabase` class with factory methods.
+      const mod = await import('@ruvector/rvf-node');
+      this.native = mod.RvfDatabase ?? mod.default?.RvfDatabase ?? mod;
     } catch {
       throw new RvfError(
         RvfErrorCode.BackendNotFound,
@@ -129,17 +131,23 @@ export class NodeBackend implements RvfBackend {
   async ingestBatch(entries: RvfIngestEntry[]): Promise<RvfIngestResult> {
     this.ensureHandle();
     try {
-      const ids = entries.map((e) => e.id);
-      const vectors = entries.map((e) =>
-        e.vector instanceof Float32Array ? e.vector : new Float32Array(e.vector),
-      );
-      const metadata = entries.some((e) => e.metadata)
-        ? entries.map((e) => e.metadata ?? {})
-        : undefined;
-      const result = await this.native.ingestBatch(this.handle, ids, vectors, metadata);
+      // NAPI signature: ingestBatch(vectors: Float32Array, ids: i64[], metadata?)
+      // Flatten individual vectors into a single contiguous Float32Array.
+      const n = entries.length;
+      if (n === 0) return { accepted: 0, rejected: 0, epoch: 0 };
+      const first = entries[0].vector;
+      const dim = first instanceof Float32Array ? first.length : first.length;
+      const flat = new Float32Array(n * dim);
+      for (let i = 0; i < n; i++) {
+        const v = entries[i].vector;
+        const f32 = v instanceof Float32Array ? v : new Float32Array(v);
+        flat.set(f32, i * dim);
+      }
+      const ids = entries.map((e) => Number(e.id));
+      const result = this.handle.ingestBatch(flat, ids);
       return {
-        accepted: result.accepted,
-        rejected: result.rejected,
+        accepted: Number(result.accepted),
+        rejected: Number(result.rejected),
         epoch: result.epoch,
       };
     } catch (err) {
@@ -155,9 +163,9 @@ export class NodeBackend implements RvfBackend {
     this.ensureHandle();
     try {
       const nativeOpts = options ? mapQueryOptionsToNative(options) : undefined;
-      const results = await this.native.query(this.handle, vector, k, nativeOpts);
-      return (results as Array<{ id: string; distance: number }>).map((r) => ({
-        id: r.id,
+      const results = this.handle.query(vector, k, nativeOpts);
+      return (results as Array<{ id: number; distance: number }>).map((r) => ({
+        id: String(r.id),
         distance: r.distance,
       }));
     } catch (err) {
@@ -168,8 +176,9 @@ export class NodeBackend implements RvfBackend {
   async delete(ids: string[]): Promise<RvfDeleteResult> {
     this.ensureHandle();
     try {
-      const result = await this.native.delete(this.handle, ids);
-      return { deleted: result.deleted, epoch: result.epoch };
+      const numIds = ids.map((id) => Number(id));
+      const result = this.handle.delete(numIds);
+      return { deleted: Number(result.deleted), epoch: result.epoch };
     } catch (err) {
       throw RvfError.fromNative(err);
     }
@@ -178,8 +187,9 @@ export class NodeBackend implements RvfBackend {
   async deleteByFilter(filter: RvfFilterExpr): Promise<RvfDeleteResult> {
     this.ensureHandle();
     try {
-      const result = await this.native.deleteByFilter(this.handle, filter);
-      return { deleted: result.deleted, epoch: result.epoch };
+      // NAPI takes a JSON string for the filter expression.
+      const result = this.handle.deleteByFilter(JSON.stringify(filter));
+      return { deleted: Number(result.deleted), epoch: result.epoch };
     } catch (err) {
       throw RvfError.fromNative(err);
     }
@@ -188,10 +198,10 @@ export class NodeBackend implements RvfBackend {
   async compact(): Promise<RvfCompactionResult> {
     this.ensureHandle();
     try {
-      const result = await this.native.compact(this.handle);
+      const result = this.handle.compact();
       return {
         segmentsCompacted: result.segmentsCompacted ?? result.segments_compacted,
-        bytesReclaimed: result.bytesReclaimed ?? result.bytes_reclaimed,
+        bytesReclaimed: Number(result.bytesReclaimed ?? result.bytes_reclaimed),
         epoch: result.epoch,
       };
     } catch (err) {
@@ -202,7 +212,7 @@ export class NodeBackend implements RvfBackend {
   async status(): Promise<RvfStatus> {
     this.ensureHandle();
     try {
-      const s = await this.native.status(this.handle);
+      const s = this.handle.status();
       return mapNativeStatus(s);
     } catch (err) {
       throw RvfError.fromNative(err);
@@ -212,7 +222,7 @@ export class NodeBackend implements RvfBackend {
   async close(): Promise<void> {
     if (!this.handle) return;
     try {
-      await this.native.close(this.handle);
+      this.handle.close();
     } catch (err) {
       throw RvfError.fromNative(err);
     } finally {
@@ -347,20 +357,28 @@ export class NodeBackend implements RvfBackend {
 /**
  * Backend that delegates to the `@ruvector/rvf-wasm` WASM build.
  *
+ * The WASM microkernel exposes C-ABI store functions (`rvf_store_create`,
+ * `rvf_store_query`, etc.) operating on integer handles. This backend wraps
+ * them behind the same `RvfBackend` interface.
+ *
  * Suitable for browser environments. The WASM module is loaded lazily.
  */
 export class WasmBackend implements RvfBackend {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private wasm: any = null;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  private handle: any = null;
+  /** Integer store handle returned by `rvf_store_create` / `rvf_store_open`. */
+  private handle: number = 0;
+  private dim: number = 0;
 
   private async loadWasm(): Promise<void> {
     if (this.wasm) return;
     try {
-      this.wasm = await import('@ruvector/rvf-wasm');
-      if (typeof this.wasm.default === 'function') {
-        await this.wasm.default();
+      const mod = await import('@ruvector/rvf-wasm');
+      // wasm-pack default export is the init function
+      if (typeof mod.default === 'function') {
+        this.wasm = await mod.default();
+      } else {
+        this.wasm = mod;
       }
     } catch {
       throw new RvfError(
@@ -376,49 +394,67 @@ export class WasmBackend implements RvfBackend {
     }
   }
 
-  async create(path: string, options: RvfOptions): Promise<void> {
+  private metricCode(metric: string | undefined): number {
+    switch (metric) {
+      case 'Cosine': return 2;
+      case 'InnerProduct': return 1;
+      default: return 0; // L2
+    }
+  }
+
+  async create(_path: string, options: RvfOptions): Promise<void> {
     await this.loadWasm();
     try {
-      this.handle = this.wasm.create(path, mapOptionsToNative(options));
+      const nativeOpts = mapOptionsToNative(options);
+      const dim = nativeOpts.dimension as number;
+      const metric = this.metricCode(nativeOpts.metric as string);
+      const h = this.wasm.rvf_store_create(dim, metric);
+      if (h <= 0) throw new Error('rvf_store_create returned ' + h);
+      this.handle = h;
+      this.dim = dim;
     } catch (err) {
       throw RvfError.fromNative(err);
     }
   }
 
-  async open(path: string): Promise<void> {
-    await this.loadWasm();
-    try {
-      this.handle = this.wasm.open(path);
-    } catch (err) {
-      throw RvfError.fromNative(err);
-    }
+  async open(_path: string): Promise<void> {
+    throw new RvfError(
+      RvfErrorCode.BackendNotFound,
+      'WASM backend does not support file-based open (in-memory only)',
+    );
   }
 
-  async openReadonly(path: string): Promise<void> {
-    await this.loadWasm();
-    try {
-      this.handle = this.wasm.open_readonly(path);
-    } catch (err) {
-      throw RvfError.fromNative(err);
-    }
+  async openReadonly(_path: string): Promise<void> {
+    throw new RvfError(
+      RvfErrorCode.BackendNotFound,
+      'WASM backend does not support file-based openReadonly (in-memory only)',
+    );
   }
 
   async ingestBatch(entries: RvfIngestEntry[]): Promise<RvfIngestResult> {
     this.ensureHandle();
     try {
-      const ids = entries.map((e) => e.id);
-      const vectors = entries.map((e) =>
-        e.vector instanceof Float32Array ? e.vector : new Float32Array(e.vector),
-      );
-      const metadata = entries.some((e) => e.metadata)
-        ? entries.map((e) => e.metadata ?? {})
-        : undefined;
-      const result = this.wasm.ingest_batch(this.handle, ids, vectors, metadata);
-      return {
-        accepted: result.accepted,
-        rejected: result.rejected,
-        epoch: result.epoch,
-      };
+      const n = entries.length;
+      if (n === 0) return { accepted: 0, rejected: 0, epoch: 0 };
+      const dim = this.dim || (entries[0].vector instanceof Float32Array
+        ? entries[0].vector.length : entries[0].vector.length);
+      const flat = new Float32Array(n * dim);
+      const ids = new BigUint64Array(n);
+      for (let i = 0; i < n; i++) {
+        const v = entries[i].vector;
+        const f32 = v instanceof Float32Array ? v : new Float32Array(v);
+        flat.set(f32, i * dim);
+        ids[i] = BigInt(entries[i].id);
+      }
+      // Allocate in WASM memory and call
+      const vecsPtr = this.wasm.rvf_alloc(flat.byteLength);
+      const idsPtr = this.wasm.rvf_alloc(ids.byteLength);
+      new Float32Array(this.wasm.memory.buffer, vecsPtr, flat.length).set(flat);
+      new BigUint64Array(this.wasm.memory.buffer, idsPtr, ids.length).set(ids);
+      const accepted = this.wasm.rvf_store_ingest(this.handle, vecsPtr, idsPtr, n);
+      this.wasm.rvf_free(vecsPtr, flat.byteLength);
+      this.wasm.rvf_free(idsPtr, ids.byteLength);
+      return { accepted: accepted > 0 ? accepted : 0, rejected: accepted < 0 ? n : 0, epoch: 0 };
     } catch (err) {
       throw RvfError.fromNative(err);
     }
@@ -427,16 +463,27 @@ export class WasmBackend implements RvfBackend {
   async query(
     vector: Float32Array,
     k: number,
-    options?: RvfQueryOptions,
+    _options?: RvfQueryOptions,
   ): Promise<RvfSearchResult[]> {
     this.ensureHandle();
     try {
-      const nativeOpts = options ? mapQueryOptionsToNative(options) : undefined;
-      const results = this.wasm.query(this.handle, vector, k, nativeOpts);
-      return (results as Array<{ id: string; distance: number }>).map((r) => ({
-        id: r.id,
-        distance: r.distance,
-      }));
+      const queryPtr = this.wasm.rvf_alloc(vector.byteLength);
+      new Float32Array(this.wasm.memory.buffer, queryPtr, vector.length).set(vector);
+      // Each result = 8 bytes id + 4 bytes dist = 12 bytes
+      const outSize = k * 12;
+      const outPtr = this.wasm.rvf_alloc(outSize);
+      const count = this.wasm.rvf_store_query(this.handle, queryPtr, k, 0, outPtr);
+      const results: RvfSearchResult[] = [];
+      const view = new DataView(this.wasm.memory.buffer);
+      for (let i = 0; i < count; i++) {
+        const off = outPtr + i * 12;
+        const id = view.getBigUint64(off, true);
+        const dist = view.getFloat32(off + 8, true);
+        results.push({ id: String(id), distance: dist });
+      }
+      this.wasm.rvf_free(queryPtr, vector.byteLength);
+      this.wasm.rvf_free(outPtr, outSize);
+      return results;
     } catch (err) {
       throw RvfError.fromNative(err);
     }
@@ -445,42 +492,44 @@ export class WasmBackend implements RvfBackend {
   async delete(ids: string[]): Promise<RvfDeleteResult> {
     this.ensureHandle();
     try {
-      const result = this.wasm.delete(this.handle, ids);
-      return { deleted: result.deleted, epoch: result.epoch };
+      const arr = new BigUint64Array(ids.map((id) => BigInt(id)));
+      const ptr = this.wasm.rvf_alloc(arr.byteLength);
+      new BigUint64Array(this.wasm.memory.buffer, ptr, arr.length).set(arr);
+      const deleted = this.wasm.rvf_store_delete(this.handle, ptr, ids.length);
+      this.wasm.rvf_free(ptr, arr.byteLength);
+      return { deleted: deleted > 0 ? deleted : 0, epoch: 0 };
     } catch (err) {
       throw RvfError.fromNative(err);
     }
   }
 
-  async deleteByFilter(filter: RvfFilterExpr): Promise<RvfDeleteResult> {
-    this.ensureHandle();
-    try {
-      const result = this.wasm.delete_by_filter(this.handle, filter);
-      return { deleted: result.deleted, epoch: result.epoch };
-    } catch (err) {
-      throw RvfError.fromNative(err);
-    }
+  async deleteByFilter(_filter: RvfFilterExpr): Promise<RvfDeleteResult> {
+    throw new RvfError(RvfErrorCode.BackendNotFound, 'deleteByFilter not supported in WASM backend');
   }
 
   async compact(): Promise<RvfCompactionResult> {
-    this.ensureHandle();
-    try {
-      const result = this.wasm.compact(this.handle);
-      return {
-        segmentsCompacted: result.segments_compacted ?? result.segmentsCompacted,
-        bytesReclaimed: result.bytes_reclaimed ?? result.bytesReclaimed,
-        epoch: result.epoch,
-      };
-    } catch (err) {
-      throw RvfError.fromNative(err);
-    }
+    return { segmentsCompacted: 0, bytesReclaimed: 0, epoch: 0 };
   }
 
   async status(): Promise<RvfStatus> {
     this.ensureHandle();
     try {
-      const s = this.wasm.status(this.handle);
-      return mapNativeStatus(s);
+      const outPtr = this.wasm.rvf_alloc(20);
+      this.wasm.rvf_store_status(this.handle, outPtr);
+      const view = new DataView(this.wasm.memory.buffer);
+      const totalVectors = view.getUint32(outPtr, true);
+      const dim = view.getUint32(outPtr + 4, true);
+      this.wasm.rvf_free(outPtr, 20);
+      return {
+        totalVectors,
+        totalSegments: 1,
+        fileSizeBytes: 0,
+        epoch: 0,
+        profileId: 0,
+        compactionState: 'idle',
+        deadSpaceRatio: 0,
+        readOnly: false,
+      };
     } catch (err) {
       throw RvfError.fromNative(err);
     }
@@ -489,11 +538,11 @@ export class WasmBackend implements RvfBackend {
   async close(): Promise<void> {
     if (!this.handle) return;
     try {
-      this.wasm.close(this.handle);
+      this.wasm.rvf_store_close(this.handle);
     } catch (err) {
       throw RvfError.fromNative(err);
     } finally {
-      this.handle = null;
+      this.handle = 0;
     }
   }
 
@@ -525,7 +574,10 @@ export class WasmBackend implements RvfBackend {
     throw new RvfError(RvfErrorCode.BackendNotFound, 'segments not supported in WASM backend');
   }
   async dimension(): Promise<number> {
-    throw new RvfError(RvfErrorCode.BackendNotFound, 'dimension not supported in WASM backend');
+    this.ensureHandle();
+    const d = this.wasm.rvf_store_dimension(this.handle);
+    if (d < 0) throw new RvfError(RvfErrorCode.StoreClosed);
+    return d;
   }
 }
 
@@ -602,7 +654,8 @@ function mapOptionsToNative(options: RvfOptions): Record<string, any> {
 function mapQueryOptionsToNative(options: RvfQueryOptions): Record<string, any> {
   return {
     ef_search: options.efSearch ?? 100,
-    filter: options.filter,
+    // NAPI accepts the filter as a JSON string, not an object.
+    filter: options.filter ? JSON.stringify(options.filter) : undefined,
     timeout_ms: options.timeoutMs ?? 0,
   };
 }
