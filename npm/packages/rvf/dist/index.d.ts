@@ -16,8 +16,10 @@
  * await db.close();
  * ```
  */
-export type { DistanceMetric, CompressionProfile, HardwareProfile, RvfOptions, RvfFilterValue, RvfFilterExpr, RvfQueryOptions, RvfSearchResult, RvfIngestResult, RvfIngestEntry, RvfDeleteResult, RvfCompactionResult, CompactionState, RvfStatus, DerivationType, RvfKernelData, RvfEbpfData, RvfSegmentInfo, BackendType, } from './types';
+export type { DistanceMetric, CompressionProfile, HardwareProfile, RvfOptions, RvfFilterValue, RvfFilterExpr, RvfQueryOptions, RvfSearchResult, RvfIngestResult, RvfIngestEntry, RvfDeleteResult, RvfCompactionResult, CompactionState, RvfStatus, DerivationType, RvfKernelData, RvfEbpfData, RvfSegmentInfo, BackendType, RvfIndexStats, RvfWitnessResult, } from './types';
 export { RvfError, RvfErrorCode } from './errors';
 export type { RvfBackend } from './backend';
 export { NodeBackend, WasmBackend, resolveBackend } from './backend';
 export { RvfDatabase } from './database';
+export { RvfSolver } from '@ruvector/rvf-solver';
+export type { TrainOptions, TrainResult, AcceptanceOptions, AcceptanceManifest, AcceptanceModeResult, CycleMetrics, PolicyState, SkipMode, SkipModeStats, CompiledConfig, } from '@ruvector/rvf-solver';
