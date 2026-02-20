@@ -4,7 +4,7 @@
 # Note: PostgreSQL 18 requires pgrx 0.15.0+ (planned for future release)
 
 ARG PG_VERSION=17
-ARG RUST_VERSION=1.83
+ARG RUST_VERSION=1.85
 
 # ============================================================================
 # Stage 1: Base Builder with Rust and PostgreSQL dev dependencies
@@ -120,7 +120,7 @@ ENV POSTGRES_INITDB_ARGS="--data-checksums"
 # Labels for version tracking
 LABEL org.opencontainers.image.title="RuVector PostgreSQL Extension v2"
 LABEL org.opencontainers.image.description="High-performance vector database extension for PostgreSQL with 230+ SQL functions, Flash Attention, GNN, hybrid search, multi-tenancy, and self-healing"
-LABEL org.opencontainers.image.version="2.0.0"
+LABEL org.opencontainers.image.version="2.0.2"
 LABEL org.opencontainers.image.vendor="ruv.io"
 LABEL org.opencontainers.image.source="https://github.com/ruvnet/ruvector"
 LABEL ruvector.pg.version="${PG_VERSION}"

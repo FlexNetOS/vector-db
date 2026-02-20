@@ -54,6 +54,7 @@ pub use simplicial_complex::{
 };
 pub use topological_code::{
     TopologicalCode, StabilizerCode, GraphState, StructurePreservingEncoder,
+    SolverBackedOperator,
 };
 pub use coherence_integration::{
     TopologicalEnergy, TopologicalCoherenceAnalyzer, QuantumCoherenceMetric,

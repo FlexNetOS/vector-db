@@ -11,6 +11,15 @@
 - ALWAYS read a file before editing it
 - NEVER commit secrets, credentials, or .env files
 
+## Publishing (crates.io & npm)
+
+- Credentials are stored in `.env` at the project root — source it before publishing
+- Cargo token is in `~/.cargo/credentials.toml` (auto-loaded by cargo)
+- npm is authenticated as `ruvnet` — verify with `npm whoami`
+- **Publish order for solver crates**: `ruvector-solver` first (no deps), then `ruvector-solver-wasm` and `ruvector-solver-node` (depend on solver)
+- Always run `cargo publish --dry-run --allow-dirty` before real publish
+- `ruvector-profiler` has `publish = false` — intentionally not publishable
+
 ## File Organization
 
 - NEVER save to root folder — use the directories below

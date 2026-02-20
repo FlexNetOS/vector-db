@@ -424,6 +424,82 @@ impl DensityMatrix {
             matrix: self.matrix.scale(Complex64::new(factor, 0.0)),
         }
     }
+
+    /// Compute the spectral decomposition once, caching eigenvalues for reuse.
+    ///
+    /// This is the recommended way to compute multiple spectral quantities
+    /// (entropy, purity, effective rank) from a single eigenvalue computation.
+    /// Each call to `von_neumann_entropy()` or `purity()` separately costs O(n³);
+    /// using this method computes everything in a single O(n³) pass.
+    pub fn spectral_decomposition(&self) -> SpectralDecomposition {
+        let eigenvalues: Vec<f64> = self
+            .matrix
+            .eigenvalues(constants::MAX_ITERATIONS, constants::DEFAULT_TOLERANCE)
+            .into_iter()
+            .map(|ev| ev.re.max(0.0)) // Clamp to non-negative (numerical safety)
+            .collect();
+
+        // Entropy: S = -Σ λ_i ln(λ_i)
+        let entropy = eigenvalues
+            .iter()
+            .filter(|&&lambda| lambda > constants::EPSILON)
+            .map(|&lambda| -lambda * lambda.ln())
+            .sum();
+
+        // Purity: Tr(ρ²) = Σ λ_i²
+        let purity = eigenvalues.iter().map(|&lambda| lambda * lambda).sum();
+
+        // Effective rank
+        let effective_rank = eigenvalues
+            .iter()
+            .filter(|&&lambda| lambda > constants::EPSILON)
+            .count();
+
+        SpectralDecomposition {
+            eigenvalues,
+            entropy,
+            purity,
+            effective_rank,
+        }
+    }
+
+    /// Compute purity using Frobenius norm: Tr(ρ²) = ||ρ||²_F for Hermitian ρ.
+    ///
+    /// This is O(n²) compared to the O(n³) matmul-based approach.
+    pub fn purity_fast(&self) -> f64 {
+        self.matrix.data.iter().map(|c| c.norm_sqr()).sum()
+    }
+
+    /// Compute von Neumann entropy from pre-computed eigenvalues.
+    pub fn entropy_from_eigenvalues(eigenvalues: &[f64]) -> f64 {
+        eigenvalues
+            .iter()
+            .filter(|&&lambda| lambda > constants::EPSILON)
+            .map(|&lambda| -lambda * lambda.ln())
+            .sum()
+    }
+
+    /// Compute purity from pre-computed eigenvalues: Tr(ρ²) = Σ λ_i².
+    pub fn purity_from_eigenvalues(eigenvalues: &[f64]) -> f64 {
+        eigenvalues.iter().map(|&lambda| lambda * lambda).sum()
+    }
+}
+
+/// Pre-computed spectral decomposition of a density matrix.
+///
+/// Computing eigenvalues is O(n³). This struct caches the result so that
+/// entropy, purity, trace distance, and other spectral quantities can be
+/// derived in O(n) from the same decomposition.
+#[derive(Debug, Clone)]
+pub struct SpectralDecomposition {
+    /// Real eigenvalues (density matrices are Hermitian → real eigenvalues)
+    pub eigenvalues: Vec<f64>,
+    /// Von Neumann entropy: S(ρ) = -Σ λ_i ln(λ_i)
+    pub entropy: f64,
+    /// Purity: Tr(ρ²) = Σ λ_i²
+    pub purity: f64,
+    /// Effective rank (number of eigenvalues above EPSILON)
+    pub effective_rank: usize,
 }
 
 #[cfg(test)]
@@ -525,5 +601,45 @@ mod tests {
 
         // Should be |01⟩⟨01|
         assert!((rho_01.matrix.get(1, 1).re - 1.0).abs() < 1e-10);
+    }
+
+    #[test]
+    fn test_spectral_decomposition() {
+        // Pure state: eigenvalues should be [1, 0], entropy 0, purity 1
+        let rho = DensityMatrix::from_pure_state(&QuantumState::ground_state(1));
+        let spectral = rho.spectral_decomposition();
+
+        assert!((spectral.purity - 1.0).abs() < 1e-5);
+        assert!(spectral.entropy.abs() < 1e-5);
+        assert_eq!(spectral.effective_rank, 1);
+    }
+
+    #[test]
+    fn test_spectral_decomposition_mixed() {
+        // Maximally mixed 2-qubit: eigenvalues [0.5, 0.5], entropy = ln(2), purity = 0.5
+        let rho = DensityMatrix::maximally_mixed(2);
+        let spectral = rho.spectral_decomposition();
+
+        assert!((spectral.purity - 0.5).abs() < 1e-5);
+        assert!((spectral.entropy - 2.0_f64.ln()).abs() < 1e-3);
+        assert_eq!(spectral.effective_rank, 2);
+    }
+
+    #[test]
+    fn test_purity_fast() {
+        let rho = DensityMatrix::from_pure_state(&QuantumState::ground_state(1));
+        let purity_fast = rho.purity_fast();
+        let purity_orig = rho.purity();
+
+        assert!((purity_fast - purity_orig).abs() < 1e-10);
+    }
+
+    #[test]
+    fn test_purity_fast_mixed() {
+        let rho = DensityMatrix::maximally_mixed(2);
+        let purity_fast = rho.purity_fast();
+        let purity_orig = rho.purity();
+
+        assert!((purity_fast - purity_orig).abs() < 1e-10);
     }
 }

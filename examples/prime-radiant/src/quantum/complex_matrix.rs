@@ -4,6 +4,7 @@
 //! Uses `num-complex` for complex number arithmetic with f64 precision.
 
 use std::ops::{Add, Mul, Sub};
+use ruvector_solver::types::CsrMatrix;
 
 /// Complex number type alias using f64 precision
 pub type Complex64 = num_complex::Complex<f64>;
@@ -302,6 +303,33 @@ impl ComplexMatrix {
         true
     }
 
+    /// Check if all entries have negligible imaginary parts
+    pub fn is_real_valued(&self, tolerance: f64) -> bool {
+        self.data.iter().all(|c| c.im.abs() <= tolerance)
+    }
+
+    /// Convert a real-valued ComplexMatrix to CsrMatrix<f64>.
+    /// Returns None if any entry has a significant imaginary part.
+    pub fn to_csr_real(&self, tolerance: f64) -> Option<CsrMatrix<f64>> {
+        if !self.is_real_valued(tolerance) {
+            return None;
+        }
+        let entries: Vec<(usize, usize, f64)> = (0..self.rows)
+            .flat_map(|i| {
+                (0..self.cols)
+                    .filter_map(move |j| {
+                        let val = self.get(i, j).re;
+                        if val.abs() > tolerance {
+                            Some((i, j, val))
+                        } else {
+                            None
+                        }
+                    })
+            })
+            .collect();
+        Some(CsrMatrix::<f64>::from_coo(self.rows, self.cols, entries))
+    }
+
     /// Check if matrix is unitary (A†A = I)
     pub fn is_unitary(&self, tolerance: f64) -> bool {
         if !self.is_square() {
@@ -481,6 +509,86 @@ impl ComplexMatrix {
         result
     }
 
+    /// Compute eigenvalues of a real symmetric matrix using the Jacobi method.
+    ///
+    /// This is significantly more numerically stable than power iteration + deflation,
+    /// especially for matrices with clustered eigenvalues (common in density matrices).
+    /// Uses CsrMatrix for efficient matrix operations when the matrix is sparse.
+    fn eigenvalues_real_symmetric(&self, max_iterations: usize, tolerance: f64) -> Vec<Complex64> {
+        let n = self.rows;
+
+        // Work with a real copy (row-major f64)
+        let mut a: Vec<Vec<f64>> = (0..n)
+            .map(|i| (0..n).map(|j| self.get(i, j).re).collect())
+            .collect();
+
+        // Jacobi eigenvalue algorithm: repeatedly zero off-diagonal elements
+        for _ in 0..max_iterations * n {
+            // Find largest off-diagonal element
+            let mut max_val = 0.0f64;
+            let mut p = 0;
+            let mut q = 1;
+
+            for i in 0..n {
+                for j in (i + 1)..n {
+                    if a[i][j].abs() > max_val {
+                        max_val = a[i][j].abs();
+                        p = i;
+                        q = j;
+                    }
+                }
+            }
+
+            // Check convergence
+            if max_val < tolerance {
+                break;
+            }
+
+            // Compute Jacobi rotation angle
+            let theta = if (a[p][p] - a[q][q]).abs() < 1e-15 {
+                std::f64::consts::FRAC_PI_4
+            } else {
+                0.5 * (2.0 * a[p][q] / (a[p][p] - a[q][q])).atan()
+            };
+
+            let c = theta.cos();
+            let s = theta.sin();
+
+            // Apply Jacobi rotation: A' = J^T A J
+            // Update rows p and q
+            let mut new_row_p = vec![0.0; n];
+            let mut new_row_q = vec![0.0; n];
+
+            for j in 0..n {
+                new_row_p[j] = c * a[p][j] + s * a[q][j];
+                new_row_q[j] = -s * a[p][j] + c * a[q][j];
+            }
+
+            for j in 0..n {
+                a[p][j] = new_row_p[j];
+                a[q][j] = new_row_q[j];
+            }
+
+            // Update columns p and q
+            for i in 0..n {
+                let aip = a[i][p];
+                let aiq = a[i][q];
+                a[i][p] = c * aip + s * aiq;
+                a[i][q] = -s * aip + c * aiq;
+            }
+        }
+
+        // Eigenvalues are on the diagonal
+        let mut eigenvalues: Vec<Complex64> = (0..n)
+            .map(|i| Complex64::new(a[i][i], 0.0))
+            .collect();
+
+        // Sort by magnitude (descending)
+        eigenvalues.sort_by(|a, b| b.norm().partial_cmp(&a.norm()).unwrap_or(std::cmp::Ordering::Equal));
+
+        eigenvalues
+    }
+
     /// Compute eigenvalues using QR iteration (simplified version)
     /// Returns eigenvalues in descending order of magnitude
     pub fn eigenvalues(&self, max_iterations: usize, tolerance: f64) -> Vec<Complex64> {
@@ -510,6 +618,11 @@ impl ComplexMatrix {
             let lambda2 = (trace - sqrt_disc) / Complex64::new(2.0, 0.0);
 
             return vec![lambda1, lambda2];
+        }
+
+        // For Hermitian + real-valued matrices, use Jacobi (much more stable)
+        if self.is_hermitian(tolerance) && self.is_real_valued(tolerance) {
+            return self.eigenvalues_real_symmetric(max_iterations, tolerance);
         }
 
         // For larger matrices, use power iteration to find dominant eigenvalue

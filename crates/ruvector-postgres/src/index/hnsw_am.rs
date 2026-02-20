@@ -537,6 +537,21 @@ unsafe fn read_vector(
 
     let header = page as *const PageHeaderData;
     let data_ptr = (header as *const u8).add(size_of::<PageHeaderData>());
+
+    // Bounds check: prevent reading past page boundary. Fixes #164 segfault.
+    let page_size = pg_sys::BLCKSZ as usize;
+    let total_read_end = size_of::<PageHeaderData>()
+        + size_of::<HnswNodePageHeader>()
+        + dimensions * size_of::<f32>();
+    if total_read_end > page_size {
+        pgrx::warning!(
+            "HNSW: Vector read would exceed page boundary ({} > {}), skipping block {}",
+            total_read_end, page_size, block
+        );
+        pg_sys::UnlockReleaseBuffer(buffer);
+        return None;
+    }
+
     let vector_ptr = data_ptr.add(size_of::<HnswNodePageHeader>()) as *const f32;
 
     let mut vector = Vec::with_capacity(dimensions);
@@ -580,6 +595,23 @@ unsafe fn read_neighbors(
     for l in 0..layer {
         let count = node_header.neighbor_counts.get(l).copied().unwrap_or(0) as usize;
         offset += count * size_of::<HnswNeighbor>();
+    }
+
+    // Bounds check: prevent reading past page boundary. Fixes #164 segfault.
+    let page_size = pg_sys::BLCKSZ as usize;
+    let header_size = size_of::<PageHeaderData>();
+    let total_read_end = header_size
+        + size_of::<HnswNodePageHeader>()
+        + vector_size
+        + offset
+        + neighbor_count * size_of::<HnswNeighbor>();
+    if total_read_end > page_size {
+        pgrx::warning!(
+            "HNSW: Neighbor read would exceed page boundary ({} > {}), skipping block {}",
+            total_read_end, page_size, block
+        );
+        pg_sys::UnlockReleaseBuffer(buffer);
+        return Vec::new();
     }
 
     let neighbors_ptr = neighbors_base.add(offset) as *const HnswNeighbor;
@@ -744,16 +776,14 @@ unsafe fn hnsw_search(
         }
     }
 
-    // Convert to sorted result vector — collect all, then sort and truncate.
-    // BinaryHeap::into_iter yields items in arbitrary order, so we must sort
-    // before truncating to k.
+    // Convert to sorted result vector — collect all via into_sorted_vec().
+    // BinaryHeap::into_iter yields items in arbitrary order, so we use
+    // into_sorted_vec() for deterministic ordering. Fixes #171.
     let mut result_vec: Vec<_> = results
+        .into_sorted_vec()
         .into_iter()
         .map(|r| (r.block, r.tid, r.distance))
         .collect();
-
-    result_vec.sort_by(|a, b| a.2.partial_cmp(&b.2).unwrap_or(Ordering::Equal));
-    result_vec.truncate(k);
 
     result_vec
 }
@@ -773,6 +803,33 @@ unsafe extern "C" fn hnsw_build(
     let metric = metric_from_index(index);
     pgrx::log!("HNSW v2: Starting index build (metric={:?})", metric);
 
+    // Extract dimensions from the indexed column's type modifier (atttypmod).
+    // For ruvector(384), atttypmod == 384. Fixes #171 and #164.
+    let dimensions = {
+        let tupdesc = (*heap).rd_att;
+        let natts = (*index_info).ii_NumIndexAttrs as usize;
+        let mut dims: u32 = 0;
+        if natts > 0 && !tupdesc.is_null() {
+            let attnum = (*index_info).ii_IndexAttrNumbers[0];
+            if attnum > 0 && (attnum as isize) <= (*tupdesc).natts as isize {
+                let attr = (*tupdesc).attrs.as_ptr().offset((attnum - 1) as isize);
+                let typmod = (*attr).atttypmod;
+                if typmod > 0 {
+                    dims = typmod as u32;
+                }
+            }
+        }
+        if dims == 0 {
+            pgrx::warning!(
+                "HNSW: Could not determine vector dimensions from column type modifier, \
+                 defaulting to 384. Ensure column is defined as ruvector(N)."
+            );
+            dims = 384;
+        }
+        pgrx::log!("HNSW v2: Building index with {} dimensions", dims);
+        dims as usize
+    };
+
     // Parse options from WITH clause
     let options = get_hnsw_options_from_relation(index);
 
@@ -786,7 +843,7 @@ unsafe extern "C" fn hnsw_build(
         .unwrap_or(0);
 
     let mut meta = HnswMetaPage {
-        dimensions: 0, // Set from first tuple in build callback
+        dimensions: dimensions as u32, // From atttypmod, refined on first tuple
         m: options.m as u16,
         m0: (options.m * 2) as u16,
         ef_construction: options.ef_construction as u32,
@@ -1576,6 +1633,14 @@ unsafe extern "C" fn hnsw_rescan(
     state.search_done = false;
     state.query_valid = false; // Reset validity flag
 
+    // Non-kNN scan (e.g., COUNT(*), WHERE embedding IS NOT NULL)
+    // When there are no ORDER BY operators, we cannot perform a vector search.
+    // Return early and let hnsw_gettuple return false, forcing PostgreSQL to
+    // fall back to a sequential scan. Fixes #152.
+    if norderbys <= 0 || orderbys.is_null() {
+        return;
+    }
+
     // Extract query vector from ORDER BY
     if norderbys > 0 && !orderbys.is_null() {
         let orderby = &*orderbys;
@@ -1660,6 +1725,9 @@ unsafe extern "C" fn hnsw_rescan(
     }
 
     // Validate query vector - CRITICAL: Prevent crashes from invalid queries
+    // Note: if query_valid is false due to norderbys==0 (non-kNN scan),
+    // we already returned early above. This check only fires for kNN scans
+    // where vector extraction genuinely failed.
     if !state.query_valid || state.query_vector.is_empty() {
         // Instead of using zeros which crash, raise a proper error
         pgrx::error!(
@@ -1753,6 +1821,13 @@ unsafe extern "C" fn hnsw_gettuple(scan: IndexScanDesc, direction: ScanDirection
 
     let state = &mut *((*scan).opaque as *mut HnswScanState);
     let index = (*scan).indexRelation;
+
+    // Non-kNN scan: no query vector was provided (e.g., COUNT(*), WHERE IS NOT NULL).
+    // Return false to tell PostgreSQL this index cannot satisfy this scan type,
+    // forcing fallback to sequential scan. Fixes #152.
+    if !state.query_valid && !state.search_done {
+        return false;
+    }
 
     // Execute search on first call
     if !state.search_done {

@@ -63,6 +63,9 @@ js-sys = { version = "0.3", optional = true }
 # Benchmarking (optional, enabled via 'bench' feature)
 criterion = { version = "0.5", features = ["html_reports"], optional = true }
 
+# Sublinear solver for optimized SpMV and spectral operations
+ruvector-solver = { path = "../../crates/ruvector-solver", default-features = false, features = ["neumann", "cg"] }
+
 [dev-dependencies]
 proptest = "1.4"
 approx = "0.5"
@@ -105,6 +108,12 @@ required-features = ["bench"]
 # Integrated benchmarks: end-to-end coherence, memory profiling, throughput
 [[bench]]
 name = "integrated_bench"
+harness = false
+required-features = ["bench"]
+
+# Solver-backed quantum operator benchmarks
+[[bench]]
+name = "quantum_solver_bench"
 harness = false
 required-features = ["bench"]
 

@@ -5,6 +5,7 @@
 
 use std::collections::{HashMap, HashSet, BTreeSet};
 use super::{constants, QuantumTopologyError, Result};
+use ruvector_solver::types::CsrMatrix;
 
 /// A simplex (k-simplex has k+1 vertices)
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
@@ -131,11 +132,11 @@ impl std::fmt::Display for Simplex {
     }
 }
 
-/// Sparse matrix for boundary computations (using coordinate format)
+/// Sparse matrix for boundary computations (using HashMap for O(1) access)
 #[derive(Debug, Clone)]
 pub struct SparseMatrix {
-    /// (row, col, value) entries
-    pub entries: Vec<(usize, usize, i32)>,
+    /// (row, col) -> value entries (O(1) access)
+    entries: HashMap<(usize, usize), i32>,
     /// Number of rows
     pub rows: usize,
     /// Number of columns
@@ -146,7 +147,7 @@ impl SparseMatrix {
     /// Create an empty sparse matrix
     pub fn new(rows: usize, cols: usize) -> Self {
         Self {
-            entries: Vec::new(),
+            entries: HashMap::new(),
             rows,
             cols,
         }
@@ -156,12 +157,12 @@ impl SparseMatrix {
     pub fn from_dense(dense: &[Vec<i32>]) -> Self {
         let rows = dense.len();
         let cols = dense.first().map(|r| r.len()).unwrap_or(0);
-        let mut entries = Vec::new();
+        let mut entries = HashMap::new();
 
         for (i, row) in dense.iter().enumerate() {
             for (j, &val) in row.iter().enumerate() {
                 if val != 0 {
-                    entries.push((i, j, val));
+                    entries.insert((i, j), val);
                 }
             }
         }
@@ -169,31 +170,24 @@ impl SparseMatrix {
         Self { entries, rows, cols }
     }
 
-    /// Set a value
+    /// Set a value (O(1) via HashMap)
     pub fn set(&mut self, row: usize, col: usize, value: i32) {
         if value == 0 {
-            self.entries.retain(|&(r, c, _)| r != row || c != col);
+            self.entries.remove(&(row, col));
         } else {
-            // Remove existing entry if present
-            self.entries.retain(|&(r, c, _)| r != row || c != col);
-            self.entries.push((row, col, value));
+            self.entries.insert((row, col), value);
         }
     }
 
-    /// Get a value
+    /// Get a value (O(1) via HashMap)
     pub fn get(&self, row: usize, col: usize) -> i32 {
-        for &(r, c, v) in &self.entries {
-            if r == row && c == col {
-                return v;
-            }
-        }
-        0
+        self.entries.get(&(row, col)).copied().unwrap_or(0)
     }
 
     /// Transpose the matrix
     pub fn transpose(&self) -> Self {
         Self {
-            entries: self.entries.iter().map(|&(r, c, v)| (c, r, v)).collect(),
+            entries: self.entries.iter().map(|(&(r, c), &v)| ((c, r), v)).collect(),
             rows: self.cols,
             cols: self.rows,
         }
@@ -207,7 +201,7 @@ impl SparseMatrix {
     /// Convert to dense matrix
     pub fn to_dense(&self) -> Vec<Vec<i32>> {
         let mut dense = vec![vec![0; self.cols]; self.rows];
-        for &(r, c, v) in &self.entries {
+        for (&(r, c), &v) in &self.entries {
             if r < self.rows && c < self.cols {
                 dense[r][c] = v;
             }
@@ -218,13 +212,37 @@ impl SparseMatrix {
     /// Matrix-vector multiplication (over integers mod 2)
     pub fn matvec_mod2(&self, v: &[u8]) -> Vec<u8> {
         let mut result = vec![0u8; self.rows];
-        for &(r, c, val) in &self.entries {
+        for (&(r, c), &val) in &self.entries {
             if c < v.len() && r < result.len() {
                 let product = ((val.abs() as u8) * v[c]) % 2;
                 result[r] = (result[r] + product) % 2;
             }
         }
         result
+    }
+
+    /// Convert to CsrMatrix<f64> for efficient SpMV operations.
+    /// Uses ruvector-solver's CSR format with O(nnz) cache-friendly SpMV.
+    pub fn to_csr_f64(&self) -> CsrMatrix<f64> {
+        CsrMatrix::<f64>::from_coo(
+            self.rows,
+            self.cols,
+            self.entries.iter().map(|(&(r, c), &v)| (r, c, v as f64)),
+        )
+    }
+
+    /// Sparse matrix-vector multiply using solver's optimized CSR SpMV.
+    /// Converts to CsrMatrix internally for cache-efficient computation.
+    pub fn spmv_f64(&self, x: &[f64]) -> Vec<f64> {
+        let csr = self.to_csr_f64();
+        let mut y = vec![0.0f64; self.rows];
+        csr.spmv(x, &mut y);
+        y
+    }
+
+    /// Get entries as a Vec of (row, col, value) triples (for iteration).
+    pub fn triplets(&self) -> Vec<(usize, usize, i32)> {
+        self.entries.iter().map(|(&(r, c), &v)| (r, c, v)).collect()
     }
 
     /// Compute rank over Z/2Z using Gaussian elimination
@@ -615,6 +633,43 @@ impl SimplicialComplex {
         }
 
         result
+    }
+
+    /// Compute the graph Laplacian L = D - A as a CsrMatrix<f64>.
+    /// Uses the 1-skeleton (edges) to build the adjacency matrix, then
+    /// L_ii = degree(i), L_ij = -1 if edge (i,j) exists.
+    pub fn graph_laplacian_csr(&self) -> CsrMatrix<f64> {
+        let num_vertices = self.count(0);
+        let edges = self.simplices_of_dim(1);
+
+        let mut entries: Vec<(usize, usize, f64)> = Vec::new();
+        let mut degree = vec![0usize; num_vertices];
+
+        // Get vertex mapping (since vertices may not be 0..n)
+        let vertices = self.simplices_of_dim(0);
+        let vertex_map: HashMap<Vec<usize>, usize> = vertices.iter()
+            .enumerate()
+            .map(|(idx, s)| (s.vertices(), idx))
+            .collect();
+
+        for edge in &edges {
+            let verts = edge.vertices();
+            if verts.len() == 2 {
+                if let (Some(&i), Some(&j)) = (vertex_map.get(&vec![verts[0]]), vertex_map.get(&vec![verts[1]])) {
+                    entries.push((i, j, -1.0));
+                    entries.push((j, i, -1.0));
+                    degree[i] += 1;
+                    degree[j] += 1;
+                }
+            }
+        }
+
+        // Add diagonal (degree)
+        for (i, &d) in degree.iter().enumerate() {
+            entries.push((i, i, d as f64));
+        }
+
+        CsrMatrix::<f64>::from_coo(num_vertices, num_vertices, entries)
     }
 }
 

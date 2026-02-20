@@ -26,6 +26,7 @@ export * from './learning-engine';
 export * from './adaptive-embedder';
 export * from './neural-embeddings';
 export * from './neural-perf';
+export * from './rvf-wrapper';
 
 // Analysis module (consolidated security, complexity, patterns)
 export * from '../analysis';

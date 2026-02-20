@@ -1,5 +1,5 @@
 [workspace]
-exclude = ["crates/micro-hnsw-wasm", "crates/ruvector-hyperbolic-hnsw", "crates/ruvector-hyperbolic-hnsw-wasm", "examples/ruvLLM/esp32", "examples/ruvLLM/esp32-flash", "examples/edge-net", "examples/data", "examples/ruvLLM", "examples/delta-behavior"]
+exclude = ["crates/micro-hnsw-wasm", "crates/ruvector-hyperbolic-hnsw", "crates/ruvector-hyperbolic-hnsw-wasm", "examples/ruvLLM/esp32", "examples/ruvLLM/esp32-flash", "examples/edge-net", "examples/data", "examples/ruvLLM", "examples/delta-behavior", "crates/rvf", "examples/rvf-desktop"]
 members = [
     "crates/ruvector-core",
     "crates/ruvector-node",
@@ -77,13 +77,37 @@ members = [
     "crates/ruqu-algorithms",
     "crates/ruqu-wasm",
     "crates/ruqu-exotic",
+    "crates/ruvector-domain-expansion",
+    "crates/ruvector-domain-expansion-wasm",
+    "crates/ruvector-solver",
+    "crates/ruvector-solver-wasm",
+    "crates/ruvector-solver-node",
     "examples/dna",
     "examples/OSpipe",
+    "crates/rvf/rvf-adapters/rvlite",
+    "crates/rvf/rvf-types",
+    "crates/rvf/rvf-wire",
+    "crates/rvf/rvf-quant",
+    "crates/rvf/rvf-crypto",
+    "crates/rvf/rvf-manifest",
+    "crates/rvf/rvf-index",
+    "crates/rvf/rvf-runtime",
+    "crates/rvf/rvf-kernel",
+    "crates/rvf/rvf-ebpf",
+    "crates/rvf/rvf-launch",
+    "crates/rvf/rvf-server",
+    "crates/rvf/rvf-import",
+    "crates/rvf/rvf-cli",
+    "crates/rvf/tests/rvf-integration",
+    "crates/rvf/benches",
+    "crates/ruvector-coherence",
+    "crates/ruvector-profiler",
+    "crates/ruvector-attn-mincut",
 ]
 resolver = "2"
 
 [workspace.package]
-version = "2.0.2"
+version = "2.0.3"
 edition = "2021"
 rust-version = "1.77"
 license = "MIT"
@@ -127,6 +151,7 @@ tracing = "0.1"
 tracing-subscriber = { version = "0.3", features = ["env-filter"] }
 
 # Math and numerics
+nalgebra = { version = "0.33", default-features = false, features = ["std"] }
 ndarray = "0.16"
 rand = "0.8"
 rand_distr = "0.4"
@@ -155,7 +180,7 @@ opt-level = 3
 lto = "fat"
 codegen-units = 1
 strip = true
-panic = "abort"
+panic = "unwind"
 
 [profile.bench]
 inherits = "release"
