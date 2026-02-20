@@ -454,23 +454,14 @@ This minimizes total compute cost subject to ε_total constraint.
 Relevant to RuVector's future development:
 
 1. **Practical nearly-linear Laplacian solvers**: Can CKMPPRX's O(m · √(log n)) be implemented with constants competitive with CG for n < 10M?
-
 2. **Dynamic spectral sparsification**: Can the sparsifier be maintained under edge updates in polylog time, enabling real-time TRUE preprocessing?
-
 3. **Sublinear attention**: Can PDE-based attention be computed in O(n · polylog(n)) for arbitrary attention patterns, not just sparse Laplacian structure?
-
 4. **Quantum advantage for sparse systems**: Does quantum walk-based Laplacian solving (HHL algorithm) provide practical speedup over classical CG at achievable qubit counts (100-1000)?
-
 5. **Distributed sublinear algorithms**: Can Forward Push and Hybrid Random Walk be efficiently distributed across ruvector-cluster's sharded graph?
-
 6. **Adaptive sparsity detection**: Can SONA learn to predict matrix sparsity patterns from historical queries, enabling pre-computed sparsifiers?
-
 7. **Error-optimal algorithm composition**: What is the information-theoretically optimal error allocation across a pipeline of k approximate algorithms?
-
 8. **Hardware-aware routing**: Can the algorithm router exploit specific SIMD width, cache size, and memory bandwidth to make per-hardware-generation routing decisions?
-
 9. **Streaming sublinear solving**: Can Laplacian solvers operate on streaming edge updates without full matrix reconstruction?
-
 10. **Sublinear Fisher Information**: Can the Fisher Information Matrix for EWC be approximated in sublinear time, enabling faster continual learning?
 
 ---
