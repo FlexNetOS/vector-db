@@ -1067,10 +1067,7 @@ impl CostEstimator {
 
     /// Record actual usage
     pub fn record_usage(&mut self, model: ClaudeModel, usage: &UsageStats) {
-        let entry = self
-            .usage_by_model
-            .entry(model)
-            .or_default();
+        let entry = self.usage_by_model.entry(model).or_default();
         entry.input_tokens += usage.input_tokens;
         entry.output_tokens += usage.output_tokens;
     }

@@ -268,10 +268,7 @@ impl<H: NeuralHash + Clone> HashIndex<H> {
     pub fn insert(&mut self, id: VectorId, vector: Vec<f32>) {
         let code = self.hasher.encode(&vector);
 
-        self.tables
-            .entry(code)
-            .or_default()
-            .push(id.clone());
+        self.tables.entry(code).or_default().push(id.clone());
 
         self.vectors.insert(id, vector);
     }

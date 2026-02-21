@@ -82,7 +82,11 @@ impl LearningSignal {
         for step in &trajectory.steps {
             let advantage = step.reward - baseline;
             let activation_len = step.activations.len().min(dim);
-            for (grad, &act) in gradient.iter_mut().zip(step.activations.iter()).take(activation_len) {
+            for (grad, &act) in gradient
+                .iter_mut()
+                .zip(step.activations.iter())
+                .take(activation_len)
+            {
                 *grad += advantage * act;
             }
         }
