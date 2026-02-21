@@ -657,6 +657,29 @@ impl TaskComplexityAnalyzer {
         }
     }
 
+    /// Returns signed calibration error.
+    ///
+    /// Positive value = systematically over-predicting complexity,
+    /// negative value = systematically under-predicting.
+    /// Returns 0.0 if no feedback has been recorded.
+    pub fn calibration_bias(&self) -> f32 {
+        let with_feedback: Vec<_> = self
+            .accuracy_history
+            .iter()
+            .filter(|r| r.actual.is_some())
+            .collect();
+
+        if with_feedback.is_empty() {
+            return 0.0;
+        }
+
+        let sum: f32 = with_feedback
+            .iter()
+            .map(|r| r.predicted - r.actual.unwrap())
+            .sum();
+        sum / with_feedback.len() as f32
+    }
+
     /// Get accuracy statistics
     pub fn accuracy_stats(&self) -> AnalyzerStats {
         let with_feedback: Vec<_> = self

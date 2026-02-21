@@ -52,6 +52,7 @@ pub mod error;
 pub mod evaluation;
 pub mod gguf;
 pub mod hub;
+pub mod intelligence;
 pub mod kernels;
 pub mod kv_cache;
 pub mod lora;
@@ -414,6 +415,12 @@ pub use ruvector_integration::{
     // Unified index
     UnifiedIndex,
     VectorMetadata,
+};
+
+// Intelligence provider exports
+pub use intelligence::{
+    FileSignalProvider, IntelligenceLoader, IntelligenceProvider, ProviderError,
+    ProviderQualityWeights, ProviderResult, QualityFactors, QualitySignal,
 };
 
 // Quality scoring exports
