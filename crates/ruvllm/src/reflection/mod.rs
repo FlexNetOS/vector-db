@@ -73,7 +73,7 @@
 //!
 //! ## Integration with ReasoningBank
 //!
-//! This module integrates with the existing [`Verdict`] enum by adding a
+//! This module integrates with the existing `Verdict` enum by adding a
 //! `RecoveredViaReflection` variant to track successful error recovery:
 //!
 //! ```rust,ignore

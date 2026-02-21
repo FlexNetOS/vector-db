@@ -400,7 +400,7 @@ pub fn compute_mincut_with_lambda2(graph: &ContractedGraph) -> MincutResult {
 
 #[cfg(test)]
 mod tests {
-    use super::super::contracted_graph::ContractedGraphBuilder;
+    use super::super::contracted_graph::{ContractedGraphBuilder, EdgeType};
     use super::*;
 
     #[test]

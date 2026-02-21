@@ -558,7 +558,7 @@ fn int8_gemv_scalar(a: &[i8], x: &[f32], y: &mut [f32], m: usize, n: usize, scal
 
 /// INT4 quantized matrix-vector multiplication with NEON
 ///
-/// Computes: y_i = sum_j (dequant(A[i,j]) * x[j])
+/// Computes: y_i = sum_j (dequant(A\[i,j\]) * x\[j\])
 /// Where A is stored as packed INT4 with block-wise scales and mins
 ///
 /// # Arguments

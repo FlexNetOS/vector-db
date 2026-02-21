@@ -240,7 +240,7 @@ mod tests {
 
     #[pg_test]
     fn test_qudag_stake() {
-        let result = super::qudag_stake(100.0, Some(30));
+        let result = super::qudag_stake(100.0, 30);
         let json = result.0;
         assert_eq!(json["amount"].as_f64().unwrap(), 100.0);
         assert!(json["validator_weight"].as_f64().unwrap() > 100.0);
@@ -248,7 +248,7 @@ mod tests {
 
     #[pg_test]
     fn test_qudag_calculate_reward() {
-        let reward = super::qudag_calculate_reward(1.0, 0.9, Some("validation"));
+        let reward = super::qudag_calculate_reward(1.0, 0.9, "validation");
         assert_eq!(reward, 0.9);
     }
 

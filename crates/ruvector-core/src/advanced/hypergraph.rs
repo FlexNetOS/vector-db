@@ -150,9 +150,7 @@ impl HypergraphIndex {
     /// Add an entity node
     pub fn add_entity(&mut self, id: VectorId, embedding: Vec<f32>) {
         self.entities.insert(id.clone(), embedding);
-        self.entity_to_hyperedges
-            .entry(id)
-            .or_insert_with(HashSet::new);
+        self.entity_to_hyperedges.entry(id).or_default();
     }
 
     /// Add a hyperedge
@@ -173,7 +171,7 @@ impl HypergraphIndex {
         for node in &hyperedge.nodes {
             self.entity_to_hyperedges
                 .entry(node.clone())
-                .or_insert_with(HashSet::new)
+                .or_default()
                 .insert(edge_id.clone());
         }
 
@@ -192,10 +190,7 @@ impl HypergraphIndex {
 
         self.add_hyperedge(temporal_edge.hyperedge)?;
 
-        self.temporal_index
-            .entry(bucket)
-            .or_insert_with(Vec::new)
-            .push(edge_id);
+        self.temporal_index.entry(bucket).or_default().push(edge_id);
 
         Ok(())
     }

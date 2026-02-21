@@ -441,9 +441,7 @@ unsafe fn metric_from_index(index: Relation) -> DistanceMetric {
         return DistanceMetric::Euclidean;
     }
 
-    let name = std::ffi::CStr::from_ptr(name_ptr)
-        .to_str()
-        .unwrap_or("");
+    let name = std::ffi::CStr::from_ptr(name_ptr).to_str().unwrap_or("");
 
     let metric = if name.contains("cosine") {
         DistanceMetric::Cosine
@@ -546,7 +544,9 @@ unsafe fn read_vector(
     if total_read_end > page_size {
         pgrx::warning!(
             "HNSW: Vector read would exceed page boundary ({} > {}), skipping block {}",
-            total_read_end, page_size, block
+            total_read_end,
+            page_size,
+            block
         );
         pg_sys::UnlockReleaseBuffer(buffer);
         return None;
@@ -608,7 +608,9 @@ unsafe fn read_neighbors(
     if total_read_end > page_size {
         pgrx::warning!(
             "HNSW: Neighbor read would exceed page boundary ({} > {}), skipping block {}",
-            total_read_end, page_size, block
+            total_read_end,
+            page_size,
+            block
         );
         pg_sys::UnlockReleaseBuffer(buffer);
         return Vec::new();
@@ -1353,8 +1355,7 @@ unsafe fn connect_node_to_neighbors(
         // Read current neighbor list for this layer
         let header_ptr = (page as *const u8).add(size_of::<PageHeaderData>());
         let node_header = &*(header_ptr as *const HnswNodePageHeader);
-        let existing_count =
-            node_header.neighbor_counts.get(layer).copied().unwrap_or(0) as usize;
+        let existing_count = node_header.neighbor_counts.get(layer).copied().unwrap_or(0) as usize;
 
         let vector_size = dimensions * size_of::<f32>();
         let neighbors_base = header_ptr
@@ -1587,12 +1588,9 @@ unsafe extern "C" fn hnsw_beginscan(
     // RelationGetIndexScan). See GiST's gistbeginscan for reference.
     if (*scan).numberOfOrderBys > 0 {
         let n = (*scan).numberOfOrderBys as usize;
-        (*scan).xs_orderbyvals = pg_sys::palloc0(
-            std::mem::size_of::<pg_sys::Datum>() * n,
-        ) as *mut pg_sys::Datum;
-        (*scan).xs_orderbynulls = pg_sys::palloc(
-            std::mem::size_of::<bool>() * n,
-        ) as *mut bool;
+        (*scan).xs_orderbyvals =
+            pg_sys::palloc0(std::mem::size_of::<pg_sys::Datum>() * n) as *mut pg_sys::Datum;
+        (*scan).xs_orderbynulls = pg_sys::palloc(std::mem::size_of::<bool>() * n) as *mut bool;
         // Initialize all ORDER BY values as null (true = null)
         std::ptr::write_bytes((*scan).xs_orderbynulls, 1u8, n);
     }

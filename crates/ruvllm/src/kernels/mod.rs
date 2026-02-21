@@ -86,9 +86,11 @@ pub mod rope;
 #[cfg(any(target_os = "macos", doc))]
 pub mod accelerate;
 
-// Apple Neural Engine (ANE) optimized operations (macOS only)
-// Uses BNNS (Basic Neural Network Subroutines) which routes to ANE
-#[cfg(any(target_os = "macos", doc))]
+// Apple Neural Engine (ANE) optimized operations
+// Uses BNNS (Basic Neural Network Subroutines) which routes to ANE on macOS.
+// Decision-logic functions (should_use_ane, get_ane_recommendation, etc.) and
+// platform-fallback stubs are available on all targets so that tests and
+// cross-platform code can reference the module unconditionally.
 pub mod ane_ops;
 
 // Re-exports for convenience
@@ -177,16 +179,10 @@ pub use ane_ops::{
     AneRecommendation,
 };
 
-// Re-export ANE availability check for macOS without coreml feature
-#[cfg(all(target_os = "macos", not(feature = "coreml")))]
+// Re-export ANE availability check for all platforms without coreml feature
+// (the ane_ops module is now unconditionally available)
+#[cfg(not(all(target_os = "macos", feature = "coreml")))]
 pub use ane_ops::is_ane_available;
-
-// Fallback ANE availability for non-macOS
-#[cfg(not(target_os = "macos"))]
-#[inline(always)]
-pub fn is_ane_available() -> bool {
-    false
-}
 
 /// SIMD lane width for NEON (128-bit = 4 floats).
 ///

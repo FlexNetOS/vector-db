@@ -1,3 +1,16 @@
+#![allow(
+    clippy::all,
+    unused_imports,
+    unused_variables,
+    dead_code,
+    unused_mut,
+    unused_assignments,
+    non_camel_case_types,
+    clippy::approx_constant,
+    unexpected_cfgs,
+    unused_must_use,
+    unused_parens
+)]
 //! RuvLTRA-Small Model Tests
 //!
 //! This module provides comprehensive tests for the RuvLTRA-Small inference engine,
@@ -24,17 +37,14 @@
 //! ```
 
 use ruvllm::backends::{
-    AneCapabilities, ComputeUnits, GenerateParams, LlmBackend, ModelArchitecture, ModelConfig,
-    Quantization,
+    AneCapabilities, ComputeUnits, ModelArchitecture, ModelConfig, Quantization,
 };
-use ruvllm::error::{Result, RuvLLMError};
 use ruvllm::gguf::quantization::{dequantize_tensor, GgufQuantType, QuantizedTensor};
 use ruvllm::kernels::ane_ops::{
     get_ane_recommendation, is_ane_available, should_use_ane, should_use_ane_activation,
-    should_use_ane_matmul, AneRecommendation,
+    should_use_ane_matmul,
 };
 
-use std::sync::Arc;
 use std::time::{Duration, Instant};
 
 // ============================================================================
@@ -56,6 +66,7 @@ const RUVLTRA_SMALL_CONFIG: RuvLtraTestConfig = RuvLtraTestConfig {
 
 /// Test configuration for RuvLTRA-Small
 #[derive(Debug, Clone, Copy)]
+#[allow(dead_code)]
 struct RuvLtraTestConfig {
     vocab_size: usize,
     hidden_size: usize,
@@ -276,7 +287,7 @@ mod quantization_accuracy {
             block[2 + i] = low | (high << 4);
         }
 
-        let mut output = vec![0.0f32; 32];
+        let _output = vec![0.0f32; 32];
         let dtype = GgufQuantType::Q4_0;
 
         // Verify block size
@@ -622,6 +633,7 @@ mod sona_integration {
     fn test_sona_pattern_learning() {
         // Simulate SONA pattern storage
         #[derive(Debug)]
+        #[allow(dead_code)]
         struct SonaPattern {
             input_hash: u64,
             optimal_config: String,
@@ -782,7 +794,7 @@ mod ane_dispatch {
         ];
 
         for (m, k, n, desc) in test_cases {
-            let should_use = should_use_ane_matmul(m, k, n);
+            let _should_use = should_use_ane_matmul(m, k, n);
             let recommendation = get_ane_recommendation(m, k, n);
 
             // Recommendation should be consistent
@@ -848,8 +860,8 @@ mod ane_dispatch {
 
         for unit in units {
             // Test ANE usage flag
-            let uses_ane = unit.uses_ane();
-            let uses_gpu = unit.uses_gpu();
+            let _uses_ane = unit.uses_ane();
+            let _uses_gpu = unit.uses_gpu();
 
             // At least CPU should always be used
             // (implied by all compute unit configurations)
@@ -931,7 +943,7 @@ mod memory_management {
     fn test_tensor_memory_estimation() {
         // Estimate memory for RuvLTRA-Small tensors
         let hidden_size = RUVLTRA_SMALL_CONFIG.hidden_size;
-        let num_layers = RUVLTRA_SMALL_CONFIG.num_hidden_layers;
+        let _num_layers = RUVLTRA_SMALL_CONFIG.num_hidden_layers;
         let vocab_size = RUVLTRA_SMALL_CONFIG.vocab_size;
 
         // Embedding: vocab_size * hidden_size * bytes_per_element

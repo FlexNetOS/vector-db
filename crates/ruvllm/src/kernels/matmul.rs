@@ -860,7 +860,7 @@ fn gemm_scalar(a: &[f32], b: &[f32], c: &mut [f32], m: usize, k: usize, n: usize
 
 /// Batched GEMM for attention computation
 ///
-/// Computes: C[b] = A[b] * B[b] for each batch element
+/// Computes: C\[b\] = A\[b\] * B\[b\] for each batch element
 ///
 /// # Arguments
 /// * `a` - Batched matrix A (batch, m, k), row-major

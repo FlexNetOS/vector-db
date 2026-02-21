@@ -89,7 +89,7 @@ jobs:
             ${{ runner.os }}-cargo-build-target-${{ matrix.pg_version }}-
 
       - name: Install cargo-pgrx
-        run: cargo install cargo-pgrx --version 0.12.0 --locked
+        run: cargo install cargo-pgrx --version 0.12.9 --locked
 
       - name: Initialize pgrx (Ubuntu)
         if: runner.os == 'Linux'
@@ -114,7 +114,7 @@ jobs:
         working-directory: crates/ruvector-postgres
 
       - name: Run tests
-        run: cargo pgrx test pg${{ matrix.pg_version }} --no-default-features
+        run: cargo pgrx test pg${{ matrix.pg_version }} --no-default-features --features pg${{ matrix.pg_version }}
         working-directory: crates/ruvector-postgres
 
   # Test with all features enabled
@@ -133,11 +133,13 @@ jobs:
 
       - name: Install PostgreSQL
         run: |
+          sudo sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list'
+          wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -
           sudo apt-get update
           sudo apt-get install -y postgresql-17 postgresql-server-dev-17
 
       - name: Install cargo-pgrx
-        run: cargo install cargo-pgrx --version 0.12.0 --locked
+        run: cargo install cargo-pgrx --version 0.12.9 --locked
 
       - name: Initialize pgrx
         run: cargo pgrx init --pg17=/usr/lib/postgresql/17/bin/pg_config
@@ -150,7 +152,7 @@ jobs:
 
       - name: Test with all features
         run: |
-          cargo pgrx test pg17 --no-default-features --features index-all,quant-all
+          cargo pgrx test pg17 --no-default-features --features pg17,index-all,quant-all
         working-directory: crates/ruvector-postgres
 
   # Benchmark on pull requests
@@ -170,11 +172,13 @@ jobs:
 
       - name: Install PostgreSQL
         run: |
+          sudo sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list'
+          wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -
           sudo apt-get update
           sudo apt-get install -y postgresql-17 postgresql-server-dev-17
 
       - name: Install cargo-pgrx
-        run: cargo install cargo-pgrx --version 0.12.0 --locked
+        run: cargo install cargo-pgrx --version 0.12.9 --locked
 
       - name: Initialize pgrx
         run: cargo pgrx init --pg17=/usr/lib/postgresql/17/bin/pg_config
@@ -237,7 +241,7 @@ jobs:
           sudo apt-get install -y postgresql-${{ matrix.pg_version }} postgresql-server-dev-${{ matrix.pg_version }}
 
       - name: Install cargo-pgrx
-        run: cargo install cargo-pgrx --version 0.12.0 --locked
+        run: cargo install cargo-pgrx --version 0.12.9 --locked
 
       - name: Initialize pgrx
         run: cargo pgrx init --pg${{ matrix.pg_version }}=/usr/lib/postgresql/${{ matrix.pg_version }}/bin/pg_config

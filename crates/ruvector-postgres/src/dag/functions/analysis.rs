@@ -248,7 +248,7 @@ mod tests {
 
     #[pg_test]
     fn test_dag_bottlenecks_threshold() {
-        let results: Vec<_> = dag_bottlenecks("SELECT 1", Some(0.8)).collect();
+        let results: Vec<_> = dag_bottlenecks("SELECT 1", 0.8).collect();
         // Should only return bottlenecks with score >= 0.8
         for row in results {
             assert!(row.2 >= 0.8);

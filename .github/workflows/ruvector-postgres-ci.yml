@@ -36,7 +36,7 @@ on:
 env:
   CARGO_TERM_COLOR: always
   RUST_BACKTRACE: 1
-  PGRX_VERSION: '0.12.6'
+  PGRX_VERSION: '0.12.9'
   RUST_VERSION: 'stable'
 
 # Concurrency control - cancel in-progress runs for same PR

@@ -1067,10 +1067,7 @@ impl CostEstimator {
 
     /// Record actual usage
     pub fn record_usage(&mut self, model: ClaudeModel, usage: &UsageStats) {
-        let entry = self
-            .usage_by_model
-            .entry(model)
-            .or_insert(UsageStats::default());
+        let entry = self.usage_by_model.entry(model).or_default();
         entry.input_tokens += usage.input_tokens;
         entry.output_tokens += usage.output_tokens;
     }
@@ -1141,7 +1138,7 @@ impl LatencyTracker {
 
     /// Record latency sample
     pub fn record(&mut self, model: ClaudeModel, sample: LatencySample) {
-        let samples = self.samples.entry(model).or_insert_with(Vec::new);
+        let samples = self.samples.entry(model).or_default();
         samples.push(sample);
 
         // Trim old samples

@@ -117,10 +117,7 @@ impl AggregatedMetrics {
 
     /// Add a sample for a metric
     pub fn add_sample(&mut self, name: &str, value: f64) {
-        self.stats
-            .entry(name.to_string())
-            .or_insert_with(MetricStats::new)
-            .add(value);
+        self.stats.entry(name.to_string()).or_default().add(value);
     }
 
     /// Get statistics for a metric

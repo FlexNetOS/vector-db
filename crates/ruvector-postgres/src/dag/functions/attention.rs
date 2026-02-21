@@ -274,7 +274,7 @@ mod tests {
 
     #[pg_test]
     fn test_dag_attention_scores() {
-        let results: Vec<_> = dag_attention_scores("SELECT 1", Some("topological")).collect();
+        let results: Vec<_> = dag_attention_scores("SELECT 1", "topological").collect();
         assert!(!results.is_empty());
 
         // Attention weights should sum to approximately 1.0
@@ -284,7 +284,7 @@ mod tests {
 
     #[pg_test]
     fn test_dag_attention_matrix() {
-        let matrix = dag_attention_matrix("SELECT 1", Some("auto"));
+        let matrix = dag_attention_matrix("SELECT 1", "auto");
         assert!(!matrix.is_empty());
 
         // Matrix should be square
@@ -298,7 +298,7 @@ mod tests {
     fn test_dag_attention_visualize_formats() {
         let formats = ["dot", "json", "ascii", "mermaid"];
         for format in &formats {
-            let result = dag_attention_visualize("SELECT 1", Some("auto"), Some(format));
+            let result = dag_attention_visualize("SELECT 1", "auto", format);
             assert!(!result.is_empty());
         }
     }
@@ -306,6 +306,6 @@ mod tests {
     #[pg_test]
     #[should_panic(expected = "Invalid format")]
     fn test_dag_attention_visualize_invalid_format() {
-        dag_attention_visualize("SELECT 1", Some("auto"), Some("invalid"));
+        dag_attention_visualize("SELECT 1", "auto", "invalid");
     }
 }

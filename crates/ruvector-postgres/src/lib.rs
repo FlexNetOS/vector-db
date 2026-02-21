@@ -47,6 +47,22 @@ pub mod embeddings;
 #[cfg(feature = "gated-transformer")]
 pub mod gated_transformer;
 
+// v0.3 feature-gated modules
+#[cfg(feature = "solver")]
+pub mod solver;
+
+#[cfg(feature = "math-distances")]
+pub mod math;
+
+#[cfg(feature = "tda")]
+pub mod tda;
+
+#[cfg(feature = "sona-learning")]
+pub mod sona;
+
+#[cfg(feature = "domain-expansion")]
+pub mod domain_expansion;
+
 // Re-exports for convenience
 pub use distance::{cosine_distance, euclidean_distance, inner_product_distance, DistanceMetric};
 pub use types::RuVector;

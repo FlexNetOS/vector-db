@@ -95,7 +95,7 @@ impl ValidationResult {
 pub struct ValidationError {
     /// Type of validation error
     pub error_type: ValidationErrorType,
-    /// Path to the field that failed validation (e.g., "data.items[0].name")
+    /// Path to the field that failed validation (e.g., "data.items\[0\].name")
     pub path: String,
     /// Human-readable error message
     pub message: String,

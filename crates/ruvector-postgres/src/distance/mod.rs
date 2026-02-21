@@ -91,6 +91,7 @@ fn detect_simd_capability() -> SimdCapability {
         return SimdCapability::Neon;
     }
 
+    #[allow(unreachable_code)]
     SimdCapability::Scalar
 }
 
