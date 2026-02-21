@@ -3,9 +3,9 @@
 pub mod operators;
 
 use dashmap::DashMap;
-use std::sync::Arc;
 use parking_lot::RwLock;
 use ruvector_domain_expansion::DomainExpansionEngine;
+use std::sync::Arc;
 
 /// Global domain expansion engine state.
 static DOMAIN_ENGINES: once_cell::sync::Lazy<DashMap<String, Arc<RwLock<DomainExpansionEngine>>>> =

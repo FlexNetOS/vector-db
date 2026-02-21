@@ -375,7 +375,9 @@ pub fn ruvector_linear_attention(
     // Linear attention: phi(q)^T * (sum phi(k_i) * v_i^T) / (phi(q)^T * sum phi(k_i))
     // Using ELU+1 as kernel feature map
     let phi = |x: &[f32]| -> Vec<f32> {
-        x.iter().map(|&v| if v >= 0.0 { v + 1.0 } else { v.exp() }).collect()
+        x.iter()
+            .map(|&v| if v >= 0.0 { v + 1.0 } else { v.exp() })
+            .collect()
     };
 
     let phi_q = phi(&query);
@@ -480,7 +482,13 @@ pub fn ruvector_sliding_window_attention(
 
     // Softmax
     let max_score = scores.iter().copied().fold(f32::NEG_INFINITY, f32::max);
-    let exp_sum: f32 = scores.iter_mut().map(|s| { *s = (*s - max_score).exp(); *s }).sum();
+    let exp_sum: f32 = scores
+        .iter_mut()
+        .map(|s| {
+            *s = (*s - max_score).exp();
+            *s
+        })
+        .sum();
     if exp_sum > 0.0 {
         for s in &mut scores {
             *s /= exp_sum;
@@ -612,7 +620,10 @@ pub fn ruvector_sparse_attention(
     let top = &scored[..k];
 
     // Softmax on top-k scores
-    let max_s = top.iter().map(|(_, s)| *s).fold(f32::NEG_INFINITY, f32::max);
+    let max_s = top
+        .iter()
+        .map(|(_, s)| *s)
+        .fold(f32::NEG_INFINITY, f32::max);
     let exps: Vec<f32> = top.iter().map(|(_, s)| (s - max_s).exp()).collect();
     let sum: f32 = exps.iter().sum();
 
@@ -704,7 +715,10 @@ pub fn ruvector_moe_attention(
 
     // Softmax on top-k expert scores
     let top_experts = &expert_scores[..k.min(expert_scores.len())];
-    let max_s = top_experts.iter().map(|(_, s)| *s).fold(f32::NEG_INFINITY, f32::max);
+    let max_s = top_experts
+        .iter()
+        .map(|(_, s)| *s)
+        .fold(f32::NEG_INFINITY, f32::max);
     let exps: Vec<f32> = top_experts.iter().map(|(_, s)| (s - max_s).exp()).collect();
     let sum: f32 = exps.iter().sum();
 
@@ -803,7 +817,13 @@ pub fn ruvector_hyperbolic_attention(
 
     // Softmax
     let max_s = scores.iter().copied().fold(f32::NEG_INFINITY, f32::max);
-    let exp_sum: f32 = scores.iter_mut().map(|s| { *s = (*s - max_s).exp(); *s }).sum();
+    let exp_sum: f32 = scores
+        .iter_mut()
+        .map(|s| {
+            *s = (*s - max_s).exp();
+            *s
+        })
+        .sum();
     if exp_sum > 0.0 {
         for s in &mut scores {
             *s /= exp_sum;

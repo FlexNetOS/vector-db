@@ -3,11 +3,11 @@
 use pgrx::prelude::*;
 use pgrx::JsonB;
 
-use ruvector_math::optimal_transport::{OptimalTransport, SlicedWasserstein, SinkhornSolver};
-use ruvector_math::product_manifold::ProductManifold;
-use ruvector_math::spherical::SphericalSpace;
-use ruvector_math::spectral::{SpectralClustering, ScaledLaplacian, GraphFilter, SpectralFilter};
 use ruvector_math::optimal_transport::GromovWasserstein;
+use ruvector_math::optimal_transport::{OptimalTransport, SinkhornSolver, SlicedWasserstein};
+use ruvector_math::product_manifold::ProductManifold;
+use ruvector_math::spectral::{GraphFilter, ScaledLaplacian, SpectralClustering, SpectralFilter};
+use ruvector_math::spherical::SphericalSpace;
 
 /// Helper: parse a JsonB 2D array into Vec<Vec<f64>>.
 fn parse_points(json: &JsonB) -> Vec<Vec<f64>> {
@@ -16,11 +16,8 @@ fn parse_points(json: &JsonB) -> Vec<Vec<f64>> {
         .map(|arr| {
             arr.iter()
                 .filter_map(|v| {
-                    v.as_array().map(|a| {
-                        a.iter()
-                            .filter_map(|x| x.as_f64())
-                            .collect()
-                    })
+                    v.as_array()
+                        .map(|a| a.iter().filter_map(|x| x.as_f64()).collect())
                 })
                 .collect()
         })
@@ -48,11 +45,7 @@ fn flatten_adjacency(adj: &[Vec<f64>]) -> (Vec<f64>, usize) {
 
 /// Compute Wasserstein (Earth Mover's) distance between two distributions.
 #[pg_extern(immutable, parallel_safe)]
-pub fn ruvector_wasserstein_distance(
-    a: Vec<f32>,
-    b: Vec<f32>,
-    p: default!(i32, 1),
-) -> f32 {
+pub fn ruvector_wasserstein_distance(a: Vec<f32>, b: Vec<f32>, p: default!(i32, 1)) -> f32 {
     if a.len() != b.len() || a.is_empty() {
         pgrx::error!("Distributions must have same non-zero length");
     }
@@ -91,14 +84,12 @@ pub fn ruvector_sinkhorn_distance(
 
     let solver = SinkhornSolver::new(reg as f64, 100);
     match solver.solve(&cost, &wa, &wb) {
-        Ok(result) => {
-            JsonB(serde_json::json!({
-                "distance": result.cost,
-                "converged": result.converged,
-                "iterations": result.iterations,
-                "transport_plan": result.plan,
-            }))
-        }
+        Ok(result) => JsonB(serde_json::json!({
+            "distance": result.cost,
+            "converged": result.converged,
+            "iterations": result.iterations,
+            "transport_plan": result.plan,
+        })),
         Err(e) => pgrx::error!("Sinkhorn failed: {}", e),
     }
 }
@@ -174,10 +165,7 @@ pub fn ruvector_jensen_shannon(p: Vec<f32>, q: Vec<f32>) -> f32 {
 
 /// Compute Fisher information metric.
 #[pg_extern(immutable, parallel_safe)]
-pub fn ruvector_fisher_information(
-    dist: Vec<f32>,
-    tangent: Vec<f32>,
-) -> f32 {
+pub fn ruvector_fisher_information(dist: Vec<f32>, tangent: Vec<f32>) -> f32 {
     if dist.len() != tangent.len() || dist.is_empty() {
         pgrx::error!("Distribution and tangent must have same non-zero length");
     }
@@ -197,10 +185,7 @@ pub fn ruvector_fisher_information(
 
 /// Spectral clustering on an adjacency matrix.
 #[pg_extern(immutable, parallel_safe)]
-pub fn ruvector_spectral_cluster(
-    adj_json: JsonB,
-    k: i32,
-) -> Vec<i32> {
+pub fn ruvector_spectral_cluster(adj_json: JsonB, k: i32) -> Vec<i32> {
     let adj = parse_matrix(&adj_json);
     if adj.is_empty() {
         return Vec::new();
@@ -307,10 +292,7 @@ pub fn ruvector_spherical_distance(a: Vec<f32>, b: Vec<f32>) -> f32 {
 
 /// Compute Gromov-Wasserstein distance between two metric spaces.
 #[pg_extern(immutable, parallel_safe)]
-pub fn ruvector_gromov_wasserstein(
-    pts_a_json: JsonB,
-    pts_b_json: JsonB,
-) -> JsonB {
+pub fn ruvector_gromov_wasserstein(pts_a_json: JsonB, pts_b_json: JsonB) -> JsonB {
     let pts_a = parse_points(&pts_a_json);
     let pts_b = parse_points(&pts_b_json);
 
@@ -320,13 +302,11 @@ pub fn ruvector_gromov_wasserstein(
 
     let gw = GromovWasserstein::new(0.1);
     match gw.solve(&pts_a, &pts_b) {
-        Ok(result) => {
-            JsonB(serde_json::json!({
-                "distance": result.loss.sqrt(),
-                "converged": result.converged,
-                "coupling": result.transport_plan,
-            }))
-        }
+        Ok(result) => JsonB(serde_json::json!({
+            "distance": result.loss.sqrt(),
+            "converged": result.converged,
+            "coupling": result.transport_plan,
+        })),
         Err(e) => pgrx::error!("Gromov-Wasserstein failed: {}", e),
     }
 }

@@ -165,10 +165,7 @@ pub fn ruvector_solve_sparse(
 
 /// Solve a graph Laplacian system Lx=b.
 #[pg_extern(immutable, parallel_safe)]
-pub fn ruvector_solve_laplacian(
-    laplacian_json: JsonB,
-    rhs: Vec<f32>,
-) -> JsonB {
+pub fn ruvector_solve_laplacian(laplacian_json: JsonB, rhs: Vec<f32>) -> JsonB {
     let csr = match matrix_json_to_csr(&laplacian_json.0) {
         Ok(m) => m,
         Err(e) => pgrx::error!("Laplacian solve: {}", e),
@@ -192,11 +189,7 @@ pub fn ruvector_solve_laplacian(
 
 /// Compute effective resistance between two nodes.
 #[pg_extern(immutable, parallel_safe)]
-pub fn ruvector_effective_resistance(
-    laplacian_json: JsonB,
-    source: i32,
-    target: i32,
-) -> f32 {
+pub fn ruvector_effective_resistance(laplacian_json: JsonB, source: i32, target: i32) -> f32 {
     let csr = match matrix_json_to_csr(&laplacian_json.0) {
         Ok(m) => m,
         Err(e) => pgrx::error!("Effective resistance: {}", e),
@@ -219,8 +212,16 @@ pub fn ruvector_effective_resistance(
         Ok(res) => {
             let s = source as usize;
             let t = target as usize;
-            let x_s = if s < res.solution.len() { res.solution[s] as f64 } else { 0.0 };
-            let x_t = if t < res.solution.len() { res.solution[t] as f64 } else { 0.0 };
+            let x_s = if s < res.solution.len() {
+                res.solution[s] as f64
+            } else {
+                0.0
+            };
+            let x_t = if t < res.solution.len() {
+                res.solution[t] as f64
+            } else {
+                0.0
+            };
             (x_s - x_t) as f32
         }
         Err(e) => pgrx::error!("Effective resistance failed: {}", e),
@@ -307,18 +308,48 @@ pub fn ruvector_solver_info() -> TableIterator<
     ),
 > {
     let algos = vec![
-        ("neumann", "Jacobi-preconditioned Neumann series", "O(nnz * log(1/eps))"),
-        ("cg", "Conjugate Gradient for SPD systems", "O(n * sqrt(kappa))"),
-        ("forward-push", "Andersen-Chung-Lang PageRank", "O(1/epsilon)"),
-        ("backward-push", "Backward Push for target PPR", "O(1/epsilon)"),
-        ("hybrid-random-walk", "Push + Monte Carlo sampling", "O(sqrt(n/epsilon))"),
-        ("bmssp", "Block MSS preconditioned solver", "O(n * nnz_per_row)"),
-        ("true-solver", "Topology-aware batch solver", "O(batch * nnz)"),
+        (
+            "neumann",
+            "Jacobi-preconditioned Neumann series",
+            "O(nnz * log(1/eps))",
+        ),
+        (
+            "cg",
+            "Conjugate Gradient for SPD systems",
+            "O(n * sqrt(kappa))",
+        ),
+        (
+            "forward-push",
+            "Andersen-Chung-Lang PageRank",
+            "O(1/epsilon)",
+        ),
+        (
+            "backward-push",
+            "Backward Push for target PPR",
+            "O(1/epsilon)",
+        ),
+        (
+            "hybrid-random-walk",
+            "Push + Monte Carlo sampling",
+            "O(sqrt(n/epsilon))",
+        ),
+        (
+            "bmssp",
+            "Block MSS preconditioned solver",
+            "O(n * nnz_per_row)",
+        ),
+        (
+            "true-solver",
+            "Topology-aware batch solver",
+            "O(batch * nnz)",
+        ),
     ];
 
-    TableIterator::new(algos.into_iter().map(|(a, d, c)| {
-        (a.to_string(), d.to_string(), c.to_string())
-    }))
+    TableIterator::new(
+        algos
+            .into_iter()
+            .map(|(a, d, c)| (a.to_string(), d.to_string(), c.to_string())),
+    )
 }
 
 /// Analyze matrix sparsity profile.
@@ -384,7 +415,8 @@ pub fn ruvector_conjugate_gradient(
         ..Default::default()
     };
 
-    let solver = ruvector_solver::cg::ConjugateGradientSolver::new(tol as f64, max_iter as usize, true);
+    let solver =
+        ruvector_solver::cg::ConjugateGradientSolver::new(tol as f64, max_iter as usize, true);
 
     match solver.solve(&csr, &rhs_f64, &budget) {
         Ok(res) => JsonB(serde_json::json!({

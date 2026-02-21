@@ -7,10 +7,7 @@ use super::get_or_create_engine;
 
 /// Record a learning trajectory for a table (Micro-LoRA).
 #[pg_extern]
-pub fn ruvector_sona_learn(
-    table_name: &str,
-    trajectory_json: JsonB,
-) -> JsonB {
+pub fn ruvector_sona_learn(table_name: &str, trajectory_json: JsonB) -> JsonB {
     let engine = get_or_create_engine(table_name);
 
     // Parse trajectory: {"initial": [f32...], "steps": [{"embedding": [f32...], "actions": [...], "reward": f32}]}
@@ -56,10 +53,7 @@ pub fn ruvector_sona_learn(
             })
             .unwrap_or_default();
 
-        let reward = step
-            .get("reward")
-            .and_then(|v| v.as_f64())
-            .unwrap_or(0.0) as f32;
+        let reward = step.get("reward").and_then(|v| v.as_f64()).unwrap_or(0.0) as f32;
 
         builder.add_step(embedding, attention_weights, reward);
     }
@@ -82,10 +76,7 @@ pub fn ruvector_sona_learn(
 
 /// Apply learned LoRA transformation to an embedding.
 #[pg_extern(immutable, parallel_safe)]
-pub fn ruvector_sona_apply(
-    table_name: &str,
-    embedding: Vec<f32>,
-) -> Vec<f32> {
+pub fn ruvector_sona_apply(table_name: &str, embedding: Vec<f32>) -> Vec<f32> {
     let engine = get_or_create_engine(table_name);
 
     let mut output = vec![0.0f32; embedding.len()];

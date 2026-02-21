@@ -3,7 +3,7 @@
 use pgrx::prelude::*;
 use pgrx::JsonB;
 
-use ruvector_domain_expansion::{DomainId, Solution, ContextBucket, ArmId};
+use ruvector_domain_expansion::{ArmId, ContextBucket, DomainId, Solution};
 
 use super::get_or_create_engine;
 

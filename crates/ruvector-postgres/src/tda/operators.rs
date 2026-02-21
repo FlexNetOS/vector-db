@@ -4,8 +4,8 @@ use pgrx::prelude::*;
 use pgrx::JsonB;
 
 use ruvector_math::homology::{
-    BottleneckDistance, PersistenceDiagram, PersistentHomology, VietorisRips, WassersteinDistance,
-    BirthDeathPair, PointCloud, Point,
+    BirthDeathPair, BottleneckDistance, PersistenceDiagram, PersistentHomology, Point, PointCloud,
+    VietorisRips, WassersteinDistance,
 };
 
 /// Helper: parse a JsonB array of points into a PointCloud.
@@ -118,10 +118,7 @@ pub fn ruvector_betti_numbers(
 
 /// Compute bottleneck distance between two persistence diagrams.
 #[pg_extern(immutable, parallel_safe)]
-pub fn ruvector_bottleneck_distance(
-    diag_a_json: JsonB,
-    diag_b_json: JsonB,
-) -> f32 {
+pub fn ruvector_bottleneck_distance(diag_a_json: JsonB, diag_b_json: JsonB) -> f32 {
     let diag_a = parse_diagram(&diag_a_json);
     let diag_b = parse_diagram(&diag_b_json);
 
@@ -144,10 +141,7 @@ pub fn ruvector_persistence_wasserstein(
 
 /// Compute topological summary (Betti numbers + persistence statistics + entropy).
 #[pg_extern(immutable, parallel_safe)]
-pub fn ruvector_topological_summary(
-    points_json: JsonB,
-    max_dim: default!(i32, 1),
-) -> JsonB {
+pub fn ruvector_topological_summary(points_json: JsonB, max_dim: default!(i32, 1)) -> JsonB {
     let cloud = parse_point_cloud(&points_json);
     if cloud.is_empty() {
         return JsonB(serde_json::json!({}));
@@ -210,10 +204,7 @@ pub fn ruvector_topological_summary(
 
 /// Detect topological drift between old and new embeddings.
 #[pg_extern(immutable, parallel_safe)]
-pub fn ruvector_embedding_drift(
-    old_json: JsonB,
-    new_json: JsonB,
-) -> JsonB {
+pub fn ruvector_embedding_drift(old_json: JsonB, new_json: JsonB) -> JsonB {
     let old_cloud = parse_point_cloud(&old_json);
     let new_cloud = parse_point_cloud(&new_json);
 
@@ -281,7 +272,8 @@ pub fn ruvector_vietoris_rips(
         })
         .collect();
 
-    let mut simplex_counts: std::collections::HashMap<usize, usize> = std::collections::HashMap::new();
+    let mut simplex_counts: std::collections::HashMap<usize, usize> =
+        std::collections::HashMap::new();
     for fs in &filtration.simplices {
         *simplex_counts.entry(fs.simplex.dim()).or_insert(0) += 1;
     }

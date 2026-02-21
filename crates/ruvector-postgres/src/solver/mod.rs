@@ -11,7 +11,9 @@ pub fn edges_json_to_csr(json: &serde_json::Value) -> Result<CsrMatrix<f64>, Str
         .get("edges")
         .and_then(|e| e.as_array())
         .or_else(|| json.as_array())
-        .ok_or_else(|| "Expected JSON object with 'edges' array or a JSON array of edges".to_string())?;
+        .ok_or_else(|| {
+            "Expected JSON object with 'edges' array or a JSON array of edges".to_string()
+        })?;
 
     if edges.is_empty() {
         return Err("Edge list is empty".to_string());
@@ -47,14 +49,24 @@ pub fn edges_json_to_csr(json: &serde_json::Value) -> Result<CsrMatrix<f64>, Str
 pub fn matrix_json_to_csr(json: &serde_json::Value) -> Result<CsrMatrix<f64>, String> {
     // Structured format with rows/cols
     if let Some(entries) = json.get("entries").and_then(|e| e.as_array()) {
-        let rows = json.get("rows").and_then(|r| r.as_u64()).ok_or("Missing 'rows'")? as usize;
-        let cols = json.get("cols").and_then(|c| c.as_u64()).ok_or("Missing 'cols'")? as usize;
+        let rows = json
+            .get("rows")
+            .and_then(|r| r.as_u64())
+            .ok_or("Missing 'rows'")? as usize;
+        let cols = json
+            .get("cols")
+            .and_then(|c| c.as_u64())
+            .ok_or("Missing 'cols'")? as usize;
 
         let coo: Vec<(usize, usize, f64)> = entries
             .iter()
             .filter_map(|e| {
                 let a = e.as_array()?;
-                Some((a[0].as_u64()? as usize, a[1].as_u64()? as usize, a[2].as_f64()?))
+                Some((
+                    a[0].as_u64()? as usize,
+                    a[1].as_u64()? as usize,
+                    a[2].as_f64()?,
+                ))
             })
             .collect();
 

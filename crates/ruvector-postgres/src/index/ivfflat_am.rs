@@ -1503,12 +1503,9 @@ unsafe extern "C" fn ivfflat_ambeginscan(
     // RelationGetIndexScan). See GiST's gistbeginscan for reference.
     if (*scan).numberOfOrderBys > 0 {
         let n = (*scan).numberOfOrderBys as usize;
-        (*scan).xs_orderbyvals = pg_sys::palloc0(
-            std::mem::size_of::<pg_sys::Datum>() * n,
-        ) as *mut pg_sys::Datum;
-        (*scan).xs_orderbynulls = pg_sys::palloc(
-            std::mem::size_of::<bool>() * n,
-        ) as *mut bool;
+        (*scan).xs_orderbyvals =
+            pg_sys::palloc0(std::mem::size_of::<pg_sys::Datum>() * n) as *mut pg_sys::Datum;
+        (*scan).xs_orderbynulls = pg_sys::palloc(std::mem::size_of::<bool>() * n) as *mut bool;
         std::ptr::write_bytes((*scan).xs_orderbynulls, 1u8, n);
     }
 

@@ -3,8 +3,8 @@
 pub mod operators;
 
 use dashmap::DashMap;
+use ruvector_sona::{SonaConfig, SonaEngine};
 use std::sync::Arc;
-use ruvector_sona::{SonaEngine, SonaConfig};
 
 /// Global Sona engine state per table.
 static SONA_ENGINES: once_cell::sync::Lazy<DashMap<String, Arc<SonaEngine>>> =
