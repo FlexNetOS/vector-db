@@ -32,10 +32,10 @@ Most vector databases are static — they store embeddings and search them. That
 | 🌿 **Git-like branching** | ❌ | ✅ Branch your data like code — only changes are copied |
 | ⚡ **Sublinear Solvers** | ❌ | ✅ O(log n) sparse linear systems, PageRank, spectral methods |
 
-**One package. Everything included:** vector search, graph queries, GNN learning, distributed clustering, local LLMs, 40+ attention mechanisms, cognitive containers ([RVF](./crates/rvf/README.md) — self-booting `.rvf` files with eBPF, witness chains, and COW branching), and WASM support.
+**One package. Everything included:** vector search, graph queries, GNN learning, distributed clustering, local LLMs, 46 attention mechanisms, cognitive containers ([RVF](./crates/rvf/README.md) — self-booting `.rvf` files with eBPF, witness chains, and COW branching), and WASM support.
 
 <details>
-<summary>📋 See Full Capabilities (43 features)</summary>
+<summary>📋 See Full Capabilities (49 features)</summary>
 
 **Core Vector Database**
 | # | Capability | What It Does |
@@ -60,57 +60,63 @@ Most vector databases are static — they store embeddings and search them. That
 | 10 | **Run LLMs locally** | ruvllm with GGUF, Metal/CUDA/ANE acceleration |
 | 11 | **RuvLTRA models** | Pre-trained GGUF for routing & embeddings (<10ms) → [HuggingFace](https://huggingface.co/ruv/ruvltra) |
 | 12 | **SONA learning** | Self-Optimizing Neural Architecture with LoRA, EWC++ |
-| 13 | **40+ attention mechanisms** | Flash, linear, graph, hyperbolic, mincut-gated (50% compute) |
+| 13 | **46 attention mechanisms** | Flash, linear, graph, hyperbolic, mincut-gated (50% compute) |
 | 14 | **Spiking neural networks** | Event-driven neuromorphic computing |
 | 15 | **Mincut-gated transformer** | Dynamic attention via graph min-cut optimization |
 | 16 | **Route AI requests** | Semantic routing + FastGRNN for LLM optimization |
+| 17 | **Sublinear Solvers in SQL** | PageRank, CG, Laplacian solver — O(log n) to O(√n) via PostgreSQL |
+| 18 | **Math Distances in SQL** | Wasserstein, Sinkhorn OT, KL divergence, spectral clustering |
+| 19 | **Topological Data Analysis** | Persistent homology, Betti numbers, embedding drift detection |
+| 20 | **Sona Learning in SQL** | Micro-LoRA trajectory learning with EWC++ forgetting prevention |
+| 21 | **Domain Expansion** | Cross-domain transfer learning with contextual bandits |
+| 22 | **Extended Attention** | O(n) linear, MoE, hyperbolic, sliding window attention in SQL |
 
 **Cognitive Containers ([RVF](./crates/rvf/README.md))**
 | # | Capability | What It Does |
 |---|------------|--------------|
-| 17 | **Self-boot as a microservice** | A `.rvf` file contains a real Linux kernel — drop it on a VM and it boots in 125 ms |
-| 18 | **eBPF acceleration** | Hot vectors served in kernel data path via XDP, socket filter, and TC programs |
-| 19 | **5.5 KB WASM runtime** | Same file runs queries in a browser tab with zero backend |
-| 20 | **COW branching** | Git-like copy-on-write — 1M-vector parent, 100 edits = ~2.5 MB child |
-| 21 | **Witness chains** | Tamper-evident hash-linked audit trail for every operation |
-| 22 | **Post-quantum signatures** | ML-DSA-65 and SLH-DSA-128s alongside Ed25519 |
-| 23 | **DNA-style lineage** | Track parent/child derivation chains with cryptographic hashes |
-| 24 | **24 segment types** | VEC, INDEX, KERNEL, EBPF, WASM, COW_MAP, WITNESS, CRYPTO, and 16 more |
+| 23 | **Self-boot as a microservice** | A `.rvf` file contains a real Linux kernel — drop it on a VM and it boots in 125 ms |
+| 24 | **eBPF acceleration** | Hot vectors served in kernel data path via XDP, socket filter, and TC programs |
+| 25 | **5.5 KB WASM runtime** | Same file runs queries in a browser tab with zero backend |
+| 26 | **COW branching** | Git-like copy-on-write — 1M-vector parent, 100 edits = ~2.5 MB child |
+| 27 | **Witness chains** | Tamper-evident hash-linked audit trail for every operation |
+| 28 | **Post-quantum signatures** | ML-DSA-65 and SLH-DSA-128s alongside Ed25519 |
+| 29 | **DNA-style lineage** | Track parent/child derivation chains with cryptographic hashes |
+| 30 | **24 segment types** | VEC, INDEX, KERNEL, EBPF, WASM, COW_MAP, WITNESS, CRYPTO, and 16 more |
 
 **Specialized Processing**
 | # | Capability | What It Does |
 |---|------------|--------------|
-| 25 | **SciPix OCR** | LaTeX/MathML extraction from scientific documents |
-| 26 | **DAG workflows** | Self-learning directed acyclic graph execution |
-| 27 | **Cognitum Gate** | Cognitive AI gateway with TileZero acceleration |
-| 28 | **FPGA transformer** | Hardware-accelerated transformer inference |
-| 29 | **Quantum coherence** | ruQu for quantum error correction via dynamic min-cut |
-| 30 | **Sublinear Solvers** | 8 algorithms: Neumann, CG, Forward Push, TRUE, BMSSP — O(log n) to O(√n) |
+| 31 | **SciPix OCR** | LaTeX/MathML extraction from scientific documents |
+| 32 | **DAG workflows** | Self-learning directed acyclic graph execution |
+| 33 | **Cognitum Gate** | Cognitive AI gateway with TileZero acceleration |
+| 34 | **FPGA transformer** | Hardware-accelerated transformer inference |
+| 35 | **Quantum coherence** | ruQu for quantum error correction via dynamic min-cut |
+| 36 | **Sublinear Solvers** | 8 algorithms: Neumann, CG, Forward Push, TRUE, BMSSP — O(log n) to O(√n) |
 
 **Genomics & Health**
 | # | Capability | What It Does |
 |---|------------|--------------|
-| 31 | **rvDNA genomic analysis** | Variant calling, protein translation, HNSW k-mer search in 12 ms |
-| 32 | **`.rvdna` file format** | AI-native binary with pre-computed vectors, tensors, and embeddings |
-| 33 | **Instant diagnostics** | Sickle cell, cancer mutations, drug dosing — runs on any device |
-| 34 | **Privacy-first WASM** | Browser-based genomics, data never leaves the device |
+| 37 | **rvDNA genomic analysis** | Variant calling, protein translation, HNSW k-mer search in 12 ms |
+| 38 | **`.rvdna` file format** | AI-native binary with pre-computed vectors, tensors, and embeddings |
+| 39 | **Instant diagnostics** | Sickle cell, cancer mutations, drug dosing — runs on any device |
+| 40 | **Privacy-first WASM** | Browser-based genomics, data never leaves the device |
 
 **Platform & Integration**
 | # | Capability | What It Does |
 |---|------------|--------------|
-| 35 | **Run anywhere** | Node.js, browser (WASM), edge (rvLite), HTTP server, Rust, bare metal |
-| 36 | **Drop into Postgres** | pgvector-compatible extension with SIMD acceleration |
-| 37 | **MCP integration** | Model Context Protocol server for AI assistant tools |
-| 38 | **Cloud deployment** | One-click deploy to Cloud Run, Kubernetes |
-| 39 | **13 Rust crates + 4 npm packages** | [RVF SDK](./crates/rvf/README.md) published on [crates.io](https://crates.io/crates/rvf-runtime) and [npm](https://www.npmjs.com/package/@ruvector/rvf) |
+| 41 | **Run anywhere** | Node.js, browser (WASM), edge (rvLite), HTTP server, Rust, bare metal |
+| 42 | **Drop into Postgres** | pgvector-compatible extension with SIMD acceleration |
+| 43 | **MCP integration** | Model Context Protocol server for AI assistant tools |
+| 44 | **Cloud deployment** | One-click deploy to Cloud Run, Kubernetes |
+| 45 | **13 Rust crates + 4 npm packages** | [RVF SDK](./crates/rvf/README.md) published on [crates.io](https://crates.io/crates/rvf-runtime) and [npm](https://www.npmjs.com/package/@ruvector/rvf) |
 
 **Self-Learning & Adaptation**
 | # | Capability | What It Does |
 |---|------------|--------------|
-| 40 | **Self-learning hooks** | Q-learning, neural patterns, HNSW memory |
-| 41 | **ReasoningBank** | Trajectory learning with verdict judgment |
-| 42 | **Economy system** | Tokenomics, CRDT-based distributed state |
-| 43 | **Agentic synthesis** | Multi-agent workflow composition |
+| 46 | **Self-learning hooks** | Q-learning, neural patterns, HNSW memory |
+| 47 | **ReasoningBank** | Trajectory learning with verdict judgment |
+| 48 | **Economy system** | Tokenomics, CRDT-based distributed state |
+| 49 | **Agentic synthesis** | Multi-agent workflow composition |
 
 </details>
 
@@ -3217,7 +3223,7 @@ let distances = batch_distances(&query, &database);  // 8-54x speedup
 [![Docker Hub](https://img.shields.io/docker/pulls/ruvnet/ruvector-postgres?label=docker%20pulls)](https://hub.docker.com/r/ruvnet/ruvector-postgres)
 [![Docker](https://img.shields.io/docker/v/ruvnet/ruvector-postgres?label=docker)](https://hub.docker.com/r/ruvnet/ruvector-postgres)
 
-**The most advanced PostgreSQL vector extension** — a drop-in pgvector replacement with 230+ SQL functions, hardware-accelerated SIMD operations, and built-in AI capabilities. Transform your existing PostgreSQL database into a full-featured vector search engine with GNN layers, attention mechanisms, and self-learning capabilities.
+**The most advanced PostgreSQL vector extension** — a drop-in pgvector replacement with 143 SQL functions, hardware-accelerated SIMD operations, and built-in AI capabilities. Transform your existing PostgreSQL database into a full-featured vector search engine with GNN layers, attention mechanisms, and self-learning capabilities.
 
 ```bash
 # Quick Install from Docker Hub
@@ -3235,17 +3241,17 @@ CREATE EXTENSION ruvector;
 
 **Why RuVector Postgres?**
 - **Zero Migration** — Works with existing pgvector code, just swap the extension
-- **10x More Functions** — 230+ SQL functions vs pgvector's ~20
+- **10x More Functions** — 143 SQL functions vs pgvector's ~20
 - **2x Faster** — AVX-512/AVX2/NEON SIMD acceleration
-- **AI-Native** — GNN layers, 40+ attention mechanisms, local embeddings
+- **AI-Native** — GNN layers, 46 attention mechanisms, local embeddings
 - **Self-Learning** — Improves search quality over time with ReasoningBank
 
 | Feature | pgvector | RuVector Postgres |
 |---------|----------|-------------------|
-| SQL Functions | ~20 | **230+** |
+| SQL Functions | ~20 | **143** |
 | SIMD Acceleration | Basic | AVX-512/AVX2/NEON (~2x faster) |
 | Index Types | HNSW, IVFFlat | HNSW, IVFFlat + Hyperbolic |
-| Attention Mechanisms | ❌ | 39 types (Flash, Linear, Graph) |
+| Attention Mechanisms | ❌ | 46 types (Flash, Linear, Graph) |
 | GNN Layers | ❌ | GCN, GraphSAGE, GAT, GIN |
 | Sparse Vectors | ❌ | BM25, TF-IDF, SPLADE |
 | Self-Learning | ❌ | ReasoningBank, trajectory learning |
@@ -3298,8 +3304,9 @@ volumes:
 ```
 
 **Available Tags:**
-- `ruvnet/ruvector-postgres:latest` - PostgreSQL + RuVector 2.0
-- `ruvnet/ruvector-postgres:2.0.0` - Specific version
+- `ruvnet/ruvector-postgres:latest` - PostgreSQL + RuVector 0.3.0
+- `ruvnet/ruvector-postgres:0.3.0` - Current release (143 SQL functions)
+- `ruvnet/ruvector-postgres:2.0.0` - Previous release
 
 </details>
 
@@ -3401,15 +3408,21 @@ pg15 = ["ruvector-postgres/pg15"]
 # AI features (opt-in)
 ai-complete = ["ruvector-postgres/ai-complete"]  # All AI features
 learning = ["ruvector-postgres/learning"]         # Self-learning
-attention = ["ruvector-postgres/attention"]       # 40+ attention mechanisms
+attention = ["ruvector-postgres/attention"]       # 46 attention mechanisms
 gnn = ["ruvector-postgres/gnn"]                   # Graph neural networks
 hyperbolic = ["ruvector-postgres/hyperbolic"]     # Hyperbolic embeddings
 embeddings = ["ruvector-postgres/embeddings"]     # Local embedding generation
+solver = ["ruvector-postgres/solver"]                   # Sublinear solvers
+math-distances = ["ruvector-postgres/math-distances"]   # Math distances & spectral
+tda = ["ruvector-postgres/tda"]                         # Topological data analysis
+sona-learning = ["ruvector-postgres/sona-learning"]     # Sona learning
+domain-expansion = ["ruvector-postgres/domain-expansion"] # Domain expansion
+analytics-complete = ["solver", "math-distances", "tda"] # All analytics
 ```
 
 **Build with all features:**
 ```bash
-cargo pgrx install --release --features "ai-complete,embeddings"
+cargo pgrx install --release --features "ai-complete,embeddings,analytics-complete,attention-extended,sona-learning,domain-expansion"
 ```
 
 </details>
@@ -3466,7 +3479,7 @@ SELECT ruvector_flash_attention(query, key, value);
 
 </details>
 
-See [ruvector-postgres README](./crates/ruvector-postgres/README.md) for full SQL API reference (230+ functions).
+See [ruvector-postgres README](./crates/ruvector-postgres/README.md) for full SQL API reference (143 functions).
 
 </details>
 

@@ -8,7 +8,17 @@
 [![npm](https://img.shields.io/npm/v/@ruvector/core.svg)](https://www.npmjs.com/package/@ruvector/core)
 [![Security](https://img.shields.io/badge/Security-Audited-green.svg)](docs/SECURITY_AUDIT_REPORT.md)
 
-**The most advanced PostgreSQL vector database extension.** A drop-in pgvector replacement with **290+ SQL functions**, SIMD acceleration, 39 attention mechanisms, GNN layers, hyperbolic embeddings, mincut-gated transformers, hybrid search, multi-tenancy, self-healing, and self-learning capabilities.
+**The most advanced PostgreSQL vector database extension.** A drop-in pgvector replacement with **143 SQL functions**, SIMD acceleration, 46 attention mechanisms, GNN layers, hyperbolic embeddings, mincut-gated transformers, hybrid search, multi-tenancy, self-healing, and self-learning capabilities.
+
+## v0.3.0 Highlights (February 2026)
+
+- **Solver Integration**: 11 functions -- PageRank (3 variants), conjugate gradient, Laplacian solver, effective resistance, matrix analysis
+- **Math Distances & Spectral**: 12 functions -- Wasserstein/Sinkhorn OT, KL/Jensen-Shannon divergence, spectral clustering, Chebyshev graph filters, product manifold distances
+- **Topological Data Analysis**: 7 functions -- persistent homology, Betti numbers, bottleneck/Wasserstein diagram distance, Vietoris-Rips complexes, embedding drift detection
+- **Extended Attention**: 7 functions -- O(n) linear, sliding window, cross, sparse top-k, mixture-of-experts, hyperbolic (Poincare ball), benchmarking
+- **Sona Learning**: 4 functions -- micro-LoRA trajectory learning, EWC++ forgetting prevention, learned transform application
+- **Domain Expansion**: Cross-domain transfer with contextual bandits
+- **143 SQL functions** across 20+ feature-gated modules
 
 ## v2.0.0 Highlights (December 2025)
 
@@ -29,7 +39,7 @@
 | Vector Search | HNSW, IVFFlat | HNSW, IVFFlat (optimized) |
 | Distance Metrics | 3 | 8+ (including hyperbolic) |
 | **Local Embeddings** | - | **6 models (fastembed)** |
-| **Attention Mechanisms** | - | **39 types** |
+| **Attention Mechanisms** | - | **46 types** |
 | **Gated Transformers** | - | **Mincut-coherence control** |
 | **Hybrid Search** | - | **RRF + Linear fusion** |
 | **Graph Neural Networks** | - | **GCN, GraphSAGE, GAT** |
@@ -43,6 +53,11 @@
 | **Agent Routing** | - | **Tiny Dancer** |
 | **Graph/Cypher** | - | **Full support** |
 | **SPARQL/RDF** | - | **W3C SPARQL 1.1** |
+| **Sublinear Solvers** | - | **PageRank, CG, Laplacian** |
+| **Math Distances** | - | **Wasserstein, Sinkhorn, spectral** |
+| **Topological Data Analysis** | - | **Persistent homology, Betti** |
+| **Sona Learning** | - | **Micro-LoRA, EWC++** |
+| **Domain Expansion** | - | **Cross-domain transfer** |
 | AVX-512/NEON SIMD | Partial | **Full** |
 | Quantization | No | **Scalar, Product, Binary** |
 
@@ -134,7 +149,7 @@ ORDER BY distance
 LIMIT 10;
 ```
 
-## 290+ SQL Functions
+## 143 SQL Functions
 
 RuVector exposes all advanced AI capabilities as native PostgreSQL functions.
 
@@ -200,7 +215,7 @@ SELECT ruvector_bm25_score(query_terms, doc_freqs, doc_len, avg_doc_len, total_d
 SELECT ruvector_tf_idf(term_freq, doc_freq, total_docs);
 ```
 
-### 39 Attention Mechanisms
+### 46 Attention Mechanisms
 
 Full transformer-style attention in PostgreSQL.
 
@@ -228,6 +243,121 @@ SELECT ruvector_attention_cross(query, context_keys, context_values);
 
 -- Self attention
 SELECT ruvector_attention_self(input, num_heads);
+```
+
+### Sublinear Solvers (11 functions)
+
+Graph analytics powered by ruvector-solver's O(log n) to O(sqrt(n)) algorithms.
+
+```sql
+-- PageRank (Forward Push, O(1/epsilon))
+SELECT ruvector_pagerank('{"edges":[[0,1],[1,2],[2,0]]}'::jsonb);
+
+-- Personalized PageRank from a source node
+SELECT ruvector_pagerank_personalized('{"edges":[[0,1],[1,2],[2,0]]}'::jsonb, 0);
+
+-- Solve sparse linear system Ax=b (Neumann or CG)
+SELECT ruvector_solve_sparse(matrix_json, ARRAY[1.0, 2.0]::real[], 'cg');
+
+-- Conjugate Gradient for SPD systems
+SELECT ruvector_conjugate_gradient(matrix_json, rhs);
+
+-- Graph Laplacian solver
+SELECT ruvector_solve_laplacian(laplacian_json, rhs);
+
+-- Effective resistance between nodes
+SELECT ruvector_effective_resistance(laplacian_json, 0, 1);
+
+-- Matrix sparsity analysis
+SELECT ruvector_matrix_analyze(matrix_json);
+
+-- List available solver algorithms
+SELECT * FROM ruvector_solver_info();
+```
+
+### Math Distances & Spectral (12 functions)
+
+Statistical distances, optimal transport, and spectral graph processing.
+
+```sql
+-- Wasserstein (Earth Mover's) distance
+SELECT ruvector_wasserstein_distance(ARRAY[0.5,0.5]::real[], ARRAY[0.3,0.7]::real[]);
+
+-- Sinkhorn optimal transport with regularization
+SELECT ruvector_sinkhorn_distance(cost_json, weights_a, weights_b);
+
+-- KL divergence and Jensen-Shannon divergence
+SELECT ruvector_kl_divergence(ARRAY[0.5,0.5]::real[], ARRAY[0.3,0.7]::real[]);
+SELECT ruvector_jensen_shannon(ARRAY[0.5,0.5]::real[], ARRAY[0.3,0.7]::real[]);
+
+-- Spectral clustering
+SELECT ruvector_spectral_cluster(adjacency_json, 3);  -- k=3 clusters
+
+-- Chebyshev polynomial graph filter
+SELECT ruvector_chebyshev_filter(adj_json, signal, 'low_pass', 10);
+
+-- Heat kernel graph diffusion
+SELECT ruvector_graph_diffusion(adj_json, signal);
+
+-- Product manifold distance (Euclidean x Hyperbolic x Spherical)
+SELECT ruvector_product_manifold_distance(a, b, 3, 2, 1);
+
+-- Spherical (great-circle) distance
+SELECT ruvector_spherical_distance(ARRAY[1,0,0]::real[], ARRAY[0,1,0]::real[]);
+```
+
+### Topological Data Analysis (7 functions)
+
+Persistent homology and topological feature extraction from point clouds.
+
+```sql
+-- Persistent homology via Vietoris-Rips filtration
+SELECT ruvector_persistent_homology('[[1,0],[0,1],[-1,0],[0,-1]]'::jsonb, 1, 3.0);
+
+-- Betti numbers at a given radius
+SELECT ruvector_betti_numbers('[[0,0],[1,0],[0,1]]'::jsonb, 1.5);
+
+-- Bottleneck distance between persistence diagrams
+SELECT ruvector_bottleneck_distance(diagram_a, diagram_b);
+
+-- Wasserstein distance between persistence diagrams
+SELECT ruvector_persistence_wasserstein(diagram_a, diagram_b, 2);
+
+-- Topological summary (Betti + persistence statistics + entropy)
+SELECT ruvector_topological_summary(points_json, 1);
+
+-- Embedding drift detection via topology
+SELECT ruvector_embedding_drift(old_embeddings, new_embeddings);
+
+-- Build Vietoris-Rips simplicial complex
+SELECT ruvector_vietoris_rips(points_json, 2.0, 2);
+```
+
+### Sona Learning (4 functions)
+
+Self-Optimizing Neural Architecture with micro-LoRA and EWC++ forgetting prevention.
+
+```sql
+-- Record a learning trajectory
+SELECT ruvector_sona_learn('my_table', trajectory_json);
+
+-- Apply learned LoRA transform to an embedding
+SELECT ruvector_sona_apply('my_table', embedding);
+
+-- Check EWC++ forgetting metrics
+SELECT ruvector_sona_ewc_status('my_table');
+
+-- Get Sona engine statistics
+SELECT ruvector_sona_stats('my_table');
+```
+
+### Domain Expansion (1 function)
+
+Cross-domain transfer learning with contextual bandits.
+
+```sql
+-- Transfer embeddings to a target domain
+SELECT ruvector_domain_transfer(embeddings_json, 'target_domain');
 ```
 
 ### Graph Neural Networks (5 functions)
