@@ -35,7 +35,7 @@ Most vector databases are static — they store embeddings and search them. That
 **One package. Everything included:** vector search, graph queries, GNN learning, distributed clustering, local LLMs, 46 attention mechanisms, cognitive containers ([RVF](./crates/rvf/README.md) — self-booting `.rvf` files with eBPF, witness chains, and COW branching), and WASM support.
 
 <details>
-<summary>📋 See Full Capabilities (49 features)</summary>
+<summary>📋 See Full Capabilities (51 features)</summary>
 
 **Core Vector Database**
 | # | Capability | What It Does |
@@ -100,23 +100,25 @@ Most vector databases are static — they store embeddings and search them. That
 | 38 | **`.rvdna` file format** | AI-native binary with pre-computed vectors, tensors, and embeddings |
 | 39 | **Instant diagnostics** | Sickle cell, cancer mutations, drug dosing — runs on any device |
 | 40 | **Privacy-first WASM** | Browser-based genomics, data never leaves the device |
+| 41 | **Health biomarker engine** | Composite polygenic risk scoring (17 SNPs, 6 gene-gene interactions, 2 us) |
+| 42 | **Streaming biomarkers** | Real-time anomaly detection, CUSUM changepoints, trend analysis (>100k readings/sec) |
 
 **Platform & Integration**
 | # | Capability | What It Does |
 |---|------------|--------------|
-| 41 | **Run anywhere** | Node.js, browser (WASM), edge (rvLite), HTTP server, Rust, bare metal |
-| 42 | **Drop into Postgres** | pgvector-compatible extension with SIMD acceleration |
-| 43 | **MCP integration** | Model Context Protocol server for AI assistant tools |
-| 44 | **Cloud deployment** | One-click deploy to Cloud Run, Kubernetes |
-| 45 | **13 Rust crates + 4 npm packages** | [RVF SDK](./crates/rvf/README.md) published on [crates.io](https://crates.io/crates/rvf-runtime) and [npm](https://www.npmjs.com/package/@ruvector/rvf) |
+| 43 | **Run anywhere** | Node.js, browser (WASM), edge (rvLite), HTTP server, Rust, bare metal |
+| 44 | **Drop into Postgres** | pgvector-compatible extension with SIMD acceleration |
+| 45 | **MCP integration** | Model Context Protocol server for AI assistant tools |
+| 46 | **Cloud deployment** | One-click deploy to Cloud Run, Kubernetes |
+| 47 | **13 Rust crates + 4 npm packages** | [RVF SDK](./crates/rvf/README.md) published on [crates.io](https://crates.io/crates/rvf-runtime) and [npm](https://www.npmjs.com/package/@ruvector/rvf) |
 
 **Self-Learning & Adaptation**
 | # | Capability | What It Does |
 |---|------------|--------------|
-| 46 | **Self-learning hooks** | Q-learning, neural patterns, HNSW memory |
-| 47 | **ReasoningBank** | Trajectory learning with verdict judgment |
-| 48 | **Economy system** | Tokenomics, CRDT-based distributed state |
-| 49 | **Agentic synthesis** | Multi-agent workflow composition |
+| 48 | **Self-learning hooks** | Q-learning, neural patterns, HNSW memory |
+| 49 | **ReasoningBank** | Trajectory learning with verdict judgment |
+| 50 | **Economy system** | Tokenomics, CRDT-based distributed state |
+| 51 | **Agentic synthesis** | Multi-agent workflow composition |
 
 </details>
 
@@ -197,6 +199,8 @@ npm install @ruvector/rvdna  # JavaScript / TypeScript
 | Translate DNA to protein | Full codon table + GNN contact graphs |
 | Predict biological age | Horvath clock, 353 CpG sites |
 | Recommend drug doses | CYP2D6 star alleles + CPIC guidelines |
+| Score health risks | 17 SNPs, 6 gene-gene interactions, composite risk scoring in 2 us |
+| Stream biomarker data | Real-time anomaly detection, CUSUM changepoints, >100k readings/sec |
 | Search genomes by similarity | HNSW k-mer vectors, O(log N) |
 | Store pre-computed AI features | `.rvdna` binary format — open and instant |
 
