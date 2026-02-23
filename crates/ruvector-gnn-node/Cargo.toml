@@ -15,7 +15,7 @@ crate-type = ["cdylib"]
 [dependencies]
 napi = { workspace = true }
 napi-derive = { workspace = true }
-ruvector-gnn = { path = "../ruvector-gnn", default-features = false }
+ruvector-gnn = { version = "2.0", path = "../ruvector-gnn", default-features = false }
 serde_json = { workspace = true }
 
 [build-dependencies]
