@@ -103,6 +103,7 @@ members = [
     "crates/ruvector-coherence",
     "crates/ruvector-profiler",
     "crates/ruvector-attn-mincut",
+    "crates/ruvector-cognitive-container",
 ]
 resolver = "2"
 

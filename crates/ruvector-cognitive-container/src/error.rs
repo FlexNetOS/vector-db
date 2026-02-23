@@ -1,5 +1,6 @@
 use thiserror::Error;
 
+/// Errors that can occur during cognitive container operations.
 #[derive(Error, Debug)]
 pub enum ContainerError {
     #[error("Memory allocation failed: requested {requested} bytes, available {available}")]
@@ -21,6 +22,7 @@ pub enum ContainerError {
     SlabOverflow { component: String },
 }
 
+/// Convenience alias for container results.
 pub type Result<T> = std::result::Result<T, ContainerError>;
 
 #[cfg(test)]
@@ -45,11 +47,11 @@ mod tests {
         };
         assert!(err.to_string().contains("100"));
 
-        let err = ContainerError::BrokenChain { epoch: 42 };
-        assert!(err.to_string().contains("42"));
+        let err = ContainerError::BrokenChain { epoch: 7 };
+        assert!(err.to_string().contains("7"));
 
         let err = ContainerError::InvalidConfig {
-            reason: "bad value".to_string(),
+            reason: "bad value".into(),
         };
         assert!(err.to_string().contains("bad value"));
 
@@ -57,7 +59,7 @@ mod tests {
         assert!(err.to_string().contains("not initialized"));
 
         let err = ContainerError::SlabOverflow {
-            component: "graph".to_string(),
+            component: "graph".into(),
         };
         assert!(err.to_string().contains("graph"));
     }

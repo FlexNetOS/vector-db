@@ -8050,6 +8050,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "ruvector-cognitive-container"
+version = "2.0.4"
+dependencies = [
+ "proptest",
+ "serde",
+ "serde_json",
+ "thiserror 2.0.17",
+]
+
+[[package]]
 name = "ruvector-coherence"
 version = "2.0.4"
 dependencies = [
