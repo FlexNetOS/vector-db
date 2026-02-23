@@ -47,8 +47,8 @@ export declare class VectorClient {
             waiting: number;
         };
         cache: {
-            size: any;
-            max: any;
+            size: number;
+            max: number;
         };
     };
     clearCache(): void;

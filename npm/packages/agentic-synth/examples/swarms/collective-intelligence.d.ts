@@ -13,40 +13,40 @@
 /**
  * Generate collaborative problem-solving session data
  */
-export declare function collaborativeProblemSolving(): Promise<any>;
+export declare function collaborativeProblemSolving(): Promise<import("../../dist/index.js").GenerationResult<unknown>>;
 /**
  * Generate knowledge sharing and transfer data
  */
 export declare function knowledgeSharingPatterns(): Promise<{
-    knowledgeBase: any;
-    transferEvents: any;
-    agentProfiles: any;
+    knowledgeBase: import("../../dist/index.js").GenerationResult<unknown>;
+    transferEvents: import("../../dist/index.js").GenerationResult<unknown>;
+    agentProfiles: import("../../dist/index.js").GenerationResult<unknown>;
 }>;
 /**
  * Generate emergent behavior patterns in swarm systems
  */
 export declare function emergentBehaviorSimulation(): Promise<{
-    swarmStates: any;
-    interactions: any;
-    emergentPatterns: any;
-    behaviorEvolution: any;
+    swarmStates: import("../../dist/index.js").GenerationResult<unknown>;
+    interactions: import("../../dist/index.js").GenerationResult<unknown>;
+    emergentPatterns: import("../../dist/index.js").GenerationResult<unknown>;
+    behaviorEvolution: import("../../dist/index.js").GenerationResult<unknown>;
 }>;
 /**
  * Generate voting and consensus mechanism data
  */
 export declare function votingAndConsensusData(): Promise<{
-    votingSessions: any;
-    consensusMechanisms: any;
-    votingBehavior: any;
+    votingSessions: import("../../dist/index.js").GenerationResult<unknown>;
+    consensusMechanisms: import("../../dist/index.js").GenerationResult<unknown>;
+    votingBehavior: import("../../dist/index.js").GenerationResult<unknown>;
 }>;
 /**
  * Generate reputation and trust system data
  */
 export declare function reputationSystems(): Promise<{
-    reputationProfiles: any;
-    reputationEvents: any;
-    trustRelationships: any;
-    reputationChanges: any;
+    reputationProfiles: import("../../dist/index.js").GenerationResult<unknown>;
+    reputationEvents: import("../../dist/index.js").GenerationResult<unknown>;
+    trustRelationships: import("../../dist/index.js").GenerationResult<unknown>;
+    reputationChanges: import("../../dist/index.js").GenerationResult<unknown>;
 }>;
 export declare function runAllCollectiveIntelligenceExamples(): Promise<void>;
 //# sourceMappingURL=collective-intelligence.d.ts.map

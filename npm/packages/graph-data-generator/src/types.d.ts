@@ -110,8 +110,34 @@ export declare const OpenRouterConfigSchema: z.ZodObject<{
     rateLimit: z.ZodOptional<z.ZodObject<{
         requests: z.ZodNumber;
         interval: z.ZodNumber;
-    }, z.core.$strip>>;
-}, z.core.$strip>;
+    }, "strip", z.ZodTypeAny, {
+        interval: number;
+        requests: number;
+    }, {
+        interval: number;
+        requests: number;
+    }>>;
+}, "strip", z.ZodTypeAny, {
+    maxRetries: number;
+    apiKey: string;
+    model: string;
+    timeout: number;
+    baseURL: string;
+    rateLimit?: {
+        interval: number;
+        requests: number;
+    } | undefined;
+}, {
+    apiKey: string;
+    maxRetries?: number | undefined;
+    model?: string | undefined;
+    timeout?: number | undefined;
+    baseURL?: string | undefined;
+    rateLimit?: {
+        interval: number;
+        requests: number;
+    } | undefined;
+}>;
 export interface OpenRouterMessage {
     role: 'system' | 'user' | 'assistant';
     content: string;

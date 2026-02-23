@@ -16,7 +16,8 @@
  *
  * Run: npx tsx examples/beginner/simple-data-generation.ts
  */
-declare const synth: any;
+import { AgenticSynth } from '@ruvector/agentic-synth';
+declare const synth: AgenticSynth;
 declare function generateUserData(): Promise<void>;
 declare function generateWithConstraints(): Promise<void>;
 export { generateUserData, generateWithConstraints, synth };

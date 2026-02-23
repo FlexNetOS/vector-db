@@ -111,7 +111,7 @@ export interface TrainingConfig {
 }
 export declare const TrainingConfigSchema: z.ZodObject<{
     models: z.ZodArray<z.ZodObject<{
-        provider: z.ZodEnum<typeof ModelProvider>;
+        provider: z.ZodNativeEnum<typeof ModelProvider>;
         model: z.ZodString;
         apiKey: z.ZodString;
         temperature: z.ZodOptional<z.ZodNumber>;
@@ -119,7 +119,25 @@ export declare const TrainingConfigSchema: z.ZodObject<{
         topP: z.ZodOptional<z.ZodNumber>;
         presencePenalty: z.ZodOptional<z.ZodNumber>;
         frequencyPenalty: z.ZodOptional<z.ZodNumber>;
-    }, z.core.$strip>>;
+    }, "strip", z.ZodTypeAny, {
+        provider: ModelProvider;
+        apiKey: string;
+        model: string;
+        temperature?: number | undefined;
+        maxTokens?: number | undefined;
+        topP?: number | undefined;
+        presencePenalty?: number | undefined;
+        frequencyPenalty?: number | undefined;
+    }, {
+        provider: ModelProvider;
+        apiKey: string;
+        model: string;
+        temperature?: number | undefined;
+        maxTokens?: number | undefined;
+        topP?: number | undefined;
+        presencePenalty?: number | undefined;
+        frequencyPenalty?: number | undefined;
+    }>, "many">;
     optimizationRounds: z.ZodDefault<z.ZodNumber>;
     convergenceThreshold: z.ZodDefault<z.ZodNumber>;
     maxConcurrency: z.ZodDefault<z.ZodNumber>;
@@ -129,7 +147,47 @@ export declare const TrainingConfigSchema: z.ZodObject<{
     timeoutPerIteration: z.ZodDefault<z.ZodNumber>;
     baselineIterations: z.ZodDefault<z.ZodNumber>;
     benchmarkSamples: z.ZodDefault<z.ZodNumber>;
-}, z.core.$strip>;
+}, "strip", z.ZodTypeAny, {
+    maxConcurrency: number;
+    models: {
+        provider: ModelProvider;
+        apiKey: string;
+        model: string;
+        temperature?: number | undefined;
+        maxTokens?: number | undefined;
+        topP?: number | undefined;
+        presencePenalty?: number | undefined;
+        frequencyPenalty?: number | undefined;
+    }[];
+    optimizationRounds: number;
+    convergenceThreshold: number;
+    enableCrossLearning: boolean;
+    enableHooksIntegration: boolean;
+    timeoutPerIteration: number;
+    baselineIterations: number;
+    benchmarkSamples: number;
+    costBudget?: number | undefined;
+}, {
+    models: {
+        provider: ModelProvider;
+        apiKey: string;
+        model: string;
+        temperature?: number | undefined;
+        maxTokens?: number | undefined;
+        topP?: number | undefined;
+        presencePenalty?: number | undefined;
+        frequencyPenalty?: number | undefined;
+    }[];
+    maxConcurrency?: number | undefined;
+    optimizationRounds?: number | undefined;
+    convergenceThreshold?: number | undefined;
+    enableCrossLearning?: boolean | undefined;
+    enableHooksIntegration?: boolean | undefined;
+    costBudget?: number | undefined;
+    timeoutPerIteration?: number | undefined;
+    baselineIterations?: number | undefined;
+    benchmarkSamples?: number | undefined;
+}>;
 /**
  * Abstract base class for all model-specific training agents
  */

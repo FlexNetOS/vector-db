@@ -14,45 +14,45 @@
  * Generate agent spawning and termination lifecycle events
  */
 export declare function agentSpawningTermination(): Promise<{
-    lifecycleEvents: any;
-    spawnStrategies: any;
-    resourcePool: any;
+    lifecycleEvents: import("../../dist/index.js").GenerationResult<unknown>;
+    spawnStrategies: import("../../dist/index.js").GenerationResult<unknown>;
+    resourcePool: import("../../dist/index.js").GenerationResult<unknown>;
 }>;
 /**
  * Generate state synchronization data for distributed agents
  */
 export declare function stateSynchronization(): Promise<{
-    stateSnapshots: any;
-    syncEvents: any;
-    consistencyChecks: any;
-    syncTopology: any;
+    stateSnapshots: import("../../dist/index.js").GenerationResult<unknown>;
+    syncEvents: import("../../dist/index.js").GenerationResult<unknown>;
+    consistencyChecks: import("../../dist/index.js").GenerationResult<unknown>;
+    syncTopology: import("../../dist/index.js").GenerationResult<unknown>;
 }>;
 /**
  * Generate health check and monitoring data
  */
 export declare function healthCheckScenarios(): Promise<{
-    healthChecks: any;
-    healthConfigs: any;
-    healthTimeSeries: any;
-    healingActions: any;
+    healthChecks: import("../../dist/index.js").GenerationResult<unknown>;
+    healthConfigs: import("../../dist/index.js").GenerationResult<unknown>;
+    healthTimeSeries: import("../../dist/index.js").GenerationResult<unknown>;
+    healingActions: import("../../dist/index.js").GenerationResult<unknown>;
 }>;
 /**
  * Generate failure recovery pattern data
  */
 export declare function recoveryPatterns(): Promise<{
-    failures: any;
-    recoveryStrategies: any;
-    circuitBreakers: any;
-    backupOperations: any;
+    failures: import("../../dist/index.js").GenerationResult<unknown>;
+    recoveryStrategies: import("../../dist/index.js").GenerationResult<unknown>;
+    circuitBreakers: import("../../dist/index.js").GenerationResult<unknown>;
+    backupOperations: import("../../dist/index.js").GenerationResult<unknown>;
 }>;
 /**
  * Generate agent version migration data
  */
 export declare function versionMigration(): Promise<{
-    versions: any;
-    migrations: any;
-    canaryDeployments: any;
-    rollbacks: any;
+    versions: import("../../dist/index.js").GenerationResult<unknown>;
+    migrations: import("../../dist/index.js").GenerationResult<unknown>;
+    canaryDeployments: import("../../dist/index.js").GenerationResult<unknown>;
+    rollbacks: import("../../dist/index.js").GenerationResult<unknown>;
 }>;
 export declare function runAllLifecycleExamples(): Promise<void>;
 //# sourceMappingURL=agent-lifecycle.d.ts.map

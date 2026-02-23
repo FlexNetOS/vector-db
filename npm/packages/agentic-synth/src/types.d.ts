@@ -20,25 +20,11 @@ export interface SchemaField {
 }
 export type DataSchema = Record<string, SchemaField>;
 export type DataConstraints = Record<string, unknown>;
-export declare const ModelProviderSchema: z.ZodEnum<{
-    gemini: "gemini";
-    openrouter: "openrouter";
-}>;
+export declare const ModelProviderSchema: z.ZodEnum<["gemini", "openrouter"]>;
 export type ModelProvider = z.infer<typeof ModelProviderSchema>;
-export declare const CacheStrategySchema: z.ZodEnum<{
-    none: "none";
-    memory: "memory";
-    disk: "disk";
-}>;
+export declare const CacheStrategySchema: z.ZodEnum<["none", "memory", "disk"]>;
 export type CacheStrategy = z.infer<typeof CacheStrategySchema>;
-export declare const DataTypeSchema: z.ZodEnum<{
-    json: "json";
-    text: "text";
-    timeseries: "timeseries";
-    events: "events";
-    structured: "structured";
-    csv: "csv";
-}>;
+export declare const DataTypeSchema: z.ZodEnum<["timeseries", "events", "structured", "text", "json", "csv"]>;
 export type DataType = z.infer<typeof DataTypeSchema>;
 export interface SynthConfig {
     provider: ModelProvider;
@@ -55,17 +41,10 @@ export interface SynthConfig {
     fallbackChain?: ModelProvider[];
 }
 export declare const SynthConfigSchema: z.ZodObject<{
-    provider: z.ZodEnum<{
-        gemini: "gemini";
-        openrouter: "openrouter";
-    }>;
+    provider: z.ZodEnum<["gemini", "openrouter"]>;
     apiKey: z.ZodOptional<z.ZodString>;
     model: z.ZodOptional<z.ZodString>;
-    cacheStrategy: z.ZodDefault<z.ZodOptional<z.ZodEnum<{
-        none: "none";
-        memory: "memory";
-        disk: "disk";
-    }>>>;
+    cacheStrategy: z.ZodDefault<z.ZodOptional<z.ZodEnum<["none", "memory", "disk"]>>>;
     cacheTTL: z.ZodDefault<z.ZodOptional<z.ZodNumber>>;
     maxRetries: z.ZodDefault<z.ZodOptional<z.ZodNumber>>;
     timeout: z.ZodDefault<z.ZodOptional<z.ZodNumber>>;
@@ -73,11 +52,34 @@ export declare const SynthConfigSchema: z.ZodObject<{
     automation: z.ZodDefault<z.ZodOptional<z.ZodBoolean>>;
     vectorDB: z.ZodDefault<z.ZodOptional<z.ZodBoolean>>;
     enableFallback: z.ZodDefault<z.ZodOptional<z.ZodBoolean>>;
-    fallbackChain: z.ZodOptional<z.ZodArray<z.ZodEnum<{
-        gemini: "gemini";
-        openrouter: "openrouter";
-    }>>>;
-}, z.core.$strip>;
+    fallbackChain: z.ZodOptional<z.ZodArray<z.ZodEnum<["gemini", "openrouter"]>, "many">>;
+}, "strip", z.ZodTypeAny, {
+    maxRetries: number;
+    provider: "gemini" | "openrouter";
+    cacheStrategy: "none" | "memory" | "disk";
+    cacheTTL: number;
+    timeout: number;
+    streaming: boolean;
+    automation: boolean;
+    vectorDB: boolean;
+    enableFallback: boolean;
+    apiKey?: string | undefined;
+    model?: string | undefined;
+    fallbackChain?: ("gemini" | "openrouter")[] | undefined;
+}, {
+    provider: "gemini" | "openrouter";
+    maxRetries?: number | undefined;
+    apiKey?: string | undefined;
+    model?: string | undefined;
+    cacheStrategy?: "none" | "memory" | "disk" | undefined;
+    cacheTTL?: number | undefined;
+    timeout?: number | undefined;
+    streaming?: boolean | undefined;
+    automation?: boolean | undefined;
+    vectorDB?: boolean | undefined;
+    enableFallback?: boolean | undefined;
+    fallbackChain?: ("gemini" | "openrouter")[] | undefined;
+}>;
 export interface GeneratorOptions {
     count?: number;
     schema?: DataSchema;
@@ -88,14 +90,22 @@ export interface GeneratorOptions {
 export declare const GeneratorOptionsSchema: z.ZodObject<{
     count: z.ZodDefault<z.ZodOptional<z.ZodNumber>>;
     schema: z.ZodOptional<z.ZodRecord<z.ZodString, z.ZodUnknown>>;
-    format: z.ZodDefault<z.ZodOptional<z.ZodEnum<{
-        json: "json";
-        csv: "csv";
-        array: "array";
-    }>>>;
-    seed: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodNumber]>>;
+    format: z.ZodDefault<z.ZodOptional<z.ZodEnum<["json", "csv", "array"]>>>;
+    seed: z.ZodOptional<z.ZodUnion<[z.ZodString, z.ZodNumber]>>;
     constraints: z.ZodOptional<z.ZodRecord<z.ZodString, z.ZodUnknown>>;
-}, z.core.$strip>;
+}, "strip", z.ZodTypeAny, {
+    count: number;
+    format: "json" | "csv" | "array";
+    schema?: Record<string, unknown> | undefined;
+    seed?: string | number | undefined;
+    constraints?: Record<string, unknown> | undefined;
+}, {
+    count?: number | undefined;
+    schema?: Record<string, unknown> | undefined;
+    format?: "json" | "csv" | "array" | undefined;
+    seed?: string | number | undefined;
+    constraints?: Record<string, unknown> | undefined;
+}>;
 export interface TimeSeriesOptions extends GeneratorOptions {
     startDate?: Date | string;
     endDate?: Date | string;
@@ -108,26 +118,44 @@ export interface TimeSeriesOptions extends GeneratorOptions {
 export declare const TimeSeriesOptionsSchema: z.ZodObject<{
     count: z.ZodDefault<z.ZodOptional<z.ZodNumber>>;
     schema: z.ZodOptional<z.ZodRecord<z.ZodString, z.ZodUnknown>>;
-    format: z.ZodDefault<z.ZodOptional<z.ZodEnum<{
-        json: "json";
-        csv: "csv";
-        array: "array";
-    }>>>;
-    seed: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodNumber]>>;
+    format: z.ZodDefault<z.ZodOptional<z.ZodEnum<["json", "csv", "array"]>>>;
+    seed: z.ZodOptional<z.ZodUnion<[z.ZodString, z.ZodNumber]>>;
     constraints: z.ZodOptional<z.ZodRecord<z.ZodString, z.ZodUnknown>>;
-    startDate: z.ZodOptional<z.ZodUnion<readonly [z.ZodDate, z.ZodString]>>;
-    endDate: z.ZodOptional<z.ZodUnion<readonly [z.ZodDate, z.ZodString]>>;
+} & {
+    startDate: z.ZodOptional<z.ZodUnion<[z.ZodDate, z.ZodString]>>;
+    endDate: z.ZodOptional<z.ZodUnion<[z.ZodDate, z.ZodString]>>;
     interval: z.ZodDefault<z.ZodOptional<z.ZodString>>;
-    metrics: z.ZodOptional<z.ZodArray<z.ZodString>>;
-    trend: z.ZodDefault<z.ZodOptional<z.ZodEnum<{
-        up: "up";
-        down: "down";
-        stable: "stable";
-        random: "random";
-    }>>>;
+    metrics: z.ZodOptional<z.ZodArray<z.ZodString, "many">>;
+    trend: z.ZodDefault<z.ZodOptional<z.ZodEnum<["up", "down", "stable", "random"]>>>;
     seasonality: z.ZodDefault<z.ZodOptional<z.ZodBoolean>>;
     noise: z.ZodDefault<z.ZodOptional<z.ZodNumber>>;
-}, z.core.$strip>;
+}, "strip", z.ZodTypeAny, {
+    count: number;
+    format: "json" | "csv" | "array";
+    interval: string;
+    trend: "up" | "down" | "stable" | "random";
+    seasonality: boolean;
+    noise: number;
+    metrics?: string[] | undefined;
+    schema?: Record<string, unknown> | undefined;
+    seed?: string | number | undefined;
+    constraints?: Record<string, unknown> | undefined;
+    startDate?: string | Date | undefined;
+    endDate?: string | Date | undefined;
+}, {
+    metrics?: string[] | undefined;
+    count?: number | undefined;
+    schema?: Record<string, unknown> | undefined;
+    format?: "json" | "csv" | "array" | undefined;
+    seed?: string | number | undefined;
+    constraints?: Record<string, unknown> | undefined;
+    startDate?: string | Date | undefined;
+    endDate?: string | Date | undefined;
+    interval?: string | undefined;
+    trend?: "up" | "down" | "stable" | "random" | undefined;
+    seasonality?: boolean | undefined;
+    noise?: number | undefined;
+}>;
 export interface EventOptions extends GeneratorOptions {
     eventTypes?: string[];
     distribution?: 'uniform' | 'poisson' | 'normal';
@@ -140,25 +168,50 @@ export interface EventOptions extends GeneratorOptions {
 export declare const EventOptionsSchema: z.ZodObject<{
     count: z.ZodDefault<z.ZodOptional<z.ZodNumber>>;
     schema: z.ZodOptional<z.ZodRecord<z.ZodString, z.ZodUnknown>>;
-    format: z.ZodDefault<z.ZodOptional<z.ZodEnum<{
-        json: "json";
-        csv: "csv";
-        array: "array";
-    }>>>;
-    seed: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodNumber]>>;
+    format: z.ZodDefault<z.ZodOptional<z.ZodEnum<["json", "csv", "array"]>>>;
+    seed: z.ZodOptional<z.ZodUnion<[z.ZodString, z.ZodNumber]>>;
     constraints: z.ZodOptional<z.ZodRecord<z.ZodString, z.ZodUnknown>>;
-    eventTypes: z.ZodOptional<z.ZodArray<z.ZodString>>;
-    distribution: z.ZodDefault<z.ZodOptional<z.ZodEnum<{
-        uniform: "uniform";
-        poisson: "poisson";
-        normal: "normal";
-    }>>>;
+} & {
+    eventTypes: z.ZodOptional<z.ZodArray<z.ZodString, "many">>;
+    distribution: z.ZodDefault<z.ZodOptional<z.ZodEnum<["uniform", "poisson", "normal"]>>>;
     timeRange: z.ZodOptional<z.ZodObject<{
-        start: z.ZodUnion<readonly [z.ZodDate, z.ZodString]>;
-        end: z.ZodUnion<readonly [z.ZodDate, z.ZodString]>;
-    }, z.core.$strip>>;
+        start: z.ZodUnion<[z.ZodDate, z.ZodString]>;
+        end: z.ZodUnion<[z.ZodDate, z.ZodString]>;
+    }, "strip", z.ZodTypeAny, {
+        start: string | Date;
+        end: string | Date;
+    }, {
+        start: string | Date;
+        end: string | Date;
+    }>>;
     userCount: z.ZodOptional<z.ZodNumber>;
-}, z.core.$strip>;
+}, "strip", z.ZodTypeAny, {
+    count: number;
+    format: "json" | "csv" | "array";
+    distribution: "uniform" | "poisson" | "normal";
+    schema?: Record<string, unknown> | undefined;
+    seed?: string | number | undefined;
+    constraints?: Record<string, unknown> | undefined;
+    eventTypes?: string[] | undefined;
+    timeRange?: {
+        start: string | Date;
+        end: string | Date;
+    } | undefined;
+    userCount?: number | undefined;
+}, {
+    count?: number | undefined;
+    schema?: Record<string, unknown> | undefined;
+    format?: "json" | "csv" | "array" | undefined;
+    seed?: string | number | undefined;
+    constraints?: Record<string, unknown> | undefined;
+    eventTypes?: string[] | undefined;
+    distribution?: "uniform" | "poisson" | "normal" | undefined;
+    timeRange?: {
+        start: string | Date;
+        end: string | Date;
+    } | undefined;
+    userCount?: number | undefined;
+}>;
 export interface GenerationResult<T = JsonValue> {
     data: T[];
     metadata: {
