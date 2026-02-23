@@ -7,20 +7,20 @@ description = "Unified WebAssembly bindings for 18+ attention mechanisms: Neural
 license = "MIT OR Apache-2.0"
 repository = "https://github.com/ruvnet/ruvector"
 keywords = ["attention", "wasm", "neural", "dag", "mamba"]
-categories = ["wasm", "science::ml", "algorithms"]
+categories = ["wasm", "science", "algorithms"]
 
 [lib]
 crate-type = ["cdylib", "rlib"]
 
 [dependencies]
 # Core attention mechanisms (7 neural attention types)
-ruvector-attention = { path = "../ruvector-attention", default-features = false, features = ["wasm"] }
+ruvector-attention = { version = "2.0", path = "../ruvector-attention", default-features = false, features = ["wasm"] }
 
 # DAG attention mechanisms (7 DAG-specific attention types)
-ruvector-dag = { path = "../ruvector-dag", default-features = false, features = ["wasm"] }
+ruvector-dag = { version = "2.0", path = "../ruvector-dag", default-features = false, features = ["wasm"] }
 
 # GNN/Graph attention (GAT, GCN, GraphSAGE)
-ruvector-gnn = { path = "../ruvector-gnn", default-features = false, features = ["wasm"] }
+ruvector-gnn = { version = "2.0", path = "../ruvector-gnn", default-features = false, features = ["wasm"] }
 
 # WASM bindings
 wasm-bindgen = "0.2"

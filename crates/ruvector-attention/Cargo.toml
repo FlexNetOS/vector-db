@@ -1,11 +1,11 @@
 [package]
 name = "ruvector-attention"
-version = "0.1.32"
-edition = "2021"
-authors = ["ruvector contributors"]
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+repository.workspace = true
 description = "Attention mechanisms for ruvector - geometric, graph, and sparse attention"
-license = "MIT OR Apache-2.0"
-repository = "https://github.com/ruvnet/ruvector"
 keywords = ["attention", "machine-learning", "vector-search", "graph-attention"]
 categories = ["algorithms", "science"]
 

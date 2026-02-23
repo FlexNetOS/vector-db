@@ -1,8 +1,5 @@
 [package]
 name = "ruvector-gnn-wasm"
-
-[package.metadata.wasm-pack.profile.release]
-wasm-opt = false
 version.workspace = true
 edition.workspace = true
 rust-version.workspace = true
@@ -12,11 +9,14 @@ repository.workspace = true
 readme = "README.md"
 description = "WebAssembly bindings for RuVector GNN with tensor compression and differentiable search"
 
+[package.metadata.wasm-pack.profile.release]
+wasm-opt = false
+
 [lib]
 crate-type = ["cdylib", "rlib"]
 
 [dependencies]
-ruvector-gnn = { path = "../ruvector-gnn", default-features = false, features = ["wasm"] }
+ruvector-gnn = { version = "2.0", path = "../ruvector-gnn", default-features = false, features = ["wasm"] }
 
 # WASM
 wasm-bindgen = { workspace = true }

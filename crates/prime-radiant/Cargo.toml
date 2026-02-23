@@ -35,11 +35,11 @@ ruvector-sona = { version = "0.1.4", features = ["serde-support"], optional = tr
 
 # Learned restriction maps with GNN (ruvector-gnn)
 # Provides: RuvectorLayer, ElasticWeightConsolidation, ReplayBuffer
-ruvector-gnn = { version = "0.1.31", default-features = false, optional = true }
+ruvector-gnn = { version = "2.0", path = "../ruvector-gnn", default-features = false, optional = true }
 
 # Subpolynomial n^o(1) graph partitioning (ruvector-mincut)
 # Provides: SubpolynomialMinCut, CognitiveMinCutEngine, WitnessTree
-ruvector-mincut = { version = "0.1.30", default-features = false, optional = true }
+ruvector-mincut = { version = "2.0", path = "../ruvector-mincut", default-features = false, optional = true }
 
 # Hierarchy-aware Poincare energy (ruvector-hyperbolic-hnsw)
 # Provides: HyperbolicHnsw, poincare_distance, ShardedHyperbolicHnsw
@@ -47,23 +47,23 @@ ruvector-hyperbolic-hnsw = { version = "0.1.0", default-features = false, option
 
 # CoherenceGatedSystem, HDC witnesses, neural gating (ruvector-nervous-system)
 # Provides: CoherenceGatedSystem, GlobalWorkspace, HdcMemory, Dendrite
-ruvector-nervous-system = { version = "0.1.30", default-features = false, optional = true }
+ruvector-nervous-system = { version = "2.0", path = "../ruvector-nervous-system", default-features = false, optional = true }
 
 # Topology-gated attention, MoE, PDE diffusion (ruvector-attention)
 # Provides: TopologyGatedAttention, MoEAttention, DiffusionAttention
-ruvector-attention = { version = "0.1.31", default-features = false, optional = true }
+ruvector-attention = { version = "2.0", path = "../ruvector-attention", default-features = false, optional = true }
 
 # Distributed Raft consensus (ruvector-raft)
 # Provides: RaftNode, RaftConfig, LogEntry, ConsensusState
-ruvector-raft = { version = "0.1.30", optional = true }
+ruvector-raft = { version = "2.0", path = "../ruvector-raft", optional = true }
 
 # Vector storage and HNSW search (ruvector-core)
 # Provides: VectorDB, HnswConfig, DistanceMetric
-ruvector-core = { version = "0.1.31", default-features = false }
+ruvector-core = { version = "2.0", path = "../ruvector-core", default-features = false }
 
 # Graph data structures (ruvector-graph)
 # Provides: GraphStore, AdjacencyList
-ruvector-graph = { version = "0.1.31", default-features = false, optional = true }
+ruvector-graph = { version = "2.0", path = "../ruvector-graph", default-features = false, optional = true }
 
 # LLM serving runtime with Ruvector integration (ruvllm)
 # Provides: WitnessLog, RoutingDecision, ModelSize, QualityMetrics

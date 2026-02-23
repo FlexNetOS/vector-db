@@ -17,7 +17,7 @@ crate-type = ["rlib"]
 default = []
 
 [dependencies]
-ruvector-attention = { version = "0.1.31", path = "../ruvector-attention" }
+ruvector-attention = { version = "2.0", path = "../ruvector-attention" }
 ruvector-gnn = { version = "2.0.1", path = "../ruvector-gnn", default-features = false }
 ruvector-mincut = { version = "2.0.1", path = "../ruvector-mincut", default-features = false, features = ["exact"] }
 serde = { version = "1.0", features = ["derive"] }
