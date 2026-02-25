@@ -93,7 +93,7 @@ impl ProofEnvironment {
     pub fn alloc_term(&mut self) -> u32 {
         let id = self.term_counter;
         self.term_counter = self.term_counter.checked_add(1)
-            .ok_or_else(|| VerificationError::ArenaExhausted { allocated: id })
+            .ok_or(VerificationError::ArenaExhausted { allocated: id })
             .expect("arena overflow");
         self.stats.proofs_constructed += 1;
         id
