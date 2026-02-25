@@ -479,6 +479,7 @@ cargo add ruvector-raft ruvector-cluster ruvector-replication
 | **Adaptive Routing** | Learn optimal routing strategies | Minimize latency, maximize accuracy |
 | **SONA** | Two-tier LoRA + EWC++ + ReasoningBank | Runtime learning without retraining |
 | **Local Embeddings** | 8+ ONNX models built-in | No external API needed |
+| **[Verified Proofs](./crates/ruvector-verified)** | 82-byte proof attestations per vector op | Structural trust, not just assertions |
 
 ### Specialized Processing
 
@@ -1150,6 +1151,7 @@ await dag.execute();
 | [ADR-013](./docs/adr/ADR-013-huggingface-publishing.md) | **New** | HuggingFace publishing |
 | [ADR-030](./docs/adr/ADR-030-rvf-cognitive-container.md) | **Accepted** | RVF cognitive container architecture |
 | [ADR-031](./docs/adr/ADR-031-rvcow-branching-and-real-cognitive-containers.md) | **Accepted** | RVCOW branching & real containers |
+| [ADR-045](./docs/adr/ADR-045-lean-agentic-integration.md) | **Accepted** | Lean-agentic formal verification integration |
 
 </details>
 
@@ -1481,6 +1483,54 @@ let syndrome = gate.assess_coherence(&quantum_state)?;
 | [rvf-cli](./crates/rvf/rvf-cli) | Unified CLI with 17 subcommands | [![crates.io](https://img.shields.io/crates/v/rvf-cli.svg)](https://crates.io/crates/rvf-cli) |
 
 **RVF Features:** Single-file cognitive containers that boot as Linux microservices, COW branching at cluster granularity, eBPF acceleration, witness chains, post-quantum signatures, 24 segment types. [Full README](./crates/rvf/README.md)
+
+### Formal Verification
+
+| Crate | Description | crates.io |
+|-------|-------------|-----------|
+| [ruvector-verified](./crates/ruvector-verified) | Proof-carrying vector operations with lean-agentic dependent types (~500ns proofs) | [![crates.io](https://img.shields.io/crates/v/ruvector-verified.svg)](https://crates.io/crates/ruvector-verified) |
+| [ruvector-verified-wasm](./crates/ruvector-verified-wasm) | WASM bindings for browser/edge formal verification | [![crates.io](https://img.shields.io/crates/v/ruvector-verified-wasm.svg)](https://crates.io/crates/ruvector-verified-wasm) |
+
+**Verification Features:** 82-byte proof attestations, 3-tier gated proof routing (Reflex <10ns / Standard <1us / Deep <100us), FastTermArena with O(1) dedup, batch dimension verification (~11ns/vector), type-safe pipeline composition. [Full README](./crates/ruvector-verified/README.md)
+
+<details>
+<summary>Formal Verification Details</summary>
+
+**How it works:** Every vector operation produces a machine-checked proof term using lean-agentic dependent types. Proofs are constructed at compile-time semantics but execute at runtime with sub-microsecond overhead, then serialized into 82-byte attestations that can be embedded in RVF witness chains.
+
+| Operation | Latency | Description |
+|-----------|---------|-------------|
+| `ProofEnvironment::new()` | ~470ns | Initialize proof context with type declarations |
+| `prove_dim_eq(a, b)` | ~496ns | Dimension equality proof with FxHash caching |
+| `verify_batch_dimensions()` | ~11ns/vec | Batch verification for N vectors |
+| `compose_chain()` | ~1.2us | Type-safe pipeline composition |
+| `create_attestation()` | ~180ns | 82-byte formal proof witness |
+| `FastTermArena::intern()` | ~1.6ns hit | O(1) dedup with 4-wide linear probe |
+| `gated::route_proof()` | <10ns | 3-tier routing: Reflex / Standard / Deep |
+
+**10 Exotic Application Domains** ([examples/verified-applications](./examples/verified-applications)):
+
+1. **Autonomous Weapons Filter** — certified targeting pipeline blocks tampered sensors
+2. **Medical Diagnostics** — proof-carrying ECG analysis with patient-keyed attestations
+3. **Financial Order Routing** — verified trade execution with proof-hash audit trail
+4. **Multi-Agent Contracts** — dimension + metric + depth contracts enforced by proof
+5. **Distributed Sensor Swarm** — coherence verification across heterogeneous nodes
+6. **Quantization Proof** — certify quantization error within formal tolerance bounds
+7. **Verifiable Synthetic Memory** — AGI memory with per-embedding proof attestations
+8. **Cryptographic Vector Signatures** — model-keyed signatures with contract matching
+9. **Simulation Integrity** — proof receipt per step for reproducible physics
+10. **Legal Forensics** — court-admissible replay bundles with structural invariants
+
+```rust
+use ruvector_verified::{ProofEnvironment, vector_types, proof_store};
+
+let mut env = ProofEnvironment::new();
+let proof = vector_types::prove_dim_eq(&mut env, 384, 384).unwrap();
+let att = proof_store::create_attestation(&env, proof);
+assert_eq!(att.to_bytes().len(), 82); // 82-byte formal witness
+```
+
+</details>
 
 **Self-booting example** — the `claude_code_appliance` builds a complete AI dev environment as one file:
 
@@ -3974,6 +4024,7 @@ console.log(`Similarity: ${cosineSimilarity(vecA, vecB)}`);  // 1.0
 | `@ruvector/exotic-wasm` | <150KB | NAO, Morphogenetic, Time Crystal |
 | `@ruvector/nervous-system-wasm` | <100KB | BTSP, HDC (10K-bit), WTA, Global Workspace |
 | `@ruvector/attention-unified-wasm` | <200KB | 18+ attention mechanisms, unified API |
+| `@ruvnet/ruvector-verified-wasm` | <80KB | Formal proof verification in browser/edge |
 
 **Common Patterns:**
 
@@ -4502,6 +4553,8 @@ curl -X POST http://localhost:8080/search \
 | [prime-radiant](./examples/prime-radiant) | Prime-Radiant coherence engine examples and usage demos | Rust |
 | [benchmarks](./examples/benchmarks) | Comprehensive benchmarks for temporal reasoning and vector operations | Rust |
 | [vwm-viewer](./examples/vwm-viewer) | Visual vector world model viewer (HTML Canvas) | HTML |
+| [**verified-applications**](./examples/verified-applications) | **10 exotic domains: weapons filter, medical diagnostics, financial routing, agent contracts, sensor swarm, quantization proof, AGI memory, vector signatures, simulation integrity, legal forensics** | Rust |
+| [rvf-kernel-optimized](./examples/rvf-kernel-optimized) | Verified + hyper-optimized Linux kernel RVF with proof-carrying ingest | Rust |
 
 </details>
 
