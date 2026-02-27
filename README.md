@@ -8,34 +8,41 @@
 [![ruv.io](https://img.shields.io/badge/ruv.io-website-purple.svg)](https://ruv.io)
 [![MIT License](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
-**The vector database that gets smarter the more you use it — and now ships as a cognitive container.**
+**The self-learning, self-optimizing vector database — with graph intelligence, local AI, and PostgreSQL built in.**
 
 ```bash
 npx ruvector
 ```
 
-Most vector databases are static — they store embeddings and search them. That's it. RuVector is different: it learns from every query, runs LLMs locally, scales horizontally, boots as a Linux microservice from a single file, and costs nothing to operate.
+Most vector databases store your data and search it — the same way, every time. RuVector is fundamentally different. It watches how you use it and gets smarter: search results improve automatically, the system tunes itself to your workload, and it runs AI models right on your hardware — no cloud APIs, no per-query bills. It drops into PostgreSQL, runs in browsers, and ships as a single file. Open source. Free forever.
 
-| | Pinecone/Weaviate | RuVector |
+| | RuVector | Typical Vector DB |
 |---|---|---|
-| 🧠 **Search improves over time** | ❌ | ✅ The more you search, the better results get |
-| 🤖 **Run LLMs locally** | ❌ | ✅ Run AI models on your own machine for free |
-| 🔗 **Graph queries** | ❌ | ✅ Ask questions about relationships between data |
-| 📚 **Self-learning** | ❌ | ✅ System watches what works and gets smarter |
-| 🚀 **Self-booting microservice** | ❌ | ✅ [One file boots into a running service](./crates/rvf/README.md) in 125 ms |
-| ⚡ **Real-time graph updates** | ❌ Must rebuild | ✅ Update connections instantly, no downtime |
-| 📦 **Single-file deployment** | ❌ Server required | ✅ One file — copy it anywhere and it just works |
-| 🔐 **Tamper-proof audit trail** | ❌ | ✅ Every operation is cryptographically recorded |
-| 🌐 **Works offline** | ❌ | ✅ Runs in browsers, phones, IoT, and bare metal |
-| 💰 **Cost** | Per-query pricing | ✅ Free forever — open source (MIT) |
-| 📈 **Scales horizontally** | 💰 Paid tiers | ✅ Add nodes freely, no per-vector fees |
-| 🌿 **Git-like branching** | ❌ | ✅ Branch your data like code — only changes are copied |
-| ⚡ **Sublinear Solvers** | ❌ | ✅ O(log n) sparse linear systems, PageRank, spectral methods |
-| 🔬 **Proof-Gated Graph Transformers** | ❌ | ✅ 8 verified modules: physics, bio, manifold, temporal, economic |
-
-**One package. Everything included:** vector search, graph queries, a [PostgreSQL extension](./crates/ruvector-postgres) (230+ SQL functions — drop-in pgvector replacement), GNN-based learning, [proof-gated graph transformers](./crates/ruvector-graph-transformer) (8 verified modules), distributed clustering, local LLM inference, 46 attention mechanisms, cognitive containers ([RVF](./crates/rvf/README.md)), and WASM support.
-
-**Already use PostgreSQL?** RuVector [drops into your existing database](./crates/ruvector-postgres) as an extension — 230+ SQL functions covering vector search, graph queries, GNN learning, attention mechanisms, and sublinear solvers. No migration required. See the [PostgreSQL docs](./docs/postgres/).
+| **Self-Learning & Optimization** | | |
+| [Search quality](./crates/ruvector-gnn) | 🧠 GNN learns from every query — results improve over time | Static — same results every time |
+| [Self-optimizing](./crates/sona) | ⚡ SONA auto-tunes routing, ranking, and compression to your workload | Manual tuning required |
+| [46 attention mechanisms](./crates/ruvector-attention) | 🎯 Flash, linear, graph, hyperbolic, [mincut-gated](./crates/ruvector-attn-mincut) (cuts compute 50%) | Basic similarity only |
+| [Transfer learning](./crates/ruvector-domain-expansion) | 🔄 Knowledge transfers across domains — new tasks bootstrap from past learning | Start from scratch each time |
+| **Graph & Relationships** | | |
+| [Graph queries](./crates/ruvector-graph) | 🔗 Full Cypher engine — `MATCH (a)-[:KNOWS]->(b)` like Neo4j | Flat list of results |
+| [Graph transformers](./crates/ruvector-graph-transformer) | 🔬 8 verified modules: physics, bio, manifold, temporal, economic | No graph support |
+| [Hyperedges](./crates/ruvector-graph) | 🕸️ Connect 3+ nodes at once — model group relationships natively | Pairwise only |
+| **AI & Compute** | | |
+| [Local LLMs](./crates/ruvllm) | 🤖 Run models on your hardware — Metal, CUDA, WebGPU, no API costs | Cloud API required (pay per call) |
+| [Sublinear solvers](./crates/ruvector-solver) | 📐 O(log n) PageRank, spectral methods, sparse linear systems | Not available |
+| [Genomics](./examples/dna) | 🧬 Variant calling, protein translation, HNSW k-mer search in 12 ms | Not available |
+| [Quantum coherence](./crates/ruqu) | ⚛️ Error correction via dynamic min-cut optimization | Not available |
+| **Database & Platform** | | |
+| [PostgreSQL](./crates/ruvector-postgres) | 🐘 230+ SQL functions — drop into your existing database, [pgvector replacement](./docs/postgres/) | Separate service to manage |
+| [Deploy anywhere](./crates/rvf/README.md) | 🌐 One file — servers, browsers, phones, IoT, bare metal, WASM (58 KB) | Cloud server required |
+| [Cognitive containers](./crates/rvf/README.md) | 🚀 Single `.rvf` file boots as a service in 125 ms — includes vectors, models, kernel | Configure a cluster |
+| [Live updates](./crates/ruvector-core) | ⚡ Update vectors and graph connections instantly, no downtime | Rebuild index or wait |
+| **Operations** | | |
+| [Tamper-proof audit](./crates/rvf/rvf-crypto) | 🔐 Cryptographic witness chain records every operation automatically | Manual logging |
+| [Branch your data](./crates/rvf/rvf-cow) | 🌿 Git-like COW branching — 1M vectors, 100 edits = ~2.5 MB branch | Copy everything |
+| [Scale out](./crates/ruvector-replication) | 📈 Raft consensus, multi-master replication, auto-sharding | Paid tiers, per-vector pricing |
+| [Post-quantum crypto](./crates/rvf/rvf-crypto) | 🛡️ ML-DSA-65 and Ed25519 signatures on every segment | Not available |
+| Cost | 💰 Free forever — open source (MIT) | Per-query or per-vector pricing |
 
 <details>
 <summary>📋 See Full Capabilities (53 features)</summary>
@@ -342,6 +349,10 @@ cargo add ruvector-solver --features all-algorithms
 
 ---
 
+## How RuVector Compares
+
+See how RuVector stacks up against popular vector databases across 40+ features — from latency and graph queries to self-learning, cognitive containers, and PostgreSQL integration.
+
 <details>
 <summary>📊 Comparison with Other Vector Databases</summary>
 
@@ -404,6 +415,10 @@ cargo add ruvector-solver --features all-algorithms
 *With PQ8 compression. Benchmarks on Apple M2 / Intel i7.
 
 </details>
+
+## Features
+
+Everything RuVector can do — organized by category. Vector search, graph queries, LLM inference, distributed systems, deployment targets, and the self-learning stack that ties it all together.
 
 <details>
 <summary>⚡ Core Features & Capabilities</summary>
@@ -638,6 +653,10 @@ cargo add prime-radiant --features gpu,simd
 
 </details>
 
+## Deployment
+
+Run RuVector wherever your application lives — as a server, a PostgreSQL extension, a browser library, an edge database, or a self-booting container.
+
 <details>
 <summary>🚀 Deployment Options</summary>
 
@@ -650,6 +669,10 @@ cargo add prime-radiant --features gpu,simd
 | **CLI Tools** | Benchmarking, testing, management | DevOps-friendly |
 
 </details>
+
+## Performance
+
+Real numbers from real benchmarks. Query throughput, latency percentiles, recall accuracy, and memory usage — measured on commodity hardware.
 
 <details>
 <summary>📈 Performance Benchmarks</summary>
@@ -693,6 +716,10 @@ Production-validated metrics at hyperscale:
 
 </details>
 
+## Compression
+
+RuVector automatically manages memory like a CPU cache — hot data stays at full precision, cold data compresses in the background. No manual tuning required.
+
 <details>
 <summary>🗜️ Adaptive Compression Tiers</summary>
 
@@ -711,6 +738,10 @@ Think of it like your computer's memory hierarchy—frequently accessed data liv
 **No configuration needed.** RuVector tracks access patterns and automatically promotes/demotes vectors between tiers. Your hot data stays fast; your cold data shrinks.
 
 </details>
+
+## Use Cases
+
+From AI-powered search to genomics, from real-time recommendations to knowledge graphs — see what people are building with RuVector.
 
 <details>
 <summary>💡 Use Cases</summary>
@@ -1060,6 +1091,8 @@ await dag.execute();
 </details>
 
 ## Installation
+
+RuVector runs on Node.js, Rust, browsers, PostgreSQL, and Docker. Pick the package that fits your stack.
 
 | Platform | Command |
 |----------|---------|
