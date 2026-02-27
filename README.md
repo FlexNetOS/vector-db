@@ -1567,6 +1567,7 @@ let syndrome = gate.assess_coherence(&quantum_state)?;
 | [ruvector-sparse-inference-wasm](./crates/ruvector-sparse-inference-wasm) | WASM bindings for sparse inference | [![crates.io](https://img.shields.io/crates/v/ruvector-sparse-inference-wasm.svg)](https://crates.io/crates/ruvector-sparse-inference-wasm) |
 | [ruvector-hyperbolic-hnsw](./crates/ruvector-hyperbolic-hnsw) | HNSW in hyperbolic space (Poincaré/Lorentz) | [![crates.io](https://img.shields.io/crates/v/ruvector-hyperbolic-hnsw.svg)](https://crates.io/crates/ruvector-hyperbolic-hnsw) |
 | [ruvector-hyperbolic-hnsw-wasm](./crates/ruvector-hyperbolic-hnsw-wasm) | WASM bindings for hyperbolic HNSW | [![crates.io](https://img.shields.io/crates/v/ruvector-hyperbolic-hnsw-wasm.svg)](https://crates.io/crates/ruvector-hyperbolic-hnsw-wasm) |
+| [ruvector-dither](./crates/ruvector-dither) | Deterministic golden-ratio and pi-digit dithering for quantization (`no_std`) | [![crates.io](https://img.shields.io/crates/v/ruvector-dither.svg)](https://crates.io/crates/ruvector-dither) |
 
 ### FPGA & Hardware Acceleration
 
@@ -1588,12 +1589,45 @@ let syndrome = gate.assess_coherence(&quantum_state)?;
 | [ruvector-exotic-wasm](./crates/ruvector-exotic-wasm) | Exotic AI primitives (strange loops, time crystals) | [![crates.io](https://img.shields.io/crates/v/ruvector-exotic-wasm.svg)](https://crates.io/crates/ruvector-exotic-wasm) |
 | [ruvector-attention-unified-wasm](./crates/ruvector-attention-unified-wasm) | Unified 18+ attention mechanisms (Neural, DAG, Mamba SSM) | [![crates.io](https://img.shields.io/crates/v/ruvector-attention-unified-wasm.svg)](https://crates.io/crates/ruvector-attention-unified-wasm) |
 | [micro-hnsw-wasm](./crates/micro-hnsw-wasm) | Neuromorphic HNSW with spiking neurons (11.8KB WASM) | [![crates.io](https://img.shields.io/crates/v/micro-hnsw-wasm.svg)](https://crates.io/crates/micro-hnsw-wasm) |
+| [thermorust](./crates/thermorust) | Thermodynamic neural motif engine — Ising/soft-spin Hamiltonians, Langevin dynamics, Landauer dissipation | [![crates.io](https://img.shields.io/crates/v/thermorust.svg)](https://crates.io/crates/thermorust) |
 
 **Bio-inspired features:**
 - **Spiking Neural Networks (SNNs)** — 10-50x energy efficiency vs traditional ANNs
 - **BTSP Learning** — Behavioral Time-Scale Synaptic Plasticity for rapid adaptation
 - **MicroLoRA** — Sub-microsecond fine-tuning for per-operator learning
 - **Mamba SSM** — State Space Model attention for linear-time sequences
+
+### Cognitive Robotics
+
+<details>
+<summary>Perception, planning, behavior trees, and swarm coordination for autonomous robots</summary>
+
+| Crate | Description | crates.io |
+|-------|-------------|-----------|
+| [ruvector-robotics](./crates/ruvector-robotics) | Cognitive robotics platform — perception, A* planning, behavior trees, swarm coordination | [![crates.io](https://img.shields.io/crates/v/ruvector-robotics.svg)](https://crates.io/crates/ruvector-robotics) |
+
+**Modules:**
+
+| Module | What It Does |
+|--------|--------------|
+| **bridge** | OccupancyGrid, PointCloud, SensorFrame, SceneGraph data types with spatial kNN |
+| **perception** | Scene-graph construction from point clouds, obstacle detection pipeline |
+| **planning** | A* grid search (octile heuristic) and potential-field velocity commands |
+| **cognitive** | Perceive-think-act-learn loop with utility-based reasoning |
+| **domain_expansion** | Cross-domain transfer learning via Meta Thompson Sampling and Beta priors |
+
+**Key features:** 290 tests, clippy-clean, `no_std`-friendly types, optional `domain-expansion` feature flag for cross-domain transfer, pluggable `PotentialFieldConfig` for obstacle avoidance, Byzantine-tolerant swarm coordination via `ruvector-domain-expansion`.
+
+```rust
+use ruvector_robotics::planning::{astar, potential_field, PotentialFieldConfig};
+use ruvector_robotics::bridge::OccupancyGrid;
+
+let grid = OccupancyGrid::new(100, 100, 0.1);
+let path = astar(&grid, (5, 5), (90, 90))?;
+let cmd = potential_field(&[0.0, 0.0, 0.0], &[5.0, 3.0, 0.0], &[], &PotentialFieldConfig::default());
+```
+
+</details>
 
 ### Self-Learning (SONA)
 

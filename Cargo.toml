@@ -112,6 +112,8 @@ members = [
     "crates/ruvector-graph-transformer-node",
     "examples/rvf-kernel-optimized",
     "examples/verified-applications",
+    "crates/thermorust",
+    "crates/ruvector-dither",
     "crates/ruvector-robotics",
     "examples/robotics",
 ]
