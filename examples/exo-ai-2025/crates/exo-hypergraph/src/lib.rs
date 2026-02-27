@@ -44,10 +44,12 @@
 
 pub mod hyperedge;
 pub mod sheaf;
+pub mod sparse_tda;
 pub mod topology;
 
 pub use hyperedge::{Hyperedge, HyperedgeIndex};
 pub use sheaf::{SheafInconsistency, SheafStructure};
+pub use sparse_tda::{PersistenceBar, PersistenceDiagram as SparsePersistenceDiagram, SparseRipsComplex};
 pub use topology::{PersistenceDiagram, SimplicialComplex};
 
 use dashmap::DashMap;

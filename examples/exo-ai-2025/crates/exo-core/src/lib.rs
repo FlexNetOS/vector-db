@@ -14,9 +14,14 @@
 pub mod backends;
 pub mod coherence_router;
 pub mod consciousness;
+pub mod genomic;
 pub mod plasticity_engine;
 pub mod thermodynamics;
 pub mod witness;
+
+pub use genomic::{
+    GenomicPatternStore, HorvathClock, NeurotransmitterProfile, RvDnaPattern,
+};
 
 pub use backends::{SubstrateBackend as ComputeSubstrateBackend, NeuromorphicBackend, QuantumStubBackend};
 pub use coherence_router::{ActionContext, CoherenceBackend, CoherenceRouter, GateDecision};
