@@ -61,6 +61,7 @@ pub mod consolidation;
 pub mod long_term;
 pub mod quantum_decay;
 pub mod short_term;
+pub mod transfer_timeline;
 pub mod types;
 
 pub use anticipation::{

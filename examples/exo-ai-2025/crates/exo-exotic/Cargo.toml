@@ -15,6 +15,7 @@ readme = "README.md"
 [dependencies]
 exo-core = { path = "../exo-core" }
 exo-temporal = "0.1"
+ruvector-domain-expansion = { path = "../../../../crates/ruvector-domain-expansion" }
 
 # Serialization
 serde = { version = "1.0", features = ["derive"] }

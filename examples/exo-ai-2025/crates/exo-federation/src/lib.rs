@@ -29,11 +29,12 @@ use tokio::sync::RwLock;
 use dashmap::DashMap;
 use serde::{Deserialize, Serialize};
 
+pub mod consensus;
+pub mod crdt;
 pub mod crypto;
 pub mod handshake;
 pub mod onion;
-pub mod crdt;
-pub mod consensus;
+pub mod transfer_crdt;
 
 pub use crypto::{PostQuantumKeypair, EncryptedChannel};
 pub use handshake::{join_federation, FederationToken, Capability};

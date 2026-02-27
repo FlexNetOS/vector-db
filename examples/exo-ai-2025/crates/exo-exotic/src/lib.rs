@@ -25,6 +25,7 @@
 
 pub mod black_holes;
 pub mod collective;
+pub mod domain_transfer;
 pub mod dreams;
 pub mod emergence;
 pub mod experiments;
