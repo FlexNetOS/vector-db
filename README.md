@@ -197,7 +197,7 @@ RuVector isn't a database you add to your stack — it's the entire stack. Self-
 | 🧠 | **ML Framework** | PyTorch, TensorFlow | 46 attention mechanisms, 8 verified graph transformer modules (physics, bio, manifold, temporal, economic), spiking neural networks, sparse inference, mincut-gated attention, hyperbolic embeddings, sublinear solvers, domain expansion, verified training, quantum coherence, coherence measurement |
 | 🌐 | **Coordination** | etcd, ZooKeeper, Consul | Raft consensus, multi-master replication, CRDT delta sync, auto-sharding |
 | 📦 | **Packaging** | Docker, Kubernetes | One `.rvf` file = your entire service. Runs on servers, browsers, phones, and IoT |
-| 🔐 | **Security** | Vault, manual audit logs | Post-quantum crypto (ML-DSA-65), witness chains, tamper-proof audit trail |
+| 🔐 | **Security** | Vault, manual audit logs | Post-quantum signatures (ML-DSA-65, SLH-DSA-128s, Ed25519), SHAKE-256 hashing, witness chains, tamper-proof audit trail, hardware attestation (TEE/enclave), cryptographic lineage tracking, formal verification with proof-carrying operations, COW branching with integrity checks |
 
 The [RVF cognitive container](./crates/rvf/README.md) ties it all together: a single file that packages your vectors, models, data, and a bootable kernel. Drop it on any machine and it starts serving in 125 ms — no install, no dependencies. It branches like Git (only changes are copied), logs every operation in a tamper-proof chain, and runs anywhere from a browser to bare metal.
 
