@@ -184,11 +184,11 @@ User Query → [SONA Engine] → Model Response → User Feedback
 
 RuVector is created by [rUv](https://ruv.io) and powers [Cognitum](https://cognitum.one), a **CES 2026 Innovation Awards Honoree** — the world's first hardware designed specifically for AI agents.
 
-**Cognitum v0 — The Agentic Appliance** is a small device with 7 compute tiles that runs thousands of AI agents simultaneously on less power than a laptop charger (<15W). Instead of burning energy constantly like a GPU, it stays quiet and only wakes up when something important happens — like a nervous system, not a brain. It responds in under a millisecond and costs 500x less per decision than cloud AI.
+**Cognitum v0 — The Agentic Appliance**: 7 compute tiles, thousands of concurrent agents, <15W total power, sub-millisecond response, 500x cheaper than cloud AI. Stays quiet until something matters — like a nervous system, not a brain.
 
-**Cognitum v1 — The Agentic Chip** takes the same idea and puts it on a single 256-core custom chip. It scales from idle to 8 GHz burst speed on demand, moves data at 2 TB/second between cores, and includes built-in encryption and security on every core.
+**Cognitum v1 — The Agentic Chip**: 256-core custom silicon, idle-to-8 GHz burst, 2 TB/s interconnect, built-in encryption per core.
 
-Both run RuVector as their software brain — the same self-learning search, spiking neural networks, and AI agent coordination you see in this repo. Everything here is open source and runs on your existing hardware today.
+Both run RuVector as their software brain. Everything in this repo is open source and runs on your existing hardware today.
 
 ### A Complete AI Operating System
 
