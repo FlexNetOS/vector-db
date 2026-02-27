@@ -186,6 +186,8 @@ RuVector isn't a database you add to your stack — it's the entire stack. Self-
 
 | | Layer | What RuVector Replaces | What It Does |
 |---|-------|----------------------|--------------|
+| 🔄 | **Self-Learning** | Manual retraining, MLOps | SONA adapts in <1 ms — LoRA fine-tuning + EWC++ memory preservation on every request |
+| ⚡ | **Self-Optimizing** | Manual tuning, config files | Auto-tunes routing, ranking, compression, and index parameters to your workload |
 | 🔧 | **Hardware** | CUDA toolkit, driver configs | Talks directly to your GPU, Neural Engine, or FPGA — Metal, CUDA, WebGPU, AVX-512 |
 | 🐧 | **Kernel** | Linux + Docker + eBPF tools | A single `.rvf` file boots its own Linux kernel in 125 ms — eBPF accelerates hot paths |
 | 🗄️ | **Storage** | PostgreSQL + Redis + S3 | Vector store, graph database, key-value cache, and 230+ SQL functions built in |
@@ -193,8 +195,6 @@ RuVector isn't a database you add to your stack — it's the entire stack. Self-
 | 🔗 | **Graph** | Neo4j, Amazon Neptune | Full Cypher query engine with hyperedges, SPARQL, and 8 verified graph transformer modules |
 | 🤖 | **AI Runtime** | llama.cpp, vLLM, Ollama | Run GGUF models locally on your hardware — no cloud APIs, no per-query costs |
 | 🧠 | **ML Framework** | PyTorch, TensorFlow | 46 attention mechanisms, spiking networks, transfer learning, verified training |
-| 🔄 | **Self-Learning** | Manual retraining, MLOps | SONA adapts in <1 ms — LoRA fine-tuning + EWC++ memory preservation on every request |
-| ⚡ | **Self-Optimizing** | Manual tuning, config files | Auto-tunes routing, ranking, compression, and index parameters to your workload |
 | 🌐 | **Coordination** | etcd, ZooKeeper, Consul | Raft consensus, multi-master replication, CRDT delta sync, auto-sharding |
 | 📦 | **Packaging** | Docker, Kubernetes | One `.rvf` file = your entire service. Runs on servers, browsers, phones, and IoT |
 | 🔐 | **Security** | Vault, manual audit logs | Post-quantum crypto (ML-DSA-65), witness chains, tamper-proof audit trail |
