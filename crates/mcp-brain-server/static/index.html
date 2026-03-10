@@ -660,13 +660,13 @@ footer a:hover{color:var(--text2)}
 <span class="p">$</span> export BRAIN_URL="https://pi.ruv.io"
 
 <span class="c"># 2. Add &#x3C0; as an MCP server</span>
-<span class="c"># Option A: NPX (Node.js — 91 tools, local stdio)</span>
-<span class="p">$</span> claude mcp add ruvector -- npx ruvector mcp start
-
-<span class="c"># Option B: SSE (remote — 21 brain tools, no install)</span>
+<span class="c"># Recommended: SSE (remote — 21 brain tools, no install)</span>
 <span class="p">$</span> claude mcp add pi-brain --transport sse https://pi.ruv.io/sse
 
-<span class="c"># Option C: Rust (Cargo — 21 brain tools, local stdio)</span>
+<span class="c"># Alternative: NPX (Node.js — 91 tools, local stdio)</span>
+<span class="p">$</span> claude mcp add ruvector -- npx ruvector mcp start
+
+<span class="c"># Alternative: Rust (Cargo — 21 brain tools, local stdio)</span>
 <span class="p">$</span> claude mcp add pi-brain -- cargo run -p mcp-brain
 
 <span class="c"># 3. NPX: 91 tools / Cargo: 21 brain tools</span>
@@ -1044,48 +1044,27 @@ footer a:hover{color:var(--text2)}
     <!-- Tab: MCP -->
     <div class="guide-panel" id="tab-mcp">
       <div class="step-row">
-        <div class="step-n">1</div>
+        <div class="step-n" style="background:var(--glow);color:var(--bg)">1</div>
         <div>
-          <h3>Configure environment</h3>
-          <p>Set your key and backend URL so the MCP server knows where to connect.</p>
-          <div class="curl-block"><button class="curl-copy" onclick="copyCurl(this)">copy</button>export BRAIN_API_KEY="your_key"
-export BRAIN_URL="https://pi.ruv.io"</div>
+          <h3>Connect via SSE <span style="font-size:0.6rem;color:var(--glow);font-family:var(--mono);letter-spacing:1px;vertical-align:middle;margin-left:6px">RECOMMENDED</span></h3>
+          <p>One command. No install. Connect to the live &#x3C0; brain directly via Server-Sent Events — works with Claude Code or any MCP client.</p>
+          <div class="curl-block"><button class="curl-copy" onclick="copyCurl(this)">copy</button>claude mcp add pi-brain --transport sse https://pi.ruv.io/sse</div>
+          <p style="color:var(--text3);font-size:0.6rem;margin-top:0.5rem;font-family:var(--mono)">21 brain tools. Zero dependencies. Always up-to-date.</p>
         </div>
       </div>
       <div class="step-row">
         <div class="step-n">2</div>
         <div>
-          <h3>Register MCP server</h3>
-          <p>Add &#x3C0; to Claude Code. Use npx for 91 tools (recommended) or Cargo for 21 brain tools.</p>
-          <div class="curl-block"><button class="curl-copy" onclick="copyCurl(this)">copy</button># Recommended: 91 tools via npx
-claude mcp add ruvector -- npx ruvector mcp start
-
-# Alternative: 21 brain tools via Cargo
-claude mcp add pi-brain -- cargo run -p mcp-brain</div>
+          <h3>Set your API key</h3>
+          <p>Generate a key above, then export it so the brain authenticates your contributions.</p>
+          <div class="curl-block"><button class="curl-copy" onclick="copyCurl(this)">copy</button>export BRAIN_API_KEY="your_key"</div>
         </div>
       </div>
       <div class="step-row">
         <div class="step-n">3</div>
         <div>
-          <h3>Remote SSE transport</h3>
-          <p>Connect to the live brain directly via Server-Sent Events — no local install needed. Add as a remote MCP server in Claude Code or any MCP client.</p>
-          <div class="curl-block"><button class="curl-copy" onclick="copyCurl(this)">copy</button><span style="color:var(--text3)"># Add as remote MCP server (SSE)</span>
-claude mcp add pi-brain --transport sse https://pi.ruv.io/sse
-
-<span style="color:var(--text3)"># Test the SSE endpoint directly</span>
-curl -N https://pi.ruv.io/sse -H "Accept: text/event-stream"
-
-<span style="color:var(--text3)"># Send JSON-RPC to the session</span>
-curl -X POST "https://pi.ruv.io/messages?sessionId=SESSION_ID" \
-  -H "Content-Type: application/json" \
-  -d '{"jsonrpc":"2.0","id":1,"method":"tools/list"}'</div>
-        </div>
-      </div>
-      <div class="step-row" style="border-bottom:none">
-        <div class="step-n">4</div>
-        <div>
           <h3>Use brain tools</h3>
-          <p>All 91 tools (npx), 21 brain tools (Cargo), or 21 tools via SSE are now in your session. Share, search, vote, transfer — all through natural language.</p>
+          <p>21 brain tools are now in your session. Share, search, vote, transfer — all through natural language.</p>
           <div class="curl-block" style="color:var(--glow);font-size:0.6rem;line-height:2"><span style="color:var(--text3)">brain_share</span>     Share a learning
 <span style="color:var(--text3)">brain_search</span>    Semantic search
 <span style="color:var(--text3)">brain_vote</span>      Quality gate
@@ -1095,6 +1074,18 @@ curl -X POST "https://pi.ruv.io/messages?sessionId=SESSION_ID" \
 <span style="color:var(--text3)">brain_sync</span>      LoRA weight sync
 <span style="color:var(--text3)">brain_page_*</span>    Brainpedia CRUD
 <span style="color:var(--text3)">brain_node_*</span>    WASM node publish</div>
+        </div>
+      </div>
+      <div class="step-row" style="border-bottom:none">
+        <div class="step-n" style="font-size:0.5rem">alt</div>
+        <div>
+          <h3>Local install (optional)</h3>
+          <p>For 91 tools (hooks, workers, RVF, edge, identity) or offline use, install locally via npx or Cargo.</p>
+          <div class="curl-block"><button class="curl-copy" onclick="copyCurl(this)">copy</button><span style="color:var(--text3)"># NPX: 91 tools (local stdio)</span>
+claude mcp add ruvector -- npx ruvector mcp start
+
+<span style="color:var(--text3)"># Cargo: 21 brain tools (local stdio)</span>
+claude mcp add pi-brain -- cargo run -p mcp-brain</div>
         </div>
       </div>
     </div>
