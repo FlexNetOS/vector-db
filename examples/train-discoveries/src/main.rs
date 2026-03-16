@@ -261,52 +261,42 @@ fn build_knn_graph(
     (matrix, ids)
 }
 
-/// Run ForwardPush PPR from each domain centroid to find cross-domain hubs
+/// Run ForwardPush PPR from individual "bridge" nodes to find cross-domain hubs.
+/// Strategy: for each node, run single-source PPR. If the top-ranked hit is in
+/// a DIFFERENT domain, that's a cross-domain bridge — a novel discovery.
 fn run_sublinear_pagerank(
     graph: &CsrMatrix<f64>,
     ids: &[String],
     discoveries: &HashMap<String, Discovery>,
 ) -> Vec<RankedCorrelation> {
-    let solver = ForwardPushSolver::new(0.85, 0.001);
+    let solver = ForwardPushSolver::new(0.85, 0.0001); // fine-grained epsilon
     let mut correlations = Vec::new();
+    let mut seen = std::collections::HashSet::new();
 
-    // Group node indices by domain
-    let mut domain_nodes: HashMap<String, Vec<usize>> = HashMap::new();
     for (i, id) in ids.iter().enumerate() {
-        if let Some(d) = discoveries.get(id) {
-            domain_nodes.entry(d.domain.clone()).or_default().push(i);
-        }
-    }
+        let source_disc = match discoveries.get(id) {
+            Some(d) => d,
+            None => continue,
+        };
 
-    let domains: Vec<String> = domain_nodes.keys().cloned().collect();
-
-    for source_domain in &domains {
-        let source_nodes = &domain_nodes[source_domain];
-        if source_nodes.is_empty() {
-            continue;
-        }
-
-        // Use multi-seed PPR from all nodes in this domain
-        let seeds: Vec<(usize, f64)> = source_nodes
-            .iter()
-            .map(|&n| (n, 1.0 / source_nodes.len() as f64))
-            .collect();
-
-        let ppr = match solver.ppr_multi_seed(graph, &seeds, 0.85, 0.001) {
+        let ppr = match solver.ppr(graph, i, 0.85, 0.0001) {
             Ok(p) => p,
             Err(_) => continue,
         };
 
-        // Find high-PPR nodes in OTHER domains
+        // Find top cross-domain hits from this node
         for (node_idx, ppr_value) in &ppr {
-            if *node_idx >= ids.len() {
+            if *node_idx >= ids.len() || *node_idx == i {
                 continue;
             }
             let target_id = &ids[*node_idx];
             if let Some(target_disc) = discoveries.get(target_id) {
-                if &target_disc.domain != source_domain && *ppr_value > 0.0001 {
+                if target_disc.domain != source_disc.domain && *ppr_value > 0.005 {
+                    let key = format!("{}→{}", source_disc.domain, target_id);
+                    if seen.contains(&key) { continue; }
+                    seen.insert(key);
                     correlations.push(RankedCorrelation {
-                        source_domain: source_domain.clone(),
+                        source_domain: source_disc.domain.clone(),
                         target_domain: target_disc.domain.clone(),
                         target_title: target_disc.title.clone(),
                         target_id: target_id.clone(),
@@ -319,6 +309,7 @@ fn run_sublinear_pagerank(
     }
 
     correlations.sort_by(|a, b| b.ppr_score.partial_cmp(&a.ppr_score).unwrap());
+    correlations.truncate(50); // top 50 cross-domain bridges
     correlations
 }
 
@@ -435,7 +426,7 @@ fn main() {
     println!("  Embedded {} vectors × {} dims", vectors.len(), DIM);
 
     // 2b. Build similarity graph (sublinear threshold)
-    let knn_k = 8; // each node connects to top-8 most similar neighbors
+    let knn_k = 12; // each node connects to top-12 most similar neighbors
     println!("  Building {}-NN similarity graph...", knn_k);
     let (graph, graph_ids) = build_knn_graph(&vectors, knn_k);
     println!(
