@@ -2944,13 +2944,28 @@ async fn pipeline_crawl_stats(
     // Use persistent adapter from AppState (ADR-115)
     let cc = &state.crawl_adapter;
     let (queries, fetched, extracted, dupes, errors) = cc.stats();
+    let (cache_hits, cache_misses, cache_entries) = cc.cache_stats();
 
     // Include WebMemoryStore stats
     let web_status = state.web_store.status();
 
+    // Calculate cache hit rate
+    let total_cache_ops = cache_hits + cache_misses;
+    let cache_hit_rate = if total_cache_ops > 0 {
+        cache_hits as f64 / total_cache_ops as f64
+    } else {
+        0.0
+    };
+
     Json(serde_json::json!({
         "adapter": "common_crawl",
         "cdx_queries": queries,
+        "cdx_cache": {
+            "hits": cache_hits,
+            "misses": cache_misses,
+            "entries": cache_entries,
+            "hit_rate": format!("{:.1}%", cache_hit_rate * 100.0),
+        },
         "pages_fetched": fetched,
         "pages_extracted": extracted,
         "duplicates_skipped": dupes,

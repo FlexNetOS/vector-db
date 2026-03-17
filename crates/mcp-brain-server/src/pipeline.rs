@@ -548,12 +548,28 @@ pub struct CrawlPage {
 /// Adapter for Common Crawl CDX index + WARC/WET extraction (ADR-096 §10).
 /// Implements 3-tier processing: CDX queries, WET segment batch, full corpus.
 #[derive(Debug)]
+/// CDX cache entry with TTL (ADR-115: avoid redundant API calls).
+#[derive(Clone)]
+pub struct CdxCacheEntry {
+    pub records: Vec<CdxRecord>,
+    pub cached_at: std::time::Instant,
+    pub ttl_secs: u64,
+}
+
+impl CdxCacheEntry {
+    pub fn is_expired(&self) -> bool {
+        self.cached_at.elapsed().as_secs() > self.ttl_secs
+    }
+}
+
 pub struct CommonCrawlAdapter {
     http: reqwest::Client,
     /// Bloom filter for URL deduplication (tracks ~1M URLs at 0.1% FPR)
     seen_urls: dashmap::DashMap<String, ()>,
     /// Content hashes for duplicate detection
     seen_hashes: dashmap::DashMap<String, ()>,
+    /// CDX query cache: key = "{crawl_index}:{url_pattern}" (ADR-115)
+    cdx_cache: dashmap::DashMap<String, CdxCacheEntry>,
     /// Base URL for CDX index API
     cdx_base: String,
     /// Base URL for data.commoncrawl.org (WARC/WET access)
@@ -567,6 +583,8 @@ pub struct CommonCrawlAdapter {
 #[derive(Debug, Default)]
 pub struct CommonCrawlStats {
     pub cdx_queries: AtomicU64,
+    pub cdx_cache_hits: AtomicU64,
+    pub cdx_cache_misses: AtomicU64,
     pub pages_fetched: AtomicU64,
     pub pages_extracted: AtomicU64,
     pub duplicates_skipped: AtomicU64,
@@ -583,6 +601,7 @@ impl CommonCrawlAdapter {
                 .unwrap_or_default(),
             seen_urls: dashmap::DashMap::new(),
             seen_hashes: dashmap::DashMap::new(),
+            cdx_cache: dashmap::DashMap::new(),
             cdx_base: "https://index.commoncrawl.org".into(),
             data_base: "https://data.commoncrawl.org".into(),
             latest_crawl: RwLock::new("CC-MAIN-2026-13".into()),
@@ -596,11 +615,31 @@ impl CommonCrawlAdapter {
     }
 
     /// Query CDX index for URLs matching a pattern (Tier 1: real-time).
+    /// Uses CDX cache (ADR-115) to avoid redundant API calls - 24h TTL.
     pub async fn query_cdx(&self, query: &CdxQuery) -> Result<Vec<CdxRecord>, String> {
         let crawl = match &query.crawl_index {
             Some(c) => c.clone(),
             None => self.latest_crawl.read().await.clone(),
         };
+
+        // Check CDX cache first (ADR-115: avoid redundant API calls)
+        let cache_key = format!("{}:{}:{}", crawl, query.url_pattern, query.limit);
+        if let Some(entry) = self.cdx_cache.get(&cache_key) {
+            if !entry.is_expired() {
+                self.stats.cdx_cache_hits.fetch_add(1, Ordering::Relaxed);
+                // Filter out already-seen URLs and return
+                let records: Vec<CdxRecord> = entry.records.iter()
+                    .filter(|r| !self.seen_urls.contains_key(&r.url))
+                    .cloned()
+                    .collect();
+                for r in &records {
+                    self.seen_urls.insert(r.url.clone(), ());
+                }
+                return Ok(records);
+            }
+        }
+        self.stats.cdx_cache_misses.fetch_add(1, Ordering::Relaxed);
+
         let mut url = format!(
             "{}/{}-index?url={}&output=json&limit={}",
             self.cdx_base, crawl, urlencoding::encode(&query.url_pattern), query.limit
@@ -621,9 +660,20 @@ impl CommonCrawlAdapter {
         let body = resp.text().await.map_err(|e| format!("CDX body read failed: {e}"))?;
 
         // CDX returns newline-delimited JSON
-        let records: Vec<CdxRecord> = body.lines()
+        let all_records: Vec<CdxRecord> = body.lines()
             .filter_map(|line| serde_json::from_str(line).ok())
-            .filter(|r: &CdxRecord| !self.seen_urls.contains_key(&r.url))
+            .collect();
+
+        // Cache all records before filtering (ADR-115)
+        self.cdx_cache.insert(cache_key, CdxCacheEntry {
+            records: all_records.clone(),
+            cached_at: std::time::Instant::now(),
+            ttl_secs: 86400, // 24 hours
+        });
+
+        // Filter out already-seen URLs
+        let records: Vec<CdxRecord> = all_records.into_iter()
+            .filter(|r| !self.seen_urls.contains_key(&r.url))
             .collect();
         for r in &records {
             self.seen_urls.insert(r.url.clone(), ());
@@ -773,6 +823,15 @@ impl CommonCrawlAdapter {
             self.stats.pages_extracted.load(Ordering::Relaxed),
             self.stats.duplicates_skipped.load(Ordering::Relaxed),
             self.stats.errors.load(Ordering::Relaxed),
+        )
+    }
+
+    /// CDX cache statistics (ADR-115).
+    pub fn cache_stats(&self) -> (u64, u64, usize) {
+        (
+            self.stats.cdx_cache_hits.load(Ordering::Relaxed),
+            self.stats.cdx_cache_misses.load(Ordering::Relaxed),
+            self.cdx_cache.len(),
         )
     }
 
