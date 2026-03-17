@@ -648,6 +648,23 @@ impl CommonCrawlAdapter {
         }
     }
 
+    /// Test connectivity to a different HTTPS endpoint for comparison.
+    /// Returns (success, status_code, body_length, error_message, url)
+    pub async fn test_external_connectivity(&self) -> (bool, u16, usize, Option<String>, String) {
+        // Use httpbin.org as a reference HTTPS endpoint
+        let url = "https://httpbin.org/get".to_string();
+        match self.http.get(&url).send().await {
+            Ok(resp) => {
+                let status = resp.status().as_u16();
+                match resp.text().await {
+                    Ok(body) => (status >= 200 && status < 300, status, body.len(), None, url),
+                    Err(e) => (false, status, 0, Some(format!("Body read error: {e}")), url),
+                }
+            }
+            Err(e) => (false, 0, 0, Some(format!("{:?}", e)), url),
+        }
+    }
+
     /// Query CDX index for URLs matching a pattern (Tier 1: real-time).
     /// Uses CDX cache (ADR-115) to avoid redundant API calls - 24h TTL.
     pub async fn query_cdx(&self, query: &CdxQuery) -> Result<Vec<CdxRecord>, String> {

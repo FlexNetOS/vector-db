@@ -2996,12 +2996,12 @@ async fn pipeline_crawl_test(
     let adapter = &state.crawl_adapter;
     let test_url = "https://index.commoncrawl.org/collinfo.json";
 
-    // Test using our configured HTTP client (native-tls, HTTP/1.1)
+    // Test Common Crawl using our configured HTTP client (native-tls, HTTP/1.1)
     let start = std::time::Instant::now();
     let (success, status, body_len, error) = adapter.test_connectivity().await;
     let latency_ms = start.elapsed().as_millis();
 
-    let result = if success {
+    let cc_result = if success {
         serde_json::json!({
             "success": true,
             "url": test_url,
@@ -3019,13 +3019,37 @@ async fn pipeline_crawl_test(
         })
     };
 
+    // Test alternative HTTPS endpoint for comparison
+    let start2 = std::time::Instant::now();
+    let (success2, status2, body_len2, error2, url2) = adapter.test_external_connectivity().await;
+    let latency_ms2 = start2.elapsed().as_millis();
+
+    let external_result = if success2 {
+        serde_json::json!({
+            "success": true,
+            "url": url2,
+            "status": status2,
+            "body_length": body_len2,
+            "latency_ms": latency_ms2,
+        })
+    } else {
+        serde_json::json!({
+            "success": false,
+            "url": url2,
+            "status": status2,
+            "error": error2,
+            "latency_ms": latency_ms2,
+        })
+    };
+
     let adapter_status = serde_json::json!({
         "adapter_queries": adapter.stats().0,
         "cache_stats": adapter.cache_stats(),
     });
 
     Json(serde_json::json!({
-        "connectivity_test": result,
+        "common_crawl_test": cc_result,
+        "external_https_test": external_result,
         "adapter_status": adapter_status,
     }))
 }
