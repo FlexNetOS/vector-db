@@ -901,6 +901,14 @@ impl FirestoreClient {
         self.memories.iter().map(|e| e.value().clone()).collect()
     }
 
+    /// Auto-upvote a memory's quality_score directly (used by training cycle for vote coverage).
+    /// Bypasses voter dedup and contributor checks — only for internal heuristic voting.
+    pub fn auto_upvote_quality(&self, id: &Uuid) {
+        if let Some(mut entry) = self.memories.get_mut(id) {
+            entry.quality_score.upvote();
+        }
+    }
+
     /// Update a memory's embedding in-place (used during RLM re-embedding on startup)
     pub fn update_embedding(&self, id: &Uuid, embedding: &[f32]) {
         if let Some(mut entry) = self.memories.get_mut(id) {

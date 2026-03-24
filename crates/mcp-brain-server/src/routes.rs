@@ -414,6 +414,8 @@ pub struct EnhancedTrainingResult {
     pub working_memory_load: f64,
     /// Neural-symbolic rule count
     pub rule_count: usize,
+    /// Auto-votes applied to under-voted memories (Gap 1: vote coverage)
+    pub auto_votes: usize,
 }
 
 /// Run enhanced training cycle with neural-symbolic feedback (ADR-110).
@@ -500,6 +502,31 @@ pub fn run_enhanced_training_cycle(state: &AppState) -> EnhancedTrainingResult {
         reflections.len()
     };
 
+    // 5. Auto-vote under-voted memories for vote coverage (Gap 1)
+    // Memories with < 2 observations get a heuristic upvote if content is substantive.
+    let auto_votes = {
+        let mut count = 0usize;
+        for mem in &all_memories {
+            if count >= 50 {
+                break; // Cap at 50 auto-votes per cycle
+            }
+            if mem.quality_score.observations() >= 2.0 {
+                continue; // Already has enough votes
+            }
+            let title_ok = mem.title.len() > 10;
+            let content_ok = mem.content.len() > 50;
+            let has_tags = !mem.tags.is_empty();
+            if (title_ok && content_ok) || has_tags {
+                state.store.auto_upvote_quality(&mem.id);
+                count += 1;
+            }
+        }
+        if count > 0 {
+            tracing::info!("Auto-voted {} under-voted memories for vote coverage", count);
+        }
+        count
+    };
+
     let sona_stats = state.sona.read().stats();
     let working_memory_load = state.internal_voice.read().working_memory_utilization();
     let rule_count = state.neural_symbolic.read().rule_count();
@@ -515,6 +542,7 @@ pub fn run_enhanced_training_cycle(state: &AppState) -> EnhancedTrainingResult {
         voice_thoughts,
         working_memory_load,
         rule_count,
+        auto_votes,
     }
 }
 
@@ -1255,16 +1283,25 @@ async fn search_memories(
     scored.truncate(limit);
     let results: Vec<ScoredBrainMemory> = scored.into_iter().map(|(score, memory)| ScoredBrainMemory { memory, score }).collect();
 
-    // ── SONA: Record search trajectory for learning ──
+    // ── SONA: Record search trajectory for learning (Gap 2: trajectory diversity) ──
+    // Only end the trajectory if we have enough results (>= 3) to form a meaningful pattern.
+    // Short searches accumulate as steps without premature trajectory completion.
     if state.rvf_flags.sona_enabled && !results.is_empty() {
         let sona = state.sona.read();
         let mut builder = sona.begin_trajectory(query_embedding.clone());
-        builder.add_step(
-            results[0].memory.embedding.clone(),
-            vec![],
-            results[0].memory.quality_score.mean() as f32,
-        );
-        sona.end_trajectory(builder, 0.5);
+        // Add a step for each result (up to 5) so SONA sees richer trajectories
+        for r in results.iter().take(5) {
+            builder.add_step(
+                r.memory.embedding.clone(),
+                vec![],
+                r.memory.quality_score.mean() as f32,
+            );
+        }
+        if results.len() >= 3 {
+            sona.end_trajectory(builder, 0.5);
+        }
+        // If < 3 results, trajectory is dropped (not ended), avoiding
+        // trivially short single-step trajectories that add noise.
     }
 
     // ── ADR-123: Auto-populate GWT working memory from top search result ──
@@ -1278,6 +1315,14 @@ async fn search_memories(
             wm_embedding,
             crate::voice::ContentSource::Perception,
         );
+    }
+
+    // ── Gap 3: Record search query embedding as drift signal ──
+    // The queries users make are a signal of what topics they care about.
+    // Recording them gives drift detection actual centroid snapshots.
+    {
+        let mut drift = state.drift.write();
+        drift.record("search_queries", &query_embedding);
     }
 
     Ok(Json(results))
@@ -2289,11 +2334,12 @@ async fn train_enhanced_endpoint(
     check_read_only(&state)?;
     let result = run_enhanced_training_cycle(&state);
     tracing::info!(
-        "Enhanced training cycle: sona={}, propositions={}, voice_thoughts={}, rules={}",
+        "Enhanced training cycle: sona={}, propositions={}, voice_thoughts={}, rules={}, auto_votes={}",
         result.sona_patterns,
         result.propositions_extracted,
         result.voice_thoughts,
-        result.rule_count
+        result.rule_count,
+        result.auto_votes
     );
     Ok(Json(result))
 }
@@ -4570,6 +4616,33 @@ async fn handle_mcp_tool_call(
 
         _ => Err(format!("Unknown tool: {tool_name}")),
     };
+
+    // ── Gap 2: SONA trajectory diversity for MCP tool calls ──
+    // Record trajectory steps for brain_share, brain_search, and brain_vote so SONA
+    // sees varied actions across a session instead of only single-search trajectories.
+    if state.rvf_flags.sona_enabled && result.is_ok() {
+        match tool_name {
+            "brain_share" | "brain_search" | "brain_vote" => {
+                let sona = state.sona.read();
+                // Build a lightweight embedding from the tool name + args for trajectory diversity
+                let action_text = format!("{}:{}", tool_name, args);
+                let action_emb = state.embedding_engine.read().embed(&action_text);
+                let reward = match tool_name {
+                    "brain_share" => 0.7_f32,  // Sharing is high-value
+                    "brain_vote" => 0.6,       // Voting is medium-value
+                    _ => 0.5,                  // Search is baseline
+                };
+                let mut builder = sona.begin_trajectory(action_emb.clone());
+                builder.add_step(action_emb, vec![], reward);
+                // Only end trajectory for share/vote (discrete actions).
+                // Search trajectories are handled by the REST endpoint with the >= 3 rule.
+                if tool_name != "brain_search" {
+                    sona.end_trajectory(builder, reward);
+                }
+            }
+            _ => {}
+        }
+    }
 
     result
 }
