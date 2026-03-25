@@ -280,7 +280,9 @@ impl TurboQuantCompressor {
 
                 for &val in block {
                     let normalized = if scale > f32::EPSILON {
-                        ((val - offset) / scale).round().clamp(0.0, (levels - 1) as f32) as u8
+                        ((val - offset) / scale)
+                            .round()
+                            .clamp(0.0, (levels - 1) as f32) as u8
                     } else {
                         0u8
                     };
@@ -305,14 +307,16 @@ impl TurboQuantCompressor {
             if self.config.enable_qjl_residual {
                 // Dequantize to get the reconstruction
                 let reconstructed = self.dequantize_rotated(
-                    &quantized_values[quantized_values.len() - num_blocks_per_vector * bytes_per_block..],
+                    &quantized_values
+                        [quantized_values.len() - num_blocks_per_vector * bytes_per_block..],
                     &scales[scales.len() - num_blocks_per_vector..],
                     &offsets[offsets.len() - num_blocks_per_vector..],
                     padded_dim,
                 );
 
                 // Compute residual in rotated space
-                let residual: Vec<f32> = rotated.iter()
+                let residual: Vec<f32> = rotated
+                    .iter()
                     .zip(reconstructed.iter())
                     .map(|(r, q)| r - q)
                     .collect();
@@ -371,7 +375,8 @@ impl TurboQuantCompressor {
 
             // Dequantize scalar values
             let mut rotated = self.dequantize_rotated(
-                &compressed.quantized_values[qv_offset..qv_offset + num_blocks_per_vector * bytes_per_block],
+                &compressed.quantized_values
+                    [qv_offset..qv_offset + num_blocks_per_vector * bytes_per_block],
                 &compressed.scales[scale_offset..scale_offset + num_blocks_per_vector],
                 &compressed.offsets[scale_offset..scale_offset + num_blocks_per_vector],
                 padded_dim,
@@ -421,7 +426,8 @@ impl TurboQuantCompressor {
     pub fn decompress_single(&self, compressed: &TurboQuantized, index: usize) -> Result<Vec<f32>> {
         if index >= compressed.num_vectors {
             return Err(RuvLLMError::Quantization(format!(
-                "Vector index {} out of range ({})", index, compressed.num_vectors
+                "Vector index {} out of range ({})",
+                index, compressed.num_vectors
             )));
         }
 
@@ -438,7 +444,8 @@ impl TurboQuantCompressor {
         let scale_offset = index * num_blocks_per_vector;
 
         let mut rotated = self.dequantize_rotated(
-            &compressed.quantized_values[qv_offset..qv_offset + num_blocks_per_vector * bytes_per_block],
+            &compressed.quantized_values
+                [qv_offset..qv_offset + num_blocks_per_vector * bytes_per_block],
             &compressed.scales[scale_offset..scale_offset + num_blocks_per_vector],
             &compressed.offsets[scale_offset..scale_offset + num_blocks_per_vector],
             padded_dim,
@@ -490,7 +497,8 @@ impl TurboQuantCompressor {
         // representation for better performance, but correctness first.
         let decompressed = self.decompress_single(compressed, index)?;
 
-        let dot: f32 = query.iter()
+        let dot: f32 = query
+            .iter()
             .zip(decompressed.iter())
             .map(|(a, b)| a * b)
             .sum();
@@ -688,9 +696,10 @@ impl TurboQuantCacheTier {
 
     /// Total memory usage in bytes
     pub fn memory_bytes(&self) -> usize {
-        self.pairs.iter().map(|p| {
-            p.key.memory_bytes() + p.value.memory_bytes()
-        }).sum()
+        self.pairs
+            .iter()
+            .map(|p| p.key.memory_bytes() + p.value.memory_bytes())
+            .sum()
     }
 
     /// Evict oldest N pairs
@@ -746,8 +755,12 @@ fn block_min_max(data: &[f32]) -> (f32, f32) {
     let mut min = f32::MAX;
     let mut max = f32::MIN;
     for &v in data {
-        if v < min { min = v; }
-        if v > max { max = v; }
+        if v < min {
+            min = v;
+        }
+        if v > max {
+            max = v;
+        }
     }
     (min, max)
 }
@@ -795,11 +808,7 @@ impl TurboQuantEmbeddingStore {
     ///
     /// This is more efficient than adding one at a time since TurboQuant
     /// operates on batches.
-    pub fn build_from_batch(
-        &mut self,
-        embeddings: &[Vec<f32>],
-        ids: &[u64],
-    ) -> Result<()> {
+    pub fn build_from_batch(&mut self, embeddings: &[Vec<f32>], ids: &[u64]) -> Result<()> {
         if embeddings.len() != ids.len() {
             return Err(RuvLLMError::Quantization(
                 "Embedding and ID count mismatch".to_string(),
@@ -819,10 +828,15 @@ impl TurboQuantEmbeddingStore {
 
     /// Retrieve a decompressed embedding by ID
     pub fn get(&self, id: u64) -> Result<Vec<f32>> {
-        let index = self.id_to_index.iter().position(|&i| i == id)
+        let index = self
+            .id_to_index
+            .iter()
+            .position(|&i| i == id)
             .ok_or_else(|| RuvLLMError::Quantization(format!("Embedding ID {} not found", id)))?;
 
-        let compressed = self.compressed.as_ref()
+        let compressed = self
+            .compressed
+            .as_ref()
             .ok_or_else(|| RuvLLMError::Quantization("Store is empty".to_string()))?;
 
         self.compressor.decompress_single(compressed, index)
@@ -832,12 +846,16 @@ impl TurboQuantEmbeddingStore {
     ///
     /// Returns (id, score) pairs sorted by descending similarity.
     pub fn search(&self, query: &[f32], top_k: usize) -> Result<Vec<(u64, f32)>> {
-        let compressed = self.compressed.as_ref()
+        let compressed = self
+            .compressed
+            .as_ref()
             .ok_or_else(|| RuvLLMError::Quantization("Store is empty".to_string()))?;
 
         let scores = self.compressor.inner_product_batch(query, compressed)?;
 
-        let mut scored: Vec<(u64, f32)> = self.id_to_index.iter()
+        let mut scored: Vec<(u64, f32)> = self
+            .id_to_index
+            .iter()
             .zip(scores.iter())
             .map(|(&id, &score)| (id, score))
             .collect();
@@ -860,7 +878,10 @@ impl TurboQuantEmbeddingStore {
 
     /// Total memory usage
     pub fn memory_bytes(&self) -> usize {
-        self.compressed.as_ref().map(|c| c.memory_bytes()).unwrap_or(0)
+        self.compressed
+            .as_ref()
+            .map(|c| c.memory_bytes())
+            .unwrap_or(0)
             + self.id_to_index.len() * 8
     }
 
@@ -868,7 +889,9 @@ impl TurboQuantEmbeddingStore {
     pub fn compression_ratio(&self) -> f32 {
         let original = self.id_to_index.len() * self.dim * 4;
         let compressed = self.memory_bytes();
-        if compressed == 0 { return 0.0; }
+        if compressed == 0 {
+            return 0.0;
+        }
         original as f32 / compressed as f32
     }
 }
@@ -893,10 +916,12 @@ mod tests {
         assert_eq!(decompressed[0].len(), data.len());
 
         // Check reconstruction error (should be small for 3.5 bits)
-        let mse: f32 = data.iter()
+        let mse: f32 = data
+            .iter()
             .zip(decompressed[0].iter())
             .map(|(a, b)| (a - b).powi(2))
-            .sum::<f32>() / data.len() as f32;
+            .sum::<f32>()
+            / data.len() as f32;
 
         assert!(mse < 0.1, "MSE too high: {}", mse);
     }
@@ -913,10 +938,12 @@ mod tests {
         let compressed = compressor.compress(&data).unwrap();
         let decompressed = compressor.decompress(&compressed).unwrap();
 
-        let mse: f32 = data.iter()
+        let mse: f32 = data
+            .iter()
             .zip(decompressed[0].iter())
             .map(|(a, b)| (a - b).powi(2))
-            .sum::<f32>() / data.len() as f32;
+            .sum::<f32>()
+            / data.len() as f32;
 
         // 4-bit should have even lower error
         assert!(mse < 0.05, "4-bit MSE too high: {}", mse);
@@ -945,13 +972,17 @@ mod tests {
 
         // Compressed inner product (asymmetric: exact query × compressed key)
         let compressed_b = compressor.compress(&b).unwrap();
-        let approx_ip = compressor.inner_product_asymmetric(&a, &compressed_b, 0).unwrap();
+        let approx_ip = compressor
+            .inner_product_asymmetric(&a, &compressed_b, 0)
+            .unwrap();
 
         let relative_error = ((true_ip - approx_ip) / true_ip).abs();
         assert!(
             relative_error < 0.15,
             "Inner product relative error too high: {} (true={}, approx={})",
-            relative_error, true_ip, approx_ip
+            relative_error,
+            true_ip,
+            approx_ip
         );
     }
 
@@ -970,10 +1001,12 @@ mod tests {
         assert_eq!(decompressed.len(), 3);
 
         for (original, restored) in [&v1, &v2, &v3].iter().zip(decompressed.iter()) {
-            let mse: f32 = original.iter()
+            let mse: f32 = original
+                .iter()
                 .zip(restored.iter())
                 .map(|(a, b)| (a - b).powi(2))
-                .sum::<f32>() / original.len() as f32;
+                .sum::<f32>()
+                / original.len() as f32;
             assert!(mse < 0.1, "Batch MSE too high: {}", mse);
         }
     }
@@ -1034,7 +1067,12 @@ mod tests {
 
     #[test]
     fn test_bit_configurations() {
-        for bits in [TurboQuantBits::Bits2_5, TurboQuantBits::Bits3_0, TurboQuantBits::Bits3_5, TurboQuantBits::Bits4_0] {
+        for bits in [
+            TurboQuantBits::Bits2_5,
+            TurboQuantBits::Bits3_0,
+            TurboQuantBits::Bits3_5,
+            TurboQuantBits::Bits4_0,
+        ] {
             let config = TurboQuantConfig {
                 bits,
                 ..Default::default()
@@ -1078,7 +1116,12 @@ mod tests {
         let original = 256 * 4; // FP32
 
         // Compressed should be significantly smaller
-        assert!(mem < original, "Compressed {} >= original {}", mem, original);
+        assert!(
+            mem < original,
+            "Compressed {} >= original {}",
+            mem,
+            original
+        );
     }
 
     #[test]
@@ -1100,10 +1143,12 @@ mod tests {
         let retrieved = store.get(5).unwrap();
         assert_eq!(retrieved.len(), 128);
 
-        let mse: f32 = embeddings[5].iter()
+        let mse: f32 = embeddings[5]
+            .iter()
             .zip(retrieved.iter())
             .map(|(a, b)| (a - b).powi(2))
-            .sum::<f32>() / 128.0;
+            .sum::<f32>()
+            / 128.0;
         assert!(mse < 0.1, "Embedding retrieval MSE too high: {}", mse);
     }
 
@@ -1117,8 +1162,10 @@ mod tests {
             .map(|i| {
                 let mut v = vec![0.0f32; 128];
                 v[i * 25] = 1.0; // Distinct spike for each
-                // Add some shared signal
-                for j in 0..128 { v[j] += 0.01; }
+                                 // Add some shared signal
+                for j in 0..128 {
+                    v[j] += 0.01;
+                }
                 v
             })
             .collect();
@@ -1133,6 +1180,10 @@ mod tests {
         let results = store.search(&query, 3).unwrap();
         assert!(!results.is_empty());
         // The top result should be id=102 (embedding[2])
-        assert_eq!(results[0].0, 102, "Expected top result to be ID 102, got {}", results[0].0);
+        assert_eq!(
+            results[0].0, 102,
+            "Expected top result to be ID 102, got {}",
+            results[0].0
+        );
     }
 }

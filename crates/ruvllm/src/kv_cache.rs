@@ -1432,9 +1432,8 @@ impl Default for TurboQuantKvCacheConfig {
 impl TurboQuantKvCache {
     /// Create a new TurboQuant-enhanced KV cache
     pub fn new(config: TurboQuantKvCacheConfig) -> Result<Self> {
-        let turbo_tier = crate::quantize::turbo_quant::TurboQuantCacheTier::new(
-            config.turbo_config.clone(),
-        )?;
+        let turbo_tier =
+            crate::quantize::turbo_quant::TurboQuantCacheTier::new(config.turbo_config.clone())?;
 
         Ok(Self {
             config,
