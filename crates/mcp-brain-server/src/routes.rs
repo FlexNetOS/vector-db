@@ -6069,9 +6069,17 @@ struct GoogleChatUser {
     email: Option<String>,
 }
 
-/// Google Chat card response — always includes `text` fallback for HTTP endpoint mode
+/// Google Chat response wrapped in the Add-ons DataActions format.
+///
+/// Google Workspace Add-ons expect responses wrapped in:
+///   { "hostAppDataAction": { "chatDataActionMarkup": { "createMessageAction": { "message": {...} } } } }
+///
+/// NOT the raw Message object. Returning a raw Message causes Google Chat
+/// to show "not responding" even though the HTTP status is 200.
+///
+/// See: https://developers.google.com/workspace/add-ons/chat/build
 fn chat_card(title: &str, subtitle: &str, sections: Vec<serde_json::Value>) -> serde_json::Value {
-    serde_json::json!({
+    let message = serde_json::json!({
         "text": format!("{} — {}", title, subtitle),
         "cardsV2": [{
             "cardId": "brain-response",
@@ -6085,6 +6093,21 @@ fn chat_card(title: &str, subtitle: &str, sections: Vec<serde_json::Value>) -> s
                 "sections": sections
             }
         }]
+    });
+
+    wrap_chat_response(message)
+}
+
+/// Wrap a Chat Message in the Add-ons DataActions envelope.
+fn wrap_chat_response(message: serde_json::Value) -> serde_json::Value {
+    serde_json::json!({
+        "hostAppDataAction": {
+            "chatDataActionMarkup": {
+                "createMessageAction": {
+                    "message": message
+                }
+            }
+        }
     })
 }
 
@@ -6118,9 +6141,9 @@ async fn google_chat_handler(
         Err(err) => {
             let raw = String::from_utf8_lossy(&body);
             tracing::warn!("Failed to parse Chat event: {}. Raw: {}", err, &raw[..raw.len().min(500)]);
-            return Json(serde_json::json!({
+            return Json(wrap_chat_response(serde_json::json!({
                 "text": "Pi Brain received your message but couldn't parse it. Try: help"
-            }));
+            })));
         }
     };
 
