@@ -162,12 +162,75 @@ gcloud scheduler jobs update http "${SCHEDULER_NAME}" \
 
 echo "  ✓ Scheduler set: every Monday at 06:00 UTC"
 
+# --- Step 6: Create nightly training job ---
+echo "▸ [6/7] Creating ruvltra-nightly-train job..."
+JOB_NAME="ruvltra-nightly-train"
+gcloud run jobs create "${JOB_NAME}" \
+    --image="${IMAGE}" \
+    --region="${REGION}" \
+    --project="${PROJECT_ID}" \
+    --memory=32Gi \
+    --cpu=8 \
+    --gpu=1 \
+    --gpu-type=nvidia-l4 \
+    --max-retries=1 \
+    --task-timeout=7200s \
+    --args="bash,scripts/training/nightly_train.sh" \
+    --set-secrets="HF_TOKEN=huggingface-token:latest" \
+    --set-env-vars="PYTHONUNBUFFERED=1,WANDB_DISABLED=true" \
+    2>/dev/null || \
+gcloud run jobs update "${JOB_NAME}" \
+    --image="${IMAGE}" \
+    --region="${REGION}" \
+    --project="${PROJECT_ID}" \
+    --memory=32Gi \
+    --cpu=8 \
+    --gpu=1 \
+    --gpu-type=nvidia-l4 \
+    --max-retries=1 \
+    --task-timeout=7200s \
+    --args="bash,scripts/training/nightly_train.sh" \
+    --set-secrets="HF_TOKEN=huggingface-token:latest" \
+    --set-env-vars="PYTHONUNBUFFERED=1,WANDB_DISABLED=true"
+
+echo "  ✓ ${JOB_NAME} ready"
+
+# --- Step 7: Set up nightly training scheduler ---
+echo "▸ [7/7] Setting up nightly training schedule..."
+SCHEDULER_NAME="ruvltra-nightly-train"
+gcloud scheduler jobs create http "${SCHEDULER_NAME}" \
+    --location="${REGION}" \
+    --project="${PROJECT_ID}" \
+    --schedule="0 3 * * *" \
+    --time-zone="UTC" \
+    --uri="https://${REGION}-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/${PROJECT_ID}/jobs/ruvltra-nightly-train:run" \
+    --http-method=POST \
+    --oauth-service-account-email="${SA_EMAIL}" \
+    --description="Nightly RuvLTRA training from brain learnings (03:00 UTC)" \
+    2>/dev/null || \
+gcloud scheduler jobs update http "${SCHEDULER_NAME}" \
+    --location="${REGION}" \
+    --project="${PROJECT_ID}" \
+    --schedule="0 3 * * *" \
+    --time-zone="UTC" \
+    --uri="https://${REGION}-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/${PROJECT_ID}/jobs/ruvltra-nightly-train:run" \
+    --http-method=POST \
+    --oauth-service-account-email="${SA_EMAIL}" \
+    --description="Nightly RuvLTRA training from brain learnings (03:00 UTC)"
+
+echo "  ✓ Nightly training scheduled: daily at 03:00 UTC"
+
 echo ""
 echo "╔══════════════════════════════════════════════════════════════╗"
 echo "║  Deployment complete!                                        ║"
 echo "║                                                              ║"
 echo "║  Run manually:                                               ║"
-echo "║    gcloud run jobs execute ruvltra-calibration --region=${REGION}  ║"
-echo "║    gcloud run jobs execute ruvltra-sft-training --region=${REGION} ║"
-echo "║    gcloud run jobs execute ruvltra-benchmark --region=${REGION}    ║"
+echo "║    gcloud run jobs execute ruvltra-calibration --region=${REGION}     ║"
+echo "║    gcloud run jobs execute ruvltra-sft-training --region=${REGION}    ║"
+echo "║    gcloud run jobs execute ruvltra-benchmark --region=${REGION}       ║"
+echo "║    gcloud run jobs execute ruvltra-nightly-train --region=${REGION}   ║"
+echo "║                                                              ║"
+echo "║  Schedules:                                                  ║"
+echo "║    Weekly benchmark: Mondays 06:00 UTC                       ║"
+echo "║    Nightly training: Daily 03:00 UTC                         ║"
 echo "╚══════════════════════════════════════════════════════════════╝"

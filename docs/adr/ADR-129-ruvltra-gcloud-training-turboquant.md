@@ -299,6 +299,48 @@ Each model card will include:
 | ruvltra-medium | v1.0 | v2.0-tq |
 | ruvltra-small | v1.0 | v2.0-tq |
 
+## Nightly Continuous Learning Loop
+
+Beyond the initial 4-phase training, a nightly pipeline continuously improves the models using fresh brain learnings from pi.ruv.io.
+
+### Schedule
+
+| Job | Schedule | What It Does |
+|-----|----------|-------------|
+| `brain-train` | Every 5 min | Brain memory optimization (existing) |
+| `brain-wet-daily` | Daily 05:00 UTC | Common Crawl WET extraction (existing) |
+| `ruvltra-nightly-train` | Daily 03:00 UTC | **NEW** — incremental LoRA from brain learnings → validate → push to HF |
+| `ruvltra-benchmark-weekly` | Monday 06:00 UTC | Automated benchmark + release gate check |
+
+### Nightly Pipeline Flow
+
+```
+03:00 UTC — ruvltra-nightly-train fires
+     │
+     ├─ [1] Export brain learnings (last 24h) + ADR corpus
+     │     └─ Skip if < 10 records
+     ├─ [2] Contamination check (13-gram)
+     ├─ [3] Incremental LoRA training (rank-8, 1 epoch, lr=1e-5)
+     ├─ [4] Release gate check (G1-G7)
+     │     └─ Block publishing if any gate fails
+     └─ [5] Push to HuggingFace (only if gates pass)
+```
+
+### Safety
+
+- **Minimum data threshold**: Skips if < 10 records (prevents training on noise)
+- **Release gates**: All 7 gates must pass before publishing
+- **Incremental only**: Rank-8 LoRA, 1 epoch — small updates, not full retraining
+- **7-day retention**: Old runs auto-cleaned
+- **Daily cost**: ~$4 (L4 GPU × ~2hr, only on days with sufficient data)
+- **Monthly cost**: ~$60-90
+
+### Implementation
+
+- Script: `scripts/training/nightly_train.sh`
+- Cloud Run Job: `ruvltra-nightly-train` (L4 GPU, 8 CPU, 32GB RAM, 2hr timeout)
+- Deployed via: `scripts/training/deploy_training.sh` (Step 6-7)
+
 ## Rollback Plan
 
 If fine-tuning degrades model quality (any release gate fails after publishing):
