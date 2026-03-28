@@ -1,21 +1,27 @@
 # RuvLTRA Training Pipeline
-# Supports: LoRA SFT, DPO, imatrix calibration, GGUF conversion
-# Target: Cloud Run Jobs with L4 GPU or Vertex AI
+# Supports: LoRA SFT, DPO, calibration, TurboQuant profiling, GGUF conversion
+# Target: Cloud Run Jobs with L4 GPU
+# Build time: ~5 min (no CUDA source compilation)
 
 FROM nvidia/cuda:12.4.1-runtime-ubuntu22.04
 
-ENV DEBIAN_FRONTEND=noninteractive
-ENV PYTHONUNBUFFERED=1
+ENV DEBIAN_FRONTEND=noninteractive \
+    PYTHONUNBUFFERED=1 \
+    PIP_NO_CACHE_DIR=1 \
+    PIP_DISABLE_PIP_VERSION_CHECK=1
 
+# System deps (libgomp needed for llama-cpp-python, git for HF downloads)
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    python3.11 python3.11-venv python3.11-dev python3-pip git curl \
+    python3.11 python3.11-venv python3.11-dev python3-pip \
+    git curl libgomp1 \
     && rm -rf /var/lib/apt/lists/* \
     && update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.11 1 \
     && update-alternatives --install /usr/bin/python python /usr/bin/python3.11 1
 
-# Install Python dependencies (prebuilt wheels, no CUDA compilation needed)
-RUN pip install --no-cache-dir \
-    torch==2.3.1 \
+# Core ML dependencies (single layer for cache efficiency)
+RUN pip install \
+    torch==2.3.1 --index-url https://download.pytorch.org/whl/cu124 \
+    && pip install \
     transformers>=4.44.0 \
     peft>=0.12.0 \
     trl>=0.9.0 \
@@ -23,21 +29,16 @@ RUN pip install --no-cache-dir \
     huggingface_hub>=0.24.0 \
     accelerate>=0.33.0 \
     bitsandbytes>=0.43.0 \
-    sentencepiece \
-    protobuf \
-    safetensors
+    sentencepiece protobuf safetensors gguf
 
-# Install llama-cpp-python prebuilt CUDA wheel (no compilation)
-RUN pip install --no-cache-dir llama-cpp-python>=0.2.80 \
+# llama-cpp-python with prebuilt CUDA wheel
+RUN pip install llama-cpp-python>=0.2.80 \
     --extra-index-url https://abetlen.github.io/llama-cpp-python/whl/cu124 \
-    || pip install --no-cache-dir llama-cpp-python>=0.2.80 \
-    || echo "WARN: llama-cpp-python install failed, using transformers-only mode"
-
-# Install llama.cpp tools via pip (no source build needed)
-RUN pip install --no-cache-dir gguf
+    || pip install llama-cpp-python>=0.2.80 \
+    || echo "WARN: llama-cpp-python unavailable, using transformers-only mode"
 
 WORKDIR /app
 COPY . /app/
 
 ENTRYPOINT ["python", "-u"]
-CMD ["run_calibration.py"]
+CMD ["run_calibration.py", "--model-id", "ruv/ruvltra-small"]
