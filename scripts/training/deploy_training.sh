@@ -50,7 +50,7 @@ gcloud run jobs create "${JOB_NAME}" \
     --gpu=1 \
     --gpu-type=nvidia-l4 \
     --max-retries=1 \
-    --task-timeout=7200s \
+    --task-timeout=3600s \
     --args="run_calibration.py,--model-id,ruvnet/ruvLTRA-7b,--upload" \
     --set-secrets="HF_TOKEN=huggingface-token:latest" \
     --set-env-vars="PYTHONUNBUFFERED=1" \
@@ -64,7 +64,7 @@ gcloud run jobs update "${JOB_NAME}" \
     --gpu=1 \
     --gpu-type=nvidia-l4 \
     --max-retries=1 \
-    --task-timeout=7200s \
+    --task-timeout=3600s \
     --args="run_calibration.py,--model-id,ruvnet/ruvLTRA-7b,--upload" \
     --set-secrets="HF_TOKEN=huggingface-token:latest" \
     --set-env-vars="PYTHONUNBUFFERED=1"
@@ -174,7 +174,7 @@ gcloud run jobs create "${JOB_NAME}" \
     --gpu=1 \
     --gpu-type=nvidia-l4 \
     --max-retries=1 \
-    --task-timeout=7200s \
+    --task-timeout=3600s \
     --args="bash,scripts/training/nightly_train.sh" \
     --set-secrets="HF_TOKEN=huggingface-token:latest" \
     --set-env-vars="PYTHONUNBUFFERED=1,WANDB_DISABLED=true" \
@@ -188,7 +188,7 @@ gcloud run jobs update "${JOB_NAME}" \
     --gpu=1 \
     --gpu-type=nvidia-l4 \
     --max-retries=1 \
-    --task-timeout=7200s \
+    --task-timeout=3600s \
     --args="bash,scripts/training/nightly_train.sh" \
     --set-secrets="HF_TOKEN=huggingface-token:latest" \
     --set-env-vars="PYTHONUNBUFFERED=1,WANDB_DISABLED=true"
