@@ -441,12 +441,26 @@ Weekly benchmark runs add ~$4/week (~$16/month).
 | GPU quota limits | Training job fails | Use preemptible instances, retry logic, L4 fallback |
 | HuggingFace token scope | Upload fails | Verify write scope before training pipeline starts |
 
+## Tooling Decision: ruvllm-native over llama.cpp
+
+The calibration and quantization pipeline uses **ruvllm-native tooling** rather than compiling llama.cpp from source:
+
+| Component | Previous (llama.cpp) | Current (ruvllm-native) |
+|-----------|---------------------|------------------------|
+| GGUF quantization | `llama-quantize` binary (requires CUDA source build) | `RuvltraQuantizer` (Rust) + `gguf` Python package |
+| Model loading | `llama-imatrix` binary | `llama-cpp-python` (prebuilt CUDA wheel) |
+| KV-cache profiling | N/A | `TurboQuantCompressor` + `TurboQuantProfile` (Rust) |
+| Docker build time | 20+ min (CUDA kernel compilation) | ~5 min (pip install prebuilt wheels) |
+
+**Rationale**: Building llama.cpp from source requires CUDA toolkit compilation of Flash Attention kernels (~100 CUDA template files), which exceeds Cloud Build timeout limits. The ruvllm ecosystem already provides all needed quantization, profiling, and inference capabilities via `RuvltraQuantizer`, `TurboQuantCompressor`, and the `gguf` Python library.
+
 ## Alternatives Considered
 
 1. **Vertex AI Model Garden**: Pre-built fine-tuning pipelines, but no TurboQuant integration and limited model architecture support.
 2. **GKE with GPU node pool**: More flexible but higher operational complexity. Cloud Run jobs are simpler for batch workloads.
 3. **TPU training**: Better cost/perf for large models, but RuvLTRA models (0.5B-3B) are small enough that A100 is sufficient and simpler.
 4. **External training providers** (Lambda, RunPod): Cheaper GPU hours but no integration with existing GCloud secrets, scheduler, and Artifact Registry.
+5. **llama.cpp source build**: Full CUDA compilation for `llama-imatrix` and `llama-quantize`. Rejected due to 20+ minute build times that exceed Cloud Build timeout, and redundancy with existing ruvllm tooling.
 
 ## Next Steps
 
