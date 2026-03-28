@@ -42,49 +42,55 @@ RuvLTRA models (0.5B-3B parameters) are the purpose-built LLMs powering Claude C
 
 ## Decision
 
-### Phase 1: TurboQuant-Optimized Quantization (Week 1)
+### Phase 1: imatrix Recalibration + TurboQuant KV Profiling (Week 1)
 
-**Goal**: Produce TurboQuant-calibrated GGUF files with imatrix calibration data that minimizes TurboQuant quantization error.
+**Goal**: Produce improved GGUF quantizations with code-focused imatrix calibration, and generate TurboQuant KV-cache configuration profiles per model.
 
-#### 1.1 imatrix Recalibration for TurboQuant
+**Important**: TurboQuant operates at **runtime on KV-cache and embeddings** — it is not a weight quantization format. It is data-oblivious (no training, no codebooks). The optimization here is:
+1. Better imatrix calibration → better base GGUF quantizations
+2. Per-model TurboQuant KV profiles → optimal bit-width per attention layer at runtime
 
-Standard imatrix calibration optimizes for standard quantization. TurboQuant uses asymmetric per-channel quantization with different error characteristics. We will:
+#### 1.1 imatrix Recalibration
 
-1. Generate TurboQuant-aware importance matrices using calibration data that emphasizes:
-   - KV-cache attention patterns (high-attention token distributions)
-   - Per-channel variance analysis for asymmetric quantization
-   - Code generation, agent routing, and Claude Code instruction-following tasks
+Generate new importance matrices using RuvLTRA-specific calibration data:
+- Code generation tasks (HumanEval, MBPP)
+- Agent routing examples (Claude Flow dataset, 2,700+ examples)
+- Claude Code instruction-following (ADR corpus, v2.1.0 code)
 
-2. Produce new GGUF variants:
+Produce updated GGUF variants with code-optimized imatrix:
 
-| Variant | Quantization | TurboQuant KV | Total Memory (3B) | Use Case |
-|---------|-------------|---------------|-------------------|----------|
-| `Q4_K_M-TQ3` | Q4_K_M weights + 3-bit KV | 10.7x KV compression | ~2.1 GB | **Default — production** |
-| `Q4_K_M-TQ4` | Q4_K_M weights + 4-bit KV | 8x KV compression | ~2.3 GB | High quality |
-| `Q8_0-TQ3` | Q8 weights + 3-bit KV | 10.7x KV compression | ~3.5 GB | Quality-first |
-| `Q2_K-TQ2` | Q2_K weights + 2-bit KV | 32x KV compression | ~1.0 GB | Edge/mobile |
+| Variant | Format | Size (3B) | Use Case |
+|---------|--------|-----------|----------|
+| `Q4_K_M` (recalibrated) | Standard GGUF | ~2.1 GB | **Default — production** |
+| `Q5_K_M` (recalibrated) | Standard GGUF | ~2.5 GB | Higher quality |
+| `Q8_0` (recalibrated) | Standard GGUF | ~3.5 GB | Quality-first |
+| `Q2_K` (recalibrated) | Standard GGUF | ~1.0 GB | Edge/mobile |
 
-#### 1.2 Implementation
+#### 1.2 TurboQuant KV-Cache Profiling
+
+Profile each model's attention patterns to determine optimal per-layer TurboQuant configuration:
 
 ```bash
-# Cloud Run Job: TurboQuant calibration
-gcloud run jobs create ruvltra-turboquant-calibration \
+# Cloud Run Job: imatrix + TurboQuant profiling
+gcloud run jobs create ruvltra-calibration \
   --image=gcr.io/ruv-dev/ruvltra-training:latest \
   --cpu=8 --memory=32Gi --gpu=1 --gpu-type=nvidia-l4 \
   --region=us-central1 \
   --set-secrets=HF_TOKEN=huggingface-token:latest \
   --max-retries=1 --task-timeout=3600s \
-  --command="python3,calibrate_turboquant.py"
+  --command="python3,calibrate_and_profile.py"
 ```
 
-**Calibration script** produces:
-1. TurboQuant-aware imatrix from calibration dataset (code generation + agent routing examples)
-2. Per-channel scale/zero-point calibration for each KV head
-3. Optimal bit-width recommendation per layer based on attention entropy
+**Outputs**:
+1. New imatrix files for each model
+2. TurboQuant runtime config: recommended bits per layer, eviction policy, QJL settings
+3. Perplexity delta report: standard KV vs TQ3 vs TQ4 per layer
 
-### Phase 2: WET-Augmented Fine-Tuning (Week 2-3)
+### Phase 2: WET-Augmented LoRA Fine-Tuning (Week 2-3)
 
-**Goal**: Fine-tune RuvLTRA models on curated data from brain knowledge + WET processing + new v2.1.0 documentation.
+**Goal**: LoRA fine-tune RuvLTRA models on curated data from brain knowledge + WET (Common Crawl WARC/WET extraction) processing + new v2.1.0 documentation.
+
+**Note**: Full pre-training is not in scope. The existing Rust training infrastructure supports LoRA adapters (rank 2-32) and embedding fine-tuning. For full SFT/DPO, we use Python (transformers + trl + peft) on Vertex AI.
 
 #### 2.1 Training Data Sources
 
@@ -233,6 +239,17 @@ Each model card will include:
 
 Weekly benchmark runs add ~$4/week (~$16/month).
 
+## Current Gaps Identified
+
+| Gap | Description | Resolution |
+|-----|-------------|------------|
+| **No GPU compute provisioned** | All GCloud is CPU-only Cloud Run except `phi4-finetuning-gpu` (L4) | Phase 1-2 provision GPU via Cloud Run Jobs and Vertex AI |
+| **TurboQuant has no GGUF format** | TurboQuant is runtime-only (KV-cache/embeddings), no GGUF serialization | Ship TQ runtime configs alongside standard GGUF files |
+| **Model checksums not set** | Registry `checksum` fields are `None` for all models | Compute and set SHA256 during Phase 4 publishing |
+| **WET pipeline is brain-only** | `CommonCrawlAdapter` feeds brain memories, not model training | Export WET-processed content as training corpus in Phase 2 |
+| **No full-model fine-tuning in Rust** | Rust training covers LoRA/embedding-level only | Use Python (transformers + peft) on Vertex AI for SFT/DPO |
+| **WASM Pi-Quant incomplete** | ADR-090 Phase 4 (PiQ WASM export) listed as "In Progress" | Track separately, not blocking this ADR |
+
 ## Risks
 
 | Risk | Impact | Mitigation |
@@ -262,6 +279,21 @@ Weekly benchmark runs add ~$4/week (~$16/month).
 8. [ ] Update model cards with benchmark results
 9. [ ] Set up weekly benchmark scheduler job
 
+## Existing Training Infrastructure
+
+| Component | Location | What It Does |
+|-----------|----------|--------------|
+| MicroLoRA training | `crates/ruvllm/src/lora/training.rs` | Per-request LoRA with EWC++ regularization |
+| Adapter trainer | `crates/ruvllm/src/lora/adapters/trainer.rs` | Synthetic Claude dataset training |
+| Pretrain pipeline | `crates/ruvllm/src/claude_flow/pretrain_pipeline.rs` | 4-phase: Bootstrap, Synthetic, Reinforce, Consolidate |
+| TS training | `npm/packages/ruvllm/src/training.ts` | Full pipeline with LR scheduling, early stopping, EWC |
+| Contrastive fine-tune | `npm/packages/ruvllm/scripts/training/contrastive-finetune.js` | Triplet loss router training |
+| Brain LoRA training | `scripts/train-lora.py` | Federated LoRA with Byzantine-tolerant aggregation |
+| 15-agent swarm | `scripts/swarm_train_15.sh` | Parallel discovery + training from 15 data sources |
+| Weight quantization | `crates/ruvllm/src/quantize/ruvltra_quant.rs` | Q4_K_M, Q5_K_M, Q8_0, PiQ3, PiQ2 GGUF export |
+| TurboQuant (runtime) | `crates/ruvllm/src/quantize/turbo_quant.rs` | 2-4 bit KV-cache/embedding compression |
+| Benchmarks | `crates/ruvllm/benches/` | 13 benchmark files covering all subsystems |
+
 ## References
 
 - [TurboQuant implementation](../../crates/ruvllm/src/quantize/turbo_quant.rs)
@@ -270,3 +302,9 @@ Weekly benchmark runs add ~$4/week (~$16/month).
 - [ADR-128: SOTA Gap Implementations](./ADR-128-sota-gap-implementations.md)
 - [v2.1.0 Release](https://github.com/ruvnet/RuVector/releases/tag/v2.1.0)
 - [phi4-finetuning-gpu service](https://console.cloud.google.com/run/detail/us-central1/phi4-finetuning-gpu/revisions?project=ruv-dev) — existing template
+- [ADR-049: Verified Training Pipeline](./ADR-049-verified-training-pipeline.md)
+- [ADR-090: Ultra-Low-Bit QAT & Pi-Quantization](./ADR-090-ultra-low-bit-qat-pi-quantization.md)
+- [ADR-093: Daily Discovery Brain Training](./ADR-093-daily-discovery-brain-training.md)
+- [Federated LoRA training script](../../scripts/train-lora.py)
+- [15-agent swarm training](../../scripts/swarm_train_15.sh)
+- [RuvLTRA model registry](../../crates/ruvllm/src/hub/registry.rs)
