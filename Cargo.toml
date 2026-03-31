@@ -39,7 +39,6 @@ members = [
     "crates/ruvector-mincut-gated-transformer-wasm",
     "crates/ruvector-postgres",
     "crates/ruvector-nervous-system",
-    "examples/refrag-pipeline",
     "examples/scipix",
     "examples/google-cloud",
     "examples/subpolynomial-time",
