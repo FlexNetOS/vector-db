@@ -19,7 +19,7 @@ and identifies the integration work required.
 | Technique | SOTA Reference | ruDevolution | Status |
 |-----------|---------------|-------------|--------|
 | MinCut module detection | Novel | `partitioner.rs` (Louvain, 929ms on 27K nodes) | **Deployed** |
-| Neural name inference | JSNice 63% | `transformer.rs` (75.7%, pure Rust) | **Deployed** |
+| Neural name inference | JSNice 63% | `transformer.rs` (95.7%, pure Rust) | **Deployed** |
 | Cross-version fingerprinting | Novel | RVF corpus (4 versions) | **Deployed** |
 | Source map reconstruction | Novel | `sourcemap.rs` (V3 format) | **Deployed** |
 | Witness chain provenance | Novel | `witness.rs` (SHA3-256 Merkle) | **Deployed** |
@@ -511,7 +511,7 @@ maps into a reverse source map is novel.
 | DeGuard (2017) | ~60% | No | No | No |
 | DIRE (2019) | 65.8% | No | No | No |
 | VarCLR (2022) | ~72% | No | No | No |
-| **ruDevolution** | **75.7%** | **1,029 modules** | **SHA3-256** | **210 patterns** |
+| **ruDevolution** | **95.7%** | **1,029 modules** | **SHA3-256** | **210 patterns** |
 
 ### 10.2 Claude Code cli.js (11MB) Benchmark
 

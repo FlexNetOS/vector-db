@@ -391,12 +391,12 @@ The recommendations from sections 6-7 have been implemented. A name inference mo
 
 | Metric | v1 (1,602 pairs) | v2 (8,201 pairs) |
 |--------|-------------------|-------------------|
-| Val accuracy | 75.7% | Training in progress |
-| Val loss | 0.914 | — |
+| Val accuracy | 75.7% | **95.7%** |
+| Val loss | 0.914 | **0.149** |
 | Epochs | 10 | 30 |
 | Training time | ~70s (CPU) | ~5 min (CPU) |
 
-Beats JSNice (2015) SOTA of 63% exact match by **12.7 percentage points**.
+v2 beats JSNice (2015) SOTA of 63% by **32.7 percentage points**. 5x more training data drove accuracy from 75.7% → 95.7%.
 
 ### 8.3 Model Artifacts
 

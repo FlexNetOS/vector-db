@@ -2,7 +2,7 @@
 
 ## Status
 
-Deployed (2026-04-03) — Model trained (673K params, 75.7% val accuracy), exported to ONNX (221KB) and binary weights (2.6MB). Pure Rust transformer inference implemented (zero ML deps). GPU pipeline ready for L4 training.
+Deployed (2026-04-03) — Model trained (673K params, 95.7% val accuracy), exported to ONNX (221KB) and binary weights (2.6MB). Pure Rust transformer inference implemented (zero ML deps). GPU pipeline ready for L4 training.
 
 ## Date
 

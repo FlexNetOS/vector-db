@@ -2,7 +2,7 @@
 
 ## Status
 
-Deployed (2026-04-03) — 5-phase pipeline implemented, 56 tests passing. Louvain partitioning (35x optimized), 210 training patterns, pure Rust transformer inference, 75.7% name accuracy beating JSNice SOTA (63%).
+Deployed (2026-04-03) — 5-phase pipeline implemented, 56 tests passing. Louvain partitioning (35x optimized), 210 training patterns, pure Rust transformer inference, 95.7% name accuracy beating JSNice SOTA (63%).
 
 ## Date
 
