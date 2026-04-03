@@ -33,6 +33,7 @@ pub mod inferrer;
 pub mod parser;
 pub mod partitioner;
 pub mod sourcemap;
+pub mod training;
 pub mod types;
 pub mod witness;
 

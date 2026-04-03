@@ -2,6 +2,10 @@
 //!
 //! Transforms minified code into readable, indented output with one
 //! declaration per logical block.
+//!
+//! Memory optimization: Works on `&str` slices from the original source
+//! instead of copying strings. Only materializes the final beautified
+//! output once per module.
 
 use crate::types::{Declaration, InferredName, Module};
 
@@ -16,11 +20,21 @@ pub fn beautify_module(
     inferred_names: &[InferredName],
     min_confidence: f64,
 ) {
-    let mut lines = Vec::new();
+    // Pre-compute estimated output size to avoid repeated reallocations.
+    let estimated_size = module
+        .declarations
+        .iter()
+        .map(|d| d.byte_range.1.saturating_sub(d.byte_range.0) + 64)
+        .sum::<usize>()
+        + 128;
+
+    let mut output = String::with_capacity(estimated_size);
 
     // Module header comment.
-    lines.push(format!("// Module: {}", module.name));
-    lines.push(String::new());
+    output.push_str("// Module: ");
+    output.push_str(&module.name);
+    output.push('\n');
+    output.push('\n');
 
     for decl in &module.declarations {
         let (start, end) = decl.byte_range;
@@ -32,57 +46,60 @@ pub fn beautify_module(
             ""
         };
 
-        // Clean up and format the declaration.
-        let formatted = format_declaration(decl, raw, inferred_names, min_confidence);
-        lines.push(formatted);
-        lines.push(String::new());
+        // Format the declaration directly into the output buffer.
+        format_declaration_into(&mut output, decl, raw, inferred_names, min_confidence);
+        output.push('\n');
+        output.push('\n');
     }
 
-    module.source = lines.join("\n");
+    module.source = output;
 }
 
-/// Format a single declaration with indentation and name replacement.
-fn format_declaration(
+/// Format a single declaration with indentation and name replacement,
+/// writing directly into the output buffer to avoid intermediate allocations.
+fn format_declaration_into(
+    out: &mut String,
     decl: &Declaration,
     raw: &str,
     inferred_names: &[InferredName],
     min_confidence: f64,
-) -> String {
-    let mut code = raw.trim().to_string();
+) {
+    let trimmed = raw.trim();
 
     // Strip leading separator characters.
-    if code.starts_with(';') || code.starts_with('}') {
-        code = code[1..].trim_start().to_string();
-    }
-
-    // Apply inferred name replacement for this declaration.
-    if let Some(inf) = inferred_names
-        .iter()
-        .find(|n| n.original == decl.name && n.confidence >= min_confidence)
-    {
-        code = replace_identifier(&code, &decl.name, &inf.inferred);
-        code = format!(
-            "{} /* confidence: {:.0}% */",
-            code,
-            inf.confidence * 100.0
-        );
-    }
-
-    // Add basic indentation for braces.
-    code = indent_braces(&code);
-
-    // Add a leading comment with the original minified name.
-    if decl.name.len() <= 3 {
-        format!("/* original: {} */ {}", decl.name, code)
+    let code = if trimmed.starts_with(';') || trimmed.starts_with('}') {
+        trimmed[1..].trim_start()
     } else {
-        code
+        trimmed
+    };
+
+    // Find the inferred name for this declaration (if any).
+    let inf_name = inferred_names
+        .iter()
+        .find(|n| n.original == decl.name && n.confidence >= min_confidence);
+
+    // Add leading comment with original minified name if it's short.
+    if decl.name.len() <= 3 {
+        out.push_str("/* original: ");
+        out.push_str(&decl.name);
+        out.push_str(" */ ");
+    }
+
+    // Apply name replacement and indentation.
+    if let Some(inf) = inf_name {
+        let replaced = replace_identifier(code, &decl.name, &inf.inferred);
+        indent_braces_into(out, &replaced);
+        out.push_str(&format!(
+            " /* confidence: {:.0}% */",
+            inf.confidence * 100.0
+        ));
+    } else {
+        indent_braces_into(out, code);
     }
 }
 
 /// Replace all standalone occurrences of `old` with `new_name` in code.
 fn replace_identifier(code: &str, old: &str, new_name: &str) -> String {
-    // Simple word-boundary replacement. For short identifiers, be careful
-    // not to replace substrings of longer identifiers.
     let mut result = String::with_capacity(code.len());
     let bytes = code.as_bytes();
     let old_bytes = old.as_bytes();
@@ -91,9 +108,7 @@ fn replace_identifier(code: &str, old: &str, new_name: &str) -> String {
 
     while i < bytes.len() {
         if i + old_len <= bytes.len() && &bytes[i..i + old_len] == old_bytes {
-            // Check word boundaries.
-            let before_ok =
-                i == 0 || !is_ident_char(bytes[i - 1]);
+            let before_ok = i == 0 || !is_ident_char(bytes[i - 1]);
             let after_ok =
                 i + old_len >= bytes.len() || !is_ident_char(bytes[i + old_len]);
 
@@ -111,13 +126,14 @@ fn replace_identifier(code: &str, old: &str, new_name: &str) -> String {
 }
 
 /// Check if a byte is a valid JS identifier character.
+#[inline]
 fn is_ident_char(b: u8) -> bool {
     b.is_ascii_alphanumeric() || b == b'_' || b == b'$'
 }
 
-/// Add basic indentation for code inside braces.
-fn indent_braces(code: &str) -> String {
-    let mut result = String::with_capacity(code.len() + 64);
+/// Add basic indentation for code inside braces, writing directly
+/// into the output buffer.
+fn indent_braces_into(out: &mut String, code: &str) {
     let mut depth: usize = 0;
     let mut in_string = false;
     let mut string_char = '"';
@@ -125,7 +141,7 @@ fn indent_braces(code: &str) -> String {
 
     for ch in code.chars() {
         if in_string {
-            result.push(ch);
+            out.push(ch);
             if prev_was_escape {
                 prev_was_escape = false;
                 continue;
@@ -144,38 +160,36 @@ fn indent_braces(code: &str) -> String {
             '"' | '\'' | '`' => {
                 in_string = true;
                 string_char = ch;
-                result.push(ch);
+                out.push(ch);
             }
             '{' => {
-                result.push(ch);
-                result.push('\n');
+                out.push(ch);
+                out.push('\n');
                 depth += 1;
-                push_indent(&mut result, depth);
+                push_indent(out, depth);
             }
             '}' => {
-                result.push('\n');
+                out.push('\n');
                 depth = depth.saturating_sub(1);
-                push_indent(&mut result, depth);
-                result.push(ch);
+                push_indent(out, depth);
+                out.push(ch);
             }
             ';' => {
-                result.push(ch);
-                // Only add newline if we're inside braces.
+                out.push(ch);
                 if depth > 0 {
-                    result.push('\n');
-                    push_indent(&mut result, depth);
+                    out.push('\n');
+                    push_indent(out, depth);
                 }
             }
             _ => {
-                result.push(ch);
+                out.push(ch);
             }
         }
     }
-
-    result
 }
 
 /// Push indentation spaces.
+#[inline]
 fn push_indent(out: &mut String, depth: usize) {
     for _ in 0..depth {
         out.push_str("  ");
@@ -208,7 +222,6 @@ mod tests {
 
     #[test]
     fn test_replace_no_substring() {
-        // Should not replace "a" inside "bar".
         assert_eq!(
             replace_identifier("var bar = 1", "a", "x"),
             "var bar = 1"
@@ -218,7 +231,8 @@ mod tests {
     #[test]
     fn test_indent_braces() {
         let input = "function(){return 1}";
-        let output = indent_braces(input);
+        let mut output = String::new();
+        indent_braces_into(&mut output, input);
         assert!(output.contains('\n'));
     }
 }

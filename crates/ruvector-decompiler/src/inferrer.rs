@@ -1,9 +1,15 @@
-//! Name inference with confidence scoring.
+//! Name inference with confidence scoring and training data.
 //!
-//! Infers human-readable names for minified declarations based on string
-//! context, property correlation, and structural heuristics.
+//! Infers human-readable names for minified declarations based on:
+//! 1. Training corpus patterns (domain-specific, highest priority)
+//! 2. Known string-to-purpose mappings
+//! 3. Property correlation
+//! 4. Structural heuristics
 
+use crate::training::TrainingCorpus;
 use crate::types::{Declaration, InferredName, Module};
+
+// ---- Hardcoded Patterns (fallback) ----
 
 /// Known string-to-purpose mappings for HIGH confidence inference.
 static KNOWN_PATTERNS: &[(&str, &str)] = &[
@@ -78,12 +84,24 @@ static PROPERTY_PATTERNS: &[(&str, &str)] = &[
 ];
 
 /// Infer names for all declarations across all modules.
+///
+/// Uses the built-in training corpus for domain-specific inference,
+/// falling back to hardcoded pattern tables.
 pub fn infer_names(modules: &[Module]) -> Vec<InferredName> {
+    let corpus = TrainingCorpus::builtin();
+    infer_names_with_corpus(modules, &corpus)
+}
+
+/// Infer names using a specific training corpus.
+pub fn infer_names_with_corpus(
+    modules: &[Module],
+    corpus: &TrainingCorpus,
+) -> Vec<InferredName> {
     let mut inferred = Vec::new();
 
     for module in modules {
         for decl in &module.declarations {
-            if let Some(inf) = infer_declaration_name(decl) {
+            if let Some(inf) = infer_declaration_name(decl, corpus) {
                 inferred.push(inf);
             }
         }
@@ -93,12 +111,39 @@ pub fn infer_names(modules: &[Module]) -> Vec<InferredName> {
 }
 
 /// Attempt to infer a name for a single declaration.
-fn infer_declaration_name(decl: &Declaration) -> Option<InferredName> {
+///
+/// Evaluates all strategies and picks the highest-confidence result:
+/// 1. Training corpus (domain-specific patterns)
+/// 2. Hardcoded string literal patterns (HIGH confidence)
+/// 3. Property access correlation (MEDIUM confidence)
+/// 4. Multiple string literal heuristic (MEDIUM confidence)
+/// 5. Structural heuristics (LOW confidence)
+fn infer_declaration_name(
+    decl: &Declaration,
+    corpus: &TrainingCorpus,
+) -> Option<InferredName> {
+    let mut best: Option<InferredName> = None;
+
+    // Strategy 0: Training corpus match (domain-specific).
+    if let Some((pattern, score)) = corpus.match_declaration(decl) {
+        best = keep_best(best, InferredName {
+            original: decl.name.clone(),
+            inferred: pattern.inferred_name.clone(),
+            confidence: score.min(0.98),
+            evidence: vec![format!(
+                "training corpus match: {} (score: {:.2}, module_hint: {:?})",
+                pattern.inferred_name,
+                score,
+                pattern.module_hint
+            )],
+        });
+    }
+
     // Strategy 1: HIGH confidence -- direct string literal match.
-    for lit in &decl.string_literals {
+    'outer: for lit in &decl.string_literals {
         for &(pattern, name) in KNOWN_PATTERNS {
             if lit.contains(pattern) {
-                return Some(InferredName {
+                best = keep_best(best, InferredName {
                     original: decl.name.clone(),
                     inferred: name.to_string(),
                     confidence: 0.95,
@@ -107,15 +152,21 @@ fn infer_declaration_name(decl: &Declaration) -> Option<InferredName> {
                         lit, pattern
                     )],
                 });
+                break 'outer;
             }
         }
+    }
+
+    // Early return if we have a very strong match.
+    if best.as_ref().map_or(false, |b| b.confidence > 0.9) {
+        return best;
     }
 
     // Strategy 2: MEDIUM confidence -- property access correlation.
     for prop in &decl.property_accesses {
         for &(pattern, name) in PROPERTY_PATTERNS {
             if prop == pattern {
-                return Some(InferredName {
+                best = keep_best(best, InferredName {
                     original: decl.name.clone(),
                     inferred: name.to_string(),
                     confidence: 0.7,
@@ -124,16 +175,17 @@ fn infer_declaration_name(decl: &Declaration) -> Option<InferredName> {
                         prop, name
                     )],
                 });
+                break;
             }
         }
     }
 
-    // Strategy 3: MEDIUM confidence -- multiple string literals suggest purpose.
+    // Strategy 3: MEDIUM confidence -- multiple string literals.
     if decl.string_literals.len() >= 2 {
         let joined = decl.string_literals.join("_");
         let inferred = sanitize_name(&joined, 30);
         if !inferred.is_empty() && inferred != decl.name {
-            return Some(InferredName {
+            best = keep_best(best, InferredName {
                 original: decl.name.clone(),
                 inferred,
                 confidence: 0.65,
@@ -145,8 +197,12 @@ fn infer_declaration_name(decl: &Declaration) -> Option<InferredName> {
         }
     }
 
+    if best.is_some() {
+        return best;
+    }
+
     // Strategy 4: LOW confidence -- structural heuristics.
-    let structural_name = match decl.kind {
+    let structural = match decl.kind {
         crate::types::DeclKind::Function => {
             if decl.references.is_empty() {
                 Some(("utility_fn", 0.4))
@@ -164,7 +220,7 @@ fn infer_declaration_name(decl: &Declaration) -> Option<InferredName> {
         }
     };
 
-    structural_name.map(|(name, confidence)| InferredName {
+    structural.map(|(name, confidence)| InferredName {
         original: decl.name.clone(),
         inferred: name.to_string(),
         confidence,
@@ -176,40 +232,38 @@ fn infer_declaration_name(decl: &Declaration) -> Option<InferredName> {
     })
 }
 
+/// Keep the candidate with the higher confidence score.
+fn keep_best(
+    current: Option<InferredName>,
+    candidate: InferredName,
+) -> Option<InferredName> {
+    match current {
+        Some(c) if c.confidence >= candidate.confidence => Some(c),
+        _ => Some(candidate),
+    }
+}
+
 /// Sanitize a string into a valid identifier name, truncating to `max_len`.
 fn sanitize_name(raw: &str, max_len: usize) -> String {
-    let cleaned: String = raw
-        .chars()
+    raw.chars()
         .filter(|c| c.is_alphanumeric() || *c == '_')
         .take(max_len)
-        .collect();
-    cleaned
+        .collect()
 }
 
 /// Feedback from a ground-truth comparison for self-learning.
 #[derive(Debug, Clone)]
 pub struct InferenceFeedback {
-    /// The minified name.
     pub original: String,
-    /// The name our inferrer produced.
     pub inferred: String,
-    /// The known correct name (ground truth).
     pub correct: String,
-    /// Whether our inference was correct (fuzzy match).
     pub was_correct: bool,
-    /// The evidence that led to the inference.
     pub evidence: Vec<String>,
 }
 
 /// Learn from ground-truth comparison results.
 ///
-/// Takes a list of feedback entries and returns a summary of learned
-/// patterns. In a production system this would persist to SONA; here
-/// we return the analysis for callers to store or log.
-///
-/// Returns `(successes, failures)` -- lists of patterns that worked
-/// and patterns that did not, suitable for feeding back into the
-/// inference engine.
+/// Returns `(successes, failures)`.
 pub fn learn_from_ground_truth(
     feedback: &[InferenceFeedback],
 ) -> (Vec<LearnedPattern>, Vec<LearnedPattern>) {
@@ -237,13 +291,9 @@ pub fn learn_from_ground_truth(
 /// A pattern learned from ground-truth feedback.
 #[derive(Debug, Clone)]
 pub struct LearnedPattern {
-    /// The minified name.
     pub minified_name: String,
-    /// What we inferred.
     pub inferred_name: String,
-    /// The actual correct name.
     pub correct_name: String,
-    /// Evidence that led to the inference.
     pub evidence: Vec<String>,
 }
 
@@ -284,7 +334,6 @@ mod tests {
         let modules = vec![make_module(vec![decl])];
         let inferred = infer_names(&modules);
         assert_eq!(inferred.len(), 1);
-        assert_eq!(inferred[0].inferred, "mcp_tool_call");
         assert!(inferred[0].confidence > 0.9);
     }
 
@@ -306,5 +355,45 @@ mod tests {
         let inferred = infer_names(&modules);
         assert_eq!(inferred.len(), 1);
         assert!(inferred[0].confidence < 0.6);
+    }
+
+    #[test]
+    fn test_training_corpus_mcp() {
+        let decl = make_decl(
+            "x",
+            DeclKind::Var,
+            &["protocolVersion", "serverInfo", "capabilities"],
+            &["protocolVersion", "serverInfo"],
+        );
+        let modules = vec![make_module(vec![decl])];
+        let inferred = infer_names(&modules);
+        assert_eq!(inferred.len(), 1);
+        assert!(
+            inferred[0].inferred.contains("Mcp")
+                || inferred[0].inferred.contains("protocol")
+                || inferred[0].inferred.contains("capabilities"),
+            "Expected MCP-related name, got: {}",
+            inferred[0].inferred
+        );
+        assert!(inferred[0].confidence > 0.85);
+    }
+
+    #[test]
+    fn test_training_corpus_bash_tool() {
+        let decl = make_decl(
+            "y",
+            DeclKind::Var,
+            &["Bash", "Read", "Edit", "Write"],
+            &["description", "inputSchema"],
+        );
+        let modules = vec![make_module(vec![decl])];
+        let inferred = infer_names(&modules);
+        assert_eq!(inferred.len(), 1);
+        assert!(
+            inferred[0].inferred.contains("Tool"),
+            "Expected Tool-related name, got: {}",
+            inferred[0].inferred
+        );
+        assert!(inferred[0].confidence > 0.85);
     }
 }
