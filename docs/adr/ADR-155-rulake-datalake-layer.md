@@ -49,12 +49,31 @@ but buys less leverage than the alternative proposed here.
 
 ## Decision
 
-**Build ruLake as a vector-native federation intermediary.** App/agent
-speaks RVF wire to `rvf-server`; `rvf-server` routes each query through
-a planner that dispatches sub-queries to a pluggable set of backend
-adapters (Parquet-on-S3 → BigQuery → Snowflake → Databricks → Iceberg →
-Delta → local files), while a RaBitQ-compressed cache in front answers
-the hot working set at ~957 QPS / 100 % recall@10.
+**Build ruLake as a cache-first vector execution fabric.** The cache —
+RaBitQ-compressed hot codes with deterministic rotation + witness — *is*
+the product; federation is the cache's refill mechanism. An
+app or agent speaks the RVF wire to `rvf-server`; ruLake answers from
+the cache whenever the backend's coherence token is current. On miss
+or drift, the corresponding backend adapter (Parquet-on-GCS, BigQuery,
+Snowflake, Iceberg, Delta, local) pulls fresh vectors, rebuilds the
+cache entry, and returns the result. The cache-hit path matches direct
+`RabitqPlusIndex::search` at ~957 QPS / 100 % recall@10
+(`ruvector-rabitq::BENCHMARK.md`) and measures a 1.00× intermediary
+tax on a local backend (`ruvector-rulake::BENCHMARK.md`).
+
+**Why cache-first, not federation-first**, per the decision matrix in
+[`06-positioning.md`](../research/ruLake/06-positioning.md) §"Decision matrix":
+
+| Axis | Federation-first | Cache-first |
+|------|-----------------:|------------:|
+| Latency | 2 | **5** |
+| Simplicity | 2 | 4 |
+| Governance | 5 | 4 |
+| Adoption friction | 2 | **4** |
+| Differentiation | 3 | **5** |
+
+Cache-first wins 4 of 5 axes. The one federation wins (governance)
+still scores 4/5 under cache-first because the cache is the choke point.
 
 Key shape decisions:
 
@@ -88,6 +107,18 @@ Key shape decisions:
    RVF wire to `rvf-server`; adapters emit RVF segments into the cache
    (`rvf-runtime::segment::Segment`), reusing the same type system that
    the rest of the ecosystem already depends on.
+
+6. **The portable unit is the bundle sidecar `table.rulake.json`,
+   not the UDF.** Implemented in `ruvector_rulake::bundle::RuLakeBundle`:
+   carries `(data_ref, dim, rotation_seed, rerank_factor, generation,
+   rvf_witness, pii_policy, lineage_id)` with a SHAKE-256 witness over
+   the preceding fields. Two instances of ruLake observing the same
+   bundle from different backends cache-share safely because the
+   witness is the cache-key anchor. This explicitly addresses the
+   "cache invalidation drift" failure mode — the witness changes iff
+   the underlying compressed codes would change. `Generation` is an
+   opaque union (`Num(u64)` for mtimes + versions; `Opaque(String)`
+   for UUIDs and hashes) so Iceberg/Snowflake tokens fit.
 
 ### Minimum viable scope (12 weeks, 20.5 engineer-weeks)
 

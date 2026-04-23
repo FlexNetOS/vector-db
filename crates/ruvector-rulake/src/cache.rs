@@ -91,8 +91,16 @@ impl VectorCache {
     /// Compress a pulled batch into a RaBitQ index and store under the
     /// given key. Overwrites any existing entry (used for invalidation +
     /// re-prime).
+    ///
+    /// **Lock discipline**: the RaBitQ index is built entirely *before*
+    /// we touch `inner`. On a 100k-vector prime that's ~400 ms of
+    /// compute; holding the cache mutex across it would serialize all
+    /// other queries on the intermediary. The mutex is only taken to
+    /// swap the finished entry in.
     pub fn prime(&self, key: CacheKey, batch: PulledBatch) -> crate::Result<()> {
-        let mut idx = RabitqPlusIndex::new(batch.dim, self.rotation_seed, self.rerank_factor);
+        let dim = batch.dim;
+        let generation = batch.generation;
+        let mut idx = RabitqPlusIndex::new(dim, self.rotation_seed, self.rerank_factor);
         // We intentionally don't trust the backend's u64 id to fit in
         // RabitqPlusIndex's usize slot — use the array position as the
         // internal id, store the mapping separately.
@@ -103,11 +111,13 @@ impl VectorCache {
         }
         let entry = CacheEntry {
             index: idx,
-            dim: batch.dim,
-            generation: batch.generation,
+            dim,
+            generation,
             last_checked: Instant::now(),
             pos_to_id,
         };
+        // Lock only long enough to insert. All the compute above ran
+        // lock-free.
         let mut inner = self.inner.lock().unwrap();
         inner.entries.insert(key, entry);
         inner.stats.primes += 1;

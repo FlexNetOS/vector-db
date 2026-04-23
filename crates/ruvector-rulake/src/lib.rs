@@ -44,11 +44,13 @@
 #![allow(clippy::needless_range_loop)]
 
 pub mod backend;
+pub mod bundle;
 pub mod cache;
 pub mod error;
 pub mod lake;
 
 pub use backend::{BackendAdapter, BackendId, CollectionId, LocalBackend, PulledBatch};
+pub use bundle::{Generation, RuLakeBundle};
 pub use cache::{CacheStats, VectorCache};
 pub use error::{Result, RuLakeError};
 pub use lake::{RuLake, SearchResult};

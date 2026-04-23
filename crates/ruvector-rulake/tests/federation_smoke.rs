@@ -267,6 +267,65 @@ fn unknown_backend_returns_error() {
 }
 
 #[test]
+fn rulake_recall_at_10_above_90pct_vs_brute_force() {
+    // The MVP's real recall gate: against brute-force top-10 on the
+    // same query set, does ruLake return the same neighbours? We use
+    // rerank×20 + clustered Gaussian — the regime `ruvector-rabitq`
+    // documents as 100 % recall@10 at n ≥ 5 k. The intermediary
+    // doesn't change the estimator, so this should pass with room.
+    // Match BENCHMARK.md methodology: generate n+nq from the same seed
+    // and split so queries share the data's cluster centroids.
+    // Different seeds would test a distribution-shift regime — valuable
+    // but distinct from the "recall against known-good RaBitQ"
+    // correctness gate this test is meant to hold.
+    let d = 128;
+    let n = 5_000;
+    let nq = 50;
+    let rerank = 20;
+    let seed = 101;
+
+    let all = clustered(n + nq, d, 100, seed);
+    let data = all[..n].to_vec();
+    let queries = all[n..].to_vec();
+
+    let backend = Arc::new(LocalBackend::new("recall-test"));
+    backend
+        .put_collection("c", d, (0..n as u64).collect(), data.clone())
+        .unwrap();
+    let lake = RuLake::new(rerank, seed);
+    lake.register_backend(backend).unwrap();
+
+    let mut hits = 0usize;
+    for q in &queries {
+        // Ground truth: brute-force top-10 L2².
+        let mut scored: Vec<(usize, f32)> = data
+            .iter()
+            .enumerate()
+            .map(|(i, v)| {
+                let s: f32 = q
+                    .iter()
+                    .zip(v.iter())
+                    .map(|(&a, &b)| (a - b) * (a - b))
+                    .sum();
+                (i, s)
+            })
+            .collect();
+        scored.sort_by(|a, b| a.1.total_cmp(&b.1));
+        let truth: std::collections::HashSet<u64> =
+            scored.iter().take(10).map(|(i, _)| *i as u64).collect();
+
+        let got = lake.search_one("recall-test", "c", q, 10).unwrap();
+        hits += got.iter().filter(|r| truth.contains(&r.id)).count();
+    }
+    let recall = hits as f64 / (nq * 10) as f64;
+    assert!(
+        recall > 0.90,
+        "ruLake recall@10 = {:.1}% — expected > 90 % on clustered/rerank×20",
+        recall * 100.0
+    );
+}
+
+#[test]
 fn unknown_collection_returns_error() {
     let backend = Arc::new(LocalBackend::new("b"));
     let lake = RuLake::new(20, 0);
