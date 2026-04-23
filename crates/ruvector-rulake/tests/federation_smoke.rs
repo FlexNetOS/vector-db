@@ -650,3 +650,54 @@ fn concurrent_searches_are_safe_and_correct() {
         stats.primes
     );
 }
+
+#[test]
+fn publish_bundle_roundtrips_through_disk() {
+    // Writer-side symmetry for the bundle protocol: one RuLake publishes
+    // its current bundle to disk; a second party reads it back and gets
+    // the same witness. This is what a cache sidecar daemon relies on
+    // when the warehouse hands a bundle to a live serving process.
+    let mut tmp = std::env::temp_dir();
+    let nanos = std::time::SystemTime::now()
+        .duration_since(std::time::UNIX_EPOCH)
+        .map(|d| d.as_nanos())
+        .unwrap_or(0);
+    tmp.push(format!("rulake-publish-{}-{}", std::process::id(), nanos));
+    std::fs::create_dir_all(&tmp).unwrap();
+
+    let backend = Arc::new(LocalBackend::new("publisher"));
+    backend
+        .put_collection(
+            "c",
+            4,
+            vec![1, 2, 3],
+            vec![vec![1.0; 4], vec![2.0; 4], vec![3.0; 4]],
+        )
+        .unwrap();
+
+    let lake = RuLake::new(20, 42);
+    lake.register_backend(backend).unwrap();
+    let key = ("publisher".to_string(), "c".to_string());
+
+    let written = lake.publish_bundle(&key, &tmp).unwrap();
+    assert_eq!(
+        written.file_name().unwrap(),
+        ruvector_rulake::RuLakeBundle::SIDECAR_FILENAME
+    );
+
+    // Reader side: a third party picks up the sidecar, verifies witness.
+    let read = ruvector_rulake::RuLakeBundle::read_from_dir(&tmp).unwrap();
+    let published = lake.cache_witness_of(&key);
+    // Publishing does NOT prime the cache — publish just emits the
+    // current bundle, so the cache witness is still None here.
+    assert_eq!(published, None);
+    // But the on-disk witness must match what a fresh search would see:
+    lake.search_one("publisher", "c", &[1.0; 4], 1).unwrap();
+    let after_prime = lake.cache_witness_of(&key).unwrap();
+    assert_eq!(
+        read.rvf_witness, after_prime,
+        "published bundle witness ≠ cache witness after prime"
+    );
+
+    let _ = std::fs::remove_dir_all(&tmp);
+}

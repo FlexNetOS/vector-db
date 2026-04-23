@@ -112,6 +112,29 @@ impl RuLake {
         self.cache.invalidate(key);
     }
 
+    /// Publish the current bundle for `(backend, collection)` to `dir`
+    /// as `table.rulake.json`. Pairs with `RuLakeBundle::read_from_dir`:
+    /// a cache sidecar daemon can watch the target directory and hand
+    /// the updated bundle to another ruLake instance, enabling
+    /// warehouse-driven cache refreshes without the reader having to
+    /// poll the backend directly.
+    ///
+    /// Returns the path of the written sidecar so callers can log /
+    /// audit the publish step.
+    pub fn publish_bundle(
+        &self,
+        key: &CacheKey,
+        dir: impl AsRef<std::path::Path>,
+    ) -> Result<std::path::PathBuf> {
+        let backend = self.get_backend(&key.0)?;
+        let bundle = backend.current_bundle(
+            &key.1,
+            self.cache.rotation_seed(),
+            self.cache.rerank_factor(),
+        )?;
+        bundle.write_to_dir(dir)
+    }
+
     /// Search a single (backend, collection) pair. Handles cache
     /// miss / staleness transparently.
     pub fn search_one(
