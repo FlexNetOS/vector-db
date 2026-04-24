@@ -309,17 +309,36 @@ impl RabitqIndex {
     /// packed words (the caller already has `q_norm` from
     /// [`Self::prepare_query_f32`] if they need it).
     pub fn encode_query_packed(&self, q: &[f32]) -> (Vec<u64>, f32) {
-        let norm: f32 = q.iter().map(|&x| x * x).sum::<f32>().sqrt();
-        let mut unit = q.to_vec();
-        normalize_inplace(&mut unit);
-        let rotated = self.rotation.apply(&unit);
-        // Pack MSB-first, same as BinaryCode::encode.
-        let mut words = vec![0u64; self.n_words];
-        for (i, &v) in rotated.iter().enumerate() {
-            if v >= 0.0 {
-                words[i / 64] |= 1u64 << (63 - (i % 64));
-            }
+        // Thread-local scratch for the intermediate rotated+normalized
+        // buffer. Replaces `q.to_vec() + self.rotation.apply(&unit)`
+        // which allocated twice per query. The returned packed words
+        // are a fresh allocation (caller wants ownership) but that
+        // was one of the three in the old path; net 3 → 1 allocations
+        // per query. 2026-04-23 memory audit finding #4.
+        use std::cell::RefCell;
+        thread_local! {
+            static SCRATCH: RefCell<(Vec<f32>, Vec<f32>)> =
+                const { RefCell::new((Vec::new(), Vec::new())) };
         }
+        let norm: f32 = q.iter().map(|&x| x * x).sum::<f32>().sqrt();
+        let dim = q.len();
+        let mut words = vec![0u64; self.n_words];
+        SCRATCH.with(|s| {
+            let mut s = s.borrow_mut();
+            let (unit, rotated) = &mut *s;
+            unit.clear();
+            unit.extend_from_slice(q);
+            normalize_inplace(unit);
+            if rotated.len() != dim {
+                rotated.resize(dim, 0.0);
+            }
+            self.rotation.apply_into(unit, rotated);
+            for (i, &v) in rotated.iter().enumerate() {
+                if v >= 0.0 {
+                    words[i / 64] |= 1u64 << (63 - (i % 64));
+                }
+            }
+        });
         (words, norm.max(1e-10))
     }
 

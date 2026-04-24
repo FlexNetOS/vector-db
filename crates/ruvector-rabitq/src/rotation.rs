@@ -57,13 +57,24 @@ impl RandomRotation {
     #[inline]
     pub fn apply(&self, v: &[f32]) -> Vec<f32> {
         debug_assert_eq!(v.len(), self.dim);
+        let mut out = vec![0.0f32; self.dim];
+        self.apply_into(v, &mut out);
+        out
+    }
+
+    /// In-place variant that writes into a caller-provided buffer.
+    /// Callers doing many rotations (hot query path) should reuse one
+    /// `Vec<f32>` instead of allocating per call — saves one malloc
+    /// per query in the ANN index's `encode_query_packed` path.
+    #[inline]
+    pub fn apply_into(&self, v: &[f32], out: &mut [f32]) {
+        debug_assert_eq!(v.len(), self.dim);
+        debug_assert_eq!(out.len(), self.dim);
         let d = self.dim;
-        let mut out = vec![0.0f32; d];
         for (i, out_i) in out.iter_mut().enumerate() {
             let row = &self.matrix[i * d..(i + 1) * d];
             *out_i = row.iter().zip(v.iter()).map(|(&r, &x)| r * x).sum();
         }
-        out
     }
 
     /// Memory usage in bytes.
