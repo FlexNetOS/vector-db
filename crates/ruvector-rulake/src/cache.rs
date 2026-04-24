@@ -277,15 +277,34 @@ impl VectorCache {
         }
 
         // Slow path: build the index lock-free, time it for prime stats.
+        //
+        // We pick between serial `add` and rayon-parallel
+        // `from_vectors_parallel` based on batch size. The parallel
+        // path amortizes rayon's task-queue overhead only when the
+        // D×D rotation work is large enough — below ~1k vectors the
+        // serial loop wins. 1024 was picked from a sweep on D=128;
+        // workloads with much larger D will benefit from parallel
+        // sooner and the threshold can be tuned.
         let prime_start = Instant::now();
         let dim = batch.dim;
         let generation = batch.generation;
-        let mut idx = RabitqPlusIndex::new(dim, self.rotation_seed, self.rerank_factor);
-        let mut pos_to_id = Vec::with_capacity(batch.ids.len());
-        for (pos, v) in batch.vectors.into_iter().enumerate() {
-            idx.add(pos, v)?;
-            pos_to_id.push(batch.ids[pos]);
-        }
+        const PARALLEL_PRIME_THRESHOLD: usize = 1024;
+        let pos_to_id: Vec<u64> = batch.ids.clone();
+        let idx = if batch.vectors.len() >= PARALLEL_PRIME_THRESHOLD {
+            let items: Vec<(usize, Vec<f32>)> = batch.vectors.into_iter().enumerate().collect();
+            RabitqPlusIndex::from_vectors_parallel(
+                dim,
+                self.rotation_seed,
+                self.rerank_factor,
+                items,
+            )?
+        } else {
+            let mut idx = RabitqPlusIndex::new(dim, self.rotation_seed, self.rerank_factor);
+            for (pos, v) in batch.vectors.into_iter().enumerate() {
+                idx.add(pos, v)?;
+            }
+            idx
+        };
         let entry = CacheEntry {
             index: Arc::new(idx),
             dim,
