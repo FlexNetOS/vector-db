@@ -167,8 +167,7 @@ async fn bounded_channel_drops_oldest_without_blocking_producer() {
     let send_base = base_url.clone();
     let send_spec = spec(task_id, root);
     let wall_start = Instant::now();
-    let send_handle =
-        tokio::spawn(async move { client.send_task(&send_base, send_spec).await });
+    let send_handle = tokio::spawn(async move { client.send_task(&send_base, send_spec).await });
 
     // Slow consumer: inter-read sleep forces the cap-256 buffer to
     // overflow. We stop as soon as the `warning` frame arrives (Lagged →
