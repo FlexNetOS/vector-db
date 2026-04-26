@@ -76,7 +76,10 @@ jobs:
   test:
     name: Tests (${{ matrix.name }})
     runs-on: ubuntu-latest
-    timeout-minutes: 90
+    # `core-and-rest` is the catch-all shard and compiles ~50 crates; on a
+    # cold cache the build alone has hit ~90min, so headroom matters more
+    # than tight feedback for this job. Faster shards still finish in ~10–20m.
+    timeout-minutes: 150
     strategy:
       fail-fast: false
       matrix:
