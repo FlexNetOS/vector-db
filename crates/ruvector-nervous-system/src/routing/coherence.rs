@@ -409,6 +409,7 @@ mod tests {
     }
 
     #[test]
+    #[ignore = "perf-gated: <100ns target is fragile on shared CI runners. Run via `cargo test --package ruvector-nervous-system -- --ignored` on a quiet machine."]
     fn test_performance_communication_gain() {
         let router = OscillatoryRouter::new(100, GAMMA_FREQ);
 
