@@ -5,7 +5,7 @@ edition = "2021"
 authors = ["RuVector Team"]
 description = "ONNX-based embedding generation for RuVector - Reimagined embedding pipeline in pure Rust"
 license = "MIT"
-repository = "https://github.com/ruvnet/ruvector"
+repository = "https://github.com/FlexNetOS/ruvector"
 keywords = ["onnx", "embeddings", "vector-database", "rust", "ml"]
 categories = ["science", "algorithms"]
 

@@ -29,7 +29,7 @@ Available functions:
   - ruvector_lorentz_to_poincare(lorentz, curvature)
   - ruvector_minkowski_dot(a, b)
 
-${chalk.gray('See: https://github.com/ruvnet/ruvector for setup instructions.')}
+${chalk.gray('See: https://github.com/FlexNetOS/ruvector for setup instructions.')}
 `;
 
 function checkHyperbolicAvailable(): boolean {

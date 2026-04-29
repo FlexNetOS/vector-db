@@ -82,12 +82,12 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/ruvnet/ruvector.git",
+    "url": "https://github.com/FlexNetOS/ruvector.git",
     "directory": "npm/packages/ruvbot"
   },
-  "homepage": "https://github.com/ruvnet/ruvector/tree/main/npm/packages/ruvbot",
+  "homepage": "https://github.com/FlexNetOS/ruvector/tree/main/npm/packages/ruvbot",
   "bugs": {
-    "url": "https://github.com/ruvnet/ruvector/issues"
+    "url": "https://github.com/FlexNetOS/ruvector/issues"
   },
   "engines": {
     "node": ">=18.0.0"

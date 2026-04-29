@@ -8,7 +8,7 @@ authors = ["RuVector Contributors"]
 description = "Comprehensive benchmarks comparing RuVix Cognition Kernel against Linux syscalls"
 keywords = ["benchmark", "syscall", "kernel", "linux", "performance"]
 categories = ["development-tools::profiling", "os"]
-repository = "https://github.com/ruvnet/ruvector"
+repository = "https://github.com/FlexNetOS/ruvector"
 readme = "README.md"
 publish = false
 

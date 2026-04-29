@@ -34,7 +34,7 @@ Attention is the core operation in transformers, vector search, and graph neural
 | **PDE/Diffusion Attention** | Runs heat equation on a similarity graph | Smooth, noise-robust attention for irregular data |
 | **Unified Diagnostics** | Health monitoring and automatic mode selection across all 7 theories | One report tells you which attention works best for your data |
 
-> Part of the [RuVector](https://github.com/ruvnet/ruvector) ecosystem -- the self-learning vector database with graph intelligence.
+> Part of the [RuVector](https://github.com/FlexNetOS/ruvector) ecosystem -- the self-learning vector database with graph intelligence.
 
 ## Supported Attention Mechanisms
 
@@ -850,7 +850,7 @@ If you use this crate in your research, please cite:
   title = {ruvector-attention: Advanced Attention Mechanisms for Vector Search},
   author = {ruvector contributors},
   year = {2025},
-  url = {https://github.com/ruvnet/ruvector}
+  url = {https://github.com/FlexNetOS/ruvector}
 }
 ```
 

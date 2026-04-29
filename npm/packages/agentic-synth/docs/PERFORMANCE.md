@@ -319,4 +319,4 @@ if (report.detected) {
 - [API Documentation](./API.md)
 - [Examples](../examples/)
 - [Benchmark Source](../src/benchmarks/)
-- [GitHub Issues](https://github.com/ruvnet/ruvector/issues)
+- [GitHub Issues](https://github.com/FlexNetOS/ruvector/issues)

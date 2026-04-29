@@ -393,8 +393,8 @@ Generate realistic synthetic data for AI/ML training, RAG systems, and database 
 
 🔗 Links:
 - NPM: https://www.npmjs.com/package/@ruvector/agentic-synth
-- GitHub: https://github.com/ruvnet/ruvector/tree/main/packages/agentic-synth
-- Documentation: https://github.com/ruvnet/ruvector/blob/main/packages/agentic-synth/README.md
+- GitHub: https://github.com/FlexNetOS/ruvector/tree/main/packages/agentic-synth
+- Documentation: https://github.com/FlexNetOS/ruvector/blob/main/packages/agentic-synth/README.md
 
 ⚡ Performance:
 - Sub-millisecond P99 latencies

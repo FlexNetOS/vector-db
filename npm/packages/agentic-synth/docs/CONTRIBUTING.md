@@ -312,7 +312,7 @@ Contributors will be:
 ## 📞 Getting Help
 
 - **Discord**: [Join our community](https://discord.gg/ruvnet)
-- **GitHub Discussions**: [Ask questions](https://github.com/ruvnet/ruvector/discussions)
+- **GitHub Discussions**: [Ask questions](https://github.com/FlexNetOS/ruvector/discussions)
 - **Email**: support@ruv.io
 
 ## 📜 Code of Conduct

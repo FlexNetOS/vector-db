@@ -486,8 +486,8 @@ Have an idea for a tutorial?
 
 ## 📞 Support
 
-- **Issues:** [GitHub Issues](https://github.com/ruvnet/ruvector/issues)
-- **Discussions:** [GitHub Discussions](https://github.com/ruvnet/ruvector/discussions)
+- **Issues:** [GitHub Issues](https://github.com/FlexNetOS/ruvector/issues)
+- **Discussions:** [GitHub Discussions](https://github.com/FlexNetOS/ruvector/discussions)
 - **Questions:** Tag us on Twitter [@ruvnet](https://twitter.com/ruvnet)
 
 ---

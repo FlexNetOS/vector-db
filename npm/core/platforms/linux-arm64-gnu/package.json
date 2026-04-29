@@ -46,11 +46,11 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/ruvnet/ruvector.git",
+    "url": "https://github.com/FlexNetOS/ruvector.git",
     "directory": "npm/core/platforms/linux-arm64-gnu"
   },
   "bugs": {
-    "url": "https://github.com/ruvnet/ruvector/issues"
+    "url": "https://github.com/FlexNetOS/ruvector/issues"
   },
   "publishConfig": {
     "access": "public"

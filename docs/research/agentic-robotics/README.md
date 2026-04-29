@@ -860,7 +860,7 @@ Key differentiator: **bounded worst-case latency** from a single-process Rust ru
 ### Repositories
 
 1. **agentic-robotics** -- https://github.com/ruvnet/agentic-robotics
-2. **ruvector** -- https://github.com/ruvnet/ruvector
+2. **ruvector** -- https://github.com/FlexNetOS/ruvector
 3. **Zenoh** (pub/sub middleware) -- https://github.com/eclipse-zenoh/zenoh
 4. **NAPI-RS** (Node.js bindings) -- https://github.com/napi-rs/napi-rs
 5. **rkyv** (zero-copy serialization) -- https://github.com/rkyv/rkyv

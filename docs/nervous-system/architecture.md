@@ -1606,7 +1606,7 @@ edition = "2021"
 authors = ["RuVector Team"]
 description = "Biologically-inspired cognitive architecture built on RuVector"
 license = "MIT OR Apache-2.0"
-repository = "https://github.com/ruvnet/ruvector"
+repository = "https://github.com/FlexNetOS/ruvector"
 
 [dependencies]
 # Core dependencies
@@ -1798,7 +1798,7 @@ MIT OR Apache-2.0 (dual licensed)
 
 ## Contributors
 
-RuVector Team - https://github.com/ruvnet/ruvector
+RuVector Team - https://github.com/FlexNetOS/ruvector
 
 ---
 

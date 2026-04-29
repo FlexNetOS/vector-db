@@ -195,7 +195,7 @@ MIT OR Apache-2.0
 
 ## Links
 
-- [GitHub](https://github.com/ruvnet/ruvector)
+- [GitHub](https://github.com/FlexNetOS/ruvector)
 - [Documentation](https://docs.rs/ruvector-math-wasm)
 - [crates.io](https://crates.io/crates/ruvector-math-wasm)
 - [npm](https://www.npmjs.com/package/ruvector-math-wasm)

@@ -7,7 +7,7 @@ license = "MIT OR Apache-2.0"
 description = "Device drivers for RuVix Cognition Kernel (ADR-087)"
 keywords = ["kernel", "drivers", "no_std", "uart", "gic"]
 categories = ["no-std", "embedded", "hardware-support"]
-repository = "https://github.com/ruvnet/ruvector"
+repository = "https://github.com/FlexNetOS/ruvector"
 readme = "README.md"
 
 [lib]

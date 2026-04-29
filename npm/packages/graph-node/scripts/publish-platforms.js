@@ -48,7 +48,7 @@ for (const platform of platforms) {
     license: 'MIT',
     repository: {
       type: 'git',
-      url: 'https://github.com/ruvnet/ruvector.git',
+      url: 'https://github.com/FlexNetOS/ruvector.git',
       directory: 'npm/packages/graph-node'
     },
     publishConfig: { access: 'public' }

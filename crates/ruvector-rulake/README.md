@@ -124,7 +124,7 @@ One deployment can serve all three depending on the collection. It's a product k
 
 ## How ruLake compares
 
-ruLake is explicitly **not** a vector database — it doesn't own storage. It's the substrate that lets you query whichever vector DB or lakehouse you already have, with a coherent compression + governance story across all of them. If you want a standalone managed vector DB, use Pinecone or Weaviate. If you want to use the vectors that already live in your lake, use ruLake — part of the [RuVector](https://github.com/ruvnet/RuVector) ecosystem alongside RVF (durable segments), `ruvector-rabitq` (1-bit compression), and `ruvector-rulake` (this crate).
+ruLake is explicitly **not** a vector database — it doesn't own storage. It's the substrate that lets you query whichever vector DB or lakehouse you already have, with a coherent compression + governance story across all of them. If you want a standalone managed vector DB, use Pinecone or Weaviate. If you want to use the vectors that already live in your lake, use ruLake — part of the [RuVector](https://github.com/FlexNetOS/ruvector) ecosystem alongside RVF (durable segments), `ruvector-rabitq` (1-bit compression), and `ruvector-rulake` (this crate).
 
 | System           | Abstraction cost | Cross-backend federation | Witness-authenticated | Cross-process cache sharing | CPU-first / GPU-optional | `unsafe` count |
 |------------------|-----------------:|-------------------------:|----------------------:|----------------------------:|-------------------------:|---------------:|

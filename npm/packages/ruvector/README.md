@@ -4,9 +4,9 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![Node Version](https://img.shields.io/node/v/ruvector)](https://nodejs.org)
 [![Downloads](https://img.shields.io/npm/dm/ruvector)](https://www.npmjs.com/package/ruvector)
-[![Build Status](https://img.shields.io/badge/build-passing-brightgreen.svg)](https://github.com/ruvnet/ruvector)
-[![Performance](https://img.shields.io/badge/latency-<0.5ms-green.svg)](https://github.com/ruvnet/ruvector)
-[![GitHub Stars](https://img.shields.io/github/stars/ruvnet/ruvector?style=social)](https://github.com/ruvnet/ruvector)
+[![Build Status](https://img.shields.io/badge/build-passing-brightgreen.svg)](https://github.com/FlexNetOS/ruvector)
+[![Performance](https://img.shields.io/badge/latency-<0.5ms-green.svg)](https://github.com/FlexNetOS/ruvector)
+[![GitHub Stars](https://img.shields.io/github/stars/FlexNetOS/ruvector?style=social)](https://github.com/FlexNetOS/ruvector)
 
 **The fastest vector database for Node.js—built in Rust, runs everywhere**
 
@@ -16,7 +16,7 @@ Ruvector is a self-learning vector database with **enterprise-grade semantic sea
 
 Built by [rUv](https://ruv.io) with production-grade Rust performance and intelligent platform detection—**automatically uses native bindings when available, falls back to WebAssembly when needed**.
 
-🌐 **[Visit ruv.io](https://ruv.io)** | 📦 **[GitHub](https://github.com/ruvnet/ruvector)** | 📚 **[Documentation](https://github.com/ruvnet/ruvector/tree/main/docs)**
+🌐 **[Visit ruv.io](https://ruv.io)** | 📦 **[GitHub](https://github.com/FlexNetOS/ruvector)** | 📚 **[Documentation](https://github.com/FlexNetOS/ruvector/tree/main/docs)**
 
 ---
 
@@ -65,7 +65,7 @@ npx ruvector hooks init --pretrain --build-agents quality
 | HNSW search | ~0.045ms | 8,800x |
 | Memory cache | ~0.01ms | **40,000x** |
 
-📖 **[Full Hooks Documentation →](https://github.com/ruvnet/ruvector/blob/main/npm/packages/ruvector/HOOKS.md)**
+📖 **[Full Hooks Documentation →](https://github.com/FlexNetOS/ruvector/blob/main/npm/packages/ruvector/HOOKS.md)**
 
 ### MCP Server Integration
 
@@ -1954,7 +1954,7 @@ If you need to rebuild the native module:
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 
 # Clone repository
-git clone https://github.com/ruvnet/ruvector.git
+git clone https://github.com/FlexNetOS/ruvector.git
 cd ruvector
 
 # Build native module
@@ -1998,7 +1998,7 @@ npm test
 
 ## RVF Cognitive Containers
 
-Ruvector integrates with [RVF (RuVector Format)](https://github.com/ruvnet/ruvector/tree/main/crates/rvf) — a universal binary substrate that stores vectors, models, graphs, compute kernels, and attestation in a single `.rvf` file.
+Ruvector integrates with [RVF (RuVector Format)](https://github.com/FlexNetOS/ruvector/tree/main/crates/rvf) — a universal binary substrate that stores vectors, models, graphs, compute kernels, and attestation in a single `.rvf` file.
 
 ### Enable RVF Backend
 
@@ -2065,7 +2065,7 @@ npx ruvector rvf export mydb.rvf --output dump.json
 
 ```bash
 # Download a specific example
-curl -LO https://raw.githubusercontent.com/ruvnet/ruvector/main/examples/rvf/output/basic_store.rvf
+curl -LO https://raw.githubusercontent.com/FlexNetOS/ruvector/main/examples/rvf/output/basic_store.rvf
 
 # Popular examples:
 #   basic_store.rvf (152 KB)        — 1,000 vectors, dim 128
@@ -2079,7 +2079,7 @@ curl -LO https://raw.githubusercontent.com/ruvnet/ruvector/main/examples/rvf/out
 cd crates/rvf && cargo run --example generate_all
 ```
 
-Full catalog: [examples/rvf/output/](https://github.com/ruvnet/ruvector/tree/main/examples/rvf/output)
+Full catalog: [examples/rvf/output/](https://github.com/FlexNetOS/ruvector/tree/main/examples/rvf/output)
 
 ### Working Examples: Cognitive Containers
 
@@ -2206,17 +2206,17 @@ If you're using WASM fallback and need better performance:
 ## 📚 Documentation
 
 - 🏠 [Homepage](https://ruv.io)
-- 📦 [GitHub Repository](https://github.com/ruvnet/ruvector)
-- 📚 [Full Documentation](https://github.com/ruvnet/ruvector/tree/main/docs)
-- 🚀 [Getting Started Guide](https://github.com/ruvnet/ruvector/blob/main/docs/guide/GETTING_STARTED.md)
-- 📖 [API Reference](https://github.com/ruvnet/ruvector/blob/main/docs/api/NODEJS_API.md)
-- 🎯 [Performance Tuning](https://github.com/ruvnet/ruvector/blob/main/docs/optimization/PERFORMANCE_TUNING_GUIDE.md)
-- 🐛 [Issue Tracker](https://github.com/ruvnet/ruvector/issues)
-- 💬 [Discussions](https://github.com/ruvnet/ruvector/discussions)
+- 📦 [GitHub Repository](https://github.com/FlexNetOS/ruvector)
+- 📚 [Full Documentation](https://github.com/FlexNetOS/ruvector/tree/main/docs)
+- 🚀 [Getting Started Guide](https://github.com/FlexNetOS/ruvector/blob/main/docs/guide/GETTING_STARTED.md)
+- 📖 [API Reference](https://github.com/FlexNetOS/ruvector/blob/main/docs/api/NODEJS_API.md)
+- 🎯 [Performance Tuning](https://github.com/FlexNetOS/ruvector/blob/main/docs/optimization/PERFORMANCE_TUNING_GUIDE.md)
+- 🐛 [Issue Tracker](https://github.com/FlexNetOS/ruvector/issues)
+- 💬 [Discussions](https://github.com/FlexNetOS/ruvector/discussions)
 
 ## 🤝 Contributing
 
-We welcome contributions! See [CONTRIBUTING.md](https://github.com/ruvnet/ruvector/blob/main/docs/development/CONTRIBUTING.md) for guidelines.
+We welcome contributions! See [CONTRIBUTING.md](https://github.com/FlexNetOS/ruvector/blob/main/docs/development/CONTRIBUTING.md) for guidelines.
 
 ### Quick Start
 
@@ -2228,10 +2228,10 @@ We welcome contributions! See [CONTRIBUTING.md](https://github.com/ruvnet/ruvect
 
 ## 🌐 Community & Support
 
-- **GitHub**: [github.com/ruvnet/ruvector](https://github.com/ruvnet/ruvector) - ⭐ Star and follow
+- **GitHub**: [github.com/FlexNetOS/ruvector](https://github.com/FlexNetOS/ruvector) - ⭐ Star and follow
 - **Discord**: [Join our community](https://discord.gg/ruvnet) - Chat with developers
 - **Twitter**: [@ruvnet](https://twitter.com/ruvnet) - Follow for updates
-- **Issues**: [Report bugs](https://github.com/ruvnet/ruvector/issues)
+- **Issues**: [Report bugs](https://github.com/FlexNetOS/ruvector/issues)
 
 ### Enterprise Support
 
@@ -2241,7 +2241,7 @@ Need custom development or consulting?
 
 ## 📜 License
 
-**MIT License** - see [LICENSE](https://github.com/ruvnet/ruvector/blob/main/LICENSE) for details.
+**MIT License** - see [LICENSE](https://github.com/FlexNetOS/ruvector/blob/main/LICENSE) for details.
 
 Free for commercial and personal use.
 
@@ -2262,9 +2262,9 @@ Built with battle-tested technologies:
 **Built with ❤️ by [rUv](https://ruv.io)**
 
 [![npm](https://img.shields.io/npm/v/ruvector.svg)](https://www.npmjs.com/package/ruvector)
-[![GitHub Stars](https://img.shields.io/github/stars/ruvnet/ruvector?style=social)](https://github.com/ruvnet/ruvector)
+[![GitHub Stars](https://img.shields.io/github/stars/FlexNetOS/ruvector?style=social)](https://github.com/FlexNetOS/ruvector)
 [![Twitter](https://img.shields.io/twitter/follow/ruvnet?style=social)](https://twitter.com/ruvnet)
 
-**[Get Started](https://github.com/ruvnet/ruvector/blob/main/docs/guide/GETTING_STARTED.md)** • **[Documentation](https://github.com/ruvnet/ruvector/tree/main/docs)** • **[API Reference](https://github.com/ruvnet/ruvector/blob/main/docs/api/NODEJS_API.md)** • **[Contributing](https://github.com/ruvnet/ruvector/blob/main/docs/development/CONTRIBUTING.md)**
+**[Get Started](https://github.com/FlexNetOS/ruvector/blob/main/docs/guide/GETTING_STARTED.md)** • **[Documentation](https://github.com/FlexNetOS/ruvector/tree/main/docs)** • **[API Reference](https://github.com/FlexNetOS/ruvector/blob/main/docs/api/NODEJS_API.md)** • **[Contributing](https://github.com/FlexNetOS/ruvector/blob/main/docs/development/CONTRIBUTING.md)**
 
 </div>

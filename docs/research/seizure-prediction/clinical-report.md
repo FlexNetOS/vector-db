@@ -4,7 +4,7 @@
 **Authors:** RuVector Research Group
 **Date:** April 12-13, 2026
 **Status:** Validated on real clinical EEG (CHB-MIT, PhysioNet) + synthetic data
-**Code:** [github.com/ruvnet/RuVector](https://github.com/ruvnet/RuVector) — `examples/brain-boundary-discovery/` + `examples/real-eeg-analysis/`
+**Code:** [github.com/FlexNetOS/ruvector](https://github.com/FlexNetOS/ruvector) — `examples/brain-boundary-discovery/` + `examples/real-eeg-analysis/`
 
 ---
 
@@ -323,7 +323,7 @@ Note: RMS during Normal (1.083) vs Pre-ictal (1.104) = **2% difference — invis
 
 ```bash
 # 1. Clone the repository
-git clone https://github.com/ruvnet/RuVector.git
+git clone https://github.com/FlexNetOS/ruvector.git
 cd RuVector
 git checkout research/exotic-structure-discovery-rvf
 

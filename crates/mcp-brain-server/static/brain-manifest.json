@@ -96,7 +96,7 @@
     },
     "rust_sdk": {
       "crate": "mcp-brain-server",
-      "repository": "https://github.com/ruvnet/ruvector"
+      "repository": "https://github.com/FlexNetOS/ruvector"
     },
     "sse": {
       "endpoint": "/sse",
@@ -152,7 +152,7 @@
   "links": {
     "homepage": "https://pi.ruv.io",
     "origin": "https://pi.ruv.io/origin",
-    "github": "https://github.com/ruvnet/ruvector",
+    "github": "https://github.com/FlexNetOS/ruvector",
     "npm": "https://www.npmjs.com/package/ruvector",
     "documentation": "https://pi.ruv.io/.well-known/agent-guide.md"
   }

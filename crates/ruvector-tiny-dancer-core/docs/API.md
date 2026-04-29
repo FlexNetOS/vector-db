@@ -664,7 +664,7 @@ record_routing_metrics(&metrics, inference_time_us, lightweight_count, powerful_
 ## Support
 
 For issues, questions, or contributions, please visit:
-- GitHub: https://github.com/ruvnet/ruvector
+- GitHub: https://github.com/FlexNetOS/ruvector
 - Documentation: https://docs.ruvector.io
 
 ---

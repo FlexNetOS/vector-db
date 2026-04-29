@@ -7,7 +7,7 @@
 
 **The pure-Rust vector database engine behind RuVector -- HNSW indexing, quantization, and SIMD acceleration in a single crate.**
 
-`ruvector-core` is the foundational library that powers the entire [RuVector](https://github.com/ruvnet/ruvector) ecosystem. It gives you a production-grade vector database you can embed directly into any Rust application: insert vectors, search them in under a millisecond, filter by metadata, and compress storage up to 32x -- all without external services. If you need vector search as a library instead of a server, this is the crate.
+`ruvector-core` is the foundational library that powers the entire [RuVector](https://github.com/FlexNetOS/ruvector) ecosystem. It gives you a production-grade vector database you can embed directly into any Rust application: insert vectors, search them in under a millisecond, filter by metadata, and compress storage up to 32x -- all without external services. If you need vector search as a library instead of a server, this is the crate.
 
 | | ruvector-core | Typical Vector Database |
 |---|---|---|
@@ -462,10 +462,10 @@ Built with state-of-the-art algorithms and libraries:
 
 <div align="center">
 
-**Part of [RuVector](https://github.com/ruvnet/ruvector) - Built by [rUv](https://ruv.io)**
+**Part of [RuVector](https://github.com/FlexNetOS/ruvector) - Built by [rUv](https://ruv.io)**
 
-[![Star on GitHub](https://img.shields.io/github/stars/ruvnet/ruvector?style=social)](https://github.com/ruvnet/ruvector)
+[![Star on GitHub](https://img.shields.io/github/stars/FlexNetOS/ruvector?style=social)](https://github.com/FlexNetOS/ruvector)
 
-[Documentation](https://docs.rs/ruvector-core) | [Crates.io](https://crates.io/crates/ruvector-core) | [GitHub](https://github.com/ruvnet/ruvector)
+[Documentation](https://docs.rs/ruvector-core) | [Crates.io](https://crates.io/crates/ruvector-core) | [GitHub](https://github.com/FlexNetOS/ruvector)
 
 </div>

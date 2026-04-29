@@ -107,7 +107,7 @@ curl -X POST $URL/benchmark/quick
 
 ```bash
 # Clone the repository
-git clone https://github.com/ruvnet/ruvector.git
+git clone https://github.com/FlexNetOS/ruvector.git
 cd ruvector/examples/google-cloud
 
 # Set environment variables

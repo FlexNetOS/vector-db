@@ -406,7 +406,7 @@ A **production-ready, standalone synthetic data generator** with:
 
 **Built by**: 5-Agent Swarm (Architect, Coder, Tester, Perf-Analyzer, API-Docs)
 **Orchestrated by**: Claude Code with claude-flow@alpha
-**Repository**: https://github.com/ruvnet/ruvector
+**Repository**: https://github.com/FlexNetOS/ruvector
 **Package**: `@ruvector/agentic-synth`
 **Branch**: `claude/setup-claude-flow-alpha-01N3K2THbetAFeoqvuUkLdxt`
 **Commit**: `e333830`

@@ -916,7 +916,7 @@ impl AccessibleColorPalette {
 - [Plotly Rust Bindings](https://crates.io/crates/plotly)
 - [WCAG 2.1 Guidelines](https://www.w3.org/WAI/WCAG21/quickref/)
 - [Perch 2.0 Paper](https://arxiv.org/abs/2508.04665)
-- [RuVector Repository](https://github.com/ruvnet/ruvector)
+- [RuVector Repository](https://github.com/FlexNetOS/ruvector)
 - [Web Audio API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Audio_API)
 
 ## Appendix A: File Structure

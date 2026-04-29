@@ -555,6 +555,6 @@ const d3Data = exportToD3(filteredGraph);
 ## Support
 
 For issues and questions:
-- GitHub Issues: https://github.com/ruvnet/ruvector/issues
-- Documentation: https://github.com/ruvnet/ruvector
+- GitHub Issues: https://github.com/FlexNetOS/ruvector/issues
+- Documentation: https://github.com/FlexNetOS/ruvector
 - Examples: See `examples/graph-export-examples.ts`

@@ -170,7 +170,7 @@ jobs:
             "files": ["${NODE_NAME}"],
             "description": "DiskANN native bindings - ${platform}",
             "license": "MIT",
-            "repository": {"type": "git", "url": "https://github.com/ruvnet/ruvector"},
+            "repository": {"type": "git", "url": "https://github.com/FlexNetOS/ruvector"},
             "engines": {"node": ">= 18"},
             "publishConfig": {"access": "public"}
           }

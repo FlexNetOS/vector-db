@@ -1770,9 +1770,9 @@ const synth = createSynth({
 
 ### Getting Help
 
-- **Documentation**: [GitHub README](https://github.com/ruvnet/ruvector/tree/main/packages/agentic-synth)
-- **Issues**: [GitHub Issues](https://github.com/ruvnet/ruvector/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/ruvnet/ruvector/discussions)
+- **Documentation**: [GitHub README](https://github.com/FlexNetOS/ruvector/tree/main/packages/agentic-synth)
+- **Issues**: [GitHub Issues](https://github.com/FlexNetOS/ruvector/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/FlexNetOS/ruvector/discussions)
 - **NPM**: [@ruvector/agentic-synth](https://www.npmjs.com/package/@ruvector/agentic-synth)
 
 ---

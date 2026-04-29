@@ -33,12 +33,12 @@
   "license": "MIT OR Apache-2.0",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ruvnet/RuVector.git",
+    "url": "git+https://github.com/FlexNetOS/ruvector.git",
     "directory": "crates/ruvector-rabitq-wasm"
   },
-  "homepage": "https://github.com/ruvnet/RuVector#readme",
+  "homepage": "https://github.com/FlexNetOS/ruvector#readme",
   "bugs": {
-    "url": "https://github.com/ruvnet/RuVector/issues"
+    "url": "https://github.com/FlexNetOS/ruvector/issues"
   },
   "files": [
     "ruvector_rabitq_wasm_bg.wasm",

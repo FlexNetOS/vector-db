@@ -36,7 +36,7 @@ EXAMPLES:
     Run security audit:
         ruvix security audit --depth full
 
-For more information, see: https://github.com/ruvnet/ruvector
+For more information, see: https://github.com/FlexNetOS/ruvector
 ")]
 struct Cli {
     /// Enable verbose output

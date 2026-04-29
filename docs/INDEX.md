@@ -250,9 +250,9 @@ docs/
 - **Benchmarks**: `cargo bench`
 
 ### Support Channels
-- **GitHub Issues**: [Report bugs or request features](https://github.com/ruvnet/ruvector/issues)
-- **GitHub Discussions**: [Ask questions](https://github.com/ruvnet/ruvector/discussions)
-- **Pull Requests**: [Contribute code](https://github.com/ruvnet/ruvector/pulls)
+- **GitHub Issues**: [Report bugs or request features](https://github.com/FlexNetOS/ruvector/issues)
+- **GitHub Discussions**: [Ask questions](https://github.com/FlexNetOS/ruvector/discussions)
+- **Pull Requests**: [Contribute code](https://github.com/FlexNetOS/ruvector/pulls)
 
 ---
 

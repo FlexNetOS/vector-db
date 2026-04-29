@@ -311,7 +311,7 @@ const snn = new SpikingNeuralNetwork(layers, {
 
 ## Related Demos
 
-This package is part of the [ruvector](https://github.com/ruvnet/ruvector) meta-cognition examples:
+This package is part of the [ruvector](https://github.com/FlexNetOS/ruvector) meta-cognition examples:
 
 | Demo | Description | Command |
 |------|-------------|---------|
@@ -346,6 +346,6 @@ MIT © [rUv](https://ruv.io)
 ## Links
 
 - **Homepage**: [ruv.io](https://ruv.io)
-- **GitHub**: [github.com/ruvnet/ruvector](https://github.com/ruvnet/ruvector)
+- **GitHub**: [github.com/FlexNetOS/ruvector](https://github.com/FlexNetOS/ruvector)
 - **npm**: [npmjs.com/package/spiking-neural](https://www.npmjs.com/package/spiking-neural)
-- **SNN Guide**: [Meta-Cognition Examples](https://github.com/ruvnet/ruvector/tree/main/examples/meta-cognition-spiking-neural-network)
+- **SNN Guide**: [Meta-Cognition Examples](https://github.com/FlexNetOS/ruvector/tree/main/examples/meta-cognition-spiking-neural-network)

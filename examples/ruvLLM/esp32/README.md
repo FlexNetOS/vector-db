@@ -1,7 +1,7 @@
 # RuvLLM ESP32
 
 <p align="center">
-  <a href="https://github.com/ruvnet/ruvector"><img src="https://img.shields.io/badge/rust-1.75+-orange.svg?style=flat-square&logo=rust" alt="Rust 1.75+"></a>
+  <a href="https://github.com/FlexNetOS/ruvector"><img src="https://img.shields.io/badge/rust-1.75+-orange.svg?style=flat-square&logo=rust" alt="Rust 1.75+"></a>
   <a href="#"><img src="https://img.shields.io/badge/no__std-compatible-brightgreen.svg?style=flat-square" alt="no_std"></a>
   <a href="#"><img src="https://img.shields.io/badge/ESP32-S2%20|%20S3%20|%20C3%20|%20C6-blue.svg?style=flat-square&logo=espressif" alt="ESP32"></a>
   <a href="#"><img src="https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square" alt="MIT License"></a>
@@ -244,7 +244,7 @@ rag.add_knowledge("The kitchen light is called 'main light'", &embed)?;
 
 ```bash
 # 1. Clone and enter
-git clone https://github.com/ruvnet/ruvector && cd ruvector/examples/ruvLLM/esp32
+git clone https://github.com/FlexNetOS/ruvector && cd ruvector/examples/ruvLLM/esp32
 
 # 2. Run the demo (no hardware needed!)
 cargo run --example embedding_demo
@@ -313,7 +313,7 @@ npx ruvllm-esp32 build --target esp32s3 --flash
 | **crates.io** | [crates.io/crates/ruvllm-esp32](https://crates.io/crates/ruvllm-esp32) |
 | **docs.rs** | [docs.rs/ruvllm-esp32](https://docs.rs/ruvllm-esp32) |
 | **npm** | [npmjs.com/package/ruvllm-esp32](https://www.npmjs.com/package/ruvllm-esp32) |
-| **GitHub** | [github.com/ruvnet/ruvector](https://github.com/ruvnet/ruvector) |
+| **GitHub** | [github.com/FlexNetOS/ruvector](https://github.com/FlexNetOS/ruvector) |
 | **Flashable Project** | [esp32-flash/](../esp32-flash/) |
 
 ---
@@ -830,7 +830,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
 ```bash
 # Clone the repo first
-git clone https://github.com/ruvnet/ruvector && cd ruvector/examples/ruvLLM/esp32
+git clone https://github.com/FlexNetOS/ruvector && cd ruvector/examples/ruvLLM/esp32
 
 # Core demos
 cargo run --example embedding_demo     # Basic inference

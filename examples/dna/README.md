@@ -601,7 +601,7 @@ See [ADR-012](adr/ADR-012-genomic-security-and-privacy.md) for the complete thre
 |---|---|---|
 | **Rust** | `cargo add rvdna` | [crates.io/crates/rvdna](https://crates.io/crates/rvdna) |
 | **npm** | `npm install @ruvector/rvdna` | [npmjs.com/package/@ruvector/rvdna](https://www.npmjs.com/package/@ruvector/rvdna) |
-| **From source** | `cargo run --release -p rvdna` | [GitHub](https://github.com/ruvnet/ruvector/tree/main/examples/dna) |
+| **From source** | `cargo run --release -p rvdna` | [GitHub](https://github.com/FlexNetOS/ruvector/tree/main/examples/dna) |
 
 ### Rust (crates.io)
 
@@ -662,7 +662,7 @@ The npm package uses Rust NAPI-RS bindings for native speed and falls back to pu
 ### From Source
 
 ```bash
-git clone https://github.com/ruvnet/ruvector.git
+git clone https://github.com/FlexNetOS/ruvector.git
 cd ruvector
 cargo run --release -p rvdna
 ```
@@ -682,4 +682,4 @@ MIT -- see `LICENSE` in the repository root.
 
 ---
 
-Part of [RuVector](https://github.com/ruvnet/ruvector) -- the self-learning vector database.
+Part of [RuVector](https://github.com/FlexNetOS/ruvector) -- the self-learning vector database.

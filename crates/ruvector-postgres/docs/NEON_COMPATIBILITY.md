@@ -308,8 +308,8 @@ Details:
 Use case:
 [Describe your vector search use case]
 
-Repository: https://github.com/ruvnet/ruvector
-Documentation: https://github.com/ruvnet/ruvector/tree/main/crates/ruvector-postgres
+Repository: https://github.com/FlexNetOS/ruvector
+Documentation: https://github.com/FlexNetOS/ruvector/tree/main/crates/ruvector-postgres
 
 I can provide pre-built binaries if needed.
 ```
@@ -692,7 +692,7 @@ ALTER DATABASE mydb SET ruvector.ef_search = 100;
 ## Support Resources
 
 - **Neon Documentation**: https://neon.tech/docs
-- **RuVector GitHub**: https://github.com/ruvnet/ruvector
-- **RuVector Issues**: https://github.com/ruvnet/ruvector/issues
+- **RuVector GitHub**: https://github.com/FlexNetOS/ruvector
+- **RuVector Issues**: https://github.com/FlexNetOS/ruvector/issues
 - **Neon Discord**: https://discord.gg/92vNTzKDGp
 - **Neon Support**: console.neon.tech → Support (Scale plan+)

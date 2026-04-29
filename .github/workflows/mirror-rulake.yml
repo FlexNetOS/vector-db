@@ -80,8 +80,8 @@ jobs:
           # This is a mirror
 
           The canonical source lives at
-          [ruvnet/ruvector](https://github.com/ruvnet/ruvector) under
-          [`crates/ruvector-rulake/`](https://github.com/ruvnet/ruvector/tree/main/crates/ruvector-rulake).
+          [ruvnet/ruvector](https://github.com/FlexNetOS/ruvector) under
+          [`crates/ruvector-rulake/`](https://github.com/FlexNetOS/ruvector/tree/main/crates/ruvector-rulake).
 
           Contents of this repo:
           - `README.md` — hand-maintained landing page
@@ -93,7 +93,7 @@ jobs:
           ruvnet/ruvector instead.
 
           The sync is driven by
-          [.github/workflows/mirror-rulake.yml](https://github.com/ruvnet/ruvector/blob/main/.github/workflows/mirror-rulake.yml)
+          [.github/workflows/mirror-rulake.yml](https://github.com/FlexNetOS/ruvector/blob/main/.github/workflows/mirror-rulake.yml)
           and runs on every push to `main` that touches the crate or
           its ADRs.
           EOF
@@ -119,7 +119,7 @@ jobs:
 
           Auto-synced from ruvnet/ruvector on ${UPSTREAM_REF}.
 
-          Source commit: https://github.com/ruvnet/ruvector/commit/${UPSTREAM_SHA}
+          Source commit: https://github.com/FlexNetOS/ruvector/commit/${UPSTREAM_SHA}
 
           Do not commit to this repo directly; changes flow from
           ruvnet/ruvector via .github/workflows/mirror-rulake.yml."

@@ -662,7 +662,7 @@ jobs:
 ## Support
 
 For issues or questions:
-- Open an issue on [GitHub](https://github.com/ruvnet/ruvector/issues)
+- Open an issue on [GitHub](https://github.com/FlexNetOS/ruvector/issues)
 - Check the [main documentation](../../README.md)
 
 ## License

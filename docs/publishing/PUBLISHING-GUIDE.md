@@ -224,9 +224,9 @@ Package: psycho-symbolic-integration
 Version: 0.1.0
 License: MIT
 Description: Integration layer combining psycho-symbolic-reasoner with ruvector and agentic-synth
-Homepage: https://github.com/ruvnet/ruvector#readme
-Repository: https://github.com/ruvnet/ruvector.git
-Issues: https://github.com/ruvnet/ruvector/issues
+Homepage: https://github.com/FlexNetOS/ruvector#readme
+Repository: https://github.com/FlexNetOS/ruvector.git
+Issues: https://github.com/FlexNetOS/ruvector/issues
 ```
 
 **Keywords:** psycho-symbolic, reasoning, ruvector, agentic-synth, ai, vector-database, synthetic-data, integration
@@ -238,9 +238,9 @@ Package: psycho-synth-examples
 Version: 0.1.0
 License: MIT
 Description: Advanced psycho-symbolic reasoning examples: audience analysis, voter sentiment, marketing optimization, financial insights, medical patient analysis, and exotic psychological profiling
-Homepage: https://github.com/ruvnet/ruvector/tree/main/packages/psycho-synth-examples#readme
-Repository: https://github.com/ruvnet/ruvector.git
-Issues: https://github.com/ruvnet/ruvector/issues
+Homepage: https://github.com/FlexNetOS/ruvector/tree/main/packages/psycho-synth-examples#readme
+Repository: https://github.com/FlexNetOS/ruvector.git
+Issues: https://github.com/FlexNetOS/ruvector/issues
 ```
 
 **Keywords:** psycho-symbolic, reasoning, synthetic-data, audience-analysis, voter-sentiment, marketing-optimization, financial-analysis, medical-insights, psychological-profiling, sentiment-analysis, preference-extraction, examples
@@ -426,7 +426,7 @@ npx psycho-synth-examples list
 **Good luck with your publication!** 🚀
 
 For questions or issues:
-- GitHub Issues: https://github.com/ruvnet/ruvector/issues
+- GitHub Issues: https://github.com/FlexNetOS/ruvector/issues
 - npm Support: https://www.npmjs.com/support
 
 MIT © ruvnet

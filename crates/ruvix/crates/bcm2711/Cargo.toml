@@ -8,7 +8,7 @@ authors = ["RuVector Contributors"]
 description = "BCM2711/BCM2712 SoC drivers for Raspberry Pi 4/5 (RuVix Phase D)"
 keywords = ["kernel", "rpi", "bcm2711", "no_std", "embedded"]
 categories = ["no-std", "embedded", "hardware-support"]
-repository = "https://github.com/ruvnet/ruvector"
+repository = "https://github.com/FlexNetOS/ruvector"
 readme = "README.md"
 
 [lib]

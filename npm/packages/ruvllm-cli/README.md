@@ -3,7 +3,7 @@
 [![npm version](https://img.shields.io/npm/v/@ruvector/ruvllm-cli.svg)](https://www.npmjs.com/package/@ruvector/ruvllm-cli)
 [![npm downloads](https://img.shields.io/npm/dt/@ruvector/ruvllm-cli.svg)](https://www.npmjs.com/package/@ruvector/ruvllm-cli)
 [![npm downloads/month](https://img.shields.io/npm/dm/@ruvector/ruvllm-cli.svg)](https://www.npmjs.com/package/@ruvector/ruvllm-cli)
-[![License](https://img.shields.io/npm/l/@ruvector/ruvllm-cli.svg)](https://github.com/ruvnet/ruvector/blob/main/LICENSE)
+[![License](https://img.shields.io/npm/l/@ruvector/ruvllm-cli.svg)](https://github.com/FlexNetOS/ruvector/blob/main/LICENSE)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue.svg)](https://www.typescriptlang.org/)
 
 **Command-line interface for local LLM inference and benchmarking** - run AI models on your machine with Metal, CUDA, and CPU acceleration.
@@ -210,8 +210,8 @@ Create `~/.ruvllm/config.json`:
 
 ## Documentation
 
-- [RuvLLM Documentation](https://github.com/ruvnet/ruvector/tree/main/crates/ruvllm)
-- [CLI Crate](https://github.com/ruvnet/ruvector/tree/main/crates/ruvllm-cli)
+- [RuvLLM Documentation](https://github.com/FlexNetOS/ruvector/tree/main/crates/ruvllm)
+- [CLI Crate](https://github.com/FlexNetOS/ruvector/tree/main/crates/ruvllm-cli)
 - [API Reference](https://docs.rs/ruvllm-cli)
 
 ## License
@@ -220,4 +220,4 @@ MIT OR Apache-2.0
 
 ---
 
-**Part of the [RuVector](https://github.com/ruvnet/ruvector) ecosystem** - High-performance vector database with self-learning capabilities.
+**Part of the [RuVector](https://github.com/FlexNetOS/ruvector) ecosystem** - High-performance vector database with self-learning capabilities.

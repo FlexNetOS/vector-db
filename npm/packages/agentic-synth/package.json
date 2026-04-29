@@ -145,12 +145,12 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/ruvnet/ruvector.git",
+    "url": "https://github.com/FlexNetOS/ruvector.git",
     "directory": "packages/agentic-synth"
   },
-  "homepage": "https://github.com/ruvnet/ruvector/tree/main/packages/agentic-synth#readme",
+  "homepage": "https://github.com/FlexNetOS/ruvector/tree/main/packages/agentic-synth#readme",
   "bugs": {
-    "url": "https://github.com/ruvnet/ruvector/issues"
+    "url": "https://github.com/FlexNetOS/ruvector/issues"
   },
   "funding": {
     "type": "github",

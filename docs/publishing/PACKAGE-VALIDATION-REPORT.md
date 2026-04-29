@@ -47,7 +47,7 @@ Total: 6 files, 32.7 KB unpacked, 9.3 KB tarball
   "description": "Integration layer combining psycho-symbolic-reasoner with ruvector and agentic-synth",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
-  "repository": "https://github.com/ruvnet/ruvector.git",
+  "repository": "https://github.com/FlexNetOS/ruvector.git",
   "publishConfig": { "access": "public" },
   "license": "MIT"
 }
@@ -59,9 +59,9 @@ psycho-symbolic, reasoning, ruvector, agentic-synth, ai, vector-database, synthe
 
 ### 🔗 Links
 
-- **Repository**: https://github.com/ruvnet/ruvector
-- **Issues**: https://github.com/ruvnet/ruvector/issues
-- **Homepage**: https://github.com/ruvnet/ruvector#readme
+- **Repository**: https://github.com/FlexNetOS/ruvector
+- **Issues**: https://github.com/FlexNetOS/ruvector/issues
+- **Homepage**: https://github.com/FlexNetOS/ruvector#readme
 - **Package**: packages/psycho-symbolic-integration
 
 ---
@@ -116,7 +116,7 @@ Total: 11 files, 112.7 KB unpacked, 26.9 KB tarball
     "psycho-synth-examples": "./bin/cli.js",
     "pse": "./bin/cli.js"
   },
-  "repository": "https://github.com/ruvnet/ruvector.git",
+  "repository": "https://github.com/FlexNetOS/ruvector.git",
   "publishConfig": { "access": "public" },
   "license": "MIT"
 }
@@ -128,9 +128,9 @@ psycho-symbolic, reasoning, synthetic-data, audience-analysis, voter-sentiment, 
 
 ### 🔗 Links
 
-- **Repository**: https://github.com/ruvnet/ruvector
-- **Issues**: https://github.com/ruvnet/ruvector/issues
-- **Homepage**: https://github.com/ruvnet/ruvector/tree/main/packages/psycho-synth-examples#readme
+- **Repository**: https://github.com/FlexNetOS/ruvector
+- **Issues**: https://github.com/FlexNetOS/ruvector/issues
+- **Homepage**: https://github.com/FlexNetOS/ruvector/tree/main/packages/psycho-synth-examples#readme
 - **Package**: packages/psycho-synth-examples
 
 ### 🖥️ CLI Binaries

@@ -738,7 +738,7 @@ Improved Retrieval
 
 ## References
 
-1. RuVector GNN Architecture: https://github.com/ruvnet/ruvector
+1. RuVector GNN Architecture: https://github.com/FlexNetOS/ruvector
 2. SONA Pattern Documentation: claude-flow v3 hooks system
 3. EWC++ Paper: "Overcoming catastrophic forgetting in neural networks"
 4. Perch 2.0 Embeddings: https://arxiv.org/abs/2508.04665

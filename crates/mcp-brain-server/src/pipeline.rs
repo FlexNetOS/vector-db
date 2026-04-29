@@ -782,7 +782,7 @@ impl CommonCrawlAdapter {
                 .pool_max_idle_per_host(0) // Disable connection pooling (Common Crawl closes connections)
                 .http1_only() // Force HTTP/1.1 (Common Crawl CDX doesn't handle HTTP/2 well)
                 .tcp_nodelay(true)
-                .user_agent("RuVector-Brain/1.0 (pi.ruv.io; +https://github.com/ruvnet/ruvector)")
+                .user_agent("RuVector-Brain/1.0 (pi.ruv.io; +https://github.com/FlexNetOS/ruvector)")
                 .build()
                 .expect("Failed to build reqwest client"),
             seen_urls: dashmap::DashMap::new(),

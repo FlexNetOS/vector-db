@@ -16,7 +16,7 @@ import chalk from 'chalk';
 import ora from 'ora';
 
 // Constants
-const DOCKER_IMAGE = 'ruvnet/ruvector-postgres';
+const DOCKER_IMAGE = 'flexnetos/ruvector-postgres';
 const DOCKER_IMAGE_VERSION = '0.2.5';
 const RUVECTOR_CRATE_VERSION = '0.2.5';
 const PGRX_VERSION = '0.12.6';
@@ -385,7 +385,7 @@ export class InstallCommands {
       spinner.text = 'Cloning ruvector repository...';
 
       // Clone the actual repository (pgrx needs .control file and proper structure)
-      execSync(`git clone --depth 1 https://github.com/ruvnet/ruvector.git ${tmpDir}/ruvector`, {
+      execSync(`git clone --depth 1 https://github.com/FlexNetOS/ruvector.git ${tmpDir}/ruvector`, {
         stdio: 'pipe',
       });
 
@@ -629,7 +629,7 @@ export class InstallCommands {
       execSync(`docker image inspect ${DOCKER_IMAGE}:${version}`, { stdio: 'pipe' });
       pullSpinner.succeed(`Found local image ${DOCKER_IMAGE}:${version}`);
     } catch {
-      // Try pulling from Docker Hub (ruvnet/ruvector-postgres)
+      // Try pulling from Docker Hub (flexnetos/ruvector-postgres)
       pullSpinner.text = `Pulling ${DOCKER_IMAGE}:${version} from Docker Hub...`;
       try {
         execSync(`docker pull ${DOCKER_IMAGE}:${version}`, { stdio: 'pipe' });
@@ -637,7 +637,7 @@ export class InstallCommands {
       } catch {
         pullSpinner.fail('Image not found locally or on Docker Hub');
         console.log(chalk.yellow('\n📦 To build the image locally, run:'));
-        console.log(chalk.gray('   git clone https://github.com/ruvnet/ruvector.git'));
+        console.log(chalk.gray('   git clone https://github.com/FlexNetOS/ruvector.git'));
         console.log(chalk.gray('   cd ruvector'));
         console.log(chalk.gray(`   docker build -f crates/ruvector-postgres/docker/Dockerfile -t ${DOCKER_IMAGE}:${version} .`));
         console.log(chalk.yellow('\n   Then run this install command again.'));

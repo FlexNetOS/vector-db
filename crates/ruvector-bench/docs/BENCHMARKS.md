@@ -454,13 +454,13 @@ To add new benchmarks:
 - [ANN-Benchmarks](http://ann-benchmarks.com)
 - [HNSW Paper](https://arxiv.org/abs/1603.09320)
 - [AgenticDB Documentation](https://github.com/agenticdb/agenticdb)
-- [Ruvector Repository](https://github.com/ruvnet/ruvector)
+- [Ruvector Repository](https://github.com/FlexNetOS/ruvector)
 
 ## Support
 
 For issues or questions:
-- GitHub Issues: https://github.com/ruvnet/ruvector/issues
-- Documentation: https://github.com/ruvnet/ruvector/docs
+- GitHub Issues: https://github.com/FlexNetOS/ruvector/issues
+- Documentation: https://github.com/FlexNetOS/ruvector/docs
 
 ---
 

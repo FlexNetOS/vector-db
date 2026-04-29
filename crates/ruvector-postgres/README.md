@@ -4,7 +4,7 @@
 [![Documentation](https://docs.rs/ruvector-postgres/badge.svg)](https://docs.rs/ruvector-postgres)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-14--17-blue.svg)](https://www.postgresql.org/)
-[![Docker](https://img.shields.io/badge/Docker-available-blue.svg)](https://hub.docker.com/r/ruvnet/ruvector-postgres)
+[![Docker](https://img.shields.io/badge/Docker-available-blue.svg)](https://hub.docker.com/r/flexnetos/ruvector-postgres)
 [![npm](https://img.shields.io/npm/v/@ruvector/core.svg)](https://www.npmjs.com/package/@ruvector/core)
 [![Security](https://img.shields.io/badge/Security-Audited-green.svg)](docs/SECURITY_AUDIT_REPORT.md)
 
@@ -47,7 +47,7 @@ Most PostgreSQL vector extensions give you storage and search -- and that is it.
 docker run -d --name ruvector-pg \
   -e POSTGRES_PASSWORD=secret \
   -p 5432:5432 \
-  ruvnet/ruvector-postgres:latest
+  flexnetos/ruvector-postgres:latest
 
 # Connect with psql
 PGPASSWORD=secret psql -h localhost -p 5432 -U postgres
@@ -1022,4 +1022,4 @@ Contributions welcome! See [CONTRIBUTING.md](../../CONTRIBUTING.md)
 
 ---
 
-Part of [RuVector](https://github.com/ruvnet/ruvector) -- the self-learning vector database.
+Part of [RuVector](https://github.com/FlexNetOS/ruvector) -- the self-learning vector database.

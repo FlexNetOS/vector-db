@@ -1,7 +1,7 @@
 # @ruvector/ruvllm-wasm
 
 [![npm](https://img.shields.io/npm/v/@ruvector/ruvllm-wasm.svg)](https://www.npmjs.com/package/@ruvector/ruvllm-wasm)
-[![License](https://img.shields.io/crates/l/ruvllm-wasm.svg)](https://github.com/ruvnet/ruvector/blob/main/LICENSE)
+[![License](https://img.shields.io/crates/l/ruvllm-wasm.svg)](https://github.com/FlexNetOS/ruvector/blob/main/LICENSE)
 
 Browser-compatible LLM inference runtime with WebAssembly. Semantic routing, adaptive learning, KV cache management, and chat template formatting — directly in the browser, no server required.
 

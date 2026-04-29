@@ -710,7 +710,7 @@ npm run report -- --test-id "worldcup-2026-final" --format pdf
 - **OpenTelemetry**: https://opentelemetry.io/docs
 
 ### Support Channels
-- **GitHub Issues**: https://github.com/ruvnet/ruvector/issues
+- **GitHub Issues**: https://github.com/FlexNetOS/ruvector/issues
 - **Email**: ops@ruvector.io
 - **Slack**: #ruvector-ops
 

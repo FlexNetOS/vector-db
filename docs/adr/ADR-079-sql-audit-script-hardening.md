@@ -125,11 +125,11 @@ The audit script detects functions via `pg_proc` pattern matching, which may und
 - `crates/ruvector-postgres/Dockerfile.prebuilt` — New slim image using pre-compiled artifacts (~12s build)
 - `crates/ruvector-postgres/docker/Dockerfile` — Updated Rust 1.85, features, labels
 - `crates/ruvector-postgres/docker/docker-compose.yml` — Updated Rust version to 1.85
-- **Published**: `docker.io/ruvnet/ruvector-postgres:0.3.2` and `:latest` (sha256:d9f86747f3af, 100% audit pass)
+- **Published**: `docker.io/flexnetos/ruvector-postgres:0.3.2` and `:latest` (sha256:d9f86747f3af, 100% audit pass)
 
 ### Verification Summary
 
-All 47 new functions verified in Docker container (`ruvnet/ruvector-postgres:0.3.2`):
+All 47 new functions verified in Docker container (`flexnetos/ruvector-postgres:0.3.2`):
 
 | Module | Functions | Status |
 |--------|-----------|--------|

@@ -716,10 +716,10 @@ if (quality.overall > 0.85) {
 
 If you're still experiencing issues:
 
-1. **Check documentation**: https://github.com/ruvnet/ruvector/tree/main/packages/agentic-synth/docs
-2. **Search issues**: https://github.com/ruvnet/ruvector/issues
+1. **Check documentation**: https://github.com/FlexNetOS/ruvector/tree/main/packages/agentic-synth/docs
+2. **Search issues**: https://github.com/FlexNetOS/ruvector/issues
 3. **Ask on Discord**: https://discord.gg/ruvnet
-4. **Open an issue**: https://github.com/ruvnet/ruvector/issues/new
+4. **Open an issue**: https://github.com/FlexNetOS/ruvector/issues/new
 
 When reporting issues, include:
 - Agentic-Synth version: `npm list agentic-synth`

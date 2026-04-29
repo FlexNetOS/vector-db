@@ -6,7 +6,7 @@ rust-version = "1.77"
 authors = ["RuVector Team"]
 license = "MIT OR Apache-2.0"
 description = "WASM bindings for mincut-gated transformer inference"
-repository = "https://github.com/ruvnet/ruvector"
+repository = "https://github.com/FlexNetOS/ruvector"
 keywords = ["transformer", "wasm", "mincut", "inference", "webassembly"]
 categories = ["wasm", "algorithms", "science"]
 

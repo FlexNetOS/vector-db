@@ -21,7 +21,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/ruvnet/ruvector"
+    "url": "https://github.com/FlexNetOS/ruvector"
   },
   "publishConfig": {
     "registry": "https://registry.npmjs.org/",

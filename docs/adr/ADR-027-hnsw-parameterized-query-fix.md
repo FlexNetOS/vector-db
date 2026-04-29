@@ -160,7 +160,7 @@ SELECT * FROM test_hnsw ORDER BY embedding <=> '[0.1,0.2]'::ruvector(2) LIMIT 5;
 
 ## Related
 
-- **Issue**: [#141](https://github.com/ruvnet/ruvector/issues/141) - HNSW Segmentation Fault with Parameterized Queries
+- **Issue**: [#141](https://github.com/FlexNetOS/ruvector/issues/141) - HNSW Segmentation Fault with Parameterized Queries
 - **Reporter**: Mark Allen, NexaDental CTO
 - **Priority**: P0 (Critical) - Production blocker
 

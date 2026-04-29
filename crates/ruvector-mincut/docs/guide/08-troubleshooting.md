@@ -508,7 +508,7 @@ println!("Algorithm stats: {:?}", mincut.stats());
 
 | Resource | URL |
 |----------|-----|
-| GitHub Issues | [github.com/ruvnet/ruvector/issues](https://github.com/ruvnet/ruvector/issues) |
+| GitHub Issues | [github.com/FlexNetOS/ruvector/issues](https://github.com/FlexNetOS/ruvector/issues) |
 | Documentation | [docs.rs/ruvector-mincut](https://docs.rs/ruvector-mincut) |
 | Discord | [ruv.io/discord](https://ruv.io/discord) |
 | Stack Overflow | Tag: `ruvector` |
@@ -552,7 +552,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
 <div align="center">
 
-**Still stuck?** [Open an issue](https://github.com/ruvnet/ruvector/issues/new) with your code and error message.
+**Still stuck?** [Open an issue](https://github.com/FlexNetOS/ruvector/issues/new) with your code and error message.
 
 [← Back to Index](README.md)
 

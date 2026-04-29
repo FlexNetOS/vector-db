@@ -6,7 +6,7 @@
 
 **WebAssembly bindings for Tiny Dancer neural routing.**
 
-`ruvector-tiny-dancer-wasm` brings production-grade AI agent routing to the browser with WebAssembly. Run FastGRNN neural inference for intelligent request routing directly in client-side applications. Part of the [Ruvector](https://github.com/ruvnet/ruvector) ecosystem.
+`ruvector-tiny-dancer-wasm` brings production-grade AI agent routing to the browser with WebAssembly. Run FastGRNN neural inference for intelligent request routing directly in client-side applications. Part of the [Ruvector](https://github.com/FlexNetOS/ruvector) ecosystem.
 
 ## Why Tiny Dancer WASM?
 
@@ -227,7 +227,7 @@ Total               ~105KB gzipped
 
 - **[Main README](../../README.md)** - Complete project overview
 - **[API Documentation](https://docs.rs/ruvector-tiny-dancer-wasm)** - Full API reference
-- **[GitHub Repository](https://github.com/ruvnet/ruvector)** - Source code
+- **[GitHub Repository](https://github.com/FlexNetOS/ruvector)** - Source code
 
 ## License
 
@@ -237,10 +237,10 @@ Total               ~105KB gzipped
 
 <div align="center">
 
-**Part of [Ruvector](https://github.com/ruvnet/ruvector) - Built by [rUv](https://ruv.io)**
+**Part of [Ruvector](https://github.com/FlexNetOS/ruvector) - Built by [rUv](https://ruv.io)**
 
-[![Star on GitHub](https://img.shields.io/github/stars/ruvnet/ruvector?style=social)](https://github.com/ruvnet/ruvector)
+[![Star on GitHub](https://img.shields.io/github/stars/FlexNetOS/ruvector?style=social)](https://github.com/FlexNetOS/ruvector)
 
-[Documentation](https://docs.rs/ruvector-tiny-dancer-wasm) | [npm](https://www.npmjs.com/package/@ruvector/tiny-dancer) | [GitHub](https://github.com/ruvnet/ruvector)
+[Documentation](https://docs.rs/ruvector-tiny-dancer-wasm) | [npm](https://www.npmjs.com/package/@ruvector/tiny-dancer) | [GitHub](https://github.com/FlexNetOS/ruvector)
 
 </div>

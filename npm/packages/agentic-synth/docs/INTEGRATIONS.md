@@ -678,12 +678,12 @@ export class MyCustomIntegration extends BaseIntegration {
 
 ## Examples Repository
 
-Complete integration examples: https://github.com/ruvnet/ruvector/tree/main/packages/agentic-synth/examples/integrations
+Complete integration examples: https://github.com/FlexNetOS/ruvector/tree/main/packages/agentic-synth/examples/integrations
 
 ---
 
 ## Support
 
-- GitHub Issues: https://github.com/ruvnet/ruvector/issues
+- GitHub Issues: https://github.com/FlexNetOS/ruvector/issues
 - Discord: https://discord.gg/ruvnet
 - Email: support@ruv.io

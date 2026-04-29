@@ -455,9 +455,9 @@ examples/
 ## 📞 Support & Resources
 
 - **Main Package**: [@ruvector/agentic-synth](https://www.npmjs.com/package/@ruvector/agentic-synth)
-- **Documentation**: [GitHub Docs](https://github.com/ruvnet/ruvector/tree/main/packages/agentic-synth)
-- **Issues**: [GitHub Issues](https://github.com/ruvnet/ruvector/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/ruvnet/ruvector/discussions)
+- **Documentation**: [GitHub Docs](https://github.com/FlexNetOS/ruvector/tree/main/packages/agentic-synth)
+- **Issues**: [GitHub Issues](https://github.com/FlexNetOS/ruvector/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/FlexNetOS/ruvector/discussions)
 - **Twitter**: [@ruvnet](https://twitter.com/ruvnet)
 
 ---

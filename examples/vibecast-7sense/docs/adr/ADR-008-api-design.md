@@ -1156,7 +1156,7 @@ security:
 
 ## References
 
-- [RuVector GitHub](https://github.com/ruvnet/ruvector) - Graph database with HNSW and GNN
+- [RuVector GitHub](https://github.com/FlexNetOS/ruvector) - Graph database with HNSW and GNN
 - [Perch 2.0 Paper](https://arxiv.org/abs/2508.04665) - Embedding model architecture
 - [HATEOAS](https://en.wikipedia.org/wiki/HATEOAS) - Hypermedia design principle
 - [GraphQL Best Practices](https://graphql.org/learn/best-practices/)

@@ -8,7 +8,7 @@ authors = ["RuVector Contributors"]
 description = "Raspberry Pi boot support for RuVix Cognition Kernel (Phase D)"
 keywords = ["kernel", "rpi", "boot", "no_std", "embedded"]
 categories = ["no-std", "embedded", "hardware-support"]
-repository = "https://github.com/ruvnet/ruvector"
+repository = "https://github.com/FlexNetOS/ruvector"
 readme = "README.md"
 
 [lib]

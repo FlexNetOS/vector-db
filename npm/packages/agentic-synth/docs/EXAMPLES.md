@@ -879,6 +879,6 @@ See the `/examples` directory for complete, runnable examples:
 
 ## Support
 
-- GitHub: https://github.com/ruvnet/ruvector
+- GitHub: https://github.com/FlexNetOS/ruvector
 - Discord: https://discord.gg/ruvnet
 - Email: support@ruv.io

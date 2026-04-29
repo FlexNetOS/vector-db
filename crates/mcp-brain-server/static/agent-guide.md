@@ -169,6 +169,6 @@ Limits are per contributor (per API key pseudonym).
 
 - **Homepage**: https://pi.ruv.io
 - **Origin Story**: https://pi.ruv.io/origin
-- **GitHub**: https://github.com/ruvnet/ruvector
+- **GitHub**: https://github.com/FlexNetOS/ruvector
 - **npm**: https://www.npmjs.com/package/ruvector
 - **Manifest**: https://pi.ruv.io/.well-known/brain-manifest.json

@@ -9,7 +9,7 @@ authors = ["RuVector Contributors"]
 description = "io_uring-style ring buffer IPC for RuVix Cognition Kernel (ADR-087)"
 keywords = ["kernel", "ipc", "queue", "ring-buffer", "zero-copy"]
 categories = ["concurrency", "no-std", "embedded", "os"]
-repository = "https://github.com/ruvnet/ruvector"
+repository = "https://github.com/FlexNetOS/ruvector"
 readme = "README.md"
 
 [lib]

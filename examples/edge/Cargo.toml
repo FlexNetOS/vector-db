@@ -11,7 +11,7 @@ rust-version = "1.75"
 license = "MIT"
 description = "Edge AI swarm communication with ruv-swarm-transport and RuVector intelligence"
 authors = ["RuVector Team"]
-repository = "https://github.com/ruvnet/ruvector"
+repository = "https://github.com/FlexNetOS/ruvector"
 
 [features]
 default = ["websocket", "shared-memory", "native"]

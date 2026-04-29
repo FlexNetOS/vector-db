@@ -696,8 +696,8 @@ MIT License - see LICENSE file for details
 
 ## 💬 Support
 
-- Issues: [GitHub Issues](https://github.com/ruvnet/ruvector/issues)
-- Discussions: [GitHub Discussions](https://github.com/ruvnet/ruvector/discussions)
+- Issues: [GitHub Issues](https://github.com/FlexNetOS/ruvector/issues)
+- Discussions: [GitHub Discussions](https://github.com/FlexNetOS/ruvector/discussions)
 - Email: support@ruv.io
 
 ---

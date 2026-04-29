@@ -709,6 +709,6 @@ See [EXAMPLES.md](./EXAMPLES.md) for comprehensive usage examples.
 
 ## Support
 
-- GitHub Issues: https://github.com/ruvnet/ruvector/issues
+- GitHub Issues: https://github.com/FlexNetOS/ruvector/issues
 - Discord: https://discord.gg/ruvnet
 - Email: support@ruv.io

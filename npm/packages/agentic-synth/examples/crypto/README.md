@@ -665,8 +665,8 @@ To add new crypto data examples:
 ## Support
 
 For issues or questions:
-- GitHub Issues: https://github.com/ruvnet/ruvector/issues
-- Documentation: https://github.com/ruvnet/ruvector/tree/main/packages/agentic-synth
+- GitHub Issues: https://github.com/FlexNetOS/ruvector/issues
+- Documentation: https://github.com/FlexNetOS/ruvector/tree/main/packages/agentic-synth
 
 ## License
 

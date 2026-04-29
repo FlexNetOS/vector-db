@@ -172,7 +172,7 @@ ${c('bold', 'IDENTITY INFO:')}
   ${c('cyan', 'Public Key:')} 32-byte Ed25519 verification key
   ${c('cyan', 'Genesis ID:')} 21-byte network fingerprint (φ-sized)
 
-${c('dim', 'Documentation: https://github.com/ruvnet/ruvector/tree/main/examples/edge-net')}
+${c('dim', 'Documentation: https://github.com/FlexNetOS/ruvector/tree/main/examples/edge-net')}
 `);
 }
 

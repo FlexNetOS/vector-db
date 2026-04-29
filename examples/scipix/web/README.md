@@ -175,4 +175,4 @@ MIT
 Built with:
 - [wasm-bindgen](https://github.com/rustwasm/wasm-bindgen)
 - [image-rs](https://github.com/image-rs/image)
-- [ruvector](https://github.com/ruvnet/ruvector)
+- [ruvector](https://github.com/FlexNetOS/ruvector)

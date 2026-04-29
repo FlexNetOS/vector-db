@@ -97,7 +97,7 @@ impl WikipediaClient {
     pub fn new(language: String) -> Result<Self> {
         let client = Client::builder()
             .timeout(Duration::from_secs(30))
-            .user_agent("RuVector/1.0 (https://github.com/ruvnet/ruvector)")
+            .user_agent("RuVector/1.0 (https://github.com/FlexNetOS/ruvector)")
             .build()
             .map_err(|e| FrameworkError::Network(e))?;
 
@@ -414,7 +414,7 @@ impl WikidataClient {
     pub fn new() -> Result<Self> {
         let client = Client::builder()
             .timeout(Duration::from_secs(30))
-            .user_agent("RuVector/1.0 (https://github.com/ruvnet/ruvector)")
+            .user_agent("RuVector/1.0 (https://github.com/FlexNetOS/ruvector)")
             .build()
             .map_err(|e| FrameworkError::Network(e))?;
 

@@ -105,7 +105,7 @@ version = "0.1.16"          # Workspace version
 edition = "2021"            # Workspace edition
 license = "MIT"             # Workspace license
 authors = ["Ruvector Team"] # Workspace authors
-repository = "https://github.com/ruvnet/ruvector"
+repository = "https://github.com/FlexNetOS/ruvector"
 ```
 
 ### Dependencies Added ✅

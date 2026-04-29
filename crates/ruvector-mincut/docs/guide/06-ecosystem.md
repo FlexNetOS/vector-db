@@ -714,7 +714,7 @@ graph LR
 
 - **Website**: [ruv.io](https://ruv.io)
 - **GitHub Organization**: [github.com/ruvnet](https://github.com/ruvnet)
-- **Main Repository**: [github.com/ruvnet/ruvector](https://github.com/ruvnet/ruvector)
+- **Main Repository**: [github.com/FlexNetOS/ruvector](https://github.com/FlexNetOS/ruvector)
 
 ### Crates.io Pages
 
@@ -734,7 +734,7 @@ graph LR
 
 - **API Docs**: [docs.ruv.io](https://docs.ruv.io)
 - **Tutorials**: [ruv.io/tutorials](https://ruv.io/tutorials)
-- **Examples**: [github.com/ruvnet/ruvector/tree/main/examples](https://github.com/ruvnet/ruvector/tree/main/examples)
+- **Examples**: [github.com/FlexNetOS/ruvector/tree/main/examples](https://github.com/FlexNetOS/ruvector/tree/main/examples)
 
 ### Community
 
@@ -745,8 +745,8 @@ graph LR
 
 ### Support
 
-- **Issues**: [github.com/ruvnet/ruvector/issues](https://github.com/ruvnet/ruvector/issues)
-- **Discussions**: [github.com/ruvnet/ruvector/discussions](https://github.com/ruvnet/ruvector/discussions)
+- **Issues**: [github.com/FlexNetOS/ruvector/issues](https://github.com/FlexNetOS/ruvector/issues)
+- **Discussions**: [github.com/FlexNetOS/ruvector/discussions](https://github.com/FlexNetOS/ruvector/discussions)
 - **Enterprise Support**: enterprise@ruv.io
 - **Security Issues**: security@ruv.io
 
@@ -817,7 +817,7 @@ ruvio deploy --service graph-analytics
 
 ## Next Steps
 
-- **Explore Examples**: Check out the [examples directory](https://github.com/ruvnet/ruvector/tree/main/examples)
+- **Explore Examples**: Check out the [examples directory](https://github.com/FlexNetOS/ruvector/tree/main/examples)
 - **Join Community**: Connect with other developers on [Discord](https://discord.gg/ruvector)
 - **Read Tutorials**: Learn patterns at [ruv.io/tutorials](https://ruv.io/tutorials)
 - **Try Cloud**: Sign up for [ruv.io platform](https://ruv.io/signup)

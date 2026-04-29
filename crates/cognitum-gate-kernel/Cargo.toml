@@ -8,7 +8,7 @@ authors = ["RuVector Contributors"]
 description = "No-std WASM kernel for 256-tile coherence gate fabric"
 keywords = ["wasm", "coherence", "mincut", "distributed", "no_std"]
 categories = ["algorithms", "no-std", "wasm"]
-repository = "https://github.com/ruvnet/ruvector"
+repository = "https://github.com/FlexNetOS/ruvector"
 readme = "README.md"
 
 [lib]

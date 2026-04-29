@@ -116,7 +116,7 @@ If you use this research, please cite:
   author={AI Research Collective},
   year={2025},
   month={December},
-  url={https://github.com/ruvnet/ruvector/tree/main/examples/exo-ai-2025/research/02-quantum-superposition},
+  url={https://github.com/FlexNetOS/ruvector/tree/main/examples/exo-ai-2025/research/02-quantum-superposition},
   note={Comprehensive research package including theory, code, and experimental protocols}
 }
 ```

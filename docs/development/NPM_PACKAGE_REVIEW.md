@@ -250,9 +250,9 @@ package.json (1.4kB)
 **ruvector package.json:**
 ```json
 {
-  "homepage": "https://github.com/ruvnet/ruvector#readme",
+  "homepage": "https://github.com/FlexNetOS/ruvector#readme",
   "bugs": {
-    "url": "https://github.com/ruvnet/ruvector/issues"
+    "url": "https://github.com/FlexNetOS/ruvector/issues"
   }
 }
 ```

@@ -529,7 +529,7 @@ The calibration and quantization pipeline uses **ruvllm-native tooling** rather 
 - [KV-Cache management](../../crates/ruvllm/src/kv_cache.rs)
 - [WET processing pipeline](../../crates/mcp-brain-server/src/pipeline.rs)
 - [ADR-128: SOTA Gap Implementations](./ADR-128-sota-gap-implementations.md)
-- [v2.1.0 Release](https://github.com/ruvnet/RuVector/releases/tag/v2.1.0)
+- [v2.1.0 Release](https://github.com/FlexNetOS/ruvector/releases/tag/v2.1.0)
 - [phi4-finetuning-gpu service](https://console.cloud.google.com/run/detail/us-central1/phi4-finetuning-gpu/revisions?project=ruv-dev) — existing template
 - [ADR-049: Verified Training Pipeline](./ADR-049-verified-training-pipeline.md)
 - [ADR-090: Ultra-Low-Bit QAT & Pi-Quantization](./ADR-090-ultra-low-bit-qat-pi-quantization.md)

@@ -7,7 +7,7 @@
  * - Performance comparison with native Rust bindings
  *
  * @see https://github.com/ruvnet/neural-trader
- * @see https://github.com/ruvnet/ruvector
+ * @see https://github.com/FlexNetOS/ruvector
  */
 
 // Core imports

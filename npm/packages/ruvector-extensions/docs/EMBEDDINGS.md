@@ -438,6 +438,6 @@ MIT © ruv.io Team
 
 ## Support
 
-- GitHub Issues: https://github.com/ruvnet/ruvector/issues
-- Documentation: https://github.com/ruvnet/ruvector
+- GitHub Issues: https://github.com/FlexNetOS/ruvector/issues
+- Documentation: https://github.com/FlexNetOS/ruvector
 - Email: info@ruv.io

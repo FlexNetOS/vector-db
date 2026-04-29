@@ -840,7 +840,7 @@ Ruvector enables SONA's three-tier temporal learning:
 2. SONA Overview: `/examples/ruvLLM/docs/SONA/00-OVERVIEW.md`
 3. mistral.rs Paged Attention: https://github.com/EricLBuehler/mistral.rs
 4. vLLM PagedAttention Paper: "Efficient Memory Management for Large Language Model Serving"
-5. Ruvector Core Documentation: https://github.com/ruvnet/ruvector
+5. Ruvector Core Documentation: https://github.com/FlexNetOS/ruvector
 
 ---
 

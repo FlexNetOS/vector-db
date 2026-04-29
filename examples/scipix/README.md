@@ -5,7 +5,7 @@
 [![Downloads](https://img.shields.io/crates/d/ruvector-scipix.svg)](https://crates.io/crates/ruvector-scipix)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Rust](https://img.shields.io/badge/rust-1.77+-orange.svg)](https://www.rust-lang.org/)
-[![CI](https://github.com/ruvnet/ruvector/workflows/CI/badge.svg)](https://github.com/ruvnet/ruvector/actions)
+[![CI](https://github.com/FlexNetOS/ruvector/workflows/CI/badge.svg)](https://github.com/FlexNetOS/ruvector/actions)
 
 <p align="center">
   <strong>🔬 Production-ready Rust OCR library for extracting LaTeX, MathML, and text from scientific images</strong>
@@ -87,7 +87,7 @@ ruvector-scipix = { version = "0.1.16", features = ["ocr", "math", "optimize"] }
 
 ```bash
 # Clone the repository
-git clone https://github.com/ruvnet/ruvector.git
+git clone https://github.com/FlexNetOS/ruvector.git
 cd ruvector/examples/scipix
 
 # Build CLI and Server
@@ -101,11 +101,11 @@ cargo install --path .
 
 ```bash
 # Download latest release (Linux)
-curl -L https://github.com/ruvnet/ruvector/releases/latest/download/scipix-cli-linux-x64 -o scipix-cli
+curl -L https://github.com/FlexNetOS/ruvector/releases/latest/download/scipix-cli-linux-x64 -o scipix-cli
 chmod +x scipix-cli
 
 # Download latest release (macOS)
-curl -L https://github.com/ruvnet/ruvector/releases/latest/download/scipix-cli-darwin-arm64 -o scipix-cli
+curl -L https://github.com/FlexNetOS/ruvector/releases/latest/download/scipix-cli-darwin-arm64 -o scipix-cli
 chmod +x scipix-cli
 ```
 
@@ -724,6 +724,6 @@ MIT License - see [LICENSE](../../LICENSE) for details.
 ---
 
 <p align="center">
-  Part of the <a href="https://github.com/ruvnet/ruvector">ruvector</a> ecosystem<br>
+  Part of the <a href="https://github.com/FlexNetOS/ruvector">ruvector</a> ecosystem<br>
   Built with Rust 🦀 | Powered by ONNX Runtime
 </p>

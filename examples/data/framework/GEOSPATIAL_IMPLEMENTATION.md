@@ -306,7 +306,7 @@ let patterns = engine.detect_patterns();
 
 ✅ **User-Agent**: All OSM services include proper User-Agent
 ```rust
-const USER_AGENT: &str = "RuVector-Data-Framework/1.0 (https://github.com/ruvnet/ruvector)";
+const USER_AGENT: &str = "RuVector-Data-Framework/1.0 (https://github.com/FlexNetOS/ruvector)";
 ```
 
 ✅ **Rate Limiting**: Nominatim strictly enforces 1 req/sec

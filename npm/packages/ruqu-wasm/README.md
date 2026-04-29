@@ -2,7 +2,7 @@
 
 [![Crates.io](https://img.shields.io/crates/v/ruqu-wasm.svg)](https://crates.io/crates/ruqu-wasm)
 [![npm](https://img.shields.io/npm/v/@ruvector/ruqu-wasm.svg)](https://www.npmjs.com/package/@ruvector/ruqu-wasm)
-[![License](https://img.shields.io/crates/l/ruqu-wasm.svg)](https://github.com/ruvnet/ruvector)
+[![License](https://img.shields.io/crates/l/ruqu-wasm.svg)](https://github.com/FlexNetOS/ruvector)
 
 **Run quantum simulations in the browser** — WebAssembly bindings for ruqu-core and ruqu-algorithms with 25-qubit support.
 
@@ -213,8 +213,8 @@ Requires WebAssembly SIMD for optimal performance (available in all modern brows
 
 ## Documentation
 
-- [WASM Strategy (ADR-QE-003)](https://github.com/ruvnet/ruvector/blob/main/docs/adr/quantum-engine/ADR-QE-003-wasm-compilation-strategy.md)
-- [Performance (ADR-QE-004)](https://github.com/ruvnet/ruvector/blob/main/docs/adr/quantum-engine/ADR-QE-004-performance-optimization-benchmarks.md)
+- [WASM Strategy (ADR-QE-003)](https://github.com/FlexNetOS/ruvector/blob/main/docs/adr/quantum-engine/ADR-QE-003-wasm-compilation-strategy.md)
+- [Performance (ADR-QE-004)](https://github.com/FlexNetOS/ruvector/blob/main/docs/adr/quantum-engine/ADR-QE-004-performance-optimization-benchmarks.md)
 
 ## License
 

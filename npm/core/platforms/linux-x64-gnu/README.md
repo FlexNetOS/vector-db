@@ -59,7 +59,7 @@ If you need to rebuild the native module:
 
 ```bash
 # Clone the repository
-git clone https://github.com/ruvnet/ruvector.git
+git clone https://github.com/FlexNetOS/ruvector.git
 cd ruvector
 
 # Install Rust toolchain
@@ -98,13 +98,13 @@ If the module fails to load:
 ## Resources
 
 - 🏠 [Homepage](https://ruv.io)
-- 📦 [GitHub Repository](https://github.com/ruvnet/ruvector)
-- 📚 [Documentation](https://github.com/ruvnet/ruvector/tree/main/docs)
-- 🐛 [Issue Tracker](https://github.com/ruvnet/ruvector/issues)
+- 📦 [GitHub Repository](https://github.com/FlexNetOS/ruvector)
+- 📚 [Documentation](https://github.com/FlexNetOS/ruvector/tree/main/docs)
+- 🐛 [Issue Tracker](https://github.com/FlexNetOS/ruvector/issues)
 
 ## License
 
-MIT License - see [LICENSE](https://github.com/ruvnet/ruvector/blob/main/LICENSE) for details.
+MIT License - see [LICENSE](https://github.com/FlexNetOS/ruvector/blob/main/LICENSE) for details.
 
 ---
 

@@ -291,9 +291,9 @@ This WASM binding leverages RuVector's hypergraph implementation from `ruvector-
 
 ## Support
 
-- GitHub: https://github.com/ruvnet/ruvector
-- Issues: https://github.com/ruvnet/ruvector/issues
-- Docs: https://github.com/ruvnet/ruvector/wiki
+- GitHub: https://github.com/FlexNetOS/ruvector
+- Issues: https://github.com/FlexNetOS/ruvector/issues
+- Docs: https://github.com/FlexNetOS/ruvector/wiki
 
 ---
 

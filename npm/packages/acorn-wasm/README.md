@@ -3,7 +3,7 @@
 **ACORN predicate-agnostic filtered HNSW in WebAssembly.** High-recall vector search with arbitrary metadata filters, in the browser or at the edge.
 
 [![npm](https://img.shields.io/npm/v/@ruvector/acorn-wasm.svg)](https://www.npmjs.com/package/@ruvector/acorn-wasm)
-[![License](https://img.shields.io/badge/license-MIT%20OR%20Apache--2.0-blue)](https://github.com/ruvnet/RuVector#license)
+[![License](https://img.shields.io/badge/license-MIT%20OR%20Apache--2.0-blue)](https://github.com/FlexNetOS/ruvector#license)
 
 ## What is ACORN?
 
@@ -136,12 +136,12 @@ The structural win is at **low selectivity**: ACORN-γ holds high recall as the 
 
 ## Source
 
-- **Rust crate**: [`crates/ruvector-acorn-wasm/`](https://github.com/ruvnet/RuVector/tree/main/crates/ruvector-acorn-wasm)
-- **Algorithm crate**: [`crates/ruvector-acorn/`](https://github.com/ruvnet/RuVector/tree/main/crates/ruvector-acorn)
-- **ADR**: [ADR-160 — ACORN predicate-agnostic filtered HNSW](https://github.com/ruvnet/RuVector/blob/main/docs/adr/ADR-160-acorn-filtered-hnsw.md)
-- **Packaging ADR**: [ADR-162 — `ruvector-acorn-wasm` npm package](https://github.com/ruvnet/RuVector/blob/main/docs/adr/ADR-162-acorn-wasm-npm-package.md)
+- **Rust crate**: [`crates/ruvector-acorn-wasm/`](https://github.com/FlexNetOS/ruvector/tree/main/crates/ruvector-acorn-wasm)
+- **Algorithm crate**: [`crates/ruvector-acorn/`](https://github.com/FlexNetOS/ruvector/tree/main/crates/ruvector-acorn)
+- **ADR**: [ADR-160 — ACORN predicate-agnostic filtered HNSW](https://github.com/FlexNetOS/ruvector/blob/main/docs/adr/ADR-160-acorn-filtered-hnsw.md)
+- **Packaging ADR**: [ADR-162 — `ruvector-acorn-wasm` npm package](https://github.com/FlexNetOS/ruvector/blob/main/docs/adr/ADR-162-acorn-wasm-npm-package.md)
 - **Paper**: [arXiv:2403.04871](https://arxiv.org/abs/2403.04871)
-- **Repository**: [github.com/ruvnet/RuVector](https://github.com/ruvnet/RuVector)
+- **Repository**: [github.com/FlexNetOS/ruvector](https://github.com/FlexNetOS/ruvector)
 
 ## License
 

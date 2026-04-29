@@ -285,11 +285,11 @@ All examples are production-ready and can be run via npx:
 
 ### 🔗 Links
 
-- **Repository**: https://github.com/ruvnet/ruvector
+- **Repository**: https://github.com/FlexNetOS/ruvector
 - **Package**: https://www.npmjs.com/package/@ruvector/agentic-synth
-- **Documentation**: https://github.com/ruvnet/ruvector/tree/main/packages/agentic-synth
-- **Issues**: https://github.com/ruvnet/ruvector/issues
-- **Examples**: https://github.com/ruvnet/ruvector/tree/main/packages/agentic-synth/examples
+- **Documentation**: https://github.com/FlexNetOS/ruvector/tree/main/packages/agentic-synth
+- **Issues**: https://github.com/FlexNetOS/ruvector/issues
+- **Examples**: https://github.com/FlexNetOS/ruvector/tree/main/packages/agentic-synth/examples
 - **ruv.io Platform**: https://ruv.io
 - **Author**: [@ruvnet](https://github.com/ruvnet)
 

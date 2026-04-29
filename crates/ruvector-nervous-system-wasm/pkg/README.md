@@ -1,7 +1,7 @@
 # @ruvector/nervous-system-wasm - Bio-Inspired AI for WebAssembly
 
 [![npm version](https://img.shields.io/npm/v/ruvector-nervous-system-wasm.svg)](https://www.npmjs.com/package/ruvector-nervous-system-wasm)
-[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/ruvnet/ruvector)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/FlexNetOS/ruvector)
 [![Bundle Size](https://img.shields.io/badge/bundle%20size-174KB%20gzip-green.svg)](https://www.npmjs.com/package/ruvector-nervous-system-wasm)
 [![WebAssembly](https://img.shields.io/badge/WebAssembly-654FF0?logo=webassembly&logoColor=white)](https://webassembly.org/)
 
@@ -401,9 +401,9 @@ MIT
 
 ## Links
 
-- [GitHub Repository](https://github.com/ruvnet/ruvector)
+- [GitHub Repository](https://github.com/FlexNetOS/ruvector)
 - [Full Documentation](https://ruv.io)
-- [Bug Reports](https://github.com/ruvnet/ruvector/issues)
+- [Bug Reports](https://github.com/FlexNetOS/ruvector/issues)
 
 ---
 

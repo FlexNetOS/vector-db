@@ -81,7 +81,7 @@ These examples walk you through every major feature, from the simplest "insert a
 
 ```bash
 # Clone the repo
-git clone https://github.com/ruvnet/ruvector
+git clone https://github.com/FlexNetOS/ruvector
 cd ruvector/examples/rvf
 
 # Run your first example
@@ -1653,7 +1653,7 @@ examples/rvf/
 ## Contributing
 
 ```bash
-git clone https://github.com/ruvnet/ruvector
+git clone https://github.com/FlexNetOS/ruvector
 cd ruvector/examples/rvf
 cargo build && cargo run --example basic_store
 ```

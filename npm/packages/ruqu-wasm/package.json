@@ -30,12 +30,12 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ruvnet/ruvector.git",
+    "url": "git+https://github.com/FlexNetOS/ruvector.git",
     "directory": "crates/ruqu-wasm"
   },
-  "homepage": "https://github.com/ruvnet/ruvector/tree/main/crates/ruqu-wasm#readme",
+  "homepage": "https://github.com/FlexNetOS/ruvector/tree/main/crates/ruqu-wasm#readme",
   "bugs": {
-    "url": "https://github.com/ruvnet/ruvector/issues"
+    "url": "https://github.com/FlexNetOS/ruvector/issues"
   },
   "files": [
     "ruqu_wasm_bg.wasm",

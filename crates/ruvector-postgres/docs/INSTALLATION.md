@@ -153,7 +153,7 @@ ls ~/.pgrx/
 
 ```bash
 # Clone the repository
-git clone https://github.com/ruvnet/ruvector.git
+git clone https://github.com/FlexNetOS/ruvector.git
 cd ruvector/crates/ruvector-postgres
 
 # Build for your PostgreSQL version
@@ -747,6 +747,6 @@ sudo systemctl restart postgresql
 
 ## Support
 
-- **Documentation**: https://github.com/ruvnet/ruvector/tree/main/crates/ruvector-postgres/docs
-- **Issues**: https://github.com/ruvnet/ruvector/issues
-- **Discussions**: https://github.com/ruvnet/ruvector/discussions
+- **Documentation**: https://github.com/FlexNetOS/ruvector/tree/main/crates/ruvector-postgres/docs
+- **Issues**: https://github.com/FlexNetOS/ruvector/issues
+- **Discussions**: https://github.com/FlexNetOS/ruvector/discussions

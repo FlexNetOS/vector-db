@@ -1,7 +1,7 @@
 # RuVector Sparsifier WASM
 
 [![License](https://img.shields.io/crates/l/ruvector-sparsifier-wasm.svg)](LICENSE)
-[![GitHub](https://img.shields.io/badge/GitHub-ruvnet%2Fruvector-blue?logo=github)](https://github.com/ruvnet/ruvector)
+[![GitHub](https://img.shields.io/badge/GitHub-ruvnet%2Fruvector-blue?logo=github)](https://github.com/FlexNetOS/ruvector)
 
 **WebAssembly bindings for dynamic spectral graph sparsification.**
 

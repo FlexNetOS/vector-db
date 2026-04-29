@@ -199,7 +199,7 @@ const related = await memory.findRelated("conv-1", 2);
 
 ## RVF Storage Backend
 
-RvLite can use [RVF (RuVector Format)](https://github.com/ruvnet/ruvector/tree/main/crates/rvf) as a persistent storage backend. When the optional `@ruvector/rvf-wasm` package is installed, rvlite gains file-backed persistence using the `.rvf` cognitive container format.
+RvLite can use [RVF (RuVector Format)](https://github.com/FlexNetOS/ruvector/tree/main/crates/rvf) as a persistent storage backend. When the optional `@ruvector/rvf-wasm` package is installed, rvlite gains file-backed persistence using the `.rvf` cognitive container format.
 
 ### Install
 
@@ -249,12 +249,12 @@ This enables epoch-based reconciliation between RVF and metadata stores:
 
 ```bash
 # Download pre-built examples to test with
-curl -LO https://raw.githubusercontent.com/ruvnet/ruvector/main/examples/rvf/output/basic_store.rvf
-curl -LO https://raw.githubusercontent.com/ruvnet/ruvector/main/examples/rvf/output/semantic_search.rvf
-curl -LO https://raw.githubusercontent.com/ruvnet/ruvector/main/examples/rvf/output/agent_memory.rvf
+curl -LO https://raw.githubusercontent.com/FlexNetOS/ruvector/main/examples/rvf/output/basic_store.rvf
+curl -LO https://raw.githubusercontent.com/FlexNetOS/ruvector/main/examples/rvf/output/semantic_search.rvf
+curl -LO https://raw.githubusercontent.com/FlexNetOS/ruvector/main/examples/rvf/output/agent_memory.rvf
 
 # 45 examples available at:
-# https://github.com/ruvnet/ruvector/tree/main/examples/rvf/output
+# https://github.com/FlexNetOS/ruvector/tree/main/examples/rvf/output
 ```
 
 ---

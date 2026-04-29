@@ -2,7 +2,7 @@
 
 [![Crates.io](https://img.shields.io/crates/v/ruvector-crv.svg)](https://crates.io/crates/ruvector-crv)
 [![Documentation](https://docs.rs/ruvector-crv/badge.svg)](https://docs.rs/ruvector-crv)
-[![License](https://img.shields.io/crates/l/ruvector-crv.svg)](https://github.com/ruvnet/ruvector)
+[![License](https://img.shields.io/crates/l/ruvector-crv.svg)](https://github.com/FlexNetOS/ruvector)
 
 **CRV (Coordinate Remote Viewing) protocol integration for RuVector** — maps the 6-stage signal line methodology to vector database subsystems with Poincaré ball embeddings, multi-head attention, and MinCut partitioning.
 
@@ -86,7 +86,7 @@ let convergence = manager.find_convergence("1234-5678", 0.75).unwrap();
 
 ## Architecture
 
-Part of the [RuVector](https://github.com/ruvnet/ruvector) ecosystem.
+Part of the [RuVector](https://github.com/FlexNetOS/ruvector) ecosystem.
 
 ## License
 

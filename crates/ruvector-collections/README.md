@@ -7,7 +7,7 @@
 
 **High-performance collection management for Ruvector vector databases.**
 
-`ruvector-collections` provides multi-tenant collection support with isolated namespaces, schema management, and collection-level configuration. Part of the [Ruvector](https://github.com/ruvnet/ruvector) ecosystem.
+`ruvector-collections` provides multi-tenant collection support with isolated namespaces, schema management, and collection-level configuration. Part of the [Ruvector](https://github.com/FlexNetOS/ruvector) ecosystem.
 
 ## Why Ruvector Collections?
 
@@ -177,7 +177,7 @@ impl CollectionManager {
 
 - **[Main README](../../README.md)** - Complete project overview
 - **[API Documentation](https://docs.rs/ruvector-collections)** - Full API reference
-- **[GitHub Repository](https://github.com/ruvnet/ruvector)** - Source code
+- **[GitHub Repository](https://github.com/FlexNetOS/ruvector)** - Source code
 
 ## License
 
@@ -187,10 +187,10 @@ impl CollectionManager {
 
 <div align="center">
 
-**Part of [Ruvector](https://github.com/ruvnet/ruvector) - Built by [rUv](https://ruv.io)**
+**Part of [Ruvector](https://github.com/FlexNetOS/ruvector) - Built by [rUv](https://ruv.io)**
 
-[![Star on GitHub](https://img.shields.io/github/stars/ruvnet/ruvector?style=social)](https://github.com/ruvnet/ruvector)
+[![Star on GitHub](https://img.shields.io/github/stars/FlexNetOS/ruvector?style=social)](https://github.com/FlexNetOS/ruvector)
 
-[Documentation](https://docs.rs/ruvector-collections) | [Crates.io](https://crates.io/crates/ruvector-collections) | [GitHub](https://github.com/ruvnet/ruvector)
+[Documentation](https://docs.rs/ruvector-collections) | [Crates.io](https://crates.io/crates/ruvector-collections) | [GitHub](https://github.com/FlexNetOS/ruvector)
 
 </div>

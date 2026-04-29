@@ -5,7 +5,7 @@ edition = "2021"
 authors = ["Prime-Radiant Team"]
 license = "MIT OR Apache-2.0"
 description = "WASM bindings for Prime-Radiant Advanced Math modules"
-repository = "https://github.com/ruvnet/ruvector"
+repository = "https://github.com/FlexNetOS/ruvector"
 keywords = ["wasm", "category-theory", "homotopy-type-theory", "spectral-analysis", "causal-inference"]
 categories = ["wasm", "mathematics", "science"]
 

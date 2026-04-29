@@ -29,7 +29,7 @@ This document tracks the readiness of all ruvector crates for publication to cra
 - [x] Rust-version: `1.77`
 - [x] License: `MIT`
 - [x] Authors: `["Ruvector Team"]`
-- [x] Repository: `https://github.com/ruvnet/ruvector`
+- [x] Repository: `https://github.com/FlexNetOS/ruvector`
 
 ### Core Crates - Metadata Status
 
@@ -52,7 +52,7 @@ This document tracks the readiness of all ruvector crates for publication to cra
 keywords = ["vector-database", "hnsw", "similarity-search", "embeddings", "simd"]
 categories = ["database", "algorithms", "science"]
 documentation = "https://docs.rs/ruvector-core"
-homepage = "https://github.com/ruvnet/ruvector"
+homepage = "https://github.com/FlexNetOS/ruvector"
 ```
 
 #### ruvector-graph
@@ -71,7 +71,7 @@ homepage = "https://github.com/ruvnet/ruvector"
 keywords = ["graph-database", "cypher", "hypergraph", "neo4j", "distributed"]
 categories = ["database", "data-structures", "algorithms"]
 documentation = "https://docs.rs/ruvector-graph"
-homepage = "https://github.com/ruvnet/ruvector"
+homepage = "https://github.com/FlexNetOS/ruvector"
 ```
 
 #### ruvector-gnn
@@ -89,7 +89,7 @@ homepage = "https://github.com/ruvnet/ruvector"
 keywords = ["gnn", "graph-neural-network", "machine-learning", "hnsw", "embeddings"]
 categories = ["science", "algorithms", "machine-learning"]
 documentation = "https://docs.rs/ruvector-gnn"
-homepage = "https://github.com/ruvnet/ruvector"
+homepage = "https://github.com/FlexNetOS/ruvector"
 ```
 
 #### ruvector-mincut (GOOD)
@@ -120,7 +120,7 @@ homepage = "https://github.com/ruvnet/ruvector"
 | keywords | PASS | `["neural", "learning", "lora", "llm", "adaptive"]` |
 | categories | PASS | `["science", "algorithms", "wasm"]` |
 | documentation | PASS | `https://docs.rs/sona` |
-| homepage | PASS | `https://github.com/ruvnet/ruvector/tree/main/crates/sona` |
+| homepage | PASS | `https://github.com/FlexNetOS/ruvector/tree/main/crates/sona` |
 | license | PASS | `MIT OR Apache-2.0` |
 
 #### ruvector-postgres (GOOD)
@@ -132,7 +132,7 @@ homepage = "https://github.com/ruvnet/ruvector"
 | keywords | PASS | `["postgresql", "vector-database", "embeddings", "pgvector", "hnsw"]` |
 | categories | PASS | `["database", "science", "algorithms"]` |
 | documentation | PASS | `https://docs.rs/ruvector-postgres` |
-| homepage | PASS | `https://github.com/ruvnet/ruvector` |
+| homepage | PASS | `https://github.com/FlexNetOS/ruvector` |
 
 #### ruvector-cli
 | Field | Status | Current Value |
@@ -147,7 +147,7 @@ homepage = "https://github.com/ruvnet/ruvector"
 keywords = ["cli", "vector-database", "mcp", "ruvector", "command-line"]
 categories = ["command-line-utilities", "database"]
 documentation = "https://docs.rs/ruvector-cli"
-homepage = "https://github.com/ruvnet/ruvector"
+homepage = "https://github.com/FlexNetOS/ruvector"
 ```
 
 #### ruvector-filter

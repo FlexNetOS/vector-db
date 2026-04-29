@@ -400,7 +400,7 @@ npm run typecheck
 
 1. Check the specific example's documentation
 2. Review the main [README.md](../README.md)
-3. Open an issue on [GitHub](https://github.com/ruvnet/ruvector/issues)
+3. Open an issue on [GitHub](https://github.com/FlexNetOS/ruvector/issues)
 4. Join the [Discord](https://discord.gg/ruvector)
 
 ## 📝 Contributing

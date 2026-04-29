@@ -21,7 +21,7 @@ All fixes from PR #66 have been successfully published across all platforms!
 - **URL**: https://crates.io/crates/ruvector-postgres
 
 ### 3. Docker Hub
-- **Repository**: `ruvnet/ruvector-postgres`
+- **Repository**: `flexnetos/ruvector-postgres`
 - **Tags**:
   - `0.2.6` ✅ Published
   - `latest` ✅ Published
@@ -71,10 +71,10 @@ All 12 W3C SPARQL 1.1 functions now registered and working:
 ### Pull Docker Image
 ```bash
 # Latest version
-docker pull ruvnet/ruvector-postgres:latest
+docker pull flexnetos/ruvector-postgres:latest
 
 # Specific version
-docker pull ruvnet/ruvector-postgres:0.2.6
+docker pull flexnetos/ruvector-postgres:0.2.6
 ```
 
 ### Use in Rust Project
@@ -91,7 +91,7 @@ docker run -d \
   -e POSTGRES_PASSWORD=ruvector \
   -e POSTGRES_DB=ruvector_test \
   -p 5432:5432 \
-  ruvnet/ruvector-postgres:0.2.6
+  flexnetos/ruvector-postgres:0.2.6
 
 # Create extension
 psql -U ruvector -d ruvector_test -c "CREATE EXTENSION ruvector CASCADE;"
@@ -125,10 +125,10 @@ Based on PR #66 claims and verification:
 
 ## 🔗 Links
 
-- **GitHub Repository**: https://github.com/ruvnet/ruvector
-- **Pull Request**: https://github.com/ruvnet/ruvector/pull/66
+- **GitHub Repository**: https://github.com/FlexNetOS/ruvector
+- **Pull Request**: https://github.com/FlexNetOS/ruvector/pull/66
 - **Crates.io**: https://crates.io/crates/ruvector-postgres
-- **Docker Hub**: https://hub.docker.com/r/ruvnet/ruvector-postgres
+- **Docker Hub**: https://hub.docker.com/r/flexnetos/ruvector-postgres
 - **Documentation**: https://docs.rs/ruvector-postgres
 
 ---
@@ -170,7 +170,7 @@ WHERE proname LIKE '%rdf%' OR proname LIKE '%sparql%' OR proname LIKE '%triple%'
 2. **Load your RDF data** using `ruvector_load_ntriples()`
 3. **Execute queries** using `ruvector_sparql()`
 4. **Monitor performance** with `ruvector_rdf_stats()`
-5. **Report issues** at https://github.com/ruvnet/ruvector/issues
+5. **Report issues** at https://github.com/FlexNetOS/ruvector/issues
 
 ---
 

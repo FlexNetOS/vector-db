@@ -3,7 +3,7 @@
 High-performance Graph Neural Network (GNN) capabilities for Ruvector, powered by Rust and NAPI-RS.
 
 [![npm version](https://img.shields.io/npm/v/@ruvector/gnn.svg)](https://www.npmjs.com/package/@ruvector/gnn)
-[![CI](https://github.com/ruvnet/ruvector/actions/workflows/build-gnn.yml/badge.svg)](https://github.com/ruvnet/ruvector/actions/workflows/build-gnn.yml)
+[![CI](https://github.com/FlexNetOS/ruvector/actions/workflows/build-gnn.yml/badge.svg)](https://github.com/FlexNetOS/ruvector/actions/workflows/build-gnn.yml)
 
 ## Features
 
@@ -247,6 +247,6 @@ Contributions are welcome! Please see the main Ruvector repository for guideline
 
 ## Links
 
-- [GitHub Repository](https://github.com/ruvnet/ruvector)
+- [GitHub Repository](https://github.com/FlexNetOS/ruvector)
 - [Documentation](https://docs.ruvector.io)
-- [Issues](https://github.com/ruvnet/ruvector/issues)
+- [Issues](https://github.com/FlexNetOS/ruvector/issues)

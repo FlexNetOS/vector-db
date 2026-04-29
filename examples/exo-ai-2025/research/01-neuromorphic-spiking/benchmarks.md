@@ -430,7 +430,7 @@ OS: Linux 6.5.0
 
 ```bash
 # Clone repository
-git clone https://github.com/ruvnet/ruvector
+git clone https://github.com/FlexNetOS/ruvector
 cd ruvector/examples/exo-ai-2025/research/01-neuromorphic-spiking
 
 # Build with optimizations

@@ -420,7 +420,7 @@ RUVBOT_LOG_LEVEL=info
       console.log(`Platform:    ${chalk.cyan(process.platform)}`);
       console.log(`Arch:        ${chalk.cyan(process.arch)}`);
       console.log('─'.repeat(40));
-      console.log(chalk.gray('\nhttps://github.com/ruvnet/ruvector'));
+      console.log(chalk.gray('\nhttps://github.com/FlexNetOS/ruvector'));
     });
 
   return program;

@@ -593,8 +593,8 @@ fn batch_updates(mincut: &mut impl DynamicMinCut,
 ### Get Help
 
 - **📖 Documentation**: [docs.rs/ruvector-mincut](https://docs.rs/ruvector-mincut)
-- **🐙 GitHub Issues**: [Report bugs or ask questions](https://github.com/ruvnet/ruvector/issues)
-- **💬 Discussions**: [Community forum](https://github.com/ruvnet/ruvector/discussions)
+- **🐙 GitHub Issues**: [Report bugs or ask questions](https://github.com/FlexNetOS/ruvector/issues)
+- **💬 Discussions**: [Community forum](https://github.com/FlexNetOS/ruvector/discussions)
 - **🌐 Website**: [ruv.io](https://ruv.io)
 
 ### Keep Learning

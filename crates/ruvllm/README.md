@@ -11,7 +11,7 @@
 cargo add ruvllm
 ```
 
-RuvLLM loads GGUF models and runs them on your hardware with full acceleration -- Apple Silicon, NVIDIA GPUs, WebAssembly, whatever you have. Unlike other local inference tools, it gets smarter over time: SONA (Self-Optimizing Neural Architecture) watches how you use it and adapts automatically, so responses improve without manual tuning. It's part of [RuVector](https://github.com/ruvnet/ruvector), the self-learning vector database with graph intelligence.
+RuvLLM loads GGUF models and runs them on your hardware with full acceleration -- Apple Silicon, NVIDIA GPUs, WebAssembly, whatever you have. Unlike other local inference tools, it gets smarter over time: SONA (Self-Optimizing Neural Architecture) watches how you use it and adapts automatically, so responses improve without manual tuning. It's part of [RuVector](https://github.com/FlexNetOS/ruvector), the self-learning vector database with graph intelligence.
 
 | | RuvLLM | OpenAI API | llama.cpp | Ollama | vLLM |
 |---|---|---|---|---|---|
@@ -42,7 +42,7 @@ RuvLLM loads GGUF models and runs them on your hardware with full acceleration -
 | **mistral-rs backend** | PagedAttention, X-LoRA, ISQ for production serving | Scale to 50+ concurrent users |
 | **Task-specific adapters** | 5 pre-trained LoRA adapters (coder, researcher, security, architect, reviewer) | Instant specialization with hot-swap |
 
-> Part of the [RuVector](https://github.com/ruvnet/ruvector) ecosystem -- the self-learning vector database with graph intelligence, local AI, and PostgreSQL built in.
+> Part of the [RuVector](https://github.com/FlexNetOS/ruvector) ecosystem -- the self-learning vector database with graph intelligence, local AI, and PostgreSQL built in.
 
 ## Quick Start
 
@@ -870,11 +870,11 @@ Contributions welcome! Please see [CONTRIBUTING.md](../../CONTRIBUTING.md) for g
 
 ## Links
 
-- [GitHub Repository](https://github.com/ruvnet/ruvector)
+- [GitHub Repository](https://github.com/FlexNetOS/ruvector)
 - [API Documentation](https://docs.rs/ruvllm)
 - [npm Package](https://www.npmjs.com/package/@ruvector/ruvllm)
-- [Issue Tracker](https://github.com/ruvnet/ruvector/issues)
+- [Issue Tracker](https://github.com/FlexNetOS/ruvector/issues)
 
 ---
 
-Part of [RuVector](https://github.com/ruvnet/ruvector) -- the self-learning vector database.
+Part of [RuVector](https://github.com/FlexNetOS/ruvector) -- the self-learning vector database.

@@ -141,7 +141,7 @@ ${c('bold', 'BROWSER USAGE:')}
   ${c('dim', 'await init();')}
   ${c('dim', 'const node = new EdgeNetNode();')}
 
-${c('dim', 'Documentation: https://github.com/ruvnet/ruvector/tree/main/examples/edge-net')}
+${c('dim', 'Documentation: https://github.com/FlexNetOS/ruvector/tree/main/examples/edge-net')}
 `);
 }
 

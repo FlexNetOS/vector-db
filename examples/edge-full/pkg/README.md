@@ -386,5 +386,5 @@ MIT License - Use freely for any purpose.
 ## Links
 
 - [npm](https://www.npmjs.com/package/@ruvector/edge-full)
-- [GitHub](https://github.com/ruvnet/ruvector)
+- [GitHub](https://github.com/FlexNetOS/ruvector)
 - [@ruvector/edge](https://www.npmjs.com/package/@ruvector/edge) (lightweight version)

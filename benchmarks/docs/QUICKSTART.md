@@ -225,7 +225,7 @@ npm run clean
 ## Support
 
 - **Documentation**: See README.md
-- **Issues**: https://github.com/ruvnet/ruvector/issues
+- **Issues**: https://github.com/FlexNetOS/ruvector/issues
 - **Slack**: https://ruvector.slack.com
 
 ---

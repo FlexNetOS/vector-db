@@ -2498,8 +2498,8 @@ ndarray = "0.15"
 nalgebra = "0.32"
 
 # RuVector integration
-ruvector-core = { git = "https://github.com/ruvnet/ruvector" }
-ruvector-gnn = { git = "https://github.com/ruvnet/ruvector" }
+ruvector-core = { git = "https://github.com/FlexNetOS/ruvector" }
+ruvector-gnn = { git = "https://github.com/FlexNetOS/ruvector" }
 
 # HTTP framework
 axum = "0.7"

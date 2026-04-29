@@ -4,11 +4,11 @@
 [![no_std](https://img.shields.io/badge/no__std-compatible-green.svg)](https://doc.rust-lang.org/reference/names/preludes.html)
 [![License](https://img.shields.io/badge/License-MIT%20OR%20Apache--2.0-blue.svg)](LICENSE)
 [![ADR](https://img.shields.io/badge/ADRs-132--141-purple.svg)](../../docs/adr/)
-[![EPIC](https://img.shields.io/badge/EPIC-ruvnet%2FRuVector%23328-brightgreen.svg)](https://github.com/ruvnet/RuVector/issues/328)
+[![EPIC](https://img.shields.io/badge/EPIC-ruvnet%2FRuVector%23328-brightgreen.svg)](https://github.com/FlexNetOS/ruvector/issues/328)
 
 ### **Agents don't fit in VMs. They need something that understands how they think.**
 
-> Part of the [RuVector](https://github.com/ruvnet/RuVector) ecosystem. Uses [RuVix](../../crates/ruvix/) kernel primitives and [RVF](../../crates/rvf/) package format. Designed for [Cognitum](https://cognitum.one) Seed, Appliance, and future chip targets.
+> Part of the [RuVector](https://github.com/FlexNetOS/ruvector) ecosystem. Uses [RuVix](../../crates/ruvix/) kernel primitives and [RVF](../../crates/rvf/) package format. Designed for [Cognitum](https://cognitum.one) Seed, Appliance, and future chip targets.
 
 Traditional hypervisors were built for an era of static server workloads —
 long-running VMs with predictable resource needs. AI agents are different.
@@ -474,4 +474,4 @@ at your option.
 
 ---
 
-<sub>[EPIC](https://github.com/ruvnet/RuVector/issues/328) · [Research Gist](https://gist.github.com/ruvnet/8082d0b339f05e73cf48b491de5b8ee6) · [pi.ruv.io Brain](https://pi.ruv.io)</sub>
+<sub>[EPIC](https://github.com/FlexNetOS/ruvector/issues/328) · [Research Gist](https://gist.github.com/ruvnet/8082d0b339f05e73cf48b491de5b8ee6) · [pi.ruv.io Brain](https://pi.ruv.io)</sub>

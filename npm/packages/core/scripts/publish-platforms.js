@@ -15,7 +15,7 @@ const basePackage = {
   version: '0.1.2',
   repository: {
     type: 'git',
-    url: 'https://github.com/ruvnet/ruvector.git'
+    url: 'https://github.com/FlexNetOS/ruvector.git'
   },
   license: 'MIT',
   keywords: ['vector', 'database', 'native', 'napi', 'rust'],

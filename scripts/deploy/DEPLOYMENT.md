@@ -383,8 +383,8 @@ export NPM_TOKEN=$(pass show npm/token)
 ## Support
 
 For issues or questions:
-- **GitHub Issues**: https://github.com/ruvnet/ruvector/issues
-- **Documentation**: https://github.com/ruvnet/ruvector
+- **GitHub Issues**: https://github.com/FlexNetOS/ruvector/issues
+- **Documentation**: https://github.com/FlexNetOS/ruvector
 - **Deployment Logs**: `logs/deployment/`
 
 ## License

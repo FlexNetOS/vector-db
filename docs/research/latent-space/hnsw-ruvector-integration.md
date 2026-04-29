@@ -741,7 +741,7 @@ pub struct SupervisedNavigator {
 
 **External**:
 - ANN-Benchmarks: http://ann-benchmarks.com/
-- RuVector GitHub: https://github.com/ruvnet/ruvector
+- RuVector GitHub: https://github.com/FlexNetOS/ruvector
 
 ---
 

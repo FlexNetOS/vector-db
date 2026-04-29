@@ -2,7 +2,7 @@
 
 [![Crates.io](https://img.shields.io/crates/v/ruqu-exotic.svg)](https://crates.io/crates/ruqu-exotic)
 [![Documentation](https://docs.rs/ruqu-exotic/badge.svg)](https://docs.rs/ruqu-exotic)
-[![License](https://img.shields.io/crates/l/ruqu-exotic.svg)](https://github.com/ruvnet/ruvector)
+[![License](https://img.shields.io/crates/l/ruqu-exotic.svg)](https://github.com/FlexNetOS/ruvector)
 
 **Experimental quantum-classical hybrid algorithms** — quantum memory decay, interference-based search, reasoning error correction, swarm interference, syndrome diagnosis, and reversible memory for AI systems.
 
@@ -137,7 +137,7 @@ store.reverse_last()?;  // Back to empty
 
 ## Integration with RuVector
 
-These algorithms integrate with the [RuVector](https://github.com/ruvnet/ruvector) vector database for quantum-enhanced AI:
+These algorithms integrate with the [RuVector](https://github.com/FlexNetOS/ruvector) vector database for quantum-enhanced AI:
 
 ```rust
 use ruvector_core::Index;
@@ -156,8 +156,8 @@ let quantum_index = InterferenceIndex::wrap(base_index)?;
 
 ## Documentation
 
-- [Exotic Discoveries (ADR-QE-014)](https://github.com/ruvnet/ruvector/blob/main/docs/adr/quantum-engine/ADR-QE-014-exotic-discoveries.md)
-- [MinCut Coherence (ADR-QE-012)](https://github.com/ruvnet/ruvector/blob/main/docs/adr/quantum-engine/ADR-QE-012-mincut-coherence-integration.md)
+- [Exotic Discoveries (ADR-QE-014)](https://github.com/FlexNetOS/ruvector/blob/main/docs/adr/quantum-engine/ADR-QE-014-exotic-discoveries.md)
+- [MinCut Coherence (ADR-QE-012)](https://github.com/FlexNetOS/ruvector/blob/main/docs/adr/quantum-engine/ADR-QE-012-mincut-coherence-integration.md)
 
 ## License
 
