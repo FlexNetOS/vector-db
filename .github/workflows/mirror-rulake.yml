@@ -80,7 +80,7 @@ jobs:
           # This is a mirror
 
           The canonical source lives at
-          [ruvnet/ruvector](https://github.com/FlexNetOS/ruvector) under
+          [FlexNetOS/ruvector](https://github.com/FlexNetOS/ruvector) under
           [`crates/ruvector-rulake/`](https://github.com/FlexNetOS/ruvector/tree/main/crates/ruvector-rulake).
 
           Contents of this repo:
@@ -90,7 +90,7 @@ jobs:
 
           Do not open PRs against `crate/` or `docs/adr/` here — they
           will be overwritten on the next sync. Send changes to
-          ruvnet/ruvector instead.
+          FlexNetOS/ruvector instead.
 
           The sync is driven by
           [.github/workflows/mirror-rulake.yml](https://github.com/FlexNetOS/ruvector/blob/main/.github/workflows/mirror-rulake.yml)
@@ -115,13 +115,13 @@ jobs:
 
           # Short subject line, full provenance in the body.
           git add -A
-          git commit -m "mirror: ruvnet/ruvector@${UPSTREAM_SHA:0:12}
+          git commit -m "mirror: FlexNetOS/ruvector@${UPSTREAM_SHA:0:12}
 
-          Auto-synced from ruvnet/ruvector on ${UPSTREAM_REF}.
+          Auto-synced from FlexNetOS/ruvector on ${UPSTREAM_REF}.
 
           Source commit: https://github.com/FlexNetOS/ruvector/commit/${UPSTREAM_SHA}
 
           Do not commit to this repo directly; changes flow from
-          ruvnet/ruvector via .github/workflows/mirror-rulake.yml."
+          FlexNetOS/ruvector via .github/workflows/mirror-rulake.yml."
 
           git push
