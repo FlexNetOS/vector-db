@@ -1,3 +1,4 @@
+# syntax=docker/dockerfile:1
 # Multi-stage Dockerfile for ruvector-postgres extension
 # Builds the extension and creates a PostgreSQL image with it installed
 # v0.3.1: Fixes — Cypher self-reference, graph/RDF persistence, SONA dimension panic
