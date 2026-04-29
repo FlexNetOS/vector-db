@@ -255,8 +255,8 @@ SET ruvector.ef_search = 100;
 
 ## Support
 
-- GitHub: https://github.com/ruvnet/ruvector
-- Issues: https://github.com/ruvnet/ruvector/issues
+- GitHub: https://github.com/FlexNetOS/ruvector
+- Issues: https://github.com/FlexNetOS/ruvector/issues
 - Docs: `/home/user/ruvector/docs/`
 
 ---

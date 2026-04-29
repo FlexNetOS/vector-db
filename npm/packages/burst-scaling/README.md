@@ -562,7 +562,7 @@ burst-scaling/
 ## Support
 
 - **Documentation**: This README and RUNBOOK.md
-- **Issues**: https://github.com/ruvnet/ruvector/issues
+- **Issues**: https://github.com/FlexNetOS/ruvector/issues
 - **Slack**: #burst-scaling
 - **On-call**: Check PagerDuty rotation
 

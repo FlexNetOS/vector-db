@@ -222,13 +222,13 @@ Common issues and solutions:
 - **[API Documentation](https://docs.rs/ruvector-mincut)** - Full Rust API docs
 
 ### RuVector Platform
-- **[RuVector Main Repository](https://github.com/ruvnet/ruvector)** - Complete platform
+- **[RuVector Main Repository](https://github.com/FlexNetOS/ruvector)** - Complete platform
 - **[RuVector Database](../../../ruvector-db/README.md)** - Vector database integration
 - **[Platform Website](https://ruv.io)** - Cloud services and support
 
 ### Community
-- **[GitHub Issues](https://github.com/ruvnet/ruvector/issues)** - Bug reports and feature requests
-- **[Discussions](https://github.com/ruvnet/ruvector/discussions)** - Community Q&A
+- **[GitHub Issues](https://github.com/FlexNetOS/ruvector/issues)** - Bug reports and feature requests
+- **[Discussions](https://github.com/FlexNetOS/ruvector/discussions)** - Community Q&A
 - **[Contributing Guide](../../CONTRIBUTING.md)** - How to contribute
 
 ---
@@ -286,9 +286,9 @@ Recommended bookmarks for frequent reference:
 ### Contributing
 
 Found an issue or want to improve this guide?
-- **Report Issues**: [GitHub Issues](https://github.com/ruvnet/ruvector/issues)
-- **Suggest Edits**: [Pull Requests](https://github.com/ruvnet/ruvector/pulls)
-- **Ask Questions**: [Discussions](https://github.com/ruvnet/ruvector/discussions)
+- **Report Issues**: [GitHub Issues](https://github.com/FlexNetOS/ruvector/issues)
+- **Suggest Edits**: [Pull Requests](https://github.com/FlexNetOS/ruvector/pulls)
+- **Ask Questions**: [Discussions](https://github.com/FlexNetOS/ruvector/discussions)
 
 ### License
 
@@ -307,7 +307,7 @@ This documentation is licensed under the MIT License, same as RuVector MinCut.
 Built with ❤️ by the [RuVector Team](https://ruv.io)
 
 [![Website](https://img.shields.io/badge/website-ruv.io-blue)](https://ruv.io)
-[![GitHub](https://img.shields.io/badge/github-ruvector-black)](https://github.com/ruvnet/ruvector)
+[![GitHub](https://img.shields.io/badge/github-ruvector-black)](https://github.com/FlexNetOS/ruvector)
 [![Docs](https://img.shields.io/badge/docs-docs.rs-orange)](https://docs.rs/ruvector-mincut)
 
 </div>

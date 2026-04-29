@@ -128,7 +128,7 @@
 │  Published to:                                                   │
 │  ✅ crates.io: https://crates.io/crates/ruvector-core           │
 │  ✅ npmjs.com: https://www.npmjs.com/package/@ruvector/core     │
-│  ✅ GitHub: https://github.com/ruvnet/ruvector/releases         │
+│  ✅ GitHub: https://github.com/FlexNetOS/ruvector/releases         │
 │                                                                  │
 │  Total Time: 15-30 minutes (with caching)                       │
 └─────────────────────────────────────────────────────────────────┘

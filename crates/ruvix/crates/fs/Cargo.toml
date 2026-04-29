@@ -8,7 +8,7 @@ authors = ["RuVector Contributors"]
 description = "Minimal filesystem for the RuVix Cognition Kernel (ADR-087 Phase E)"
 keywords = ["kernel", "filesystem", "vfs", "fat32", "no_std"]
 categories = ["filesystem", "no-std", "embedded", "os"]
-repository = "https://github.com/ruvnet/ruvector"
+repository = "https://github.com/FlexNetOS/ruvector"
 readme = "README.md"
 
 [lib]

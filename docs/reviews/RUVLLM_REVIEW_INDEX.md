@@ -261,7 +261,7 @@ Safety:         Full documentation (100% coverage)
 
 All documents reference specific files in the codebase:
 
-**Crate Root**: `/Users/cohen/GitHub/ruvnet/ruvector/crates/ruvllm/`
+**Crate Root**: `/home/ubuntu/flexnetos/ruvector/crates/ruvllm/`
 
 **Key Files Analyzed**:
 - `src/lib.rs` - Module structure & re-exports
@@ -272,7 +272,7 @@ All documents reference specific files in the codebase:
 - `src/kv_cache.rs` - Large file analysis
 - `src/speculative.rs` - Large file analysis
 
-**Workspace Root**: `/Users/cohen/GitHub/ruvnet/ruvector/Cargo.toml`
+**Workspace Root**: `/home/ubuntu/flexnetos/ruvector/Cargo.toml`
 
 ---
 
@@ -398,4 +398,4 @@ All recommendations follow:
 
 **End of Index**
 
-All documents are in `/Users/cohen/GitHub/ruvnet/ruvector/`
+All documents are in `/home/ubuntu/flexnetos/ruvector/`

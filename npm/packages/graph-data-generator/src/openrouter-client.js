@@ -48,7 +48,7 @@ class OpenRouterClient {
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${this.config.apiKey}`,
-                    'HTTP-Referer': 'https://github.com/ruvnet/ruvector',
+                    'HTTP-Referer': 'https://github.com/FlexNetOS/ruvector',
                     'X-Title': 'RuVector Graph Data Generator'
                 },
                 body: JSON.stringify(request),
@@ -85,7 +85,7 @@ class OpenRouterClient {
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${this.config.apiKey}`,
-                'HTTP-Referer': 'https://github.com/ruvnet/ruvector',
+                'HTTP-Referer': 'https://github.com/FlexNetOS/ruvector',
                 'X-Title': 'RuVector Graph Data Generator'
             },
             body: JSON.stringify(request),

@@ -5,14 +5,14 @@
   "main": "index.js",
   "types": "index.d.ts",
   "author": "rUv <info@ruv.io> (https://ruv.io)",
-  "homepage": "https://github.com/ruvnet/ruvector/tree/main/examples/dna",
+  "homepage": "https://github.com/FlexNetOS/ruvector/tree/main/examples/dna",
   "repository": {
     "type": "git",
-    "url": "https://github.com/ruvnet/ruvector.git",
+    "url": "https://github.com/FlexNetOS/ruvector.git",
     "directory": "npm/packages/rvdna"
   },
   "bugs": {
-    "url": "https://github.com/ruvnet/ruvector/issues"
+    "url": "https://github.com/FlexNetOS/ruvector/issues"
   },
   "license": "MIT",
   "engines": {

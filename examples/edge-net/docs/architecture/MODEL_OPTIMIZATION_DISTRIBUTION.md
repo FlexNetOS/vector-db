@@ -374,7 +374,7 @@ interface IPFSModelConfig {
   },
 
   "license": "MIT",
-  "homepage": "https://github.com/ruvnet/ruvector",
+  "homepage": "https://github.com/FlexNetOS/ruvector",
   "publishedAt": "2026-01-03T00:00:00Z",
   "publishedBy": "ruvector-team"
 }

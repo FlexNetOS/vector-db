@@ -49,9 +49,9 @@ cat > pkg/package.json << 'EOF'
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/ruvnet/ruvector"
+    "url": "https://github.com/FlexNetOS/ruvector"
   },
-  "homepage": "https://github.com/ruvnet/ruvector/tree/main/examples/edge",
+  "homepage": "https://github.com/FlexNetOS/ruvector/tree/main/examples/edge",
   "files": [
     "ruvector_edge_bg.wasm",
     "ruvector_edge.js",

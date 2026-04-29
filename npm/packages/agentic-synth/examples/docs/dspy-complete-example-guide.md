@@ -536,7 +536,7 @@ npm run test -- examples/dspy-complete-example.test.ts
 
 ### Documentation
 - [DSPy.ts GitHub](https://github.com/ruvnet/dspy.ts)
-- [AgenticSynth Docs](https://github.com/ruvnet/ruvector/tree/main/packages/agentic-synth)
+- [AgenticSynth Docs](https://github.com/FlexNetOS/ruvector/tree/main/packages/agentic-synth)
 - [DSPy Paper](https://arxiv.org/abs/2310.03714)
 
 ### Examples

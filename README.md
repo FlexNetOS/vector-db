@@ -1,6 +1,6 @@
 # RuVector — A Self-Learning, Vector Memory & Agentic Operating System
 [![CES 2026 Innovation Award](https://img.shields.io/badge/🏅_CES_2026-Innovation_Award-gold.svg)](https://cognitum.one)
-[![GitHub Trending](https://img.shields.io/badge/🔥_GitHub-Trending-orange.svg)](https://github.com/ruvnet/ruvector)
+[![GitHub Trending](https://img.shields.io/badge/🔥_GitHub-Trending-orange.svg)](https://github.com/FlexNetOS/ruvector)
 
 [![Crates.io](https://img.shields.io/crates/v/ruvector-core.svg)](https://crates.io/crates/ruvector-core)
 [![npm](https://img.shields.io/npm/v/ruvector.svg)](https://www.npmjs.com/package/ruvector)
@@ -854,7 +854,7 @@ cargo add ruvllm                    # Rust
 cargo install rvf-cli                    # RVF CLI (17 commands)
 cargo add rvf-runtime                    # RVF Rust library
 npm install @ruvector/rvf                # RVF TypeScript SDK
-docker pull ruvnet/ruvector-postgres     # PostgreSQL
+docker pull flexnetos/ruvector-postgres     # PostgreSQL
 npm install rvlite                       # Edge DB
 npx ruvector mcp start                   # MCP Server
 ```
@@ -1662,7 +1662,7 @@ wget https://huggingface.co/ruv/ruvltra/resolve/main/ruvltra-small-0.5b-q4_k_m.g
 | [ruvector-router-ffi](./crates/ruvector-router-ffi) | FFI bindings for other languages | [![crates.io](https://img.shields.io/crates/v/ruvector-router-ffi.svg)](https://crates.io/crates/ruvector-router-ffi) |
 | [ruvector-router-wasm](./crates/ruvector-router-wasm) | WASM bindings for browser routing | [![crates.io](https://img.shields.io/crates/v/ruvector-router-wasm.svg)](https://crates.io/crates/ruvector-router-wasm) |
 
-**Hybrid Routing** achieves **90% accuracy** for agent routing using keyword-first strategy with embedding fallback. See [Issue #122](https://github.com/ruvnet/ruvector/issues/122) for benchmarks and the [training tutorials](#-ruvllm-training--fine-tuning-tutorials) for fine-tuning guides.
+**Hybrid Routing** achieves **90% accuracy** for agent routing using keyword-first strategy with embedding fallback. See [Issue #122](https://github.com/FlexNetOS/ruvector/issues/122) for benchmarks and the [training tutorials](#-ruvllm-training--fine-tuning-tutorials) for fine-tuning guides.
 
 ### Neural Trader
 
@@ -2039,7 +2039,7 @@ See [OSpipe README](./examples/OSpipe/README.md) for full documentation, TypeScr
 **PostgreSQL Features:** Drop-in pgvector replacement, GNN layers, hybrid search, multi-tenancy, self-healing, self-learning capabilities.
 
 ```bash
-docker pull ruvnet/ruvector-postgres    # Docker image
+docker pull flexnetos/ruvector-postgres    # Docker image
 cargo add ruvector-postgres             # Rust crate
 ```
 
@@ -3693,8 +3693,8 @@ let distances = batch_distances(&query, &database);  // 8-54x speedup
 
 [![crates.io](https://img.shields.io/crates/v/ruvector-postgres.svg)](https://crates.io/crates/ruvector-postgres)
 [![npm](https://img.shields.io/npm/v/@ruvector/postgres-cli.svg)](https://www.npmjs.com/package/@ruvector/postgres-cli)
-[![Docker Hub](https://img.shields.io/docker/pulls/ruvnet/ruvector-postgres?label=docker%20pulls)](https://hub.docker.com/r/ruvnet/ruvector-postgres)
-[![Docker](https://img.shields.io/docker/v/ruvnet/ruvector-postgres?label=docker)](https://hub.docker.com/r/ruvnet/ruvector-postgres)
+[![Docker Hub](https://img.shields.io/docker/pulls/flexnetos/ruvector-postgres?label=docker%20pulls)](https://hub.docker.com/r/flexnetos/ruvector-postgres)
+[![Docker](https://img.shields.io/docker/v/flexnetos/ruvector-postgres?label=docker)](https://hub.docker.com/r/flexnetos/ruvector-postgres)
 
 **The most advanced PostgreSQL vector extension** — a drop-in pgvector replacement with 143 SQL functions, hardware-accelerated SIMD operations, and built-in AI capabilities. Transform your existing PostgreSQL database into a full-featured vector search engine with GNN layers, attention mechanisms, and self-learning capabilities.
 
@@ -3703,7 +3703,7 @@ let distances = batch_distances(&query, &database);  // 8-54x speedup
 docker run -d --name ruvector \
   -e POSTGRES_PASSWORD=secret \
   -p 5432:5432 \
-  ruvnet/ruvector-postgres:latest
+  flexnetos/ruvector-postgres:latest
 
 # Connect and use
 psql -h localhost -U ruvector -d ruvector_test
@@ -3735,14 +3735,14 @@ CREATE EXTENSION ruvector;
 <details>
 <summary><strong>🐳 Docker Hub (Recommended)</strong></summary>
 
-**Pull from Docker Hub:** [hub.docker.com/r/ruvnet/ruvector-postgres](https://hub.docker.com/r/ruvnet/ruvector-postgres)
+**Pull from Docker Hub:** [hub.docker.com/r/flexnetos/ruvector-postgres](https://hub.docker.com/r/flexnetos/ruvector-postgres)
 
 ```bash
 # Quick start
 docker run -d --name ruvector \
   -e POSTGRES_PASSWORD=secret \
   -p 5432:5432 \
-  ruvnet/ruvector-postgres:latest
+  flexnetos/ruvector-postgres:latest
 
 # Connect
 psql -h localhost -U ruvector -d ruvector_test
@@ -3763,7 +3763,7 @@ CREATE EXTENSION ruvector;
 version: '3.8'
 services:
   ruvector-postgres:
-    image: ruvnet/ruvector-postgres:latest
+    image: flexnetos/ruvector-postgres:latest
     environment:
       POSTGRES_PASSWORD: secret
       POSTGRES_DB: ruvector_test
@@ -3777,9 +3777,9 @@ volumes:
 ```
 
 **Available Tags:**
-- `ruvnet/ruvector-postgres:latest` - PostgreSQL + RuVector 0.3.0
-- `ruvnet/ruvector-postgres:0.3.0` - Current release (143 SQL functions)
-- `ruvnet/ruvector-postgres:2.0.0` - Previous release
+- `flexnetos/ruvector-postgres:latest` - PostgreSQL + RuVector 0.3.0
+- `flexnetos/ruvector-postgres:0.3.0` - Current release (143 SQL functions)
+- `flexnetos/ruvector-postgres:2.0.0` - Previous release
 
 </details>
 
@@ -5215,7 +5215,7 @@ await db.sync('https://api.example.com/vectors');
 - `@ruvector/attention-linux-x64-gnu`, `@ruvector/attention-linux-arm64-gnu`, `@ruvector/attention-darwin-x64`, `@ruvector/attention-darwin-arm64`, `@ruvector/attention-win32-x64-msvc`
 - `@ruvector/ruvllm-linux-x64-gnu`, `@ruvector/ruvllm-linux-arm64-gnu`, `@ruvector/ruvllm-darwin-x64`, `@ruvector/ruvllm-darwin-arm64`, `@ruvector/ruvllm-win32-x64-msvc`
 
-See [GitHub Issue #20](https://github.com/ruvnet/ruvector/issues/20) for multi-platform npm package roadmap.
+See [GitHub Issue #20](https://github.com/FlexNetOS/ruvector/issues/20) for multi-platform npm package roadmap.
 
 ```bash
 # Install all-in-one package
@@ -5416,7 +5416,7 @@ train_loss = losses.CosineSimilarityLoss(model)
 model.fit([(DataLoader(train_examples, batch_size=16), train_loss)], epochs=5)
 ```
 
-**Resources:** [Issue #122](https://github.com/ruvnet/ruvector/issues/122) | [LoRA Paper](https://arxiv.org/abs/2106.09685) | [Sentence Transformers](https://www.sbert.net/docs/training/overview.html)
+**Resources:** [Issue #122](https://github.com/FlexNetOS/ruvector/issues/122) | [LoRA Paper](https://arxiv.org/abs/2106.09685) | [Sentence Transformers](https://www.sbert.net/docs/training/overview.html)
 
 #### Rust Training Module
 
@@ -5502,7 +5502,7 @@ MIT License — free for commercial and personal use.
 
 <div align="center">
 
-**Built by [rUv](https://ruv.io)** • [GitHub](https://github.com/ruvnet/ruvector) • [npm](https://npmjs.com/package/ruvector) • [crates.io](https://crates.io/crates/rvf-runtime) • [Docs](./docs/) • [RVF](./crates/rvf/README.md)
+**Built by [rUv](https://ruv.io)** • [GitHub](https://github.com/FlexNetOS/ruvector) • [npm](https://npmjs.com/package/ruvector) • [crates.io](https://crates.io/crates/rvf-runtime) • [Docs](./docs/) • [RVF](./crates/rvf/README.md)
 
 *Vector search that gets smarter over time — now shipping as cognitive containers.*
 

@@ -57,7 +57,7 @@ edition = "2021"
 rust-version = "1.77"
 license = "MIT"
 authors = ["Ruvector Team"]
-repository = "https://github.com/ruvnet/ruvector"
+repository = "https://github.com/FlexNetOS/ruvector"
 
 [workspace.dependencies]
 serde = { version = "1.0", features = ["derive"] }
@@ -155,7 +155,7 @@ LABEL version="0.3.1"
 LABEL org.opencontainers.image.title="ruvector-postgres"
 LABEL org.opencontainers.image.version="0.3.1"
 LABEL org.opencontainers.image.vendor="ruv.io"
-LABEL org.opencontainers.image.source="https://github.com/ruvnet/ruvector"
+LABEL org.opencontainers.image.source="https://github.com/FlexNetOS/ruvector"
 LABEL org.opencontainers.image.description="Drop-in pgvector replacement with SIMD, Flash Attention, GNN, Cypher, SPARQL, hybrid search, multi-tenancy, self-healing, and SONA"
 
 # Set embedding model cache path - models are pre-downloaded during build

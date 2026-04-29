@@ -31,7 +31,7 @@ const MAX_RETRIES: u32 = 3;
 const RETRY_DELAY_MS: u64 = 2000;
 
 // User-Agent for OSM services (required by policy)
-const USER_AGENT: &str = "RuVector-Data-Framework/1.0 (https://github.com/ruvnet/ruvector)";
+const USER_AGENT: &str = "RuVector-Data-Framework/1.0 (https://github.com/FlexNetOS/ruvector)";
 
 // ============================================================================
 // Nominatim Client (OpenStreetMap Geocoding)

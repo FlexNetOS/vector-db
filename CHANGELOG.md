@@ -8,7 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [2.0.5] - 2026-02-26
 
 ### Fixed
-- **ruvector-gnn**: Replace `assert!()` with `Result` in `MultiHeadAttention::new()` and `RuvectorLayer::new()` — prevents fatal `abort()` in NAPI-RS/WASM bindings ([#216](https://github.com/ruvnet/ruvector/issues/216))
+- **ruvector-gnn**: Replace `assert!()` with `Result` in `MultiHeadAttention::new()` and `RuvectorLayer::new()` — prevents fatal `abort()` in NAPI-RS/WASM bindings ([#216](https://github.com/FlexNetOS/ruvector/issues/216))
 - **ruvector-gnn**: Fix pre-existing `mmap.rs` test compilation error (`grad_offset` returns `Option<usize>`)
 - **install.sh**: Remove stale hardcoded version pins (`@0.1.2`, `@0.1.23`), always fetch latest
 - **install.sh**: Fix operator precedence bug in CLI install guard (`--npm-only` now correctly skips CLI)
@@ -40,9 +40,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **ADR-043: External Intelligence Providers** for SONA learning — pluggable external AI intelligence integration
 - **Intelligence module** in `@ruvector/ruvllm@2.5.0`
 - **Security Hardened RVF v3.0** — 30 verified capabilities, AIDefence + TEE hardened container (ADR-042)
-- **Proof-gated graph transformer** with 8 verified modules ([#212](https://github.com/ruvnet/ruvector/pull/212))
-- **Formal verification** with lean-agentic dependent types ([#206](https://github.com/ruvnet/ruvector/pull/206))
-- **WASM cognitive stack** — canonical min-cut, spectral coherence, container orchestration, cold-tier GNN training ([#201](https://github.com/ruvnet/ruvector/pull/201))
+- **Proof-gated graph transformer** with 8 verified modules ([#212](https://github.com/FlexNetOS/ruvector/pull/212))
+- **Formal verification** with lean-agentic dependent types ([#206](https://github.com/FlexNetOS/ruvector/pull/206))
+- **WASM cognitive stack** — canonical min-cut, spectral coherence, container orchestration, cold-tier GNN training ([#201](https://github.com/FlexNetOS/ruvector/pull/201))
 - **rvDNA health biomarker analysis engine**:
   - 20-SNP panel with streaming simulation
   - LPA cardiovascular SNPs from SOTA meta-analysis
@@ -53,13 +53,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security
 - **Harden intelligence providers** — type-safe enums, input validation, file size limits
-- **Fix path traversal** in MCP server `vector_db_backup` (CWE-22) ([#211](https://github.com/ruvnet/ruvector/pull/211))
-- **Harden MCP servers** against command injection, CORS bypass, and prototype pollution ([#213](https://github.com/ruvnet/ruvector/pull/213))
+- **Fix path traversal** in MCP server `vector_db_backup` (CWE-22) ([#211](https://github.com/FlexNetOS/ruvector/pull/211))
+- **Harden MCP servers** against command injection, CORS bypass, and prototype pollution ([#213](https://github.com/FlexNetOS/ruvector/pull/213))
 
 ### Fixed
 - Migrate attention/dag/tiny-dancer to workspace versioning
 - Fix all dependency version specs for crates.io publishing
-- Include prebuilt binaries in `@ruvector/gnn` platform packages ([#195](https://github.com/ruvnet/ruvector/issues/195))
+- Include prebuilt binaries in `@ruvector/gnn` platform packages ([#195](https://github.com/FlexNetOS/ruvector/issues/195))
 - CI: Node.js upgraded to 20 in GNN build workflow
 - CI: Auto-publish on push to main for GNN packages
 - RVF `NodeBackend` string ID ↔ numeric label mapping
@@ -71,7 +71,7 @@ Major release introducing the RuVector Format (RVF) cognitive container, AGI run
 ### Added
 
 #### RuVector Format (RVF) — Universal Cognitive Container
-- Complete RVF SDK with cognitive container specification ([#166](https://github.com/ruvnet/ruvector/pull/166))
+- Complete RVF SDK with cognitive container specification ([#166](https://github.com/FlexNetOS/ruvector/pull/166))
 - New crates: `rvf-types`, `rvf-crypto`, `rvf-runtime`, `rvf-node`, `rvf-wasm`, `rvf-solver`, `rvf-solver-wasm`, `rvf-cli`
 - WASM segment (`WASM_SEG 0x10`) for self-bootstrapping RVF files
 - Ed25519 asymmetric signing (RFC 8032) behind feature gate
@@ -109,16 +109,16 @@ Major release introducing the RuVector Format (RVF) cognitive container, AGI run
 - **RvBot**: Self-contained RVF bot with real Linux 6.6 kernel and initramfs boot
 - **rvDNA Genomics**: Complete SOTA genomic analysis pipeline, native 23andMe genotyping v0.2.0
 - **Domain Expansion**: Cross-domain AGI transfer learning engine with WASM bindings and meta-learning
-- **OSPipe**: RuVector-enhanced personal AI memory for Screenpipe ([#163](https://github.com/ruvnet/ruvector/pull/163))
+- **OSPipe**: RuVector-enhanced personal AI memory for Screenpipe ([#163](https://github.com/FlexNetOS/ruvector/pull/163))
 - **Quantum Simulation**: `ruqu-core`, `ruqu-algorithms`, `ruqu-wasm`, Bell test CHSH inequality
 - **Causal Atlas** (ADR-040): Dashboard, solver, and desktop app
 - **ruvector-postgres v0.3.0**: 43 new SQL functions (ADR-044)
 
 ### Fixed
-- HNSW index bugs, agent/SPARQL crashes ([#152](https://github.com/ruvnet/ruvector/issues/152), [#164](https://github.com/ruvnet/ruvector/issues/164), [#167](https://github.com/ruvnet/ruvector/issues/167), [#171](https://github.com/ruvnet/ruvector/issues/171))
-- LRU security fix ([#148](https://github.com/ruvnet/ruvector/issues/148))
+- HNSW index bugs, agent/SPARQL crashes ([#152](https://github.com/FlexNetOS/ruvector/issues/152), [#164](https://github.com/FlexNetOS/ruvector/issues/164), [#167](https://github.com/FlexNetOS/ruvector/issues/167), [#171](https://github.com/FlexNetOS/ruvector/issues/171))
+- LRU security fix ([#148](https://github.com/FlexNetOS/ruvector/issues/148))
 - FPGA-transformer `BackendSpec.as_ref` and HNSW array indexing
-- Platform-specific errno on macOS/BSD ([#174](https://github.com/ruvnet/ruvector/issues/174))
+- Platform-specific errno on macOS/BSD ([#174](https://github.com/FlexNetOS/ruvector/issues/174))
 - WASM path resolution in CJS→ESM interop
 - Docker Rust version bumped to 1.85 for edition2024
 
@@ -225,4 +225,4 @@ Initial release of RuVector — a high-performance vector database written in Ru
 
 ---
 
-For questions or issues, visit: https://github.com/ruvnet/ruvector/issues
+For questions or issues, visit: https://github.com/FlexNetOS/ruvector/issues

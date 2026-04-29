@@ -4,7 +4,7 @@ version = "0.1.0"
 edition = "2021"
 description = "rvAgent ACP server — Agent Communication Protocol with auth, rate limiting, TLS"
 license = "MIT OR Apache-2.0"
-repository = "https://github.com/ruvnet/RuVector"
+repository = "https://github.com/FlexNetOS/ruvector"
 
 [[bin]]
 name = "rvagent-acp"

@@ -8,7 +8,7 @@ authors = ["RuVector Contributors"]
 description = "Proof engine with 3-tier routing for the RuVix Cognition Kernel (ADR-087)"
 keywords = ["kernel", "proof", "verification", "no_std", "capability"]
 categories = ["no-std", "embedded", "os"]
-repository = "https://github.com/ruvnet/ruvector"
+repository = "https://github.com/FlexNetOS/ruvector"
 readme = "README.md"
 
 [lib]

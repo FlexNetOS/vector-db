@@ -212,7 +212,7 @@ Generation:   ~0.04ms  ████████░░  (40%)
 
 ```bash
 # Clone the repository
-git clone https://github.com/ruvnet/ruvector.git
+git clone https://github.com/FlexNetOS/ruvector.git
 cd ruvector/examples/ruvLLM
 
 # Build in release mode

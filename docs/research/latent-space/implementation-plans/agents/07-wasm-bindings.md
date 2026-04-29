@@ -75,7 +75,7 @@ authors = ["RuVector Team"]
 edition = "2021"
 license = "MIT OR Apache-2.0"
 description = "WebAssembly bindings for RuVector attention mechanisms"
-repository = "https://github.com/ruvnet/ruvector"
+repository = "https://github.com/FlexNetOS/ruvector"
 keywords = ["wasm", "attention", "machine-learning", "gnn", "webassembly"]
 categories = ["wasm", "science"]
 
@@ -180,7 +180,7 @@ opt-level = 3             # Optimize for speed
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/ruvnet/ruvector.git"
+    "url": "https://github.com/FlexNetOS/ruvector.git"
   },
   "keywords": [
     "wasm",

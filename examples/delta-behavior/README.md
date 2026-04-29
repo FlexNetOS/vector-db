@@ -295,6 +295,6 @@ If you use Delta-behavior in academic work, please cite:
   title = {Delta-Behavior: Constrained State Transitions for Coherent Systems},
   author = {RuVector Team},
   year = {2026},
-  url = {https://github.com/ruvnet/ruvector}
+  url = {https://github.com/FlexNetOS/ruvector}
 }
 ```

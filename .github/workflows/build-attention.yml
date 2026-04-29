@@ -357,7 +357,7 @@ jobs:
             "keywords": ["ruvector", "attention", "transformer", "napi-rs"],
             "author": "rUv <ruv@ruv.io>",
             "license": "MIT OR Apache-2.0",
-            "repository": {"type": "git", "url": "https://github.com/ruvnet/ruvector"},
+            "repository": {"type": "git", "url": "https://github.com/FlexNetOS/ruvector"},
             "engines": {"node": ">= 10"},
             "publishConfig": {"registry": "https://registry.npmjs.org/", "access": "public"}
           }

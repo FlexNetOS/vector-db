@@ -328,6 +328,6 @@ Hooks integrate with:
 
 ## Support
 
-- **Issues**: [GitHub Issues](https://github.com/ruvnet/ruvector/issues)
+- **Issues**: [GitHub Issues](https://github.com/FlexNetOS/ruvector/issues)
 - **Documentation**: This directory
 - **Examples**: `.claude/commands/hooks/`

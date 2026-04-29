@@ -47,7 +47,7 @@ const loaded = DiskAnn.load('./my-index');
 
 ## API
 
-See full documentation at [github.com/ruvnet/ruvector](https://github.com/ruvnet/ruvector).
+See full documentation at [github.com/FlexNetOS/ruvector](https://github.com/FlexNetOS/ruvector).
 
 ## License
 

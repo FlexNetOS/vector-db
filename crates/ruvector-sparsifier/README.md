@@ -3,7 +3,7 @@
 [![Crates.io](https://img.shields.io/crates/v/ruvector-sparsifier.svg)](https://crates.io/crates/ruvector-sparsifier)
 [![Documentation](https://docs.rs/ruvector-sparsifier/badge.svg)](https://docs.rs/ruvector-sparsifier)
 [![License](https://img.shields.io/crates/l/ruvector-sparsifier.svg)](LICENSE)
-[![GitHub](https://img.shields.io/badge/GitHub-ruvnet%2Fruvector-blue?logo=github)](https://github.com/ruvnet/ruvector)
+[![GitHub](https://img.shields.io/badge/GitHub-ruvnet%2Fruvector-blue?logo=github)](https://github.com/FlexNetOS/ruvector)
 [![ruv.io](https://img.shields.io/badge/ruv.io-AI%20Infrastructure-orange)](https://ruv.io)
 
 **An always-on compressed world model for real-time graph analytics.**

@@ -741,7 +741,7 @@ Contributions are welcome! See [CONTRIBUTING.md](../../docs/development/CONTRIBU
 
 ```bash
 # Clone repository
-git clone https://github.com/ruvnet/ruvector.git
+git clone https://github.com/FlexNetOS/ruvector.git
 cd ruvector/crates/router-ffi
 
 # Install dependencies
@@ -789,8 +789,8 @@ Built with cutting-edge technologies:
 
 ## Support
 
-- **Documentation**: [github.com/ruvnet/ruvector](https://github.com/ruvnet/ruvector)
-- **Issues**: [GitHub Issues](https://github.com/ruvnet/ruvector/issues)
+- **Documentation**: [github.com/FlexNetOS/ruvector](https://github.com/FlexNetOS/ruvector)
+- **Issues**: [GitHub Issues](https://github.com/FlexNetOS/ruvector/issues)
 - **Discord**: [Join our community](https://discord.gg/ruvnet)
 - **Twitter**: [@ruvnet](https://twitter.com/ruvnet)
 - **Enterprise**: [enterprise@ruv.io](mailto:enterprise@ruv.io)
@@ -799,9 +799,9 @@ Built with cutting-edge technologies:
 
 <div align="center">
 
-**Built by [rUv](https://ruv.io) • Part of the [Ruvector](https://github.com/ruvnet/ruvector) ecosystem**
+**Built by [rUv](https://ruv.io) • Part of the [Ruvector](https://github.com/FlexNetOS/ruvector) ecosystem**
 
-[![Star on GitHub](https://img.shields.io/github/stars/ruvnet/ruvector?style=social)](https://github.com/ruvnet/ruvector)
+[![Star on GitHub](https://img.shields.io/github/stars/FlexNetOS/ruvector?style=social)](https://github.com/FlexNetOS/ruvector)
 [![Follow @ruvnet](https://img.shields.io/twitter/follow/ruvnet?style=social)](https://twitter.com/ruvnet)
 
 </div>

@@ -1,7 +1,7 @@
 #!/bin/bash
 # RuVector Installer
-# Usage: curl -fsSL https://raw.githubusercontent.com/ruvnet/ruvector/main/install.sh | bash
-# Or:    wget -qO- https://raw.githubusercontent.com/ruvnet/ruvector/main/install.sh | bash
+# Usage: curl -fsSL https://raw.githubusercontent.com/FlexNetOS/ruvector/main/install.sh | bash
+# Or:    wget -qO- https://raw.githubusercontent.com/FlexNetOS/ruvector/main/install.sh | bash
 
 # Don't exit on error - we handle errors manually
 set +e
@@ -322,7 +322,7 @@ main() {
                 echo "  --help         Show this help"
                 echo ""
                 echo "Examples:"
-                echo "  curl -fsSL https://raw.githubusercontent.com/ruvnet/ruvector/main/install.sh | bash"
+                echo "  curl -fsSL https://raw.githubusercontent.com/FlexNetOS/ruvector/main/install.sh | bash"
                 echo "  curl -fsSL ... | bash -s -- --rust-only"
                 echo "  curl -fsSL ... | bash -s -- --npm-only"
                 echo "  curl -fsSL ... | bash -s -- --list"
@@ -426,8 +426,8 @@ main() {
     echo "  npx ruvector info"
     echo "  npx ruvector benchmark"
     echo ""
-    echo -e "${CYAN}Documentation:${NC} https://github.com/ruvnet/ruvector"
-    echo -e "${CYAN}Issues:${NC}        https://github.com/ruvnet/ruvector/issues"
+    echo -e "${CYAN}Documentation:${NC} https://github.com/FlexNetOS/ruvector"
+    echo -e "${CYAN}Issues:${NC}        https://github.com/FlexNetOS/ruvector/issues"
     echo ""
 }
 

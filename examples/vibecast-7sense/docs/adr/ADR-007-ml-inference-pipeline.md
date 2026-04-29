@@ -1095,7 +1095,7 @@ impl VerificationHarness {
 - [birdnet-onnx Crate (Docs.rs)](https://docs.rs/birdnet-onnx)
 - [ONNX Runtime Rust Bindings](https://github.com/pykeio/ort)
 - [Rubato Resampling Crate](https://docs.rs/rubato)
-- [RuVector Repository](https://github.com/ruvnet/ruvector)
+- [RuVector Repository](https://github.com/FlexNetOS/ruvector)
 
 ## Appendix A: Configuration Examples
 

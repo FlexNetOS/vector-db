@@ -188,9 +188,9 @@ This example demonstrates REFRAG concepts without modifying ruvector-core. For p
 2. **Phase 2**: Integrate policy network into ruvector-router
 3. **Phase 3**: Update REST API with hybrid response format
 
-See [Issue #10](https://github.com/ruvnet/ruvector/issues/10) for the full integration proposal.
+See [Issue #10](https://github.com/FlexNetOS/ruvector/issues/10) for the full integration proposal.
 
 ## References
 
 - [REFRAG: Rethinking RAG based Decoding (arXiv:2509.01092)](https://arxiv.org/abs/2509.01092)
-- [RuVector Documentation](https://github.com/ruvnet/ruvector)
+- [RuVector Documentation](https://github.com/FlexNetOS/ruvector)

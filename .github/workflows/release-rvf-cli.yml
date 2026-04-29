@@ -157,7 +157,7 @@ jobs:
 
             ```bash
             # Download (macOS ARM64 example)
-            curl -L -o rvf https://github.com/ruvnet/ruvector/releases/download/${{ steps.tag.outputs.tag }}/rvf-darwin-arm64
+            curl -L -o rvf https://github.com/FlexNetOS/ruvector/releases/download/${{ steps.tag.outputs.tag }}/rvf-darwin-arm64
             chmod +x rvf
 
             # Create a store and query
@@ -165,7 +165,7 @@ jobs:
             ./rvf status mydb.rvf
             ```
 
-            See the [CLI README](https://github.com/ruvnet/ruvector/tree/main/crates/rvf/rvf-cli) for full documentation.
+            See the [CLI README](https://github.com/FlexNetOS/ruvector/tree/main/crates/rvf/rvf-cli) for full documentation.
           files: release/*
           draft: false
           prerelease: false

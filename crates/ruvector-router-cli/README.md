@@ -29,7 +29,7 @@ cargo install router-cli
 
 ```bash
 # Clone the repository
-git clone https://github.com/ruvnet/ruvector.git
+git clone https://github.com/FlexNetOS/ruvector.git
 cd ruvector
 
 # Build and install from workspace
@@ -579,7 +579,7 @@ done
 
 We welcome contributions! Here's how to contribute to the router-cli:
 
-1. **Fork** the repository at [github.com/ruvnet/ruvector](https://github.com/ruvnet/ruvector)
+1. **Fork** the repository at [github.com/FlexNetOS/ruvector](https://github.com/FlexNetOS/ruvector)
 2. **Create** a feature branch (`git checkout -b feature/cli-improvement`)
 3. **Make** your changes to `crates/router-cli/`
 4. **Test** thoroughly:
@@ -602,7 +602,7 @@ We welcome contributions! Here's how to contribute to the router-cli:
 
 ```bash
 # Clone and navigate to CLI crate
-git clone https://github.com/ruvnet/ruvector.git
+git clone https://github.com/FlexNetOS/ruvector.git
 cd ruvector/crates/router-cli
 
 # Build in development mode
@@ -636,9 +636,9 @@ Built with:
 
 <div align="center">
 
-**Built by [rUv](https://ruv.io) • Part of [Ruvector](https://github.com/ruvnet/ruvector)**
+**Built by [rUv](https://ruv.io) • Part of [Ruvector](https://github.com/FlexNetOS/ruvector)**
 
-[![GitHub](https://img.shields.io/badge/GitHub-ruvnet/ruvector-blue.svg)](https://github.com/ruvnet/ruvector)
+[![GitHub](https://img.shields.io/badge/GitHub-FlexNetOS/ruvector-blue.svg)](https://github.com/FlexNetOS/ruvector)
 [![Documentation](https://img.shields.io/badge/docs-README-green.svg)](../../README.md)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](../../LICENSE)
 

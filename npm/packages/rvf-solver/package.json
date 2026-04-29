@@ -18,7 +18,7 @@
   },
   "keywords": ["solver", "wasm", "thompson-sampling", "reasoning-bank", "self-learning", "rvf", "agi"],
   "license": "MIT",
-  "repository": "https://github.com/ruvnet/ruvector",
+  "repository": "https://github.com/FlexNetOS/ruvector",
   "publishConfig": {
     "registry": "https://registry.npmjs.org/",
     "access": "public"

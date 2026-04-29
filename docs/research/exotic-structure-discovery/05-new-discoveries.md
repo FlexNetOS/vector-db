@@ -146,7 +146,7 @@ This directly demonstrates the thesis: **graph-structural boundary detection fin
 All experiments run in seconds on a laptop:
 
 ```bash
-git clone https://github.com/ruvnet/RuVector.git
+git clone https://github.com/FlexNetOS/ruvector.git
 cd RuVector
 git checkout research/exotic-structure-discovery-rvf
 cargo run -p boundary-discovery              # Original proof (z=-3.90)

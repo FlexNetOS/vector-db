@@ -720,8 +720,8 @@ SELECT * FROM ruvector_memory_stats();
 - **Documentation**: [/docs](/docs) directory
 - **API Reference**: [API.md](./API.md)
 - **Performance Guide**: [SIMD_OPTIMIZATION.md](./SIMD_OPTIMIZATION.md)
-- **GitHub Issues**: https://github.com/ruvnet/ruvector/issues
-- **Community Forum**: https://github.com/ruvnet/ruvector/discussions
+- **GitHub Issues**: https://github.com/FlexNetOS/ruvector/issues
+- **Community Forum**: https://github.com/FlexNetOS/ruvector/discussions
 
 ## Migration Checklist Template
 

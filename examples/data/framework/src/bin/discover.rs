@@ -1124,7 +1124,7 @@ fn print_help() {
     • Multiple output formats (human-readable, JSON)
 
 {}MORE INFO:{}
-    Repository: https://github.com/ruvnet/ruvector
+    Repository: https://github.com/FlexNetOS/ruvector
     Documentation: See examples/data/framework/README.md
 "#,
         color::BOLD,

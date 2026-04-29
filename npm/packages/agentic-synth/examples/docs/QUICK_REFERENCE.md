@@ -462,7 +462,7 @@ console.log('Learned Demos:', optimized.__demos);
 
 ## 💬 Support
 
-- GitHub Issues: [ruvector/issues](https://github.com/ruvnet/ruvector/issues)
+- GitHub Issues: [ruvector/issues](https://github.com/FlexNetOS/ruvector/issues)
 - Discord: [Join](https://discord.gg/ruvector)
 - Email: [support@ruv.io](mailto:support@ruv.io)
 

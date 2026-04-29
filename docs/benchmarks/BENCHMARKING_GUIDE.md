@@ -433,4 +433,4 @@ assert!(regression < 0.05, "Performance regression > 5%");
 
 ## Questions?
 
-Open an issue: https://github.com/ruvnet/ruvector/issues
+Open an issue: https://github.com/FlexNetOS/ruvector/issues

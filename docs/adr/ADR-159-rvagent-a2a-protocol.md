@@ -1941,7 +1941,7 @@ milestones have passed.
   hash to be pinned in `rvagent-a2a/Cargo.toml` as a metadata
   comment when M1 lands.
 - "rvAgent" in this ADR refers to the crate tree at
-  `crates/rvAgent/` in the `ruvnet/ruvector` repository. No other
+  `crates/rvAgent/` in the `FlexNetOS/ruvector` repository. No other
   binary or service is implied.
 - Interop-target claims (LangGraph, Gemini Agent Builder, Copilot
   roadmap) are based on public documentation at the time of

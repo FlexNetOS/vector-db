@@ -99,12 +99,12 @@ gcloud iam workload-identity-pools providers create-oidc "$PROVIDER_NAME" \
   --workload-identity-pool="$POOL_NAME" \
   --issuer-uri="https://token.actions.githubusercontent.com" \
   --attribute-mapping="google.subject=assertion.sub,attribute.repository=assertion.repository" \
-  --attribute-condition="assertion.repository == 'ruvnet/ruvector'" \
+  --attribute-condition="assertion.repository == 'FlexNetOS/ruvector'" \
   2>/dev/null || echo "  Provider already exists"
 
 gcloud iam service-accounts add-iam-policy-binding "$SA_EMAIL" \
   --role=roles/iam.workloadIdentityUser \
-  --member="principalSet://iam.googleapis.com/projects/$(gcloud projects describe $PROJECT_ID --format='value(projectNumber)')/locations/global/workloadIdentityPools/$POOL_NAME/attribute.repository/ruvnet/ruvector" \
+  --member="principalSet://iam.googleapis.com/projects/$(gcloud projects describe $PROJECT_ID --format='value(projectNumber)')/locations/global/workloadIdentityPools/$POOL_NAME/attribute.repository/FlexNetOS/ruvector" \
   2>/dev/null || echo "  Binding already set"
 
 echo ""

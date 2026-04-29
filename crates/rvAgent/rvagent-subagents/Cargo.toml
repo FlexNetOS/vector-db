@@ -4,7 +4,7 @@ version = "0.1.0"
 edition = "2021"
 description = "rvAgent subagents — spec compilation, builder, orchestration, result validation"
 license = "MIT OR Apache-2.0"
-repository = "https://github.com/ruvnet/RuVector"
+repository = "https://github.com/FlexNetOS/ruvector"
 
 [dependencies]
 rvagent-core = { path = "../rvagent-core" }

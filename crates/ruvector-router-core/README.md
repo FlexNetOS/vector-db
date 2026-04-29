@@ -710,7 +710,7 @@ pub fn calculate_compression_ratio(original_dims: usize, qtype: QuantizationType
 
 ## 🔗 Links
 
-- **Main Repository**: [github.com/ruvnet/ruvector](https://github.com/ruvnet/ruvector)
+- **Main Repository**: [github.com/FlexNetOS/ruvector](https://github.com/FlexNetOS/ruvector)
 - **Documentation**: [docs/README.md](../../docs/README.md)
 - **API Reference**: [docs/api/RUST_API.md](../../docs/api/RUST_API.md)
 - **Performance Guide**: [docs/optimization/PERFORMANCE_TUNING_GUIDE.md](../../docs/optimization/PERFORMANCE_TUNING_GUIDE.md)
@@ -752,7 +752,7 @@ Built with battle-tested technologies:
 
 <div align="center">
 
-**Part of the [Ruvector](https://github.com/ruvnet/ruvector) ecosystem**
+**Part of the [Ruvector](https://github.com/FlexNetOS/ruvector) ecosystem**
 
 Built by [rUv](https://ruv.io) • Production Ready • MIT Licensed
 

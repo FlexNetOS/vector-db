@@ -71,13 +71,13 @@
   ],
   "author": "ruv.io Team <info@ruv.io> (https://ruv.io)",
   "license": "MIT",
-  "homepage": "https://github.com/ruvnet/ruvector#readme",
+  "homepage": "https://github.com/FlexNetOS/ruvector#readme",
   "bugs": {
-    "url": "https://github.com/ruvnet/ruvector/issues"
+    "url": "https://github.com/FlexNetOS/ruvector/issues"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ruvnet/ruvector.git",
+    "url": "git+https://github.com/FlexNetOS/ruvector.git",
     "directory": "npm/packages/postgres-cli"
   },
   "funding": {

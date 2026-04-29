@@ -651,6 +651,6 @@ cursor.execute("SELECT * FROM ruvector_search('items_embeddings', %s, 10)", [vec
 
 ## Support
 
-- GitHub Issues: https://github.com/ruvnet/ruvector/issues
+- GitHub Issues: https://github.com/FlexNetOS/ruvector/issues
 - Documentation: https://ruvector.dev/docs
 - Migration Support: migration@ruvector.dev

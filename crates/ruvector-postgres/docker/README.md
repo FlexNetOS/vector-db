@@ -385,7 +385,7 @@ test:
 
 - [pgrx Documentation](https://github.com/pgcentralfoundation/pgrx)
 - [PostgreSQL Docker Hub](https://hub.docker.com/_/postgres)
-- [RuVector Repository](https://github.com/ruvnet/ruvector)
+- [RuVector Repository](https://github.com/FlexNetOS/ruvector)
 
 ## License
 

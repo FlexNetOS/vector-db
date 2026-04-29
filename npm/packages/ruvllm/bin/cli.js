@@ -859,7 +859,7 @@ Examples:
   ruvllm train stats                  # Show dataset statistics
   ruvllm train contrastive --epochs 20 --output ./my-training
 
-Learn more: https://github.com/ruvnet/ruvector
+Learn more: https://github.com/FlexNetOS/ruvector
 `);
 }
 

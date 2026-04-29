@@ -317,7 +317,7 @@ cargo bench --workspace --no-run
 
 ## Additional Resources
 
-- **Project Repository**: https://github.com/ruvnet/ruvector
+- **Project Repository**: https://github.com/FlexNetOS/ruvector
 - **Ruvector Documentation**: See main project docs
 - **Architecture Documentation**: See `architecture/` directory
 - **Specifications**: See `specs/` directory

@@ -295,9 +295,9 @@ See the [Rust documentation](https://docs.rs/rvdna) for the complete API includi
 
 ## Links
 
-- [GitHub](https://github.com/ruvnet/ruvector/tree/main/examples/dna) - Source code
+- [GitHub](https://github.com/FlexNetOS/ruvector/tree/main/examples/dna) - Source code
 - [crates.io](https://crates.io/crates/rvdna) - Rust crate
-- [RuVector](https://github.com/ruvnet/ruvector) - Parent vector computing platform
+- [RuVector](https://github.com/FlexNetOS/ruvector) - Parent vector computing platform
 
 ## License
 

@@ -170,19 +170,19 @@ The included Linux 6.6.80 kernel is built from source with a minimal config:
 
 ```bash
 # Basic install
-curl -fsSL https://raw.githubusercontent.com/ruvnet/ruvector/main/npm/packages/ruvbot/scripts/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/FlexNetOS/ruvector/main/npm/packages/ruvbot/scripts/install.sh | bash
 
 # Install with interactive wizard
-RUVBOT_WIZARD=true curl -fsSL https://raw.githubusercontent.com/ruvnet/ruvector/main/npm/packages/ruvbot/scripts/install.sh | bash
+RUVBOT_WIZARD=true curl -fsSL https://raw.githubusercontent.com/FlexNetOS/ruvector/main/npm/packages/ruvbot/scripts/install.sh | bash
 
 # Install specific version
-RUVBOT_VERSION=0.1.3 curl -fsSL https://raw.githubusercontent.com/ruvnet/ruvector/main/npm/packages/ruvbot/scripts/install.sh | bash
+RUVBOT_VERSION=0.1.3 curl -fsSL https://raw.githubusercontent.com/FlexNetOS/ruvector/main/npm/packages/ruvbot/scripts/install.sh | bash
 
 # Install and deploy to Cloud Run
-RUVBOT_DEPLOY=cloudrun curl -fsSL https://raw.githubusercontent.com/ruvnet/ruvector/main/npm/packages/ruvbot/scripts/install.sh | bash
+RUVBOT_DEPLOY=cloudrun curl -fsSL https://raw.githubusercontent.com/FlexNetOS/ruvector/main/npm/packages/ruvbot/scripts/install.sh | bash
 
 # Install with Slack channel dependencies
-RUVBOT_CHANNEL=slack curl -fsSL https://raw.githubusercontent.com/ruvnet/ruvector/main/npm/packages/ruvbot/scripts/install.sh | bash
+RUVBOT_CHANNEL=slack curl -fsSL https://raw.githubusercontent.com/FlexNetOS/ruvector/main/npm/packages/ruvbot/scripts/install.sh | bash
 ```
 
 ### Install Options (Environment Variables)
@@ -1406,7 +1406,7 @@ ruvbot doctor
 
 ```bash
 # Clone the repository
-git clone https://github.com/ruvnet/ruvector.git
+git clone https://github.com/FlexNetOS/ruvector.git
 cd ruvector/npm/packages/ruvbot
 
 # Install dependencies
@@ -1464,16 +1464,16 @@ See [CONTRIBUTING.md](../../CONTRIBUTING.md) for contribution guidelines.
 
 - **Live Demo**: https://ruvbot-875130704813.us-central1.run.app
 - **npm Package**: https://www.npmjs.com/package/@ruvector/ruvbot
-- **Repository**: https://github.com/ruvnet/ruvector
-- **Issues**: https://github.com/ruvnet/ruvector/issues
-- **Documentation**: https://github.com/ruvnet/ruvector/tree/main/npm/packages/ruvbot
+- **Repository**: https://github.com/FlexNetOS/ruvector
+- **Issues**: https://github.com/FlexNetOS/ruvector/issues
+- **Documentation**: https://github.com/FlexNetOS/ruvector/tree/main/npm/packages/ruvbot
 - **Feature Comparison**: [docs/FEATURE_COMPARISON.md](docs/FEATURE_COMPARISON.md)
 - **ADR Documents**: [docs/adr/](docs/adr/)
 
 ## Support
 
-- **GitHub Issues**: https://github.com/ruvnet/ruvector/issues
-- **Discussions**: https://github.com/ruvnet/ruvector/discussions
+- **GitHub Issues**: https://github.com/FlexNetOS/ruvector/issues
+- **Discussions**: https://github.com/FlexNetOS/ruvector/discussions
 
 ---
 

@@ -7,7 +7,7 @@
 
 **High-performance REST API server for Ruvector vector databases.**
 
-`ruvector-server` provides a production-ready HTTP API built on Axum with CORS support, compression, and OpenAPI documentation. Exposes full Ruvector functionality via RESTful endpoints. Part of the [Ruvector](https://github.com/ruvnet/ruvector) ecosystem.
+`ruvector-server` provides a production-ready HTTP API built on Axum with CORS support, compression, and OpenAPI documentation. Exposes full Ruvector functionality via RESTful endpoints. Part of the [Ruvector](https://github.com/FlexNetOS/ruvector) ecosystem.
 
 ## Why Ruvector Server?
 
@@ -210,7 +210,7 @@ docker run -p 8080:8080 ruvector-server
 
 - **[Main README](../../README.md)** - Complete project overview
 - **[API Documentation](https://docs.rs/ruvector-server)** - Full API reference
-- **[GitHub Repository](https://github.com/ruvnet/ruvector)** - Source code
+- **[GitHub Repository](https://github.com/FlexNetOS/ruvector)** - Source code
 
 ## License
 
@@ -220,10 +220,10 @@ docker run -p 8080:8080 ruvector-server
 
 <div align="center">
 
-**Part of [Ruvector](https://github.com/ruvnet/ruvector) - Built by [rUv](https://ruv.io)**
+**Part of [Ruvector](https://github.com/FlexNetOS/ruvector) - Built by [rUv](https://ruv.io)**
 
-[![Star on GitHub](https://img.shields.io/github/stars/ruvnet/ruvector?style=social)](https://github.com/ruvnet/ruvector)
+[![Star on GitHub](https://img.shields.io/github/stars/FlexNetOS/ruvector?style=social)](https://github.com/FlexNetOS/ruvector)
 
-[Documentation](https://docs.rs/ruvector-server) | [Crates.io](https://crates.io/crates/ruvector-server) | [GitHub](https://github.com/ruvnet/ruvector)
+[Documentation](https://docs.rs/ruvector-server) | [Crates.io](https://crates.io/crates/ruvector-server) | [GitHub](https://github.com/FlexNetOS/ruvector)
 
 </div>

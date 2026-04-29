@@ -339,6 +339,6 @@ MIT OR Apache-2.0
 
 ## Links
 
-- [GitHub Repository](https://github.com/ruvnet/ruvector)
+- [GitHub Repository](https://github.com/FlexNetOS/ruvector)
 - [Core Library](../ruvector-mincut-gated-transformer)
 - [RuVector Documentation](../../README.md)

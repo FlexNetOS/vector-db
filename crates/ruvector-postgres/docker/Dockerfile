@@ -92,7 +92,7 @@ edition = "2021"
 rust-version = "1.77"
 license = "MIT"
 authors = ["Ruvector Team"]
-repository = "https://github.com/ruvnet/ruvector"
+repository = "https://github.com/FlexNetOS/ruvector"
 
 [workspace.dependencies]
 serde = { version = "1.0", features = ["derive"] }
@@ -191,7 +191,7 @@ LABEL org.opencontainers.image.title="RuVector PostgreSQL Extension v0.3.1"
 LABEL org.opencontainers.image.description="High-performance vector database extension for PostgreSQL with 270+ SQL functions, Graph/Cypher/SPARQL, GNN, hybrid search, multi-tenancy, self-healing, SONA self-learning, Solver, Math, TDA, and Domain Expansion"
 LABEL org.opencontainers.image.version="0.3.1"
 LABEL org.opencontainers.image.vendor="ruv.io"
-LABEL org.opencontainers.image.source="https://github.com/ruvnet/ruvector"
+LABEL org.opencontainers.image.source="https://github.com/FlexNetOS/ruvector"
 LABEL ruvector.pg.version="${PG_VERSION}"
 LABEL ruvector.features="attention,gnn,hybrid,tenancy,healing,learning,hyperbolic,graph,solver,math,tda,sona,domain-expansion"
 

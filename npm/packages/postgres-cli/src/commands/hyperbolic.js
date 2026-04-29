@@ -31,7 +31,7 @@ Available functions:
   - ruvector_lorentz_to_poincare(lorentz, curvature)
   - ruvector_minkowski_dot(a, b)
 
-${chalk_1.default.gray('See: https://github.com/ruvnet/ruvector for setup instructions.')}
+${chalk_1.default.gray('See: https://github.com/FlexNetOS/ruvector for setup instructions.')}
 `;
 function checkHyperbolicAvailable() {
     // Hyperbolic geometry functions are now implemented in the PostgreSQL extension

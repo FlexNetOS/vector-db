@@ -274,18 +274,18 @@ async function indexImages(imagePaths) {
 ## Resources
 
 - 🏠 [Homepage](https://ruv.io)
-- 📦 [GitHub Repository](https://github.com/ruvnet/ruvector)
-- 📚 [Documentation](https://github.com/ruvnet/ruvector/tree/main/docs)
-- 🐛 [Issue Tracker](https://github.com/ruvnet/ruvector/issues)
-- 💬 [Discussions](https://github.com/ruvnet/ruvector/discussions)
+- 📦 [GitHub Repository](https://github.com/FlexNetOS/ruvector)
+- 📚 [Documentation](https://github.com/FlexNetOS/ruvector/tree/main/docs)
+- 🐛 [Issue Tracker](https://github.com/FlexNetOS/ruvector/issues)
+- 💬 [Discussions](https://github.com/FlexNetOS/ruvector/discussions)
 
 ## Contributing
 
-Contributions are welcome! Please see [CONTRIBUTING.md](https://github.com/ruvnet/ruvector/blob/main/CONTRIBUTING.md) for guidelines.
+Contributions are welcome! Please see [CONTRIBUTING.md](https://github.com/FlexNetOS/ruvector/blob/main/CONTRIBUTING.md) for guidelines.
 
 ## License
 
-MIT License - see [LICENSE](https://github.com/ruvnet/ruvector/blob/main/LICENSE) for details.
+MIT License - see [LICENSE](https://github.com/FlexNetOS/ruvector/blob/main/LICENSE) for details.
 
 ---
 

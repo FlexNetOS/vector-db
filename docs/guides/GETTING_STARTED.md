@@ -51,7 +51,7 @@ npm install @ruvector/rvf-node
 #### CLI
 ```bash
 # Build from source
-git clone https://github.com/ruvnet/ruvector.git
+git clone https://github.com/FlexNetOS/ruvector.git
 cd ruvector
 cargo install --path crates/ruvector-cli
 ```
@@ -279,8 +279,8 @@ The RVF binary format supports:
 
 ## Community & Support
 
-- **GitHub**: [https://github.com/ruvnet/ruvector](https://github.com/ruvnet/ruvector)
-- **Issues**: [https://github.com/ruvnet/ruvector/issues](https://github.com/ruvnet/ruvector/issues)
+- **GitHub**: [https://github.com/FlexNetOS/ruvector](https://github.com/FlexNetOS/ruvector)
+- **Issues**: [https://github.com/FlexNetOS/ruvector/issues](https://github.com/FlexNetOS/ruvector/issues)
 
 ## License
 

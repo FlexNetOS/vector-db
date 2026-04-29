@@ -687,7 +687,7 @@ pub fn format_report(a: &GenotypeAnalysis) -> String {
     );
     let _ = writeln!(
         r,
-        "  https://github.com/ruvnet/ruvector/tree/main/examples/dna"
+        "  https://github.com/FlexNetOS/ruvector/tree/main/examples/dna"
     );
     let _ = writeln!(r, "{}", sep);
 

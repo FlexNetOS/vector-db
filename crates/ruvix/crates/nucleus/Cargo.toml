@@ -8,7 +8,7 @@ authors = ["RuVector Contributors"]
 description = "Integration crate for RuVix Cognition Kernel - syscall dispatch, deterministic replay, and full acceptance tests (ADR-087)"
 keywords = ["kernel", "syscall", "deterministic", "replay", "cognition"]
 categories = ["embedded", "no-std", "os"]
-repository = "https://github.com/ruvnet/ruvector"
+repository = "https://github.com/FlexNetOS/ruvector"
 readme = "README.md"
 
 [lib]

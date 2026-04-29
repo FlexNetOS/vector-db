@@ -1291,7 +1291,7 @@ async function generateWithBackoff(synth, options, maxRetries = 3) {
 - **Performance Guide**: See `docs/PERFORMANCE.md`
 - **Benchmarks**: See `PERFORMANCE_REPORT.md`
 - **Examples**: See `examples/` directory
-- **GitHub**: https://github.com/ruvnet/ruvector
+- **GitHub**: https://github.com/FlexNetOS/ruvector
 
 ---
 

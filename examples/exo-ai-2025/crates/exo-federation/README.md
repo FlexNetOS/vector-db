@@ -72,8 +72,8 @@ async fn main() -> Result<()> {
 
 ## Links
 
-- [GitHub](https://github.com/ruvnet/ruvector)
-- [EXO-AI Documentation](https://github.com/ruvnet/ruvector/tree/main/examples/exo-ai-2025)
+- [GitHub](https://github.com/FlexNetOS/ruvector)
+- [EXO-AI Documentation](https://github.com/FlexNetOS/ruvector/tree/main/examples/exo-ai-2025)
 
 ## License
 

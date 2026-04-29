@@ -4,7 +4,7 @@ version = "0.3.0"
 edition = "2021"
 description = "Standalone vector database with SQL, SPARQL, and Cypher - powered by RuVector WASM"
 license = "MIT OR Apache-2.0"
-repository = "https://github.com/ruvnet/ruvector"
+repository = "https://github.com/FlexNetOS/ruvector"
 authors = ["RuVector Contributors"]
 
 [lib]

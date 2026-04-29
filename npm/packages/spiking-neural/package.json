@@ -32,11 +32,11 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ruvnet/ruvector.git"
+    "url": "git+https://github.com/FlexNetOS/ruvector.git"
   },
   "homepage": "https://ruv.io",
   "bugs": {
-    "url": "https://github.com/ruvnet/ruvector/issues"
+    "url": "https://github.com/FlexNetOS/ruvector/issues"
   },
   "engines": {
     "node": ">=16.0.0"

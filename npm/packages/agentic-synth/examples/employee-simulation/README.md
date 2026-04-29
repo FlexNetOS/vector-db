@@ -344,8 +344,8 @@ const context = `
 ## Support & Contribution
 
 ### Questions
-- GitHub Issues: [ruvector/issues](https://github.com/ruvnet/ruvector/issues)
-- Documentation: [agentic-synth docs](https://github.com/ruvnet/ruvector/tree/main/packages/agentic-synth)
+- GitHub Issues: [ruvector/issues](https://github.com/FlexNetOS/ruvector/issues)
+- Documentation: [agentic-synth docs](https://github.com/FlexNetOS/ruvector/tree/main/packages/agentic-synth)
 
 ### Contributing
 Contributions welcome! Please ensure:

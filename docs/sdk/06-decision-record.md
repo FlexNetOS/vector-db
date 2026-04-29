@@ -112,7 +112,7 @@ When M4 ships:
 - **gRPC service + thin client** — wrong architectural shape for a
   vector index.
 - **One-wheel-per-Python-version** — abi3 collapses the matrix.
-- **Separate `ruvnet/ruvector-py` repo** — breaks the single-PR
+- **Separate `FlexNetOS/ruvector-py` repo** — breaks the single-PR
   cross-binding diff workflow that NAPI bindings already enjoy.
 
 ## Source pointers

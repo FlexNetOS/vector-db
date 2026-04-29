@@ -342,5 +342,5 @@ The CLI uses the same API as the programmatic interface. For advanced usage, see
 
 ## Support
 
-- GitHub Issues: https://github.com/ruvnet/ruvector
-- Documentation: https://github.com/ruvnet/ruvector/tree/main/packages/agentic-synth
+- GitHub Issues: https://github.com/FlexNetOS/ruvector
+- Documentation: https://github.com/FlexNetOS/ruvector/tree/main/packages/agentic-synth

@@ -1330,7 +1330,7 @@ Recording Upload
 - Evans, Eric. "Domain-Driven Design: Tackling Complexity in the Heart of Software" (2003)
 - Vernon, Vaughn. "Implementing Domain-Driven Design" (2013)
 - Perch 2.0 Paper: arXiv:2508.04665
-- RuVector Documentation: https://github.com/ruvnet/ruvector
+- RuVector Documentation: https://github.com/FlexNetOS/ruvector
 
 ---
 

@@ -469,4 +469,4 @@ See main RuVector repository for contribution guidelines.
 
 - [MCP Specification](https://spec.modelcontextprotocol.io/)
 - [JSON-RPC 2.0](https://www.jsonrpc.org/specification)
-- [RuVector Documentation](https://github.com/ruvnet/ruvector)
+- [RuVector Documentation](https://github.com/FlexNetOS/ruvector)

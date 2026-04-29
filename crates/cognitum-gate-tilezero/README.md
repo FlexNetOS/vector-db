@@ -2,7 +2,7 @@
 
 <p align="center">
   <a href="https://ruv.io"><img src="https://img.shields.io/badge/ruv.io-coherence_gate-blueviolet?style=for-the-badge" alt="ruv.io"></a>
-  <a href="https://github.com/ruvnet/ruvector"><img src="https://img.shields.io/badge/RuVector-monorepo-orange?style=for-the-badge&logo=github" alt="RuVector"></a>
+  <a href="https://github.com/FlexNetOS/ruvector"><img src="https://img.shields.io/badge/RuVector-monorepo-orange?style=for-the-badge&logo=github" alt="RuVector"></a>
 </p>
 
 <p align="center">
@@ -598,7 +598,7 @@ MIT OR Apache-2.0
 
 <p align="center">
   <a href="https://ruv.io">ruv.io</a> •
-  <a href="https://github.com/ruvnet/ruvector">RuVector</a> •
+  <a href="https://github.com/FlexNetOS/ruvector">RuVector</a> •
   <a href="https://crates.io/crates/cognitum-gate-tilezero">crates.io</a>
 </p>
 

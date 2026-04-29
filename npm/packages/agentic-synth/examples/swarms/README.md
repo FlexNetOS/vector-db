@@ -637,9 +637,9 @@ Contributions are welcome! Please submit examples that demonstrate:
 
 ## Resources
 
-- [agentic-synth Documentation](https://github.com/ruvnet/ruvector/tree/main/packages/agentic-synth)
+- [agentic-synth Documentation](https://github.com/FlexNetOS/ruvector/tree/main/packages/agentic-synth)
 - [claude-flow Documentation](https://github.com/ruvnet/claude-flow)
-- [AgenticDB Documentation](https://github.com/ruvnet/ruvector)
+- [AgenticDB Documentation](https://github.com/FlexNetOS/ruvector)
 - [Flow-Nexus Platform](https://flow-nexus.ruv.io)
 
 ## License
@@ -648,8 +648,8 @@ MIT License - See LICENSE file for details
 
 ## Support
 
-- GitHub Issues: https://github.com/ruvnet/ruvector/issues
-- Discussions: https://github.com/ruvnet/ruvector/discussions
+- GitHub Issues: https://github.com/FlexNetOS/ruvector/issues
+- Discussions: https://github.com/FlexNetOS/ruvector/discussions
 - Discord: [Join our community](#)
 
 ---

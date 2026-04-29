@@ -6,7 +6,7 @@ rust-version = "1.77"
 authors = ["RuVector Team"]
 license = "MIT OR Apache-2.0"
 description = "WASM bindings for FPGA Transformer backend"
-repository = "https://github.com/ruvnet/ruvector"
+repository = "https://github.com/FlexNetOS/ruvector"
 keywords = ["fpga", "transformer", "wasm", "inference"]
 categories = ["wasm", "algorithms"]
 

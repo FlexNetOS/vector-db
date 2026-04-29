@@ -4,7 +4,7 @@ version = "2.0.0"
 edition = "2021"
 description = "RuVector Causal Atlas — native desktop app with embedded Three.js dashboard"
 license = "MIT OR Apache-2.0"
-repository = "https://github.com/ruvnet/ruvector"
+repository = "https://github.com/FlexNetOS/ruvector"
 
 [[bin]]
 name = "ruvector"

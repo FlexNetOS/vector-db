@@ -10,7 +10,7 @@
 
 Bring the power of Ruvector's blazing-fast vector search to your Node.js and TypeScript applications. Built with NAPI-RS for zero-overhead native bindings, async/await support, and complete type safety.
 
-> Part of the [Ruvector](https://github.com/ruvnet/ruvector) ecosystem - next-generation vector database built in Rust.
+> Part of the [Ruvector](https://github.com/FlexNetOS/ruvector) ecosystem - next-generation vector database built in Rust.
 
 ## 🌟 Why Ruvector Node.js?
 
@@ -835,7 +835,7 @@ const manhattanDb = new VectorDB({
 
 ```bash
 # Clone the repository
-git clone https://github.com/ruvnet/ruvector.git
+git clone https://github.com/FlexNetOS/ruvector.git
 cd ruvector/crates/ruvector-node
 
 # Install dependencies
@@ -1037,8 +1037,8 @@ cargo bench -p ruvector-bench
 
 ## 🌐 Support
 
-- **GitHub Issues**: [Report bugs or request features](https://github.com/ruvnet/ruvector/issues)
-- **Discussions**: [Ask questions and share ideas](https://github.com/ruvnet/ruvector/discussions)
+- **GitHub Issues**: [Report bugs or request features](https://github.com/FlexNetOS/ruvector/issues)
+- **Discussions**: [Ask questions and share ideas](https://github.com/FlexNetOS/ruvector/discussions)
 - **Discord**: [Join our community](https://discord.gg/ruvnet)
 - **Twitter**: [@ruvnet](https://twitter.com/ruvnet)
 - **Enterprise**: [enterprise@ruv.io](mailto:enterprise@ruv.io)
@@ -1072,9 +1072,9 @@ Special thanks to the Rust and Node.js communities!
 
 <div align="center">
 
-**Built by [rUv](https://ruv.io) • Part of the [Ruvector](https://github.com/ruvnet/ruvector) ecosystem**
+**Built by [rUv](https://ruv.io) • Part of the [Ruvector](https://github.com/FlexNetOS/ruvector) ecosystem**
 
-[![Star on GitHub](https://img.shields.io/github/stars/ruvnet/ruvector?style=social)](https://github.com/ruvnet/ruvector)
+[![Star on GitHub](https://img.shields.io/github/stars/FlexNetOS/ruvector?style=social)](https://github.com/FlexNetOS/ruvector)
 [![npm downloads](https://img.shields.io/npm/dm/ruvector.svg)](https://www.npmjs.com/package/ruvector)
 [![Discord](https://img.shields.io/badge/Discord-Join%20Chat-7289da.svg)](https://discord.gg/ruvnet)
 

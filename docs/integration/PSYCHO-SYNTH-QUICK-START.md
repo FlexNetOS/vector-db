@@ -488,7 +488,7 @@ npx psycho-synth-examples list
 
 Built with ❤️ by ruvnet using:
 - [psycho-symbolic-reasoner](https://www.npmjs.com/package/psycho-symbolic-reasoner) - Ultra-fast symbolic AI
-- [@ruvector/agentic-synth](https://github.com/ruvnet/ruvector) - AI-powered data generation
-- [ruvector](https://github.com/ruvnet/ruvector) - High-performance vector database
+- [@ruvector/agentic-synth](https://github.com/FlexNetOS/ruvector) - AI-powered data generation
+- [ruvector](https://github.com/FlexNetOS/ruvector) - High-performance vector database
 
 MIT © ruvnet

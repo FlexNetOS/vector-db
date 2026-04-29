@@ -11,10 +11,10 @@ info:
     - Federated mesh networking
   license:
     name: MIT OR Apache-2.0
-    url: https://github.com/ruvnet/ruvector
+    url: https://github.com/FlexNetOS/ruvector
   contact:
     name: EXO-AI Team
-    url: https://github.com/ruvnet/ruvector/issues
+    url: https://github.com/FlexNetOS/ruvector/issues
 
 servers:
   - url: http://localhost:8080/api/v1

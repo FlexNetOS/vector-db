@@ -6,7 +6,7 @@
 
 **Node.js bindings for Tiny Dancer neural routing via NAPI-RS.**
 
-`ruvector-tiny-dancer-node` provides native Node.js bindings for production-grade AI agent routing. Run FastGRNN neural inference at native speed for intelligent request routing in server-side applications. Part of the [Ruvector](https://github.com/ruvnet/ruvector) ecosystem.
+`ruvector-tiny-dancer-node` provides native Node.js bindings for production-grade AI agent routing. Run FastGRNN neural inference at native speed for intelligent request routing in server-side applications. Part of the [Ruvector](https://github.com/FlexNetOS/ruvector) ecosystem.
 
 ## Why Tiny Dancer Node?
 
@@ -247,7 +247,7 @@ app.listen(3000);
 
 ```bash
 # Clone repository
-git clone https://github.com/ruvnet/ruvector.git
+git clone https://github.com/FlexNetOS/ruvector.git
 cd ruvector/crates/ruvector-tiny-dancer-node
 
 # Install dependencies
@@ -270,7 +270,7 @@ npm test
 
 - **[Main README](../../README.md)** - Complete project overview
 - **[API Documentation](https://docs.rs/ruvector-tiny-dancer-node)** - Full API reference
-- **[GitHub Repository](https://github.com/ruvnet/ruvector)** - Source code
+- **[GitHub Repository](https://github.com/FlexNetOS/ruvector)** - Source code
 
 ## License
 
@@ -280,10 +280,10 @@ npm test
 
 <div align="center">
 
-**Part of [Ruvector](https://github.com/ruvnet/ruvector) - Built by [rUv](https://ruv.io)**
+**Part of [Ruvector](https://github.com/FlexNetOS/ruvector) - Built by [rUv](https://ruv.io)**
 
-[![Star on GitHub](https://img.shields.io/github/stars/ruvnet/ruvector?style=social)](https://github.com/ruvnet/ruvector)
+[![Star on GitHub](https://img.shields.io/github/stars/FlexNetOS/ruvector?style=social)](https://github.com/FlexNetOS/ruvector)
 
-[Documentation](https://docs.rs/ruvector-tiny-dancer-node) | [npm](https://www.npmjs.com/package/@ruvector/tiny-dancer-node) | [GitHub](https://github.com/ruvnet/ruvector)
+[Documentation](https://docs.rs/ruvector-tiny-dancer-node) | [npm](https://www.npmjs.com/package/@ruvector/tiny-dancer-node) | [GitHub](https://github.com/FlexNetOS/ruvector)
 
 </div>

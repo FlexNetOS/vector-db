@@ -7,7 +7,7 @@
 
 **Advanced metadata filtering for Ruvector vector search.**
 
-`ruvector-filter` provides a powerful filter expression language for combining vector similarity search with metadata constraints. Supports complex boolean expressions, range queries, and efficient filter evaluation. Part of the [Ruvector](https://github.com/ruvnet/ruvector) ecosystem.
+`ruvector-filter` provides a powerful filter expression language for combining vector similarity search with metadata constraints. Supports complex boolean expressions, range queries, and efficient filter evaluation. Part of the [Ruvector](https://github.com/FlexNetOS/ruvector) ecosystem.
 
 ## Why Ruvector Filter?
 
@@ -207,7 +207,7 @@ impl FilterExpr {
 
 - **[Main README](../../README.md)** - Complete project overview
 - **[API Documentation](https://docs.rs/ruvector-filter)** - Full API reference
-- **[GitHub Repository](https://github.com/ruvnet/ruvector)** - Source code
+- **[GitHub Repository](https://github.com/FlexNetOS/ruvector)** - Source code
 
 ## License
 
@@ -217,10 +217,10 @@ impl FilterExpr {
 
 <div align="center">
 
-**Part of [Ruvector](https://github.com/ruvnet/ruvector) - Built by [rUv](https://ruv.io)**
+**Part of [Ruvector](https://github.com/FlexNetOS/ruvector) - Built by [rUv](https://ruv.io)**
 
-[![Star on GitHub](https://img.shields.io/github/stars/ruvnet/ruvector?style=social)](https://github.com/ruvnet/ruvector)
+[![Star on GitHub](https://img.shields.io/github/stars/FlexNetOS/ruvector?style=social)](https://github.com/FlexNetOS/ruvector)
 
-[Documentation](https://docs.rs/ruvector-filter) | [Crates.io](https://crates.io/crates/ruvector-filter) | [GitHub](https://github.com/ruvnet/ruvector)
+[Documentation](https://docs.rs/ruvector-filter) | [Crates.io](https://crates.io/crates/ruvector-filter) | [GitHub](https://github.com/FlexNetOS/ruvector)
 
 </div>

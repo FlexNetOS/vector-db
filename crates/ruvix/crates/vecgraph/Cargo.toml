@@ -8,7 +8,7 @@ authors = ["RuVector Contributors"]
 description = "Kernel-resident vector and graph stores for RuVix Cognition Kernel (ADR-087)"
 keywords = ["kernel", "vector", "graph", "hnsw", "proof-gated"]
 categories = ["data-structures", "no-std", "embedded", "os"]
-repository = "https://github.com/ruvnet/ruvector"
+repository = "https://github.com/FlexNetOS/ruvector"
 readme = "README.md"
 
 [lib]

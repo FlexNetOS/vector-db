@@ -47,12 +47,12 @@
   "license": "MIT OR Apache-2.0",
   "repository": {
     "type": "git",
-    "url": "https://github.com/ruvnet/ruvector.git",
+    "url": "https://github.com/FlexNetOS/ruvector.git",
     "directory": "npm/packages/ruvllm-wasm"
   },
-  "homepage": "https://github.com/ruvnet/ruvector/tree/main/crates/ruvllm-wasm",
+  "homepage": "https://github.com/FlexNetOS/ruvector/tree/main/crates/ruvllm-wasm",
   "bugs": {
-    "url": "https://github.com/ruvnet/ruvector/issues"
+    "url": "https://github.com/FlexNetOS/ruvector/issues"
   },
   "engines": {
     "node": ">= 18"

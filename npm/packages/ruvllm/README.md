@@ -3,7 +3,7 @@
 [![npm version](https://img.shields.io/npm/v/@ruvector/ruvllm.svg)](https://www.npmjs.com/package/@ruvector/ruvllm)
 [![Downloads](https://img.shields.io/npm/dm/@ruvector/ruvllm)](https://www.npmjs.com/package/@ruvector/ruvllm)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
-[![GitHub Stars](https://img.shields.io/github/stars/ruvnet/ruvector?style=social)](https://github.com/ruvnet/ruvector)
+[![GitHub Stars](https://img.shields.io/github/stars/FlexNetOS/ruvector?style=social)](https://github.com/FlexNetOS/ruvector)
 
 **Self-learning LLM runtime for Node.js** — GGUF inference, TurboQuant KV-cache compression (6-8x memory savings), SONA adaptive learning, FlashAttention, speculative decoding, and SIMD-optimized kernels. Built in Rust, runs everywhere.
 
@@ -273,7 +273,7 @@ const response = await llm.query('Write production code');
 
 ## Links
 
-- [GitHub Repository](https://github.com/ruvnet/ruvector)
+- [GitHub Repository](https://github.com/FlexNetOS/ruvector)
 - [API Documentation](https://docs.rs/ruvllm)
 - [Crate (Rust)](https://crates.io/crates/ruvllm)
 

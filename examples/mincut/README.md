@@ -3,7 +3,7 @@
 [![Crates.io](https://img.shields.io/crates/v/ruvector-mincut.svg)](https://crates.io/crates/ruvector-mincut)
 [![Documentation](https://docs.rs/ruvector-mincut/badge.svg)](https://docs.rs/ruvector-mincut)
 [![License](https://img.shields.io/badge/license-MIT%2FApache--2.0-blue.svg)](LICENSE)
-[![GitHub](https://img.shields.io/badge/GitHub-ruvnet%2Fruvector-blue?logo=github)](https://github.com/ruvnet/ruvector)
+[![GitHub](https://img.shields.io/badge/GitHub-ruvnet%2Fruvector-blue?logo=github)](https://github.com/FlexNetOS/ruvector)
 [![ruv.io](https://img.shields.io/badge/ruv.io-AI%20Infrastructure-orange)](https://ruv.io)
 
 What if your infrastructure could heal itself before you noticed it was broken? What if a drone swarm could reorganize mid-flight without any central command? What if an AI system knew exactly where its own blind spots were?
@@ -390,6 +390,6 @@ ruvector-mincut = { version = "0.1.26", features = ["monitoring", "approximate"]
 
 **Built with [RuVector MinCut](https://crates.io/crates/ruvector-mincut)**
 
-[ruv.io](https://ruv.io) | [GitHub](https://github.com/ruvnet/ruvector) | [Docs](https://docs.rs/ruvector-mincut)
+[ruv.io](https://ruv.io) | [GitHub](https://github.com/FlexNetOS/ruvector) | [Docs](https://docs.rs/ruvector-mincut)
 
 </div>

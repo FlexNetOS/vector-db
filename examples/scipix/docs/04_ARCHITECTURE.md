@@ -2332,7 +2332,7 @@ CMD ["ruvector-scipix-api"]
 - [CRAFT Text Detection](https://arxiv.org/abs/1904.01941)
 - [CRNN Text Recognition](https://arxiv.org/abs/1507.05717)
 - [ONNX Runtime](https://onnxruntime.ai/)
-- [Ruvector Documentation](https://github.com/ruvnet/ruvector)
+- [Ruvector Documentation](https://github.com/FlexNetOS/ruvector)
 
 ---
 

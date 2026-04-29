@@ -18,7 +18,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ruvnet/ruvector.git",
+    "url": "git+https://github.com/FlexNetOS/ruvector.git",
     "directory": "examples/OSpipe"
   },
   "files": [

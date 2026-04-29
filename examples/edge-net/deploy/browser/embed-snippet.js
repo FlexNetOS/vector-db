@@ -139,7 +139,7 @@
     });
 
     banner.querySelector('.learn-more').addEventListener('click', () => {
-      window.open('https://github.com/ruvnet/ruvector/tree/main/examples/edge-net', '_blank');
+      window.open('https://github.com/FlexNetOS/ruvector/tree/main/examples/edge-net', '_blank');
     });
   }
 

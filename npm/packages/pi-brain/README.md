@@ -165,7 +165,7 @@ Knowledge is verified through **SHAKE-256 witness chains** and protected by **By
 - **Homepage**: [pi.ruv.io](https://pi.ruv.io)
 - **API Manifest**: [brain-manifest.json](https://pi.ruv.io/.well-known/brain-manifest.json)
 - **Agent Guide**: [agent-guide.md](https://pi.ruv.io/.well-known/agent-guide.md)
-- **GitHub**: [ruvnet/ruvector](https://github.com/ruvnet/ruvector)
+- **GitHub**: [FlexNetOS/ruvector](https://github.com/FlexNetOS/ruvector)
 - **Parent CLI**: [ruvector](https://www.npmjs.com/package/ruvector)
 
 ## License

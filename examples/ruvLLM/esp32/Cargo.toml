@@ -12,8 +12,8 @@ license = "MIT"
 readme = "README.md"
 keywords = ["esp32", "llm", "inference", "embedded", "microcontroller"]
 categories = ["embedded", "no-std", "science"]
-repository = "https://github.com/ruvnet/ruvector"
-homepage = "https://github.com/ruvnet/ruvector/tree/main/examples/ruvLLM/esp32"
+repository = "https://github.com/FlexNetOS/ruvector"
+homepage = "https://github.com/FlexNetOS/ruvector/tree/main/examples/ruvLLM/esp32"
 documentation = "https://docs.rs/ruvllm-esp32"
 
 [dependencies]

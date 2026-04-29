@@ -3116,7 +3116,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       }
 
       case 'rvf_examples': {
-        const BASE_URL = 'https://raw.githubusercontent.com/ruvnet/ruvector/main/examples/rvf/output';
+        const BASE_URL = 'https://raw.githubusercontent.com/FlexNetOS/ruvector/main/examples/rvf/output';
         const examples = [
           { name: 'basic_store', size: '152 KB', desc: '1,000 vectors, dim 128' },
           { name: 'semantic_search', size: '755 KB', desc: 'Semantic search with HNSW' },
@@ -3141,7 +3141,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
           total: 45,
           shown: filtered.length,
           examples: filtered.map(e => ({ ...e, url: `${BASE_URL}/${e.name}.rvf` })),
-          catalog: 'https://github.com/ruvnet/ruvector/tree/main/examples/rvf/output'
+          catalog: 'https://github.com/FlexNetOS/ruvector/tree/main/examples/rvf/output'
         }, null, 2) }] };
       }
 

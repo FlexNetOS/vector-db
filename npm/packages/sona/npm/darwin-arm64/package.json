@@ -6,5 +6,5 @@
   "main": "sona.darwin-arm64.node",
   "files": ["sona.darwin-arm64.node"],
   "license": "MIT",
-  "repository": {"type": "git", "url": "https://github.com/ruvnet/ruvector.git"}
+  "repository": {"type": "git", "url": "https://github.com/FlexNetOS/ruvector.git"}
 }

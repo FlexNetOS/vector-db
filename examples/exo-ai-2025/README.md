@@ -5,12 +5,12 @@
 [![Crates.io](https://img.shields.io/crates/v/exo-core.svg)](https://crates.io/crates/exo-core)
 [![Documentation](https://docs.rs/exo-core/badge.svg)](https://docs.rs/exo-core)
 [![License](https://img.shields.io/badge/license-MIT%2FApache--2.0-blue.svg)](LICENSE)
-[![GitHub](https://img.shields.io/badge/GitHub-ruvnet%2Fruvector-blue?logo=github)](https://github.com/ruvnet/ruvector)
+[![GitHub](https://img.shields.io/badge/GitHub-ruvnet%2Fruvector-blue?logo=github)](https://github.com/FlexNetOS/ruvector)
 [![Website](https://img.shields.io/badge/Website-ruv.io-purple)](https://ruv.io)
 
 **A research platform exploring the computational foundations of consciousness, memory, and cognition**
 
-[Documentation](https://docs.rs/exo-core) | [GitHub](https://github.com/ruvnet/ruvector) | [Website](https://ruv.io) | [Examples](#quick-start)
+[Documentation](https://docs.rs/exo-core) | [GitHub](https://github.com/FlexNetOS/ruvector) | [Website](https://ruv.io) | [Examples](#quick-start)
 
 </div>
 
@@ -70,7 +70,7 @@ let distances = batch_distances(&query, &database);
 
 ## Overview
 
-EXO-AI 2025 is a comprehensive cognitive substrate implementing cutting-edge theories from neuroscience, physics, and consciousness research. Built on the [RuVector](https://github.com/ruvnet/ruvector) foundation, it provides 9 interconnected Rust crates totaling ~15,800+ lines of research-grade code.
+EXO-AI 2025 is a comprehensive cognitive substrate implementing cutting-edge theories from neuroscience, physics, and consciousness research. Built on the [RuVector](https://github.com/FlexNetOS/ruvector) foundation, it provides 9 interconnected Rust crates totaling ~15,800+ lines of research-grade code.
 
 ### Why EXO-AI?
 
@@ -480,7 +480,7 @@ Packaged `.rvf` files containing TransferPriors + PolicyKernels + CostCurves are
 
 ```bash
 # Clone the repository
-git clone https://github.com/ruvnet/ruvector.git
+git clone https://github.com/FlexNetOS/ruvector.git
 cd ruvector/examples/exo-ai-2025
 
 # Build all crates
@@ -531,7 +531,7 @@ cargo test -p exo-manifold
 
 ## Contributing
 
-Contributions are welcome! See our [Contributing Guide](https://github.com/ruvnet/ruvector/blob/main/CONTRIBUTING.md) for details.
+Contributions are welcome! See our [Contributing Guide](https://github.com/FlexNetOS/ruvector/blob/main/CONTRIBUTING.md) for details.
 
 1. Fork the repository
 2. Create your feature branch (`git checkout -b feature/amazing-feature`)
@@ -545,7 +545,7 @@ MIT OR Apache-2.0
 
 ## Links
 
-- **GitHub**: [github.com/ruvnet/ruvector](https://github.com/ruvnet/ruvector)
+- **GitHub**: [github.com/FlexNetOS/ruvector](https://github.com/FlexNetOS/ruvector)
 - **Website**: [ruv.io](https://ruv.io)
 - **Documentation**: [docs.rs/exo-core](https://docs.rs/exo-core)
 - **Crates.io**: [crates.io/crates/exo-core](https://crates.io/crates/exo-core)

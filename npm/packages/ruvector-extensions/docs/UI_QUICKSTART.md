@@ -219,4 +219,4 @@ npm run example:ui
 
 ---
 
-Need help? Open an issue: https://github.com/ruvnet/ruvector/issues
+Need help? Open an issue: https://github.com/FlexNetOS/ruvector/issues

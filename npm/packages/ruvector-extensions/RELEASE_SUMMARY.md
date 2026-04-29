@@ -353,7 +353,7 @@ Built with:
 
 ## 📧 Support
 
-- GitHub Issues: https://github.com/ruvnet/ruvector/issues
+- GitHub Issues: https://github.com/FlexNetOS/ruvector/issues
 - Documentation: See `/docs` directory
 - Examples: See `/examples` directory
 

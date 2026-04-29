@@ -1336,4 +1336,4 @@ MIT License - Free for commercial and personal use.
 
 **Stop paying for cloud AI. Start running free edge swarms.**
 
-[GitHub](https://github.com/ruvnet/ruvector) | [npm](https://www.npmjs.com/package/@ruvector/edge) | [Issues](https://github.com/ruvnet/ruvector/issues)
+[GitHub](https://github.com/FlexNetOS/ruvector) | [npm](https://www.npmjs.com/package/@ruvector/edge) | [Issues](https://github.com/FlexNetOS/ruvector/issues)

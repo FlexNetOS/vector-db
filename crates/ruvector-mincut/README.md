@@ -3,7 +3,7 @@
 [![Crates.io](https://img.shields.io/crates/v/ruvector-mincut.svg)](https://crates.io/crates/ruvector-mincut)
 [![Documentation](https://docs.rs/ruvector-mincut/badge.svg)](https://docs.rs/ruvector-mincut)
 [![License](https://img.shields.io/crates/l/ruvector-mincut.svg)](LICENSE)
-[![GitHub](https://img.shields.io/badge/GitHub-ruvnet%2Fruvector-blue?logo=github)](https://github.com/ruvnet/ruvector)
+[![GitHub](https://img.shields.io/badge/GitHub-ruvnet%2Fruvector-blue?logo=github)](https://github.com/FlexNetOS/ruvector)
 [![ruv.io](https://img.shields.io/badge/ruv.io-AI%20Infrastructure-orange)](https://ruv.io)
 
 **Continuous structural integrity as a first-class signal for systems that must not drift.**
@@ -222,7 +222,7 @@ Learn to build networks that think for themselves. These examples demonstrate se
 | **Temporal Hypergraph** | Time-varying hyperedges with causal constraints (all 5 phases) | `cd examples/mincut && cargo run --release --example temporal_hypergraph` |
 | **Federated Loops** | Multi-system mutual observation with spike-based consensus (all 4 phases) | `cd examples/mincut && cargo run --release --example federated_loops` |
 
-See the full [Examples Guide](https://github.com/ruvnet/ruvector/tree/main/examples/mincut) for detailed explanations and real-world applications.
+See the full [Examples Guide](https://github.com/FlexNetOS/ruvector/tree/main/examples/mincut) for detailed explanations and real-world applications.
 
 ---
 
@@ -821,7 +821,7 @@ Contributions are welcome! Please see [CONTRIBUTING.md](../../CONTRIBUTING.md) f
 
 ```bash
 # Clone the repository
-git clone https://github.com/ruvnet/ruvector.git
+git clone https://github.com/FlexNetOS/ruvector.git
 cd ruvector/crates/ruvector-mincut
 
 # Run tests (448+ passing)
@@ -910,8 +910,8 @@ This implementation is based on research in dynamic graph algorithms:
 - 🌐 **Website**: [ruv.io](https://ruv.io) — AI Infrastructure & Research
 - 📦 **Crates.io**: [ruvector-mincut](https://crates.io/crates/ruvector-mincut)
 - 📖 **Documentation**: [docs.rs/ruvector-mincut](https://docs.rs/ruvector-mincut)
-- 🐙 **GitHub**: [github.com/ruvnet/ruvector](https://github.com/ruvnet/ruvector)
-- 📝 **Issues**: [Report bugs or request features](https://github.com/ruvnet/ruvector/issues)
+- 🐙 **GitHub**: [github.com/FlexNetOS/ruvector](https://github.com/FlexNetOS/ruvector)
+- 📝 **Issues**: [Report bugs or request features](https://github.com/FlexNetOS/ruvector/issues)
 
 ---
 

@@ -1503,7 +1503,7 @@ version = "0.1.0"
 edition = "2021"
 rust-version = "1.77"
 license = "MIT OR Apache-2.0"
-repository = "https://github.com/ruvnet/ruvector"
+repository = "https://github.com/FlexNetOS/ruvector"
 authors = ["ruv.io", "RuVector Team"]
 
 [workspace.dependencies]

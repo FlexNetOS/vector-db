@@ -11,7 +11,7 @@
 ruvector-domain-expansion = "0.1"
 ```
 
-Most AI systems learn one task at a time. Train a model on genomics and it can't trade stocks. Teach it quantum circuits and it won't plan workflows. `ruvector-domain-expansion` changes that: knowledge learned in one domain automatically transfers to other domains — and it **proves** the transfer actually helped before committing it. Genomics priors seed molecular design. Trading risk models improve resource allocation. Quantum noise detection accelerates signal processing. This is how real generalization works. Part of the [RuVector](https://github.com/ruvnet/ruvector) ecosystem.
+Most AI systems learn one task at a time. Train a model on genomics and it can't trade stocks. Teach it quantum circuits and it won't plan workflows. `ruvector-domain-expansion` changes that: knowledge learned in one domain automatically transfers to other domains — and it **proves** the transfer actually helped before committing it. Genomics priors seed molecular design. Trading risk models improve resource allocation. Quantum noise detection accelerates signal processing. This is how real generalization works. Part of the [RuVector](https://github.com/FlexNetOS/ruvector) ecosystem.
 
 | | ruvector-domain-expansion | Traditional Fine-Tuning |
 |---|---|---|
@@ -218,4 +218,4 @@ The domain expansion engine is built on top of these RuVector primitives:
 
 ---
 
-Part of [RuVector](https://github.com/ruvnet/ruvector) — the self-learning vector database.
+Part of [RuVector](https://github.com/FlexNetOS/ruvector) — the self-learning vector database.
