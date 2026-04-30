@@ -56,52 +56,70 @@ jobs:
       fail-fast: false
       matrix:
         include:
+          # Xtensa targets — use the espup-installed `esp` Rust toolchain.
           - target: esp32
             rust_target: xtensa-esp32-espidf
             chip: esp32
+            toolchain: esp
           - target: esp32s2
             rust_target: xtensa-esp32s2-espidf
             chip: esp32s2
+            toolchain: esp
           - target: esp32s3
             rust_target: xtensa-esp32s3-espidf
             chip: esp32s3
+            toolchain: esp
+          # RISC-V targets — use upstream nightly with rust-src.
           - target: esp32c3
             rust_target: riscv32imc-esp-espidf
             chip: esp32c3
+            toolchain: nightly
           - target: esp32c6
             rust_target: riscv32imac-esp-espidf
             chip: esp32c6
+            toolchain: nightly
     steps:
       - uses: actions/checkout@v4
 
-      - name: install espup
-        run: cargo install espup --locked
-
-      - name: install esp toolchain
+      - name: install rust nightly + rust-src (RISC-V)
+        if: matrix.toolchain == 'nightly'
         run: |
+          rustup toolchain install nightly --component rust-src
+          rustup default nightly
+
+      - name: install espup + esp toolchain (Xtensa)
+        if: matrix.toolchain == 'esp'
+        run: |
+          cargo install espup --locked
           espup install --targets ${{ matrix.target }}
           source ~/export-esp.sh
           echo "PATH=$PATH" >> $GITHUB_ENV
           echo "LIBCLANG_PATH=$LIBCLANG_PATH" >> $GITHUB_ENV
 
-      - name: install espflash
-        run: cargo install espflash --locked
+      - name: install ldproxy + espflash
+        run: cargo install espflash ldproxy --locked
 
       - name: build firmware
         working-directory: examples/ruvLLM/esp32-flash
         env:
           RUVLLM_VARIANT: ${{ matrix.target }}
         run: |
-          source ~/export-esp.sh
-          cargo +esp build \
+          if [ "${{ matrix.toolchain }}" = "esp" ]; then
+            source ~/export-esp.sh
+          fi
+          # Override the host's mold linker — Xtensa/RISC-V targets need the
+          # toolchain-provided gcc/ld via ldproxy.
+          unset RUSTFLAGS
+          cargo +${{ matrix.toolchain }} build \
             --release \
-            --target ${{ matrix.rust_target }} \
-            --features esp32
+            --target ${{ matrix.rust_target }}
 
       - name: produce merged .bin
         working-directory: examples/ruvLLM/esp32-flash
         run: |
-          source ~/export-esp.sh
+          if [ "${{ matrix.toolchain }}" = "esp" ]; then
+            source ~/export-esp.sh
+          fi
           espflash save-image \
             --chip ${{ matrix.chip }} \
             --merge \
