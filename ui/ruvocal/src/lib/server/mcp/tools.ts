@@ -75,7 +75,11 @@ async function listServerTools(
 	const timeoutId = setTimeout(() => timeoutController.abort(), MCP_CONNECT_TIMEOUT_MS);
 	// If the caller provides a signal, link it so external abort also cancels
 	if (opts.signal) {
-		opts.signal.addEventListener("abort", () => timeoutController.abort(), { once: true });
+		if (opts.signal.aborted) {
+			timeoutController.abort(opts.signal.reason);
+		} else {
+			opts.signal.addEventListener("abort", () => timeoutController.abort(), { once: true });
+		}
 	}
 	const combinedSignal = timeoutController.signal;
 
