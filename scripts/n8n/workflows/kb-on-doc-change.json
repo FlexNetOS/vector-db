@@ -1,0 +1,67 @@
+{
+  "name": "Knowledge Base — On Doc Change (CI hook)",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "kb-on-doc-change",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "wh-change",
+      "name": "Webhook (CI)",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [240, 300],
+      "webhookId": "kb-on-doc-change"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Expect: { repo, sha, changed_paths: [\"docs/foo.md\", ...] }\nconst body = $input.first().json.body || $input.first().json;\nconst items = (body.changed_paths || []).map(p => ({ json: { repo: body.repo, sha: body.sha, path: p } }));\nreturn items.length ? items : [{ json: { repo: body.repo, sha: body.sha, path: null } }];\n"
+      },
+      "id": "fn-fanout",
+      "name": "Fan out paths",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [480, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=http://localhost:5678/webhook/kb-ingest",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"namespace\": \"ruvector-docs\",\n  \"content\": $json.path ? `Doc updated: ${$json.path}` : \"\",\n  \"tags\": [\"ci\", `repo:${$json.repo}`, `sha:${$json.sha}`, `path:${$json.path}`],\n  \"metadata\": { \"repo\": $json.repo, \"sha\": $json.sha, \"source_path\": $json.path, \"trigger\": \"doc-change\" }\n}",
+        "options": {}
+      },
+      "id": "http-fwd",
+      "name": "Forward to kb-ingest",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [720, 300]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { ok: true, fanned_out: $items().length } }}"
+      },
+      "id": "respond",
+      "name": "Respond",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [960, 300]
+    }
+  ],
+  "connections": {
+    "Webhook (CI)":       { "main": [[{ "node": "Fan out paths", "type": "main", "index": 0 }]] },
+    "Fan out paths":      { "main": [[{ "node": "Forward to kb-ingest", "type": "main", "index": 0 }]] },
+    "Forward to kb-ingest": { "main": [[{ "node": "Respond", "type": "main", "index": 0 }]] }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "tags": [
+    { "name": "knowledge-base" },
+    { "name": "ci" }
+  ]
+}

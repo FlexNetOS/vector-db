@@ -1,0 +1,91 @@
+{
+  "name": "Knowledge Base — Retrieval",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "kb-query",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "wh-query",
+      "name": "Webhook (query)",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [240, 300],
+      "webhookId": "kb-query"
+    },
+    {
+      "parameters": {
+        "jsCode": "const body = $input.first().json.body || $input.first().json;\nreturn [{ json: {\n  q: body.q || body.query || '',\n  k: body.k || 5,\n  namespace: body.namespace || 'ruvector-docs'\n}}];\n"
+      },
+      "id": "fn-args",
+      "name": "Read args",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [480, 300]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "={{$env.RUVECTOR_BASE_URL || 'http://ruvector:8080'}}/v1/memories/search",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            { "name": "q",         "value": "={{$json.q}}" },
+            { "name": "k",         "value": "={{$json.k}}" },
+            { "name": "namespace", "value": "={{$json.namespace}}" }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "fullResponse": false,
+              "responseFormat": "json"
+            }
+          }
+        }
+      },
+      "id": "http-search",
+      "name": "RuVector — GET /v1/memories/search",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [720, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Pass-through reranker hook. A real deployment would invoke a cross-encoder\n// here; we keep the RuVector ANN order and add a per-hit relevance band.\nconst r = $input.first().json;\nconst hits = (r.hits || []).map((h, i) => ({\n  rank: i + 1,\n  id: h.id,\n  score: h.score,\n  band: h.score > 0.5 ? 'high' : h.score > 0.2 ? 'med' : 'low',\n  source_path: (h.metadata && h.metadata.source_path) || null,\n  snippet: h.snippet,\n  tags: h.tags || []\n}));\nreturn [{ json: { query: r.query, k: r.k, namespace: r.namespace, count: hits.length, hits } }];\n"
+      },
+      "id": "fn-rerank",
+      "name": "Rerank / shape",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [960, 300]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{$json}}"
+      },
+      "id": "respond",
+      "name": "Respond",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [1200, 300]
+    }
+  ],
+  "connections": {
+    "Webhook (query)": { "main": [[{ "node": "Read args", "type": "main", "index": 0 }]] },
+    "Read args":       { "main": [[{ "node": "RuVector — GET /v1/memories/search", "type": "main", "index": 0 }]] },
+    "RuVector — GET /v1/memories/search": { "main": [[{ "node": "Rerank / shape", "type": "main", "index": 0 }]] },
+    "Rerank / shape":  { "main": [[{ "node": "Respond", "type": "main", "index": 0 }]] }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "tags": [
+    { "name": "knowledge-base" },
+    { "name": "ruvector" },
+    { "name": "retrieval" }
+  ]
+}

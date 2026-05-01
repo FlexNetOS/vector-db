@@ -1,0 +1,3900 @@
+{
+  "repo": "ruvector",
+  "total_md": 2030,
+  "considered_md": 2009,
+  "exact_duplicate_groups": [
+    {
+      "hash": "a63c9eb714b93bdfd9db7e6530cd677a76ae768308ea3ff2d7466652ab748e96",
+      "files": [
+        "crates/rvlite/examples/dashboard/README.md",
+        "examples/edge-net/dashboard/README.md"
+      ],
+      "size_chars": 2554
+    },
+    {
+      "hash": "6c01cc15b48cba2328b71877f973511afb08af02e38c3b3eeabbcc453dd1c812",
+      "files": [
+        "crates/ruvector-learning-wasm/README.md",
+        "examples/vectorvroom/vendor/ruvector/ruvector_learning_wasm/README.md"
+      ],
+      "size_chars": 8365
+    },
+    {
+      "hash": "63909fef681947b87b60b1e518f193362769c4d446eab5acdf0b8541d5d8c54e",
+      "files": [
+        "crates/ruvector-graph-transformer-wasm/README.md",
+        "crates/ruvector-graph-transformer-wasm/pkg/README.md"
+      ],
+      "size_chars": 6030
+    },
+    {
+      "hash": "8ebfff9551d8e23e09e3e25c0a8042306442519f6a72efe57480d516ebe28e5c",
+      "files": [
+        "crates/ruqu-wasm/README.md",
+        "npm/packages/ruqu-wasm/README.md"
+      ],
+      "size_chars": 5613
+    },
+    {
+      "hash": "b9c58ef2fba08f538701ebe9725820b80868e1cc5d3389483aac109f99141066",
+      "files": [
+        "crates/ruvector-attention-wasm/README.md",
+        "crates/ruvector-attention-wasm/pkg/README.md"
+      ],
+      "size_chars": 5615
+    },
+    {
+      "hash": "aef19a0f428b7bba2b6c5489e9168fc096eb128086c7a313b69e5bcdd1bc43e9",
+      "files": [
+        "crates/ruvector-gnn-wasm/README.md",
+        "examples/vectorvroom/vendor/ruvector/ruvector_gnn_wasm/README.md"
+      ],
+      "size_chars": 4388
+    },
+    {
+      "hash": "0976768c589110612e666720c14ecd35ff048f7d429f264abe06d300e19611e1",
+      "files": [
+        "docs/research/cognitive-frontier/delta-behavior-computational-paradigm.md",
+        "examples/delta-behavior/research/THEORETICAL-FOUNDATIONS.md"
+      ],
+      "size_chars": 39635
+    },
+    {
+      "hash": "1cef773e3dd1e94f48eb89c683a6be30b8a8b1f996f6f3c65ed5b49e1d028dba",
+      "files": [
+        "docs/research/DrAgnes/dermlite-integration.md",
+        "examples/dragnes/docs/dermlite-integration.md"
+      ],
+      "size_chars": 15564
+    },
+    {
+      "hash": "ce6264fb6e7de69d90f4cbddfe941b98f863d5db6612f83eb999f5e43122dbec",
+      "files": [
+        "docs/research/DrAgnes/competitive-analysis.md",
+        "examples/dragnes/docs/competitive-analysis.md"
+      ],
+      "size_chars": 12398
+    },
+    {
+      "hash": "62e4474dae8ca8bec978422a84c30e6f5cbf5edd860d45497a4bb9422a78be96",
+      "files": [
+        "docs/research/DrAgnes/deployment.md",
+        "examples/dragnes/docs/deployment.md"
+      ],
+      "size_chars": 19887
+    },
+    {
+      "hash": "9b6b0de9d779f631441b978a778813161c38f45976c31035a76aef799fd03e72",
+      "files": [
+        "docs/research/DrAgnes/hipaa-compliance.md",
+        "examples/dragnes/docs/hipaa-compliance.md"
+      ],
+      "size_chars": 15491
+    },
+    {
+      "hash": "bfabb078a24f1514732eeaf008c25412cadf572c55fdcee0fbaee69fabc7e9e6",
+      "files": [
+        "docs/research/DrAgnes/architecture.md",
+        "examples/dragnes/docs/architecture.md"
+      ],
+      "size_chars": 20406
+    },
+    {
+      "hash": "79b55c7f26f11d286155448ad3fe4a2bdcee18f1f48b352bc0edde196fbff05d",
+      "files": [
+        "docs/research/DrAgnes/future-vision.md",
+        "examples/dragnes/docs/future-vision.md"
+      ],
+      "size_chars": 17054
+    },
+    {
+      "hash": "6309f58afab2199786837f5c67737060c0ce20349da127b23aabb22aaa749007",
+      "files": [
+        "docs/research/DrAgnes/data-sources.md",
+        "examples/dragnes/docs/data-sources.md"
+      ],
+      "size_chars": 13494
+    },
+    {
+      "hash": "c46dffdb10f570a449d536adc8eb7b1a4392e5a20253b8daa6ba3b4cca49bb6e",
+      "files": [
+        "docs/research/DrAgnes/HAM10000_analysis.md",
+        "examples/dragnes/docs/HAM10000_analysis.md"
+      ],
+      "size_chars": 11095
+    },
+    {
+      "hash": "23efdab65d6a4ebfdd4eea36d9bad9271007c34ff0b7035adbac9335dcba9323",
+      "files": [
+        "docs/research/DrAgnes/README.md",
+        "examples/dragnes/docs/README.md"
+      ],
+      "size_chars": 5060
+    },
+    {
+      "hash": "a6c0d7c07955ad4a96de6780fc8a425afea87efead65053f21997e105d8f596e",
+      "files": [
+        "docs/adr/ADR-144-diskann-vamana-implementation.md",
+        "docs/adr/ADR-146-diskann-vamana-implementation.md"
+      ],
+      "size_chars": 5537
+    },
+    {
+      "hash": "596eefb1db8d208d2941cd81f01b3f382f3930100797f5ea51da0ffef0ca20ab",
+      "files": [
+        "examples/vectorvroom/vendor/ruvector/ruvector_cnn_wasm/README.md",
+        "npm/packages/ruvector-cnn/README.md"
+      ],
+      "size_chars": 8097
+    },
+    {
+      "hash": "90c1f2b6d5f83044cfb8a8ba93d482159ead67ad9b89aa28db5fb1be6c3a4454",
+      "files": [
+        "patches/hnsw_rs/Changes.md",
+        "scripts/patches/hnsw_rs/Changes.md"
+      ],
+      "size_chars": 3380
+    },
+    {
+      "hash": "b0fb28ede8c12ec40269f69e2299a0d7da5ed11b617c5e44b53308d728a0faef",
+      "files": [
+        "patches/hnsw_rs/README.md",
+        "scripts/patches/hnsw_rs/README.md"
+      ],
+      "size_chars": 10220
+    },
+    {
+      "hash": "caa9360d4a124facd0081aed3c72def5d263733b5019e83a4ccb1574f4d6b101",
+      "files": [
+        ".claude/agents/github/github-modes.md",
+        ".claude/commands/github/github-modes.md"
+      ],
+      "size_chars": 5687
+    },
+    {
+      "hash": "d490675a6eb63c16c4971f7ce8c8c263675067ec378b84db96fc0bebebb6849e",
+      "files": [
+        ".claude/agents/devops/ci-cd/ops-cicd-github.md",
+        ".claude/agents/devops/ops-cicd-github.md"
+      ],
+      "size_chars": 1176
+    },
+    {
+      "hash": "57a0397228d67d01266f1cdfcf410d6c5ab16d2cdf217226ea828d11f5b2eb3c",
+      "files": [
+        ".claude/agents/specialized/mobile/spec-mobile-react-native.md",
+        ".claude/agents/specialized/spec-mobile-react-native.md"
+      ],
+      "size_chars": 1963
+    },
+    {
+      "hash": "6b27653ae6ef09b1c9ffc09d3b3b7fc361a6c8aecfa09343a2b64dfa248a7884",
+      "files": [
+        ".claude/agents/analysis/analyze-code-quality.md",
+        ".claude/agents/analysis/code-review/analyze-code-quality.md"
+      ],
+      "size_chars": 1345
+    },
+    {
+      "hash": "437264d7ad10b1a185899cf20e6a07cdc224277578878905d8ecb5e549d3f534",
+      "files": [
+        ".claude/agents/architecture/arch-system-design.md",
+        ".claude/agents/architecture/system-design/arch-system-design.md"
+      ],
+      "size_chars": 1152
+    },
+    {
+      "hash": "124ec6452ad52c62c5140fddce4444af2eb5ce1c58071a8119c626f5780d5d52",
+      "files": [
+        ".claude/agents/testing/production-validator.md",
+        ".claude/agents/testing/validation/production-validator.md"
+      ],
+      "size_chars": 10746
+    },
+    {
+      "hash": "85ddce145ed2a7aa8cc81fb8f665fc28bdfce6a9f08db842f149f4bba2a79bf1",
+      "files": [
+        ".claude/agents/testing/tdd-london-swarm.md",
+        ".claude/agents/testing/unit/tdd-london-swarm.md"
+      ],
+      "size_chars": 6272
+    },
+    {
+      "hash": "efa5c79a619601ca2879a8e1a4d93b1c913b96d2ce7d4edf8d167949abea9e38",
+      "files": [
+        "examples/edge-net/README.md",
+        "examples/edge-net/pkg/README.md"
+      ],
+      "size_chars": 43686
+    }
+  ],
+  "near_duplicate_pairs": [
+    {
+      "a": "crates/rvf/docs/adr/ADR-031-rvcow-branching-and-real-cognitive-containers.md",
+      "b": "docs/adr/ADR-026-rvcow-branching-and-real-cognitive-containers.md",
+      "jaccard": 0.997
+    },
+    {
+      "a": "crates/sona/README.md",
+      "b": "examples/vectorvroom/vendor/ruvector/sona/README.md",
+      "jaccard": 0.989
+    },
+    {
+      "a": ".claude/agents/goal/agent.md",
+      "b": ".claude/agents/reasoning/agent.md",
+      "jaccard": 0.984
+    },
+    {
+      "a": "crates/ruvector-wasm/README.md",
+      "b": "examples/vectorvroom/vendor/ruvector/ruvector_wasm/README.md",
+      "jaccard": 0.969
+    },
+    {
+      "a": "examples/ruvLLM/esp32-flash/README.md",
+      "b": "examples/ruvLLM/esp32-flash/npm/README.md",
+      "jaccard": 0.945
+    },
+    {
+      "a": ".claude/commands/github/repo-architect.md",
+      "b": ".claude/agents/github/repo-architect.md",
+      "jaccard": 0.924
+    },
+    {
+      "a": ".claude/agents/goal/goal-planner.md",
+      "b": ".claude/agents/reasoning/goal-planner.md",
+      "jaccard": 0.871
+    },
+    {
+      "a": "examples/edge/README.md",
+      "b": "examples/edge/pkg/README.md",
+      "jaccard": 0.865
+    },
+    {
+      "a": ".claude/commands/github/multi-repo-swarm.md",
+      "b": ".claude/agents/github/multi-repo-swarm.md",
+      "jaccard": 0.753
+    },
+    {
+      "a": "crates/rvf/rvf-node/README.md",
+      "b": "npm/packages/rvf-node/README.md",
+      "jaccard": 0.741
+    },
+    {
+      "a": ".claude/commands/github/release-swarm.md",
+      "b": ".claude/agents/github/release-swarm.md",
+      "jaccard": 0.715
+    },
+    {
+      "a": ".claude/commands/github/sync-coordinator.md",
+      "b": ".claude/agents/github/sync-coordinator.md",
+      "jaccard": 0.713
+    },
+    {
+      "a": "docs/architecture/decisions/ADR-004-rvf-format.md",
+      "b": "docs/architecture/decisions/ADR-005-rvf-cognitive-container.md",
+      "jaccard": 0.708
+    }
+  ],
+  "potential_contradictions": [
+    {
+      "label": "ruvector_version",
+      "value_a": "0.3.0",
+      "value_b": "2.0.3",
+      "files_a": [
+        "README.md"
+      ],
+      "files_b": [
+        "docs/research/sublinear-time-solver/00-executive-summary.md",
+        "docs/research/wasm-integration-2026/00-executive-summary.md"
+      ]
+    },
+    {
+      "label": "ruvector_version",
+      "value_a": "0.3.0",
+      "value_b": "0.1.0",
+      "files_a": [
+        "README.md"
+      ],
+      "files_b": [
+        "docs/hnsw/HNSW_QUICK_REFERENCE.md",
+        "examples/exo-ai-2025/report/COMPREHENSIVE_COMPARISON.md",
+        "tests/docker-integration/FINAL_REVIEW_REPORT.md"
+      ]
+    },
+    {
+      "label": "ruvector_version",
+      "value_a": "0.3.0",
+      "value_b": "0.1.15",
+      "files_a": [
+        "README.md"
+      ],
+      "files_b": [
+        "docs/implementation/SECURITY_FIXES_SUMMARY.md"
+      ]
+    },
+    {
+      "label": "ruvector_version",
+      "value_a": "0.3.0",
+      "value_b": "2.0.1",
+      "files_a": [
+        "README.md"
+      ],
+      "files_b": [
+        "ui/ruvocal/docs/adr/ADR-029-HUGGINGFACE-CHAT-UI-CLOUD-RUN.md"
+      ]
+    },
+    {
+      "label": "ruvector_version",
+      "value_a": "2.0.3",
+      "value_b": "0.1.0",
+      "files_a": [
+        "docs/research/sublinear-time-solver/00-executive-summary.md",
+        "docs/research/wasm-integration-2026/00-executive-summary.md"
+      ],
+      "files_b": [
+        "docs/hnsw/HNSW_QUICK_REFERENCE.md",
+        "examples/exo-ai-2025/report/COMPREHENSIVE_COMPARISON.md",
+        "tests/docker-integration/FINAL_REVIEW_REPORT.md"
+      ]
+    },
+    {
+      "label": "ruvector_version",
+      "value_a": "2.0.3",
+      "value_b": "0.1.15",
+      "files_a": [
+        "docs/research/sublinear-time-solver/00-executive-summary.md",
+        "docs/research/wasm-integration-2026/00-executive-summary.md"
+      ],
+      "files_b": [
+        "docs/implementation/SECURITY_FIXES_SUMMARY.md"
+      ]
+    },
+    {
+      "label": "ruvector_version",
+      "value_a": "2.0.3",
+      "value_b": "2.0.1",
+      "files_a": [
+        "docs/research/sublinear-time-solver/00-executive-summary.md",
+        "docs/research/wasm-integration-2026/00-executive-summary.md"
+      ],
+      "files_b": [
+        "ui/ruvocal/docs/adr/ADR-029-HUGGINGFACE-CHAT-UI-CLOUD-RUN.md"
+      ]
+    },
+    {
+      "label": "ruvector_version",
+      "value_a": "0.1.0",
+      "value_b": "0.1.15",
+      "files_a": [
+        "docs/hnsw/HNSW_QUICK_REFERENCE.md",
+        "examples/exo-ai-2025/report/COMPREHENSIVE_COMPARISON.md",
+        "tests/docker-integration/FINAL_REVIEW_REPORT.md"
+      ],
+      "files_b": [
+        "docs/implementation/SECURITY_FIXES_SUMMARY.md"
+      ]
+    },
+    {
+      "label": "ruvector_version",
+      "value_a": "0.1.0",
+      "value_b": "2.0.1",
+      "files_a": [
+        "docs/hnsw/HNSW_QUICK_REFERENCE.md",
+        "examples/exo-ai-2025/report/COMPREHENSIVE_COMPARISON.md",
+        "tests/docker-integration/FINAL_REVIEW_REPORT.md"
+      ],
+      "files_b": [
+        "ui/ruvocal/docs/adr/ADR-029-HUGGINGFACE-CHAT-UI-CLOUD-RUN.md"
+      ]
+    },
+    {
+      "label": "ruvector_version",
+      "value_a": "0.1.15",
+      "value_b": "2.0.1",
+      "files_a": [
+        "docs/implementation/SECURITY_FIXES_SUMMARY.md"
+      ],
+      "files_b": [
+        "ui/ruvocal/docs/adr/ADR-029-HUGGINGFACE-CHAT-UI-CLOUD-RUN.md"
+      ]
+    },
+    {
+      "label": "node_version",
+      "value_a": "20",
+      "value_b": "18.0",
+      "files_a": [
+        "crates/ruvector-learning-wasm/pkg/README.md",
+        "crates/ruvector-router-ffi/README.md",
+        "docs/adr/temporal-tensor-store/ADR-022-wasm-api-cross-platform.md",
+        "docs/research/knowledge-export/QUICKSTART.md",
+        "docs/research/latent-space/implementation-plans/04-swarm-implementation.md"
+      ],
+      "files_b": [
+        "crates/ruvector-node/README.md",
+        "crates/ruvector-router-ffi/README.md",
+        "npm/README.md"
+      ]
+    },
+    {
+      "label": "node_version",
+      "value_a": "20",
+      "value_b": "1",
+      "files_a": [
+        "crates/ruvector-learning-wasm/pkg/README.md",
+        "crates/ruvector-router-ffi/README.md",
+        "docs/adr/temporal-tensor-store/ADR-022-wasm-api-cross-platform.md",
+        "docs/research/knowledge-export/QUICKSTART.md",
+        "docs/research/latent-space/implementation-plans/04-swarm-implementation.md"
+      ],
+      "files_b": [
+        ".claude/skills/agentdb-advanced/SKILL.md",
+        "crates/micro-hnsw-wasm/README.md",
+        "crates/ruvector-attention-unified-wasm/README.md",
+        "crates/ruvector-cluster/README.md",
+        "crates/ruvector-mincut/docs/guide/03-practical-applications.md"
+      ]
+    },
+    {
+      "label": "node_version",
+      "value_a": "20",
+      "value_b": "2",
+      "files_a": [
+        "crates/ruvector-learning-wasm/pkg/README.md",
+        "crates/ruvector-router-ffi/README.md",
+        "docs/adr/temporal-tensor-store/ADR-022-wasm-api-cross-platform.md",
+        "docs/research/knowledge-export/QUICKSTART.md",
+        "docs/research/latent-space/implementation-plans/04-swarm-implementation.md"
+      ],
+      "files_b": [
+        ".claude/agents/swarm/mesh-coordinator.md",
+        ".claude/skills/agentdb-advanced/SKILL.md",
+        "crates/ruvector-attention-unified-wasm/README.md",
+        "crates/ruvector-cluster/README.md",
+        "crates/ruvector-mincut/docs/guide/03-practical-applications.md"
+      ]
+    },
+    {
+      "label": "node_version",
+      "value_a": "20",
+      "value_b": "3",
+      "files_a": [
+        "crates/ruvector-learning-wasm/pkg/README.md",
+        "crates/ruvector-router-ffi/README.md",
+        "docs/adr/temporal-tensor-store/ADR-022-wasm-api-cross-platform.md",
+        "docs/research/knowledge-export/QUICKSTART.md",
+        "docs/research/latent-space/implementation-plans/04-swarm-implementation.md"
+      ],
+      "files_b": [
+        ".claude/skills/agentdb-advanced/SKILL.md",
+        "crates/ruvector-attention-unified-wasm/README.md",
+        "crates/ruvector-cluster/README.md",
+        "crates/ruvector-mincut/docs/guide/03-practical-applications.md",
+        "crates/ruvector-raft/README.md"
+      ]
+    },
+    {
+      "label": "node_version",
+      "value_a": "20",
+      "value_b": "0",
+      "files_a": [
+        "crates/ruvector-learning-wasm/pkg/README.md",
+        "crates/ruvector-router-ffi/README.md",
+        "docs/adr/temporal-tensor-store/ADR-022-wasm-api-cross-platform.md",
+        "docs/research/knowledge-export/QUICKSTART.md",
+        "docs/research/latent-space/implementation-plans/04-swarm-implementation.md"
+      ],
+      "files_b": [
+        "crates/micro-hnsw-wasm/README.md",
+        "crates/ruvector-attention-unified-wasm/README.md",
+        "crates/ruvector-mincut/docs/guide/03-practical-applications.md",
+        "crates/ruvector-solver/README.md",
+        "crates/ruvix/qemu-swarm/README.md"
+      ]
+    },
+    {
+      "label": "node_version",
+      "value_a": "20",
+      "value_b": "18",
+      "files_a": [
+        "crates/ruvector-learning-wasm/pkg/README.md",
+        "crates/ruvector-router-ffi/README.md",
+        "docs/adr/temporal-tensor-store/ADR-022-wasm-api-cross-platform.md",
+        "docs/research/knowledge-export/QUICKSTART.md",
+        "docs/research/latent-space/implementation-plans/04-swarm-implementation.md"
+      ],
+      "files_b": [
+        ".claude/agents/sparc/architecture.md",
+        ".claude/agents/sparc/specification.md",
+        ".claude/skills/agentdb-advanced/SKILL.md",
+        ".claude/skills/agentdb-learning/SKILL.md",
+        ".claude/skills/agentdb-memory-patterns/SKILL.md"
+      ]
+    },
+    {
+      "label": "node_version",
+      "value_a": "20",
+      "value_b": "4",
+      "files_a": [
+        "crates/ruvector-learning-wasm/pkg/README.md",
+        "crates/ruvector-router-ffi/README.md",
+        "docs/adr/temporal-tensor-store/ADR-022-wasm-api-cross-platform.md",
+        "docs/research/knowledge-export/QUICKSTART.md",
+        "docs/research/latent-space/implementation-plans/04-swarm-implementation.md"
+      ],
+      "files_b": [
+        "crates/ruvector-cluster/README.md",
+        "crates/ruvector-mincut/docs/guide/03-practical-applications.md",
+        "docs/architecture/SYSTEM_OVERVIEW.md",
+        "docs/project-phases/phase5-implementation-summary.md",
+        "docs/research/gnn-v2/15-entangled-subspace-attention.md"
+      ]
+    },
+    {
+      "label": "node_version",
+      "value_a": "20",
+      "value_b": "16",
+      "files_a": [
+        "crates/ruvector-learning-wasm/pkg/README.md",
+        "crates/ruvector-router-ffi/README.md",
+        "docs/adr/temporal-tensor-store/ADR-022-wasm-api-cross-platform.md",
+        "docs/research/knowledge-export/QUICKSTART.md",
+        "docs/research/latent-space/implementation-plans/04-swarm-implementation.md"
+      ],
+      "files_b": [
+        "crates/ruvector-sparse-inference-wasm/README.md",
+        "docs/architecture/NPM_PACKAGE_ARCHITECTURE.md",
+        "docs/development/CONTRIBUTING.md",
+        "docs/guides/INSTALLATION.md",
+        "examples/dna/adr/ADR-008-wasm-edge-genomics.md"
+      ]
+    },
+    {
+      "label": "node_version",
+      "value_a": "20",
+      "value_b": "42",
+      "files_a": [
+        "crates/ruvector-learning-wasm/pkg/README.md",
+        "crates/ruvector-router-ffi/README.md",
+        "docs/adr/temporal-tensor-store/ADR-022-wasm-api-cross-platform.md",
+        "docs/research/knowledge-export/QUICKSTART.md",
+        "docs/research/latent-space/implementation-plans/04-swarm-implementation.md"
+      ],
+      "files_b": [
+        "docs/research/gnn-v2/02-incremental-graph-learning.md",
+        "docs/research/nightly/2026-04-26-acorn-filtered-hnsw/README.md"
+      ]
+    },
+    {
+      "label": "node_version",
+      "value_a": "20",
+      "value_b": "22",
+      "files_a": [
+        "crates/ruvector-learning-wasm/pkg/README.md",
+        "crates/ruvector-router-ffi/README.md",
+        "docs/adr/temporal-tensor-store/ADR-022-wasm-api-cross-platform.md",
+        "docs/research/knowledge-export/QUICKSTART.md",
+        "docs/research/latent-space/implementation-plans/04-swarm-implementation.md"
+      ],
+      "files_b": [
+        "docs/research/latent-space/implementation-plans/04-swarm-implementation.md",
+        "docs/research/latent-space/implementation-plans/06-platform-bindings.md",
+        "docs/testing/integration-testing-report.md",
+        "npm/packages/agentic-synth/docs/OPTIMIZATION_GUIDE.md"
+      ]
+    },
+    {
+      "label": "node_version",
+      "value_a": "20",
+      "value_b": "1.0",
+      "files_a": [
+        "crates/ruvector-learning-wasm/pkg/README.md",
+        "crates/ruvector-router-ffi/README.md",
+        "docs/adr/temporal-tensor-store/ADR-022-wasm-api-cross-platform.md",
+        "docs/research/knowledge-export/QUICKSTART.md",
+        "docs/research/latent-space/implementation-plans/04-swarm-implementation.md"
+      ],
+      "files_b": [
+        "docs/research/latent-space/implementation-plans/agents/11-unit-tests.md"
+      ]
+    },
+    {
+      "label": "node_version",
+      "value_a": "20",
+      "value_b": "16.4",
+      "files_a": [
+        "crates/ruvector-learning-wasm/pkg/README.md",
+        "crates/ruvector-router-ffi/README.md",
+        "docs/adr/temporal-tensor-store/ADR-022-wasm-api-cross-platform.md",
+        "docs/research/knowledge-export/QUICKSTART.md",
+        "docs/research/latent-space/implementation-plans/04-swarm-implementation.md"
+      ],
+      "files_b": [
+        "docs/research/sublinear-time-solver/06-wasm-integration.md"
+      ]
+    },
+    {
+      "label": "node_version",
+      "value_a": "20",
+      "value_b": "5",
+      "files_a": [
+        "crates/ruvector-learning-wasm/pkg/README.md",
+        "crates/ruvector-router-ffi/README.md",
+        "docs/adr/temporal-tensor-store/ADR-022-wasm-api-cross-platform.md",
+        "docs/research/knowledge-export/QUICKSTART.md",
+        "docs/research/latent-space/implementation-plans/04-swarm-implementation.md"
+      ],
+      "files_b": [
+        "docs/adr/ADR-050-graph-transformer-bindings.md"
+      ]
+    },
+    {
+      "label": "node_version",
+      "value_a": "20",
+      "value_b": "14",
+      "files_a": [
+        "crates/ruvector-learning-wasm/pkg/README.md",
+        "crates/ruvector-router-ffi/README.md",
+        "docs/adr/temporal-tensor-store/ADR-022-wasm-api-cross-platform.md",
+        "docs/research/knowledge-export/QUICKSTART.md",
+        "docs/research/latent-space/implementation-plans/04-swarm-implementation.md"
+      ],
+      "files_b": [
+        "npm/packages/ruvbot/docs/adr/ADR-006-wasm-integration.md"
+      ]
+    },
+    {
+      "label": "node_version",
+      "value_a": "20",
+      "value_b": "7",
+      "files_a": [
+        "crates/ruvector-learning-wasm/pkg/README.md",
+        "crates/ruvector-router-ffi/README.md",
+        "docs/adr/temporal-tensor-store/ADR-022-wasm-api-cross-platform.md",
+        "docs/research/knowledge-export/QUICKSTART.md",
+        "docs/research/latent-space/implementation-plans/04-swarm-implementation.md"
+      ],
+      "files_b": [
+        "examples/mincut/README.md",
+        "examples/mincut/morphogenetic/README.md"
+      ]
+    },
+    {
+      "label": "node_version",
+      "value_a": "20",
+      "value_b": "11",
+      "files_a": [
+        "crates/ruvector-learning-wasm/pkg/README.md",
+        "crates/ruvector-router-ffi/README.md",
+        "docs/adr/temporal-tensor-store/ADR-022-wasm-api-cross-platform.md",
+        "docs/research/knowledge-export/QUICKSTART.md",
+        "docs/research/latent-space/implementation-plans/04-swarm-implementation.md"
+      ],
+      "files_b": [
+        ".github/workflows/RELEASE.md"
+      ]
+    },
+    {
+      "label": "node_version",
+      "value_a": "20",
+      "value_b": "10",
+      "files_a": [
+        "crates/ruvector-learning-wasm/pkg/README.md",
+        "crates/ruvector-router-ffi/README.md",
+        "docs/adr/temporal-tensor-store/ADR-022-wasm-api-cross-platform.md",
+        "docs/research/knowledge-export/QUICKSTART.md",
+        "docs/research/latent-space/implementation-plans/04-swarm-implementation.md"
+      ],
+      "files_b": [
+        ".github/workflows/RELEASE.md"
+      ]
+    },
+    {
+      "label": "node_version",
+      "value_a": "20",
+      "value_b": "12",
+      "files_a": [
+        "crates/ruvector-learning-wasm/pkg/README.md",
+        "crates/ruvector-router-ffi/README.md",
+        "docs/adr/temporal-tensor-store/ADR-022-wasm-api-cross-platform.md",
+        "docs/research/knowledge-export/QUICKSTART.md",
+        "docs/research/latent-space/implementation-plans/04-swarm-implementation.md"
+      ],
+      "files_b": [
+        ".github/workflows/RELEASE.md"
+      ]
+    },
+    {
+      "label": "node_version",
+      "value_a": "18.0",
+      "value_b": "1",
+      "files_a": [
+        "crates/ruvector-node/README.md",
+        "crates/ruvector-router-ffi/README.md",
+        "npm/README.md"
+      ],
+      "files_b": [
+        ".claude/skills/agentdb-advanced/SKILL.md",
+        "crates/micro-hnsw-wasm/README.md",
+        "crates/ruvector-attention-unified-wasm/README.md",
+        "crates/ruvector-cluster/README.md",
+        "crates/ruvector-mincut/docs/guide/03-practical-applications.md"
+      ]
+    },
+    {
+      "label": "node_version",
+      "value_a": "18.0",
+      "value_b": "2",
+      "files_a": [
+        "crates/ruvector-node/README.md",
+        "crates/ruvector-router-ffi/README.md",
+        "npm/README.md"
+      ],
+      "files_b": [
+        ".claude/agents/swarm/mesh-coordinator.md",
+        ".claude/skills/agentdb-advanced/SKILL.md",
+        "crates/ruvector-attention-unified-wasm/README.md",
+        "crates/ruvector-cluster/README.md",
+        "crates/ruvector-mincut/docs/guide/03-practical-applications.md"
+      ]
+    },
+    {
+      "label": "node_version",
+      "value_a": "18.0",
+      "value_b": "3",
+      "files_a": [
+        "crates/ruvector-node/README.md",
+        "crates/ruvector-router-ffi/README.md",
+        "npm/README.md"
+      ],
+      "files_b": [
+        ".claude/skills/agentdb-advanced/SKILL.md",
+        "crates/ruvector-attention-unified-wasm/README.md",
+        "crates/ruvector-cluster/README.md",
+        "crates/ruvector-mincut/docs/guide/03-practical-applications.md",
+        "crates/ruvector-raft/README.md"
+      ]
+    },
+    {
+      "label": "node_version",
+      "value_a": "18.0",
+      "value_b": "0",
+      "files_a": [
+        "crates/ruvector-node/README.md",
+        "crates/ruvector-router-ffi/README.md",
+        "npm/README.md"
+      ],
+      "files_b": [
+        "crates/micro-hnsw-wasm/README.md",
+        "crates/ruvector-attention-unified-wasm/README.md",
+        "crates/ruvector-mincut/docs/guide/03-practical-applications.md",
+        "crates/ruvector-solver/README.md",
+        "crates/ruvix/qemu-swarm/README.md"
+      ]
+    },
+    {
+      "label": "node_version",
+      "value_a": "18.0",
+      "value_b": "18",
+      "files_a": [
+        "crates/ruvector-node/README.md",
+        "crates/ruvector-router-ffi/README.md",
+        "npm/README.md"
+      ],
+      "files_b": [
+        ".claude/agents/sparc/architecture.md",
+        ".claude/agents/sparc/specification.md",
+        ".claude/skills/agentdb-advanced/SKILL.md",
+        ".claude/skills/agentdb-learning/SKILL.md",
+        ".claude/skills/agentdb-memory-patterns/SKILL.md"
+      ]
+    },
+    {
+      "label": "node_version",
+      "value_a": "18.0",
+      "value_b": "4",
+      "files_a": [
+        "crates/ruvector-node/README.md",
+        "crates/ruvector-router-ffi/README.md",
+        "npm/README.md"
+      ],
+      "files_b": [
+        "crates/ruvector-cluster/README.md",
+        "crates/ruvector-mincut/docs/guide/03-practical-applications.md",
+        "docs/architecture/SYSTEM_OVERVIEW.md",
+        "docs/project-phases/phase5-implementation-summary.md",
+        "docs/research/gnn-v2/15-entangled-subspace-attention.md"
+      ]
+    },
+    {
+      "label": "node_version",
+      "value_a": "18.0",
+      "value_b": "16",
+      "files_a": [
+        "crates/ruvector-node/README.md",
+        "crates/ruvector-router-ffi/README.md",
+        "npm/README.md"
+      ],
+      "files_b": [
+        "crates/ruvector-sparse-inference-wasm/README.md",
+        "docs/architecture/NPM_PACKAGE_ARCHITECTURE.md",
+        "docs/development/CONTRIBUTING.md",
+        "docs/guides/INSTALLATION.md",
+        "examples/dna/adr/ADR-008-wasm-edge-genomics.md"
+      ]
+    },
+    {
+      "label": "node_version",
+      "value_a": "18.0",
+      "value_b": "42",
+      "files_a": [
+        "crates/ruvector-node/README.md",
+        "crates/ruvector-router-ffi/README.md",
+        "npm/README.md"
+      ],
+      "files_b": [
+        "docs/research/gnn-v2/02-incremental-graph-learning.md",
+        "docs/research/nightly/2026-04-26-acorn-filtered-hnsw/README.md"
+      ]
+    },
+    {
+      "label": "node_version",
+      "value_a": "18.0",
+      "value_b": "22",
+      "files_a": [
+        "crates/ruvector-node/README.md",
+        "crates/ruvector-router-ffi/README.md",
+        "npm/README.md"
+      ],
+      "files_b": [
+        "docs/research/latent-space/implementation-plans/04-swarm-implementation.md",
+        "docs/research/latent-space/implementation-plans/06-platform-bindings.md",
+        "docs/testing/integration-testing-report.md",
+        "npm/packages/agentic-synth/docs/OPTIMIZATION_GUIDE.md"
+      ]
+    },
+    {
+      "label": "node_version",
+      "value_a": "18.0",
+      "value_b": "1.0",
+      "files_a": [
+        "crates/ruvector-node/README.md",
+        "crates/ruvector-router-ffi/README.md",
+        "npm/README.md"
+      ],
+      "files_b": [
+        "docs/research/latent-space/implementation-plans/agents/11-unit-tests.md"
+      ]
+    },
+    {
+      "label": "node_version",
+      "value_a": "18.0",
+      "value_b": "16.4",
+      "files_a": [
+        "crates/ruvector-node/README.md",
+        "crates/ruvector-router-ffi/README.md",
+        "npm/README.md"
+      ],
+      "files_b": [
+        "docs/research/sublinear-time-solver/06-wasm-integration.md"
+      ]
+    },
+    {
+      "label": "node_version",
+      "value_a": "18.0",
+      "value_b": "5",
+      "files_a": [
+        "crates/ruvector-node/README.md",
+        "crates/ruvector-router-ffi/README.md",
+        "npm/README.md"
+      ],
+      "files_b": [
+        "docs/adr/ADR-050-graph-transformer-bindings.md"
+      ]
+    },
+    {
+      "label": "node_version",
+      "value_a": "18.0",
+      "value_b": "14",
+      "files_a": [
+        "crates/ruvector-node/README.md",
+        "crates/ruvector-router-ffi/README.md",
+        "npm/README.md"
+      ],
+      "files_b": [
+        "npm/packages/ruvbot/docs/adr/ADR-006-wasm-integration.md"
+      ]
+    },
+    {
+      "label": "node_version",
+      "value_a": "18.0",
+      "value_b": "7",
+      "files_a": [
+        "crates/ruvector-node/README.md",
+        "crates/ruvector-router-ffi/README.md",
+        "npm/README.md"
+      ],
+      "files_b": [
+        "examples/mincut/README.md",
+        "examples/mincut/morphogenetic/README.md"
+      ]
+    },
+    {
+      "label": "node_version",
+      "value_a": "18.0",
+      "value_b": "11",
+      "files_a": [
+        "crates/ruvector-node/README.md",
+        "crates/ruvector-router-ffi/README.md",
+        "npm/README.md"
+      ],
+      "files_b": [
+        ".github/workflows/RELEASE.md"
+      ]
+    },
+    {
+      "label": "node_version",
+      "value_a": "18.0",
+      "value_b": "10",
+      "files_a": [
+        "crates/ruvector-node/README.md",
+        "crates/ruvector-router-ffi/README.md",
+        "npm/README.md"
+      ],
+      "files_b": [
+        ".github/workflows/RELEASE.md"
+      ]
+    },
+    {
+      "label": "node_version",
+      "value_a": "18.0",
+      "value_b": "12",
+      "files_a": [
+        "crates/ruvector-node/README.md",
+        "crates/ruvector-router-ffi/README.md",
+        "npm/README.md"
+      ],
+      "files_b": [
+        ".github/workflows/RELEASE.md"
+      ]
+    },
+    {
+      "label": "node_version",
+      "value_a": "1",
+      "value_b": "2",
+      "files_a": [
+        ".claude/skills/agentdb-advanced/SKILL.md",
+        "crates/micro-hnsw-wasm/README.md",
+        "crates/ruvector-attention-unified-wasm/README.md",
+        "crates/ruvector-cluster/README.md",
+        "crates/ruvector-mincut/docs/guide/03-practical-applications.md"
+      ],
+      "files_b": [
+        ".claude/agents/swarm/mesh-coordinator.md",
+        ".claude/skills/agentdb-advanced/SKILL.md",
+        "crates/ruvector-attention-unified-wasm/README.md",
+        "crates/ruvector-cluster/README.md",
+        "crates/ruvector-mincut/docs/guide/03-practical-applications.md"
+      ]
+    },
+    {
+      "label": "node_version",
+      "value_a": "1",
+      "value_b": "3",
+      "files_a": [
+        ".claude/skills/agentdb-advanced/SKILL.md",
+        "crates/micro-hnsw-wasm/README.md",
+        "crates/ruvector-attention-unified-wasm/README.md",
+        "crates/ruvector-cluster/README.md",
+        "crates/ruvector-mincut/docs/guide/03-practical-applications.md"
+      ],
+      "files_b": [
+        ".claude/skills/agentdb-advanced/SKILL.md",
+        "crates/ruvector-attention-unified-wasm/README.md",
+        "crates/ruvector-cluster/README.md",
+        "crates/ruvector-mincut/docs/guide/03-practical-applications.md",
+        "crates/ruvector-raft/README.md"
+      ]
+    },
+    {
+      "label": "node_version",
+      "value_a": "1",
+      "value_b": "0",
+      "files_a": [
+        ".claude/skills/agentdb-advanced/SKILL.md",
+        "crates/micro-hnsw-wasm/README.md",
+        "crates/ruvector-attention-unified-wasm/README.md",
+        "crates/ruvector-cluster/README.md",
+        "crates/ruvector-mincut/docs/guide/03-practical-applications.md"
+      ],
+      "files_b": [
+        "crates/micro-hnsw-wasm/README.md",
+        "crates/ruvector-attention-unified-wasm/README.md",
+        "crates/ruvector-mincut/docs/guide/03-practical-applications.md",
+        "crates/ruvector-solver/README.md",
+        "crates/ruvix/qemu-swarm/README.md"
+      ]
+    },
+    {
+      "label": "node_version",
+      "value_a": "1",
+      "value_b": "18",
+      "files_a": [
+        ".claude/skills/agentdb-advanced/SKILL.md",
+        "crates/micro-hnsw-wasm/README.md",
+        "crates/ruvector-attention-unified-wasm/README.md",
+        "crates/ruvector-cluster/README.md",
+        "crates/ruvector-mincut/docs/guide/03-practical-applications.md"
+      ],
+      "files_b": [
+        ".claude/agents/sparc/architecture.md",
+        ".claude/agents/sparc/specification.md",
+        ".claude/skills/agentdb-advanced/SKILL.md",
+        ".claude/skills/agentdb-learning/SKILL.md",
+        ".claude/skills/agentdb-memory-patterns/SKILL.md"
+      ]
+    },
+    {
+      "label": "node_version",
+      "value_a": "1",
+      "value_b": "4",
+      "files_a": [
+        ".claude/skills/agentdb-advanced/SKILL.md",
+        "crates/micro-hnsw-wasm/README.md",
+        "crates/ruvector-attention-unified-wasm/README.md",
+        "crates/ruvector-cluster/README.md",
+        "crates/ruvector-mincut/docs/guide/03-practical-applications.md"
+      ],
+      "files_b": [
+        "crates/ruvector-cluster/README.md",
+        "crates/ruvector-mincut/docs/guide/03-practical-applications.md",
+        "docs/architecture/SYSTEM_OVERVIEW.md",
+        "docs/project-phases/phase5-implementation-summary.md",
+        "docs/research/gnn-v2/15-entangled-subspace-attention.md"
+      ]
+    },
+    {
+      "label": "node_version",
+      "value_a": "1",
+      "value_b": "16",
+      "files_a": [
+        ".claude/skills/agentdb-advanced/SKILL.md",
+        "crates/micro-hnsw-wasm/README.md",
+        "crates/ruvector-attention-unified-wasm/README.md",
+        "crates/ruvector-cluster/README.md",
+        "crates/ruvector-mincut/docs/guide/03-practical-applications.md"
+      ],
+      "files_b": [
+        "crates/ruvector-sparse-inference-wasm/README.md",
+        "docs/architecture/NPM_PACKAGE_ARCHITECTURE.md",
+        "docs/development/CONTRIBUTING.md",
+        "docs/guides/INSTALLATION.md",
+        "examples/dna/adr/ADR-008-wasm-edge-genomics.md"
+      ]
+    },
+    {
+      "label": "node_version",
+      "value_a": "1",
+      "value_b": "42",
+      "files_a": [
+        ".claude/skills/agentdb-advanced/SKILL.md",
+        "crates/micro-hnsw-wasm/README.md",
+        "crates/ruvector-attention-unified-wasm/README.md",
+        "crates/ruvector-cluster/README.md",
+        "crates/ruvector-mincut/docs/guide/03-practical-applications.md"
+      ],
+      "files_b": [
+        "docs/research/gnn-v2/02-incremental-graph-learning.md",
+        "docs/research/nightly/2026-04-26-acorn-filtered-hnsw/README.md"
+      ]
+    },
+    {
+      "label": "node_version",
+      "value_a": "1",
+      "value_b": "22",
+      "files_a": [
+        ".claude/skills/agentdb-advanced/SKILL.md",
+        "crates/micro-hnsw-wasm/README.md",
+        "crates/ruvector-attention-unified-wasm/README.md",
+        "crates/ruvector-cluster/README.md",
+        "crates/ruvector-mincut/docs/guide/03-practical-applications.md"
+      ],
+      "files_b": [
+        "docs/research/latent-space/implementation-plans/04-swarm-implementation.md",
+        "docs/research/latent-space/implementation-plans/06-platform-bindings.md",
+        "docs/testing/integration-testing-report.md",
+        "npm/packages/agentic-synth/docs/OPTIMIZATION_GUIDE.md"
+      ]
+    },
+    {
+      "label": "node_version",
+      "value_a": "1",
+      "value_b": "1.0",
+      "files_a": [
+        ".claude/skills/agentdb-advanced/SKILL.md",
+        "crates/micro-hnsw-wasm/README.md",
+        "crates/ruvector-attention-unified-wasm/README.md",
+        "crates/ruvector-cluster/README.md",
+        "crates/ruvector-mincut/docs/guide/03-practical-applications.md"
+      ],
+      "files_b": [
+        "docs/research/latent-space/implementation-plans/agents/11-unit-tests.md"
+      ]
+    },
+    {
+      "label": "node_version",
+      "value_a": "1",
+      "value_b": "16.4",
+      "files_a": [
+        ".claude/skills/agentdb-advanced/SKILL.md",
+        "crates/micro-hnsw-wasm/README.md",
+        "crates/ruvector-attention-unified-wasm/README.md",
+        "crates/ruvector-cluster/README.md",
+        "crates/ruvector-mincut/docs/guide/03-practical-applications.md"
+      ],
+      "files_b": [
+        "docs/research/sublinear-time-solver/06-wasm-integration.md"
+      ]
+    },
+    {
+      "label": "node_version",
+      "value_a": "1",
+      "value_b": "5",
+      "files_a": [
+        ".claude/skills/agentdb-advanced/SKILL.md",
+        "crates/micro-hnsw-wasm/README.md",
+        "crates/ruvector-attention-unified-wasm/README.md",
+        "crates/ruvector-cluster/README.md",
+        "crates/ruvector-mincut/docs/guide/03-practical-applications.md"
+      ],
+      "files_b": [
+        "docs/adr/ADR-050-graph-transformer-bindings.md"
+      ]
+    },
+    {
+      "label": "node_version",
+      "value_a": "1",
+      "value_b": "14",
+      "files_a": [
+        ".claude/skills/agentdb-advanced/SKILL.md",
+        "crates/micro-hnsw-wasm/README.md",
+        "crates/ruvector-attention-unified-wasm/README.md",
+        "crates/ruvector-cluster/README.md",
+        "crates/ruvector-mincut/docs/guide/03-practical-applications.md"
+      ],
+      "files_b": [
+        "npm/packages/ruvbot/docs/adr/ADR-006-wasm-integration.md"
+      ]
+    },
+    {
+      "label": "node_version",
+      "value_a": "1",
+      "value_b": "7",
+      "files_a": [
+        ".claude/skills/agentdb-advanced/SKILL.md",
+        "crates/micro-hnsw-wasm/README.md",
+        "crates/ruvector-attention-unified-wasm/README.md",
+        "crates/ruvector-cluster/README.md",
+        "crates/ruvector-mincut/docs/guide/03-practical-applications.md"
+      ],
+      "files_b": [
+        "examples/mincut/README.md",
+        "examples/mincut/morphogenetic/README.md"
+      ]
+    },
+    {
+      "label": "node_version",
+      "value_a": "1",
+      "value_b": "11",
+      "files_a": [
+        ".claude/skills/agentdb-advanced/SKILL.md",
+        "crates/micro-hnsw-wasm/README.md",
+        "crates/ruvector-attention-unified-wasm/README.md",
+        "crates/ruvector-cluster/README.md",
+        "crates/ruvector-mincut/docs/guide/03-practical-applications.md"
+      ],
+      "files_b": [
+        ".github/workflows/RELEASE.md"
+      ]
+    },
+    {
+      "label": "node_version",
+      "value_a": "1",
+      "value_b": "10",
+      "files_a": [
+        ".claude/skills/agentdb-advanced/SKILL.md",
+        "crates/micro-hnsw-wasm/README.md",
+        "crates/ruvector-attention-unified-wasm/README.md",
+        "crates/ruvector-cluster/README.md",
+        "crates/ruvector-mincut/docs/guide/03-practical-applications.md"
+      ],
+      "files_b": [
+        ".github/workflows/RELEASE.md"
+      ]
+    },
+    {
+      "label": "node_version",
+      "value_a": "1",
+      "value_b": "12",
+      "files_a": [
+        ".claude/skills/agentdb-advanced/SKILL.md",
+        "crates/micro-hnsw-wasm/README.md",
+        "crates/ruvector-attention-unified-wasm/README.md",
+        "crates/ruvector-cluster/README.md",
+        "crates/ruvector-mincut/docs/guide/03-practical-applications.md"
+      ],
+      "files_b": [
+        ".github/workflows/RELEASE.md"
+      ]
+    },
+    {
+      "label": "node_version",
+      "value_a": "2",
+      "value_b": "3",
+      "files_a": [
+        ".claude/agents/swarm/mesh-coordinator.md",
+        ".claude/skills/agentdb-advanced/SKILL.md",
+        "crates/ruvector-attention-unified-wasm/README.md",
+        "crates/ruvector-cluster/README.md",
+        "crates/ruvector-mincut/docs/guide/03-practical-applications.md"
+      ],
+      "files_b": [
+        ".claude/skills/agentdb-advanced/SKILL.md",
+        "crates/ruvector-attention-unified-wasm/README.md",
+        "crates/ruvector-cluster/README.md",
+        "crates/ruvector-mincut/docs/guide/03-practical-applications.md",
+        "crates/ruvector-raft/README.md"
+      ]
+    },
+    {
+      "label": "node_version",
+      "value_a": "2",
+      "value_b": "0",
+      "files_a": [
+        ".claude/agents/swarm/mesh-coordinator.md",
+        ".claude/skills/agentdb-advanced/SKILL.md",
+        "crates/ruvector-attention-unified-wasm/README.md",
+        "crates/ruvector-cluster/README.md",
+        "crates/ruvector-mincut/docs/guide/03-practical-applications.md"
+      ],
+      "files_b": [
+        "crates/micro-hnsw-wasm/README.md",
+        "crates/ruvector-attention-unified-wasm/README.md",
+        "crates/ruvector-mincut/docs/guide/03-practical-applications.md",
+        "crates/ruvector-solver/README.md",
+        "crates/ruvix/qemu-swarm/README.md"
+      ]
+    },
+    {
+      "label": "node_version",
+      "value_a": "2",
+      "value_b": "18",
+      "files_a": [
+        ".claude/agents/swarm/mesh-coordinator.md",
+        ".claude/skills/agentdb-advanced/SKILL.md",
+        "crates/ruvector-attention-unified-wasm/README.md",
+        "crates/ruvector-cluster/README.md",
+        "crates/ruvector-mincut/docs/guide/03-practical-applications.md"
+      ],
+      "files_b": [
+        ".claude/agents/sparc/architecture.md",
+        ".claude/agents/sparc/specification.md",
+        ".claude/skills/agentdb-advanced/SKILL.md",
+        ".claude/skills/agentdb-learning/SKILL.md",
+        ".claude/skills/agentdb-memory-patterns/SKILL.md"
+      ]
+    },
+    {
+      "label": "node_version",
+      "value_a": "2",
+      "value_b": "4",
+      "files_a": [
+        ".claude/agents/swarm/mesh-coordinator.md",
+        ".claude/skills/agentdb-advanced/SKILL.md",
+        "crates/ruvector-attention-unified-wasm/README.md",
+        "crates/ruvector-cluster/README.md",
+        "crates/ruvector-mincut/docs/guide/03-practical-applications.md"
+      ],
+      "files_b": [
+        "crates/ruvector-cluster/README.md",
+        "crates/ruvector-mincut/docs/guide/03-practical-applications.md",
+        "docs/architecture/SYSTEM_OVERVIEW.md",
+        "docs/project-phases/phase5-implementation-summary.md",
+        "docs/research/gnn-v2/15-entangled-subspace-attention.md"
+      ]
+    },
+    {
+      "label": "node_version",
+      "value_a": "2",
+      "value_b": "16",
+      "files_a": [
+        ".claude/agents/swarm/mesh-coordinator.md",
+        ".claude/skills/agentdb-advanced/SKILL.md",
+        "crates/ruvector-attention-unified-wasm/README.md",
+        "crates/ruvector-cluster/README.md",
+        "crates/ruvector-mincut/docs/guide/03-practical-applications.md"
+      ],
+      "files_b": [
+        "crates/ruvector-sparse-inference-wasm/README.md",
+        "docs/architecture/NPM_PACKAGE_ARCHITECTURE.md",
+        "docs/development/CONTRIBUTING.md",
+        "docs/guides/INSTALLATION.md",
+        "examples/dna/adr/ADR-008-wasm-edge-genomics.md"
+      ]
+    },
+    {
+      "label": "node_version",
+      "value_a": "2",
+      "value_b": "42",
+      "files_a": [
+        ".claude/agents/swarm/mesh-coordinator.md",
+        ".claude/skills/agentdb-advanced/SKILL.md",
+        "crates/ruvector-attention-unified-wasm/README.md",
+        "crates/ruvector-cluster/README.md",
+        "crates/ruvector-mincut/docs/guide/03-practical-applications.md"
+      ],
+      "files_b": [
+        "docs/research/gnn-v2/02-incremental-graph-learning.md",
+        "docs/research/nightly/2026-04-26-acorn-filtered-hnsw/README.md"
+      ]
+    },
+    {
+      "label": "node_version",
+      "value_a": "2",
+      "value_b": "22",
+      "files_a": [
+        ".claude/agents/swarm/mesh-coordinator.md",
+        ".claude/skills/agentdb-advanced/SKILL.md",
+        "crates/ruvector-attention-unified-wasm/README.md",
+        "crates/ruvector-cluster/README.md",
+        "crates/ruvector-mincut/docs/guide/03-practical-applications.md"
+      ],
+      "files_b": [
+        "docs/research/latent-space/implementation-plans/04-swarm-implementation.md",
+        "docs/research/latent-space/implementation-plans/06-platform-bindings.md",
+        "docs/testing/integration-testing-report.md",
+        "npm/packages/agentic-synth/docs/OPTIMIZATION_GUIDE.md"
+      ]
+    },
+    {
+      "label": "node_version",
+      "value_a": "2",
+      "value_b": "1.0",
+      "files_a": [
+        ".claude/agents/swarm/mesh-coordinator.md",
+        ".claude/skills/agentdb-advanced/SKILL.md",
+        "crates/ruvector-attention-unified-wasm/README.md",
+        "crates/ruvector-cluster/README.md",
+        "crates/ruvector-mincut/docs/guide/03-practical-applications.md"
+      ],
+      "files_b": [
+        "docs/research/latent-space/implementation-plans/agents/11-unit-tests.md"
+      ]
+    },
+    {
+      "label": "node_version",
+      "value_a": "2",
+      "value_b": "16.4",
+      "files_a": [
+        ".claude/agents/swarm/mesh-coordinator.md",
+        ".claude/skills/agentdb-advanced/SKILL.md",
+        "crates/ruvector-attention-unified-wasm/README.md",
+        "crates/ruvector-cluster/README.md",
+        "crates/ruvector-mincut/docs/guide/03-practical-applications.md"
+      ],
+      "files_b": [
+        "docs/research/sublinear-time-solver/06-wasm-integration.md"
+      ]
+    },
+    {
+      "label": "node_version",
+      "value_a": "2",
+      "value_b": "5",
+      "files_a": [
+        ".claude/agents/swarm/mesh-coordinator.md",
+        ".claude/skills/agentdb-advanced/SKILL.md",
+        "crates/ruvector-attention-unified-wasm/README.md",
+        "crates/ruvector-cluster/README.md",
+        "crates/ruvector-mincut/docs/guide/03-practical-applications.md"
+      ],
+      "files_b": [
+        "docs/adr/ADR-050-graph-transformer-bindings.md"
+      ]
+    },
+    {
+      "label": "node_version",
+      "value_a": "2",
+      "value_b": "14",
+      "files_a": [
+        ".claude/agents/swarm/mesh-coordinator.md",
+        ".claude/skills/agentdb-advanced/SKILL.md",
+        "crates/ruvector-attention-unified-wasm/README.md",
+        "crates/ruvector-cluster/README.md",
+        "crates/ruvector-mincut/docs/guide/03-practical-applications.md"
+      ],
+      "files_b": [
+        "npm/packages/ruvbot/docs/adr/ADR-006-wasm-integration.md"
+      ]
+    },
+    {
+      "label": "node_version",
+      "value_a": "2",
+      "value_b": "7",
+      "files_a": [
+        ".claude/agents/swarm/mesh-coordinator.md",
+        ".claude/skills/agentdb-advanced/SKILL.md",
+        "crates/ruvector-attention-unified-wasm/README.md",
+        "crates/ruvector-cluster/README.md",
+        "crates/ruvector-mincut/docs/guide/03-practical-applications.md"
+      ],
+      "files_b": [
+        "examples/mincut/README.md",
+        "examples/mincut/morphogenetic/README.md"
+      ]
+    },
+    {
+      "label": "node_version",
+      "value_a": "2",
+      "value_b": "11",
+      "files_a": [
+        ".claude/agents/swarm/mesh-coordinator.md",
+        ".claude/skills/agentdb-advanced/SKILL.md",
+        "crates/ruvector-attention-unified-wasm/README.md",
+        "crates/ruvector-cluster/README.md",
+        "crates/ruvector-mincut/docs/guide/03-practical-applications.md"
+      ],
+      "files_b": [
+        ".github/workflows/RELEASE.md"
+      ]
+    },
+    {
+      "label": "node_version",
+      "value_a": "2",
+      "value_b": "10",
+      "files_a": [
+        ".claude/agents/swarm/mesh-coordinator.md",
+        ".claude/skills/agentdb-advanced/SKILL.md",
+        "crates/ruvector-attention-unified-wasm/README.md",
+        "crates/ruvector-cluster/README.md",
+        "crates/ruvector-mincut/docs/guide/03-practical-applications.md"
+      ],
+      "files_b": [
+        ".github/workflows/RELEASE.md"
+      ]
+    },
+    {
+      "label": "node_version",
+      "value_a": "2",
+      "value_b": "12",
+      "files_a": [
+        ".claude/agents/swarm/mesh-coordinator.md",
+        ".claude/skills/agentdb-advanced/SKILL.md",
+        "crates/ruvector-attention-unified-wasm/README.md",
+        "crates/ruvector-cluster/README.md",
+        "crates/ruvector-mincut/docs/guide/03-practical-applications.md"
+      ],
+      "files_b": [
+        ".github/workflows/RELEASE.md"
+      ]
+    },
+    {
+      "label": "node_version",
+      "value_a": "3",
+      "value_b": "0",
+      "files_a": [
+        ".claude/skills/agentdb-advanced/SKILL.md",
+        "crates/ruvector-attention-unified-wasm/README.md",
+        "crates/ruvector-cluster/README.md",
+        "crates/ruvector-mincut/docs/guide/03-practical-applications.md",
+        "crates/ruvector-raft/README.md"
+      ],
+      "files_b": [
+        "crates/micro-hnsw-wasm/README.md",
+        "crates/ruvector-attention-unified-wasm/README.md",
+        "crates/ruvector-mincut/docs/guide/03-practical-applications.md",
+        "crates/ruvector-solver/README.md",
+        "crates/ruvix/qemu-swarm/README.md"
+      ]
+    },
+    {
+      "label": "node_version",
+      "value_a": "3",
+      "value_b": "18",
+      "files_a": [
+        ".claude/skills/agentdb-advanced/SKILL.md",
+        "crates/ruvector-attention-unified-wasm/README.md",
+        "crates/ruvector-cluster/README.md",
+        "crates/ruvector-mincut/docs/guide/03-practical-applications.md",
+        "crates/ruvector-raft/README.md"
+      ],
+      "files_b": [
+        ".claude/agents/sparc/architecture.md",
+        ".claude/agents/sparc/specification.md",
+        ".claude/skills/agentdb-advanced/SKILL.md",
+        ".claude/skills/agentdb-learning/SKILL.md",
+        ".claude/skills/agentdb-memory-patterns/SKILL.md"
+      ]
+    },
+    {
+      "label": "node_version",
+      "value_a": "3",
+      "value_b": "4",
+      "files_a": [
+        ".claude/skills/agentdb-advanced/SKILL.md",
+        "crates/ruvector-attention-unified-wasm/README.md",
+        "crates/ruvector-cluster/README.md",
+        "crates/ruvector-mincut/docs/guide/03-practical-applications.md",
+        "crates/ruvector-raft/README.md"
+      ],
+      "files_b": [
+        "crates/ruvector-cluster/README.md",
+        "crates/ruvector-mincut/docs/guide/03-practical-applications.md",
+        "docs/architecture/SYSTEM_OVERVIEW.md",
+        "docs/project-phases/phase5-implementation-summary.md",
+        "docs/research/gnn-v2/15-entangled-subspace-attention.md"
+      ]
+    },
+    {
+      "label": "node_version",
+      "value_a": "3",
+      "value_b": "16",
+      "files_a": [
+        ".claude/skills/agentdb-advanced/SKILL.md",
+        "crates/ruvector-attention-unified-wasm/README.md",
+        "crates/ruvector-cluster/README.md",
+        "crates/ruvector-mincut/docs/guide/03-practical-applications.md",
+        "crates/ruvector-raft/README.md"
+      ],
+      "files_b": [
+        "crates/ruvector-sparse-inference-wasm/README.md",
+        "docs/architecture/NPM_PACKAGE_ARCHITECTURE.md",
+        "docs/development/CONTRIBUTING.md",
+        "docs/guides/INSTALLATION.md",
+        "examples/dna/adr/ADR-008-wasm-edge-genomics.md"
+      ]
+    },
+    {
+      "label": "node_version",
+      "value_a": "3",
+      "value_b": "42",
+      "files_a": [
+        ".claude/skills/agentdb-advanced/SKILL.md",
+        "crates/ruvector-attention-unified-wasm/README.md",
+        "crates/ruvector-cluster/README.md",
+        "crates/ruvector-mincut/docs/guide/03-practical-applications.md",
+        "crates/ruvector-raft/README.md"
+      ],
+      "files_b": [
+        "docs/research/gnn-v2/02-incremental-graph-learning.md",
+        "docs/research/nightly/2026-04-26-acorn-filtered-hnsw/README.md"
+      ]
+    },
+    {
+      "label": "node_version",
+      "value_a": "3",
+      "value_b": "22",
+      "files_a": [
+        ".claude/skills/agentdb-advanced/SKILL.md",
+        "crates/ruvector-attention-unified-wasm/README.md",
+        "crates/ruvector-cluster/README.md",
+        "crates/ruvector-mincut/docs/guide/03-practical-applications.md",
+        "crates/ruvector-raft/README.md"
+      ],
+      "files_b": [
+        "docs/research/latent-space/implementation-plans/04-swarm-implementation.md",
+        "docs/research/latent-space/implementation-plans/06-platform-bindings.md",
+        "docs/testing/integration-testing-report.md",
+        "npm/packages/agentic-synth/docs/OPTIMIZATION_GUIDE.md"
+      ]
+    },
+    {
+      "label": "node_version",
+      "value_a": "3",
+      "value_b": "1.0",
+      "files_a": [
+        ".claude/skills/agentdb-advanced/SKILL.md",
+        "crates/ruvector-attention-unified-wasm/README.md",
+        "crates/ruvector-cluster/README.md",
+        "crates/ruvector-mincut/docs/guide/03-practical-applications.md",
+        "crates/ruvector-raft/README.md"
+      ],
+      "files_b": [
+        "docs/research/latent-space/implementation-plans/agents/11-unit-tests.md"
+      ]
+    },
+    {
+      "label": "node_version",
+      "value_a": "3",
+      "value_b": "16.4",
+      "files_a": [
+        ".claude/skills/agentdb-advanced/SKILL.md",
+        "crates/ruvector-attention-unified-wasm/README.md",
+        "crates/ruvector-cluster/README.md",
+        "crates/ruvector-mincut/docs/guide/03-practical-applications.md",
+        "crates/ruvector-raft/README.md"
+      ],
+      "files_b": [
+        "docs/research/sublinear-time-solver/06-wasm-integration.md"
+      ]
+    },
+    {
+      "label": "node_version",
+      "value_a": "3",
+      "value_b": "5",
+      "files_a": [
+        ".claude/skills/agentdb-advanced/SKILL.md",
+        "crates/ruvector-attention-unified-wasm/README.md",
+        "crates/ruvector-cluster/README.md",
+        "crates/ruvector-mincut/docs/guide/03-practical-applications.md",
+        "crates/ruvector-raft/README.md"
+      ],
+      "files_b": [
+        "docs/adr/ADR-050-graph-transformer-bindings.md"
+      ]
+    },
+    {
+      "label": "node_version",
+      "value_a": "3",
+      "value_b": "14",
+      "files_a": [
+        ".claude/skills/agentdb-advanced/SKILL.md",
+        "crates/ruvector-attention-unified-wasm/README.md",
+        "crates/ruvector-cluster/README.md",
+        "crates/ruvector-mincut/docs/guide/03-practical-applications.md",
+        "crates/ruvector-raft/README.md"
+      ],
+      "files_b": [
+        "npm/packages/ruvbot/docs/adr/ADR-006-wasm-integration.md"
+      ]
+    },
+    {
+      "label": "node_version",
+      "value_a": "3",
+      "value_b": "7",
+      "files_a": [
+        ".claude/skills/agentdb-advanced/SKILL.md",
+        "crates/ruvector-attention-unified-wasm/README.md",
+        "crates/ruvector-cluster/README.md",
+        "crates/ruvector-mincut/docs/guide/03-practical-applications.md",
+        "crates/ruvector-raft/README.md"
+      ],
+      "files_b": [
+        "examples/mincut/README.md",
+        "examples/mincut/morphogenetic/README.md"
+      ]
+    },
+    {
+      "label": "node_version",
+      "value_a": "3",
+      "value_b": "11",
+      "files_a": [
+        ".claude/skills/agentdb-advanced/SKILL.md",
+        "crates/ruvector-attention-unified-wasm/README.md",
+        "crates/ruvector-cluster/README.md",
+        "crates/ruvector-mincut/docs/guide/03-practical-applications.md",
+        "crates/ruvector-raft/README.md"
+      ],
+      "files_b": [
+        ".github/workflows/RELEASE.md"
+      ]
+    },
+    {
+      "label": "node_version",
+      "value_a": "3",
+      "value_b": "10",
+      "files_a": [
+        ".claude/skills/agentdb-advanced/SKILL.md",
+        "crates/ruvector-attention-unified-wasm/README.md",
+        "crates/ruvector-cluster/README.md",
+        "crates/ruvector-mincut/docs/guide/03-practical-applications.md",
+        "crates/ruvector-raft/README.md"
+      ],
+      "files_b": [
+        ".github/workflows/RELEASE.md"
+      ]
+    },
+    {
+      "label": "node_version",
+      "value_a": "3",
+      "value_b": "12",
+      "files_a": [
+        ".claude/skills/agentdb-advanced/SKILL.md",
+        "crates/ruvector-attention-unified-wasm/README.md",
+        "crates/ruvector-cluster/README.md",
+        "crates/ruvector-mincut/docs/guide/03-practical-applications.md",
+        "crates/ruvector-raft/README.md"
+      ],
+      "files_b": [
+        ".github/workflows/RELEASE.md"
+      ]
+    },
+    {
+      "label": "node_version",
+      "value_a": "0",
+      "value_b": "18",
+      "files_a": [
+        "crates/micro-hnsw-wasm/README.md",
+        "crates/ruvector-attention-unified-wasm/README.md",
+        "crates/ruvector-mincut/docs/guide/03-practical-applications.md",
+        "crates/ruvector-solver/README.md",
+        "crates/ruvix/qemu-swarm/README.md"
+      ],
+      "files_b": [
+        ".claude/agents/sparc/architecture.md",
+        ".claude/agents/sparc/specification.md",
+        ".claude/skills/agentdb-advanced/SKILL.md",
+        ".claude/skills/agentdb-learning/SKILL.md",
+        ".claude/skills/agentdb-memory-patterns/SKILL.md"
+      ]
+    },
+    {
+      "label": "node_version",
+      "value_a": "0",
+      "value_b": "4",
+      "files_a": [
+        "crates/micro-hnsw-wasm/README.md",
+        "crates/ruvector-attention-unified-wasm/README.md",
+        "crates/ruvector-mincut/docs/guide/03-practical-applications.md",
+        "crates/ruvector-solver/README.md",
+        "crates/ruvix/qemu-swarm/README.md"
+      ],
+      "files_b": [
+        "crates/ruvector-cluster/README.md",
+        "crates/ruvector-mincut/docs/guide/03-practical-applications.md",
+        "docs/architecture/SYSTEM_OVERVIEW.md",
+        "docs/project-phases/phase5-implementation-summary.md",
+        "docs/research/gnn-v2/15-entangled-subspace-attention.md"
+      ]
+    },
+    {
+      "label": "node_version",
+      "value_a": "0",
+      "value_b": "16",
+      "files_a": [
+        "crates/micro-hnsw-wasm/README.md",
+        "crates/ruvector-attention-unified-wasm/README.md",
+        "crates/ruvector-mincut/docs/guide/03-practical-applications.md",
+        "crates/ruvector-solver/README.md",
+        "crates/ruvix/qemu-swarm/README.md"
+      ],
+      "files_b": [
+        "crates/ruvector-sparse-inference-wasm/README.md",
+        "docs/architecture/NPM_PACKAGE_ARCHITECTURE.md",
+        "docs/development/CONTRIBUTING.md",
+        "docs/guides/INSTALLATION.md",
+        "examples/dna/adr/ADR-008-wasm-edge-genomics.md"
+      ]
+    },
+    {
+      "label": "node_version",
+      "value_a": "0",
+      "value_b": "42",
+      "files_a": [
+        "crates/micro-hnsw-wasm/README.md",
+        "crates/ruvector-attention-unified-wasm/README.md",
+        "crates/ruvector-mincut/docs/guide/03-practical-applications.md",
+        "crates/ruvector-solver/README.md",
+        "crates/ruvix/qemu-swarm/README.md"
+      ],
+      "files_b": [
+        "docs/research/gnn-v2/02-incremental-graph-learning.md",
+        "docs/research/nightly/2026-04-26-acorn-filtered-hnsw/README.md"
+      ]
+    },
+    {
+      "label": "node_version",
+      "value_a": "0",
+      "value_b": "22",
+      "files_a": [
+        "crates/micro-hnsw-wasm/README.md",
+        "crates/ruvector-attention-unified-wasm/README.md",
+        "crates/ruvector-mincut/docs/guide/03-practical-applications.md",
+        "crates/ruvector-solver/README.md",
+        "crates/ruvix/qemu-swarm/README.md"
+      ],
+      "files_b": [
+        "docs/research/latent-space/implementation-plans/04-swarm-implementation.md",
+        "docs/research/latent-space/implementation-plans/06-platform-bindings.md",
+        "docs/testing/integration-testing-report.md",
+        "npm/packages/agentic-synth/docs/OPTIMIZATION_GUIDE.md"
+      ]
+    },
+    {
+      "label": "node_version",
+      "value_a": "0",
+      "value_b": "1.0",
+      "files_a": [
+        "crates/micro-hnsw-wasm/README.md",
+        "crates/ruvector-attention-unified-wasm/README.md",
+        "crates/ruvector-mincut/docs/guide/03-practical-applications.md",
+        "crates/ruvector-solver/README.md",
+        "crates/ruvix/qemu-swarm/README.md"
+      ],
+      "files_b": [
+        "docs/research/latent-space/implementation-plans/agents/11-unit-tests.md"
+      ]
+    },
+    {
+      "label": "node_version",
+      "value_a": "0",
+      "value_b": "16.4",
+      "files_a": [
+        "crates/micro-hnsw-wasm/README.md",
+        "crates/ruvector-attention-unified-wasm/README.md",
+        "crates/ruvector-mincut/docs/guide/03-practical-applications.md",
+        "crates/ruvector-solver/README.md",
+        "crates/ruvix/qemu-swarm/README.md"
+      ],
+      "files_b": [
+        "docs/research/sublinear-time-solver/06-wasm-integration.md"
+      ]
+    },
+    {
+      "label": "node_version",
+      "value_a": "0",
+      "value_b": "5",
+      "files_a": [
+        "crates/micro-hnsw-wasm/README.md",
+        "crates/ruvector-attention-unified-wasm/README.md",
+        "crates/ruvector-mincut/docs/guide/03-practical-applications.md",
+        "crates/ruvector-solver/README.md",
+        "crates/ruvix/qemu-swarm/README.md"
+      ],
+      "files_b": [
+        "docs/adr/ADR-050-graph-transformer-bindings.md"
+      ]
+    },
+    {
+      "label": "node_version",
+      "value_a": "0",
+      "value_b": "14",
+      "files_a": [
+        "crates/micro-hnsw-wasm/README.md",
+        "crates/ruvector-attention-unified-wasm/README.md",
+        "crates/ruvector-mincut/docs/guide/03-practical-applications.md",
+        "crates/ruvector-solver/README.md",
+        "crates/ruvix/qemu-swarm/README.md"
+      ],
+      "files_b": [
+        "npm/packages/ruvbot/docs/adr/ADR-006-wasm-integration.md"
+      ]
+    },
+    {
+      "label": "node_version",
+      "value_a": "0",
+      "value_b": "7",
+      "files_a": [
+        "crates/micro-hnsw-wasm/README.md",
+        "crates/ruvector-attention-unified-wasm/README.md",
+        "crates/ruvector-mincut/docs/guide/03-practical-applications.md",
+        "crates/ruvector-solver/README.md",
+        "crates/ruvix/qemu-swarm/README.md"
+      ],
+      "files_b": [
+        "examples/mincut/README.md",
+        "examples/mincut/morphogenetic/README.md"
+      ]
+    },
+    {
+      "label": "node_version",
+      "value_a": "0",
+      "value_b": "11",
+      "files_a": [
+        "crates/micro-hnsw-wasm/README.md",
+        "crates/ruvector-attention-unified-wasm/README.md",
+        "crates/ruvector-mincut/docs/guide/03-practical-applications.md",
+        "crates/ruvector-solver/README.md",
+        "crates/ruvix/qemu-swarm/README.md"
+      ],
+      "files_b": [
+        ".github/workflows/RELEASE.md"
+      ]
+    },
+    {
+      "label": "node_version",
+      "value_a": "0",
+      "value_b": "10",
+      "files_a": [
+        "crates/micro-hnsw-wasm/README.md",
+        "crates/ruvector-attention-unified-wasm/README.md",
+        "crates/ruvector-mincut/docs/guide/03-practical-applications.md",
+        "crates/ruvector-solver/README.md",
+        "crates/ruvix/qemu-swarm/README.md"
+      ],
+      "files_b": [
+        ".github/workflows/RELEASE.md"
+      ]
+    },
+    {
+      "label": "node_version",
+      "value_a": "0",
+      "value_b": "12",
+      "files_a": [
+        "crates/micro-hnsw-wasm/README.md",
+        "crates/ruvector-attention-unified-wasm/README.md",
+        "crates/ruvector-mincut/docs/guide/03-practical-applications.md",
+        "crates/ruvector-solver/README.md",
+        "crates/ruvix/qemu-swarm/README.md"
+      ],
+      "files_b": [
+        ".github/workflows/RELEASE.md"
+      ]
+    },
+    {
+      "label": "node_version",
+      "value_a": "18",
+      "value_b": "4",
+      "files_a": [
+        ".claude/agents/sparc/architecture.md",
+        ".claude/agents/sparc/specification.md",
+        ".claude/skills/agentdb-advanced/SKILL.md",
+        ".claude/skills/agentdb-learning/SKILL.md",
+        ".claude/skills/agentdb-memory-patterns/SKILL.md"
+      ],
+      "files_b": [
+        "crates/ruvector-cluster/README.md",
+        "crates/ruvector-mincut/docs/guide/03-practical-applications.md",
+        "docs/architecture/SYSTEM_OVERVIEW.md",
+        "docs/project-phases/phase5-implementation-summary.md",
+        "docs/research/gnn-v2/15-entangled-subspace-attention.md"
+      ]
+    },
+    {
+      "label": "node_version",
+      "value_a": "18",
+      "value_b": "16",
+      "files_a": [
+        ".claude/agents/sparc/architecture.md",
+        ".claude/agents/sparc/specification.md",
+        ".claude/skills/agentdb-advanced/SKILL.md",
+        ".claude/skills/agentdb-learning/SKILL.md",
+        ".claude/skills/agentdb-memory-patterns/SKILL.md"
+      ],
+      "files_b": [
+        "crates/ruvector-sparse-inference-wasm/README.md",
+        "docs/architecture/NPM_PACKAGE_ARCHITECTURE.md",
+        "docs/development/CONTRIBUTING.md",
+        "docs/guides/INSTALLATION.md",
+        "examples/dna/adr/ADR-008-wasm-edge-genomics.md"
+      ]
+    },
+    {
+      "label": "node_version",
+      "value_a": "18",
+      "value_b": "42",
+      "files_a": [
+        ".claude/agents/sparc/architecture.md",
+        ".claude/agents/sparc/specification.md",
+        ".claude/skills/agentdb-advanced/SKILL.md",
+        ".claude/skills/agentdb-learning/SKILL.md",
+        ".claude/skills/agentdb-memory-patterns/SKILL.md"
+      ],
+      "files_b": [
+        "docs/research/gnn-v2/02-incremental-graph-learning.md",
+        "docs/research/nightly/2026-04-26-acorn-filtered-hnsw/README.md"
+      ]
+    },
+    {
+      "label": "node_version",
+      "value_a": "18",
+      "value_b": "22",
+      "files_a": [
+        ".claude/agents/sparc/architecture.md",
+        ".claude/agents/sparc/specification.md",
+        ".claude/skills/agentdb-advanced/SKILL.md",
+        ".claude/skills/agentdb-learning/SKILL.md",
+        ".claude/skills/agentdb-memory-patterns/SKILL.md"
+      ],
+      "files_b": [
+        "docs/research/latent-space/implementation-plans/04-swarm-implementation.md",
+        "docs/research/latent-space/implementation-plans/06-platform-bindings.md",
+        "docs/testing/integration-testing-report.md",
+        "npm/packages/agentic-synth/docs/OPTIMIZATION_GUIDE.md"
+      ]
+    },
+    {
+      "label": "node_version",
+      "value_a": "18",
+      "value_b": "1.0",
+      "files_a": [
+        ".claude/agents/sparc/architecture.md",
+        ".claude/agents/sparc/specification.md",
+        ".claude/skills/agentdb-advanced/SKILL.md",
+        ".claude/skills/agentdb-learning/SKILL.md",
+        ".claude/skills/agentdb-memory-patterns/SKILL.md"
+      ],
+      "files_b": [
+        "docs/research/latent-space/implementation-plans/agents/11-unit-tests.md"
+      ]
+    },
+    {
+      "label": "node_version",
+      "value_a": "18",
+      "value_b": "16.4",
+      "files_a": [
+        ".claude/agents/sparc/architecture.md",
+        ".claude/agents/sparc/specification.md",
+        ".claude/skills/agentdb-advanced/SKILL.md",
+        ".claude/skills/agentdb-learning/SKILL.md",
+        ".claude/skills/agentdb-memory-patterns/SKILL.md"
+      ],
+      "files_b": [
+        "docs/research/sublinear-time-solver/06-wasm-integration.md"
+      ]
+    },
+    {
+      "label": "node_version",
+      "value_a": "18",
+      "value_b": "5",
+      "files_a": [
+        ".claude/agents/sparc/architecture.md",
+        ".claude/agents/sparc/specification.md",
+        ".claude/skills/agentdb-advanced/SKILL.md",
+        ".claude/skills/agentdb-learning/SKILL.md",
+        ".claude/skills/agentdb-memory-patterns/SKILL.md"
+      ],
+      "files_b": [
+        "docs/adr/ADR-050-graph-transformer-bindings.md"
+      ]
+    },
+    {
+      "label": "node_version",
+      "value_a": "18",
+      "value_b": "14",
+      "files_a": [
+        ".claude/agents/sparc/architecture.md",
+        ".claude/agents/sparc/specification.md",
+        ".claude/skills/agentdb-advanced/SKILL.md",
+        ".claude/skills/agentdb-learning/SKILL.md",
+        ".claude/skills/agentdb-memory-patterns/SKILL.md"
+      ],
+      "files_b": [
+        "npm/packages/ruvbot/docs/adr/ADR-006-wasm-integration.md"
+      ]
+    },
+    {
+      "label": "node_version",
+      "value_a": "18",
+      "value_b": "7",
+      "files_a": [
+        ".claude/agents/sparc/architecture.md",
+        ".claude/agents/sparc/specification.md",
+        ".claude/skills/agentdb-advanced/SKILL.md",
+        ".claude/skills/agentdb-learning/SKILL.md",
+        ".claude/skills/agentdb-memory-patterns/SKILL.md"
+      ],
+      "files_b": [
+        "examples/mincut/README.md",
+        "examples/mincut/morphogenetic/README.md"
+      ]
+    },
+    {
+      "label": "node_version",
+      "value_a": "18",
+      "value_b": "11",
+      "files_a": [
+        ".claude/agents/sparc/architecture.md",
+        ".claude/agents/sparc/specification.md",
+        ".claude/skills/agentdb-advanced/SKILL.md",
+        ".claude/skills/agentdb-learning/SKILL.md",
+        ".claude/skills/agentdb-memory-patterns/SKILL.md"
+      ],
+      "files_b": [
+        ".github/workflows/RELEASE.md"
+      ]
+    },
+    {
+      "label": "node_version",
+      "value_a": "18",
+      "value_b": "10",
+      "files_a": [
+        ".claude/agents/sparc/architecture.md",
+        ".claude/agents/sparc/specification.md",
+        ".claude/skills/agentdb-advanced/SKILL.md",
+        ".claude/skills/agentdb-learning/SKILL.md",
+        ".claude/skills/agentdb-memory-patterns/SKILL.md"
+      ],
+      "files_b": [
+        ".github/workflows/RELEASE.md"
+      ]
+    },
+    {
+      "label": "node_version",
+      "value_a": "18",
+      "value_b": "12",
+      "files_a": [
+        ".claude/agents/sparc/architecture.md",
+        ".claude/agents/sparc/specification.md",
+        ".claude/skills/agentdb-advanced/SKILL.md",
+        ".claude/skills/agentdb-learning/SKILL.md",
+        ".claude/skills/agentdb-memory-patterns/SKILL.md"
+      ],
+      "files_b": [
+        ".github/workflows/RELEASE.md"
+      ]
+    },
+    {
+      "label": "node_version",
+      "value_a": "4",
+      "value_b": "16",
+      "files_a": [
+        "crates/ruvector-cluster/README.md",
+        "crates/ruvector-mincut/docs/guide/03-practical-applications.md",
+        "docs/architecture/SYSTEM_OVERVIEW.md",
+        "docs/project-phases/phase5-implementation-summary.md",
+        "docs/research/gnn-v2/15-entangled-subspace-attention.md"
+      ],
+      "files_b": [
+        "crates/ruvector-sparse-inference-wasm/README.md",
+        "docs/architecture/NPM_PACKAGE_ARCHITECTURE.md",
+        "docs/development/CONTRIBUTING.md",
+        "docs/guides/INSTALLATION.md",
+        "examples/dna/adr/ADR-008-wasm-edge-genomics.md"
+      ]
+    },
+    {
+      "label": "node_version",
+      "value_a": "4",
+      "value_b": "42",
+      "files_a": [
+        "crates/ruvector-cluster/README.md",
+        "crates/ruvector-mincut/docs/guide/03-practical-applications.md",
+        "docs/architecture/SYSTEM_OVERVIEW.md",
+        "docs/project-phases/phase5-implementation-summary.md",
+        "docs/research/gnn-v2/15-entangled-subspace-attention.md"
+      ],
+      "files_b": [
+        "docs/research/gnn-v2/02-incremental-graph-learning.md",
+        "docs/research/nightly/2026-04-26-acorn-filtered-hnsw/README.md"
+      ]
+    },
+    {
+      "label": "node_version",
+      "value_a": "4",
+      "value_b": "22",
+      "files_a": [
+        "crates/ruvector-cluster/README.md",
+        "crates/ruvector-mincut/docs/guide/03-practical-applications.md",
+        "docs/architecture/SYSTEM_OVERVIEW.md",
+        "docs/project-phases/phase5-implementation-summary.md",
+        "docs/research/gnn-v2/15-entangled-subspace-attention.md"
+      ],
+      "files_b": [
+        "docs/research/latent-space/implementation-plans/04-swarm-implementation.md",
+        "docs/research/latent-space/implementation-plans/06-platform-bindings.md",
+        "docs/testing/integration-testing-report.md",
+        "npm/packages/agentic-synth/docs/OPTIMIZATION_GUIDE.md"
+      ]
+    },
+    {
+      "label": "node_version",
+      "value_a": "4",
+      "value_b": "1.0",
+      "files_a": [
+        "crates/ruvector-cluster/README.md",
+        "crates/ruvector-mincut/docs/guide/03-practical-applications.md",
+        "docs/architecture/SYSTEM_OVERVIEW.md",
+        "docs/project-phases/phase5-implementation-summary.md",
+        "docs/research/gnn-v2/15-entangled-subspace-attention.md"
+      ],
+      "files_b": [
+        "docs/research/latent-space/implementation-plans/agents/11-unit-tests.md"
+      ]
+    },
+    {
+      "label": "node_version",
+      "value_a": "4",
+      "value_b": "16.4",
+      "files_a": [
+        "crates/ruvector-cluster/README.md",
+        "crates/ruvector-mincut/docs/guide/03-practical-applications.md",
+        "docs/architecture/SYSTEM_OVERVIEW.md",
+        "docs/project-phases/phase5-implementation-summary.md",
+        "docs/research/gnn-v2/15-entangled-subspace-attention.md"
+      ],
+      "files_b": [
+        "docs/research/sublinear-time-solver/06-wasm-integration.md"
+      ]
+    },
+    {
+      "label": "node_version",
+      "value_a": "4",
+      "value_b": "5",
+      "files_a": [
+        "crates/ruvector-cluster/README.md",
+        "crates/ruvector-mincut/docs/guide/03-practical-applications.md",
+        "docs/architecture/SYSTEM_OVERVIEW.md",
+        "docs/project-phases/phase5-implementation-summary.md",
+        "docs/research/gnn-v2/15-entangled-subspace-attention.md"
+      ],
+      "files_b": [
+        "docs/adr/ADR-050-graph-transformer-bindings.md"
+      ]
+    },
+    {
+      "label": "node_version",
+      "value_a": "4",
+      "value_b": "14",
+      "files_a": [
+        "crates/ruvector-cluster/README.md",
+        "crates/ruvector-mincut/docs/guide/03-practical-applications.md",
+        "docs/architecture/SYSTEM_OVERVIEW.md",
+        "docs/project-phases/phase5-implementation-summary.md",
+        "docs/research/gnn-v2/15-entangled-subspace-attention.md"
+      ],
+      "files_b": [
+        "npm/packages/ruvbot/docs/adr/ADR-006-wasm-integration.md"
+      ]
+    },
+    {
+      "label": "node_version",
+      "value_a": "4",
+      "value_b": "7",
+      "files_a": [
+        "crates/ruvector-cluster/README.md",
+        "crates/ruvector-mincut/docs/guide/03-practical-applications.md",
+        "docs/architecture/SYSTEM_OVERVIEW.md",
+        "docs/project-phases/phase5-implementation-summary.md",
+        "docs/research/gnn-v2/15-entangled-subspace-attention.md"
+      ],
+      "files_b": [
+        "examples/mincut/README.md",
+        "examples/mincut/morphogenetic/README.md"
+      ]
+    },
+    {
+      "label": "node_version",
+      "value_a": "4",
+      "value_b": "11",
+      "files_a": [
+        "crates/ruvector-cluster/README.md",
+        "crates/ruvector-mincut/docs/guide/03-practical-applications.md",
+        "docs/architecture/SYSTEM_OVERVIEW.md",
+        "docs/project-phases/phase5-implementation-summary.md",
+        "docs/research/gnn-v2/15-entangled-subspace-attention.md"
+      ],
+      "files_b": [
+        ".github/workflows/RELEASE.md"
+      ]
+    },
+    {
+      "label": "node_version",
+      "value_a": "4",
+      "value_b": "10",
+      "files_a": [
+        "crates/ruvector-cluster/README.md",
+        "crates/ruvector-mincut/docs/guide/03-practical-applications.md",
+        "docs/architecture/SYSTEM_OVERVIEW.md",
+        "docs/project-phases/phase5-implementation-summary.md",
+        "docs/research/gnn-v2/15-entangled-subspace-attention.md"
+      ],
+      "files_b": [
+        ".github/workflows/RELEASE.md"
+      ]
+    },
+    {
+      "label": "node_version",
+      "value_a": "4",
+      "value_b": "12",
+      "files_a": [
+        "crates/ruvector-cluster/README.md",
+        "crates/ruvector-mincut/docs/guide/03-practical-applications.md",
+        "docs/architecture/SYSTEM_OVERVIEW.md",
+        "docs/project-phases/phase5-implementation-summary.md",
+        "docs/research/gnn-v2/15-entangled-subspace-attention.md"
+      ],
+      "files_b": [
+        ".github/workflows/RELEASE.md"
+      ]
+    },
+    {
+      "label": "node_version",
+      "value_a": "16",
+      "value_b": "42",
+      "files_a": [
+        "crates/ruvector-sparse-inference-wasm/README.md",
+        "docs/architecture/NPM_PACKAGE_ARCHITECTURE.md",
+        "docs/development/CONTRIBUTING.md",
+        "docs/guides/INSTALLATION.md",
+        "examples/dna/adr/ADR-008-wasm-edge-genomics.md"
+      ],
+      "files_b": [
+        "docs/research/gnn-v2/02-incremental-graph-learning.md",
+        "docs/research/nightly/2026-04-26-acorn-filtered-hnsw/README.md"
+      ]
+    },
+    {
+      "label": "node_version",
+      "value_a": "16",
+      "value_b": "22",
+      "files_a": [
+        "crates/ruvector-sparse-inference-wasm/README.md",
+        "docs/architecture/NPM_PACKAGE_ARCHITECTURE.md",
+        "docs/development/CONTRIBUTING.md",
+        "docs/guides/INSTALLATION.md",
+        "examples/dna/adr/ADR-008-wasm-edge-genomics.md"
+      ],
+      "files_b": [
+        "docs/research/latent-space/implementation-plans/04-swarm-implementation.md",
+        "docs/research/latent-space/implementation-plans/06-platform-bindings.md",
+        "docs/testing/integration-testing-report.md",
+        "npm/packages/agentic-synth/docs/OPTIMIZATION_GUIDE.md"
+      ]
+    },
+    {
+      "label": "node_version",
+      "value_a": "16",
+      "value_b": "1.0",
+      "files_a": [
+        "crates/ruvector-sparse-inference-wasm/README.md",
+        "docs/architecture/NPM_PACKAGE_ARCHITECTURE.md",
+        "docs/development/CONTRIBUTING.md",
+        "docs/guides/INSTALLATION.md",
+        "examples/dna/adr/ADR-008-wasm-edge-genomics.md"
+      ],
+      "files_b": [
+        "docs/research/latent-space/implementation-plans/agents/11-unit-tests.md"
+      ]
+    },
+    {
+      "label": "node_version",
+      "value_a": "16",
+      "value_b": "16.4",
+      "files_a": [
+        "crates/ruvector-sparse-inference-wasm/README.md",
+        "docs/architecture/NPM_PACKAGE_ARCHITECTURE.md",
+        "docs/development/CONTRIBUTING.md",
+        "docs/guides/INSTALLATION.md",
+        "examples/dna/adr/ADR-008-wasm-edge-genomics.md"
+      ],
+      "files_b": [
+        "docs/research/sublinear-time-solver/06-wasm-integration.md"
+      ]
+    },
+    {
+      "label": "node_version",
+      "value_a": "16",
+      "value_b": "5",
+      "files_a": [
+        "crates/ruvector-sparse-inference-wasm/README.md",
+        "docs/architecture/NPM_PACKAGE_ARCHITECTURE.md",
+        "docs/development/CONTRIBUTING.md",
+        "docs/guides/INSTALLATION.md",
+        "examples/dna/adr/ADR-008-wasm-edge-genomics.md"
+      ],
+      "files_b": [
+        "docs/adr/ADR-050-graph-transformer-bindings.md"
+      ]
+    },
+    {
+      "label": "node_version",
+      "value_a": "16",
+      "value_b": "14",
+      "files_a": [
+        "crates/ruvector-sparse-inference-wasm/README.md",
+        "docs/architecture/NPM_PACKAGE_ARCHITECTURE.md",
+        "docs/development/CONTRIBUTING.md",
+        "docs/guides/INSTALLATION.md",
+        "examples/dna/adr/ADR-008-wasm-edge-genomics.md"
+      ],
+      "files_b": [
+        "npm/packages/ruvbot/docs/adr/ADR-006-wasm-integration.md"
+      ]
+    },
+    {
+      "label": "node_version",
+      "value_a": "16",
+      "value_b": "7",
+      "files_a": [
+        "crates/ruvector-sparse-inference-wasm/README.md",
+        "docs/architecture/NPM_PACKAGE_ARCHITECTURE.md",
+        "docs/development/CONTRIBUTING.md",
+        "docs/guides/INSTALLATION.md",
+        "examples/dna/adr/ADR-008-wasm-edge-genomics.md"
+      ],
+      "files_b": [
+        "examples/mincut/README.md",
+        "examples/mincut/morphogenetic/README.md"
+      ]
+    },
+    {
+      "label": "node_version",
+      "value_a": "16",
+      "value_b": "11",
+      "files_a": [
+        "crates/ruvector-sparse-inference-wasm/README.md",
+        "docs/architecture/NPM_PACKAGE_ARCHITECTURE.md",
+        "docs/development/CONTRIBUTING.md",
+        "docs/guides/INSTALLATION.md",
+        "examples/dna/adr/ADR-008-wasm-edge-genomics.md"
+      ],
+      "files_b": [
+        ".github/workflows/RELEASE.md"
+      ]
+    },
+    {
+      "label": "node_version",
+      "value_a": "16",
+      "value_b": "10",
+      "files_a": [
+        "crates/ruvector-sparse-inference-wasm/README.md",
+        "docs/architecture/NPM_PACKAGE_ARCHITECTURE.md",
+        "docs/development/CONTRIBUTING.md",
+        "docs/guides/INSTALLATION.md",
+        "examples/dna/adr/ADR-008-wasm-edge-genomics.md"
+      ],
+      "files_b": [
+        ".github/workflows/RELEASE.md"
+      ]
+    },
+    {
+      "label": "node_version",
+      "value_a": "16",
+      "value_b": "12",
+      "files_a": [
+        "crates/ruvector-sparse-inference-wasm/README.md",
+        "docs/architecture/NPM_PACKAGE_ARCHITECTURE.md",
+        "docs/development/CONTRIBUTING.md",
+        "docs/guides/INSTALLATION.md",
+        "examples/dna/adr/ADR-008-wasm-edge-genomics.md"
+      ],
+      "files_b": [
+        ".github/workflows/RELEASE.md"
+      ]
+    },
+    {
+      "label": "node_version",
+      "value_a": "42",
+      "value_b": "22",
+      "files_a": [
+        "docs/research/gnn-v2/02-incremental-graph-learning.md",
+        "docs/research/nightly/2026-04-26-acorn-filtered-hnsw/README.md"
+      ],
+      "files_b": [
+        "docs/research/latent-space/implementation-plans/04-swarm-implementation.md",
+        "docs/research/latent-space/implementation-plans/06-platform-bindings.md",
+        "docs/testing/integration-testing-report.md",
+        "npm/packages/agentic-synth/docs/OPTIMIZATION_GUIDE.md"
+      ]
+    },
+    {
+      "label": "node_version",
+      "value_a": "42",
+      "value_b": "1.0",
+      "files_a": [
+        "docs/research/gnn-v2/02-incremental-graph-learning.md",
+        "docs/research/nightly/2026-04-26-acorn-filtered-hnsw/README.md"
+      ],
+      "files_b": [
+        "docs/research/latent-space/implementation-plans/agents/11-unit-tests.md"
+      ]
+    },
+    {
+      "label": "node_version",
+      "value_a": "42",
+      "value_b": "16.4",
+      "files_a": [
+        "docs/research/gnn-v2/02-incremental-graph-learning.md",
+        "docs/research/nightly/2026-04-26-acorn-filtered-hnsw/README.md"
+      ],
+      "files_b": [
+        "docs/research/sublinear-time-solver/06-wasm-integration.md"
+      ]
+    },
+    {
+      "label": "node_version",
+      "value_a": "42",
+      "value_b": "5",
+      "files_a": [
+        "docs/research/gnn-v2/02-incremental-graph-learning.md",
+        "docs/research/nightly/2026-04-26-acorn-filtered-hnsw/README.md"
+      ],
+      "files_b": [
+        "docs/adr/ADR-050-graph-transformer-bindings.md"
+      ]
+    },
+    {
+      "label": "node_version",
+      "value_a": "42",
+      "value_b": "14",
+      "files_a": [
+        "docs/research/gnn-v2/02-incremental-graph-learning.md",
+        "docs/research/nightly/2026-04-26-acorn-filtered-hnsw/README.md"
+      ],
+      "files_b": [
+        "npm/packages/ruvbot/docs/adr/ADR-006-wasm-integration.md"
+      ]
+    },
+    {
+      "label": "node_version",
+      "value_a": "42",
+      "value_b": "7",
+      "files_a": [
+        "docs/research/gnn-v2/02-incremental-graph-learning.md",
+        "docs/research/nightly/2026-04-26-acorn-filtered-hnsw/README.md"
+      ],
+      "files_b": [
+        "examples/mincut/README.md",
+        "examples/mincut/morphogenetic/README.md"
+      ]
+    },
+    {
+      "label": "node_version",
+      "value_a": "42",
+      "value_b": "11",
+      "files_a": [
+        "docs/research/gnn-v2/02-incremental-graph-learning.md",
+        "docs/research/nightly/2026-04-26-acorn-filtered-hnsw/README.md"
+      ],
+      "files_b": [
+        ".github/workflows/RELEASE.md"
+      ]
+    },
+    {
+      "label": "node_version",
+      "value_a": "42",
+      "value_b": "10",
+      "files_a": [
+        "docs/research/gnn-v2/02-incremental-graph-learning.md",
+        "docs/research/nightly/2026-04-26-acorn-filtered-hnsw/README.md"
+      ],
+      "files_b": [
+        ".github/workflows/RELEASE.md"
+      ]
+    },
+    {
+      "label": "node_version",
+      "value_a": "42",
+      "value_b": "12",
+      "files_a": [
+        "docs/research/gnn-v2/02-incremental-graph-learning.md",
+        "docs/research/nightly/2026-04-26-acorn-filtered-hnsw/README.md"
+      ],
+      "files_b": [
+        ".github/workflows/RELEASE.md"
+      ]
+    },
+    {
+      "label": "node_version",
+      "value_a": "22",
+      "value_b": "1.0",
+      "files_a": [
+        "docs/research/latent-space/implementation-plans/04-swarm-implementation.md",
+        "docs/research/latent-space/implementation-plans/06-platform-bindings.md",
+        "docs/testing/integration-testing-report.md",
+        "npm/packages/agentic-synth/docs/OPTIMIZATION_GUIDE.md"
+      ],
+      "files_b": [
+        "docs/research/latent-space/implementation-plans/agents/11-unit-tests.md"
+      ]
+    },
+    {
+      "label": "node_version",
+      "value_a": "22",
+      "value_b": "16.4",
+      "files_a": [
+        "docs/research/latent-space/implementation-plans/04-swarm-implementation.md",
+        "docs/research/latent-space/implementation-plans/06-platform-bindings.md",
+        "docs/testing/integration-testing-report.md",
+        "npm/packages/agentic-synth/docs/OPTIMIZATION_GUIDE.md"
+      ],
+      "files_b": [
+        "docs/research/sublinear-time-solver/06-wasm-integration.md"
+      ]
+    },
+    {
+      "label": "node_version",
+      "value_a": "22",
+      "value_b": "5",
+      "files_a": [
+        "docs/research/latent-space/implementation-plans/04-swarm-implementation.md",
+        "docs/research/latent-space/implementation-plans/06-platform-bindings.md",
+        "docs/testing/integration-testing-report.md",
+        "npm/packages/agentic-synth/docs/OPTIMIZATION_GUIDE.md"
+      ],
+      "files_b": [
+        "docs/adr/ADR-050-graph-transformer-bindings.md"
+      ]
+    },
+    {
+      "label": "node_version",
+      "value_a": "22",
+      "value_b": "14",
+      "files_a": [
+        "docs/research/latent-space/implementation-plans/04-swarm-implementation.md",
+        "docs/research/latent-space/implementation-plans/06-platform-bindings.md",
+        "docs/testing/integration-testing-report.md",
+        "npm/packages/agentic-synth/docs/OPTIMIZATION_GUIDE.md"
+      ],
+      "files_b": [
+        "npm/packages/ruvbot/docs/adr/ADR-006-wasm-integration.md"
+      ]
+    },
+    {
+      "label": "node_version",
+      "value_a": "22",
+      "value_b": "7",
+      "files_a": [
+        "docs/research/latent-space/implementation-plans/04-swarm-implementation.md",
+        "docs/research/latent-space/implementation-plans/06-platform-bindings.md",
+        "docs/testing/integration-testing-report.md",
+        "npm/packages/agentic-synth/docs/OPTIMIZATION_GUIDE.md"
+      ],
+      "files_b": [
+        "examples/mincut/README.md",
+        "examples/mincut/morphogenetic/README.md"
+      ]
+    },
+    {
+      "label": "node_version",
+      "value_a": "22",
+      "value_b": "11",
+      "files_a": [
+        "docs/research/latent-space/implementation-plans/04-swarm-implementation.md",
+        "docs/research/latent-space/implementation-plans/06-platform-bindings.md",
+        "docs/testing/integration-testing-report.md",
+        "npm/packages/agentic-synth/docs/OPTIMIZATION_GUIDE.md"
+      ],
+      "files_b": [
+        ".github/workflows/RELEASE.md"
+      ]
+    },
+    {
+      "label": "node_version",
+      "value_a": "22",
+      "value_b": "10",
+      "files_a": [
+        "docs/research/latent-space/implementation-plans/04-swarm-implementation.md",
+        "docs/research/latent-space/implementation-plans/06-platform-bindings.md",
+        "docs/testing/integration-testing-report.md",
+        "npm/packages/agentic-synth/docs/OPTIMIZATION_GUIDE.md"
+      ],
+      "files_b": [
+        ".github/workflows/RELEASE.md"
+      ]
+    },
+    {
+      "label": "node_version",
+      "value_a": "22",
+      "value_b": "12",
+      "files_a": [
+        "docs/research/latent-space/implementation-plans/04-swarm-implementation.md",
+        "docs/research/latent-space/implementation-plans/06-platform-bindings.md",
+        "docs/testing/integration-testing-report.md",
+        "npm/packages/agentic-synth/docs/OPTIMIZATION_GUIDE.md"
+      ],
+      "files_b": [
+        ".github/workflows/RELEASE.md"
+      ]
+    },
+    {
+      "label": "node_version",
+      "value_a": "1.0",
+      "value_b": "16.4",
+      "files_a": [
+        "docs/research/latent-space/implementation-plans/agents/11-unit-tests.md"
+      ],
+      "files_b": [
+        "docs/research/sublinear-time-solver/06-wasm-integration.md"
+      ]
+    },
+    {
+      "label": "node_version",
+      "value_a": "1.0",
+      "value_b": "5",
+      "files_a": [
+        "docs/research/latent-space/implementation-plans/agents/11-unit-tests.md"
+      ],
+      "files_b": [
+        "docs/adr/ADR-050-graph-transformer-bindings.md"
+      ]
+    },
+    {
+      "label": "node_version",
+      "value_a": "1.0",
+      "value_b": "14",
+      "files_a": [
+        "docs/research/latent-space/implementation-plans/agents/11-unit-tests.md"
+      ],
+      "files_b": [
+        "npm/packages/ruvbot/docs/adr/ADR-006-wasm-integration.md"
+      ]
+    },
+    {
+      "label": "node_version",
+      "value_a": "1.0",
+      "value_b": "7",
+      "files_a": [
+        "docs/research/latent-space/implementation-plans/agents/11-unit-tests.md"
+      ],
+      "files_b": [
+        "examples/mincut/README.md",
+        "examples/mincut/morphogenetic/README.md"
+      ]
+    },
+    {
+      "label": "node_version",
+      "value_a": "1.0",
+      "value_b": "11",
+      "files_a": [
+        "docs/research/latent-space/implementation-plans/agents/11-unit-tests.md"
+      ],
+      "files_b": [
+        ".github/workflows/RELEASE.md"
+      ]
+    },
+    {
+      "label": "node_version",
+      "value_a": "1.0",
+      "value_b": "10",
+      "files_a": [
+        "docs/research/latent-space/implementation-plans/agents/11-unit-tests.md"
+      ],
+      "files_b": [
+        ".github/workflows/RELEASE.md"
+      ]
+    },
+    {
+      "label": "node_version",
+      "value_a": "1.0",
+      "value_b": "12",
+      "files_a": [
+        "docs/research/latent-space/implementation-plans/agents/11-unit-tests.md"
+      ],
+      "files_b": [
+        ".github/workflows/RELEASE.md"
+      ]
+    },
+    {
+      "label": "node_version",
+      "value_a": "16.4",
+      "value_b": "5",
+      "files_a": [
+        "docs/research/sublinear-time-solver/06-wasm-integration.md"
+      ],
+      "files_b": [
+        "docs/adr/ADR-050-graph-transformer-bindings.md"
+      ]
+    },
+    {
+      "label": "node_version",
+      "value_a": "16.4",
+      "value_b": "14",
+      "files_a": [
+        "docs/research/sublinear-time-solver/06-wasm-integration.md"
+      ],
+      "files_b": [
+        "npm/packages/ruvbot/docs/adr/ADR-006-wasm-integration.md"
+      ]
+    },
+    {
+      "label": "node_version",
+      "value_a": "16.4",
+      "value_b": "7",
+      "files_a": [
+        "docs/research/sublinear-time-solver/06-wasm-integration.md"
+      ],
+      "files_b": [
+        "examples/mincut/README.md",
+        "examples/mincut/morphogenetic/README.md"
+      ]
+    },
+    {
+      "label": "node_version",
+      "value_a": "16.4",
+      "value_b": "11",
+      "files_a": [
+        "docs/research/sublinear-time-solver/06-wasm-integration.md"
+      ],
+      "files_b": [
+        ".github/workflows/RELEASE.md"
+      ]
+    },
+    {
+      "label": "node_version",
+      "value_a": "16.4",
+      "value_b": "10",
+      "files_a": [
+        "docs/research/sublinear-time-solver/06-wasm-integration.md"
+      ],
+      "files_b": [
+        ".github/workflows/RELEASE.md"
+      ]
+    },
+    {
+      "label": "node_version",
+      "value_a": "16.4",
+      "value_b": "12",
+      "files_a": [
+        "docs/research/sublinear-time-solver/06-wasm-integration.md"
+      ],
+      "files_b": [
+        ".github/workflows/RELEASE.md"
+      ]
+    },
+    {
+      "label": "node_version",
+      "value_a": "5",
+      "value_b": "14",
+      "files_a": [
+        "docs/adr/ADR-050-graph-transformer-bindings.md"
+      ],
+      "files_b": [
+        "npm/packages/ruvbot/docs/adr/ADR-006-wasm-integration.md"
+      ]
+    },
+    {
+      "label": "node_version",
+      "value_a": "5",
+      "value_b": "7",
+      "files_a": [
+        "docs/adr/ADR-050-graph-transformer-bindings.md"
+      ],
+      "files_b": [
+        "examples/mincut/README.md",
+        "examples/mincut/morphogenetic/README.md"
+      ]
+    },
+    {
+      "label": "node_version",
+      "value_a": "5",
+      "value_b": "11",
+      "files_a": [
+        "docs/adr/ADR-050-graph-transformer-bindings.md"
+      ],
+      "files_b": [
+        ".github/workflows/RELEASE.md"
+      ]
+    },
+    {
+      "label": "node_version",
+      "value_a": "5",
+      "value_b": "10",
+      "files_a": [
+        "docs/adr/ADR-050-graph-transformer-bindings.md"
+      ],
+      "files_b": [
+        ".github/workflows/RELEASE.md"
+      ]
+    },
+    {
+      "label": "node_version",
+      "value_a": "5",
+      "value_b": "12",
+      "files_a": [
+        "docs/adr/ADR-050-graph-transformer-bindings.md"
+      ],
+      "files_b": [
+        ".github/workflows/RELEASE.md"
+      ]
+    },
+    {
+      "label": "node_version",
+      "value_a": "14",
+      "value_b": "7",
+      "files_a": [
+        "npm/packages/ruvbot/docs/adr/ADR-006-wasm-integration.md"
+      ],
+      "files_b": [
+        "examples/mincut/README.md",
+        "examples/mincut/morphogenetic/README.md"
+      ]
+    },
+    {
+      "label": "node_version",
+      "value_a": "14",
+      "value_b": "11",
+      "files_a": [
+        "npm/packages/ruvbot/docs/adr/ADR-006-wasm-integration.md"
+      ],
+      "files_b": [
+        ".github/workflows/RELEASE.md"
+      ]
+    },
+    {
+      "label": "node_version",
+      "value_a": "14",
+      "value_b": "10",
+      "files_a": [
+        "npm/packages/ruvbot/docs/adr/ADR-006-wasm-integration.md"
+      ],
+      "files_b": [
+        ".github/workflows/RELEASE.md"
+      ]
+    },
+    {
+      "label": "node_version",
+      "value_a": "14",
+      "value_b": "12",
+      "files_a": [
+        "npm/packages/ruvbot/docs/adr/ADR-006-wasm-integration.md"
+      ],
+      "files_b": [
+        ".github/workflows/RELEASE.md"
+      ]
+    },
+    {
+      "label": "node_version",
+      "value_a": "7",
+      "value_b": "11",
+      "files_a": [
+        "examples/mincut/README.md",
+        "examples/mincut/morphogenetic/README.md"
+      ],
+      "files_b": [
+        ".github/workflows/RELEASE.md"
+      ]
+    },
+    {
+      "label": "node_version",
+      "value_a": "7",
+      "value_b": "10",
+      "files_a": [
+        "examples/mincut/README.md",
+        "examples/mincut/morphogenetic/README.md"
+      ],
+      "files_b": [
+        ".github/workflows/RELEASE.md"
+      ]
+    },
+    {
+      "label": "node_version",
+      "value_a": "7",
+      "value_b": "12",
+      "files_a": [
+        "examples/mincut/README.md",
+        "examples/mincut/morphogenetic/README.md"
+      ],
+      "files_b": [
+        ".github/workflows/RELEASE.md"
+      ]
+    },
+    {
+      "label": "node_version",
+      "value_a": "11",
+      "value_b": "10",
+      "files_a": [
+        ".github/workflows/RELEASE.md"
+      ],
+      "files_b": [
+        ".github/workflows/RELEASE.md"
+      ]
+    },
+    {
+      "label": "node_version",
+      "value_a": "11",
+      "value_b": "12",
+      "files_a": [
+        ".github/workflows/RELEASE.md"
+      ],
+      "files_b": [
+        ".github/workflows/RELEASE.md"
+      ]
+    },
+    {
+      "label": "node_version",
+      "value_a": "10",
+      "value_b": "12",
+      "files_a": [
+        ".github/workflows/RELEASE.md"
+      ],
+      "files_b": [
+        ".github/workflows/RELEASE.md"
+      ]
+    },
+    {
+      "label": "rust_version",
+      "value_a": "1.77",
+      "value_b": "1.70",
+      "files_a": [
+        "crates/ruvector-mincut/README.md",
+        "crates/ruvix/qemu-swarm/README.md",
+        "crates/rvm/README.md",
+        "docs/development/CONTRIBUTING.md",
+        "docs/research/latent-space/implementation-plans/01-specification.md"
+      ],
+      "files_b": [
+        "crates/ruvector-attention-wasm/README.md",
+        "crates/ruvector-attention-wasm/pkg/README.md",
+        "crates/ruvector-mincut/docs/BENCHMARK_REPORT.md",
+        "crates/ruvector-postgres/src/sparse/README.md",
+        "docs/plans/subpolynomial-time-mincut/05-completion.md"
+      ]
+    },
+    {
+      "label": "rust_version",
+      "value_a": "1.77",
+      "value_b": "1.87",
+      "files_a": [
+        "crates/ruvector-mincut/README.md",
+        "crates/ruvix/qemu-swarm/README.md",
+        "crates/rvm/README.md",
+        "docs/development/CONTRIBUTING.md",
+        "docs/research/latent-space/implementation-plans/01-specification.md"
+      ],
+      "files_b": [
+        "crates/rvf/README.md",
+        "crates/rvf/rvf-federation/README.md",
+        "crates/rvf/rvf-node/README.md",
+        "examples/rvf/README.md",
+        "examples/rvf/scripts/README.md"
+      ]
+    },
+    {
+      "label": "rust_version",
+      "value_a": "1.77",
+      "value_b": "1.75",
+      "files_a": [
+        "crates/ruvector-mincut/README.md",
+        "crates/ruvix/qemu-swarm/README.md",
+        "crates/rvm/README.md",
+        "docs/development/CONTRIBUTING.md",
+        "docs/research/latent-space/implementation-plans/01-specification.md"
+      ],
+      "files_b": [
+        "benchmarks/graph/docs/QUICKSTART.md",
+        "crates/ruvector-postgres/docker/README.md",
+        "crates/ruvector-postgres/docs/BUILD.md",
+        "docs/rvagent/getting-started.md",
+        "examples/exo-ai-2025/crates/exo-wasm/README.md"
+      ]
+    },
+    {
+      "label": "rust_version",
+      "value_a": "1.77",
+      "value_b": "1.91",
+      "files_a": [
+        "crates/ruvector-mincut/README.md",
+        "crates/ruvix/qemu-swarm/README.md",
+        "crates/rvm/README.md",
+        "docs/development/CONTRIBUTING.md",
+        "docs/research/latent-space/implementation-plans/01-specification.md"
+      ],
+      "files_b": [
+        "crates/ruvllm-wasm/README.md",
+        "docs/adr/ADR-084-ruvllm-wasm-publish.md",
+        "docs/adr/ADR-086-neural-trader-wasm.md"
+      ]
+    },
+    {
+      "label": "rust_version",
+      "value_a": "1.77",
+      "value_b": "1.80",
+      "files_a": [
+        "crates/ruvector-mincut/README.md",
+        "crates/ruvix/qemu-swarm/README.md",
+        "crates/rvm/README.md",
+        "docs/development/CONTRIBUTING.md",
+        "docs/research/latent-space/implementation-plans/01-specification.md"
+      ],
+      "files_b": [
+        "docs/guides/INSTALLATION.md"
+      ]
+    },
+    {
+      "label": "rust_version",
+      "value_a": "1.77",
+      "value_b": "1.83",
+      "files_a": [
+        "crates/ruvector-mincut/README.md",
+        "crates/ruvix/qemu-swarm/README.md",
+        "crates/rvm/README.md",
+        "docs/development/CONTRIBUTING.md",
+        "docs/research/latent-space/implementation-plans/01-specification.md"
+      ],
+      "files_b": [
+        "docs/research/knowledge-export/QUICKSTART.md",
+        "tests/docker-integration/PR66_REVIEW_COMMENT.md",
+        "tests/docker-integration/PR66_TEST_REPORT.md"
+      ]
+    },
+    {
+      "label": "rust_version",
+      "value_a": "1.77",
+      "value_b": "1.85",
+      "files_a": [
+        "crates/ruvector-mincut/README.md",
+        "crates/ruvix/qemu-swarm/README.md",
+        "crates/rvm/README.md",
+        "docs/development/CONTRIBUTING.md",
+        "docs/research/latent-space/implementation-plans/01-specification.md"
+      ],
+      "files_b": [
+        "docs/adr/ADR-079-sql-audit-script-hardening.md"
+      ]
+    },
+    {
+      "label": "rust_version",
+      "value_a": "1.77",
+      "value_b": "1.91.1",
+      "files_a": [
+        "crates/ruvector-mincut/README.md",
+        "crates/ruvix/qemu-swarm/README.md",
+        "crates/rvm/README.md",
+        "docs/development/CONTRIBUTING.md",
+        "docs/research/latent-space/implementation-plans/01-specification.md"
+      ],
+      "files_b": [
+        "docs/benchmarks/BENCHMARK_COMPARISON.md",
+        "tests/docker-integration/FINAL_REVIEW_REPORT.md",
+        "tests/docker-integration/FINAL_SUMMARY.md",
+        "tests/docker-integration/FIXES_APPLIED.md",
+        "tests/docker-integration/SUCCESS_REPORT.md"
+      ]
+    },
+    {
+      "label": "rust_version",
+      "value_a": "1.77",
+      "value_b": "1.78",
+      "files_a": [
+        "crates/ruvector-mincut/README.md",
+        "crates/ruvix/qemu-swarm/README.md",
+        "crates/rvm/README.md",
+        "docs/development/CONTRIBUTING.md",
+        "docs/research/latent-space/implementation-plans/01-specification.md"
+      ],
+      "files_b": [
+        "examples/exo-ai-2025/crates/exo-backend-classical/README.md",
+        "examples/exo-ai-2025/crates/exo-core/README.md",
+        "examples/exo-ai-2025/crates/exo-exotic/README.md",
+        "examples/exo-ai-2025/crates/exo-federation/README.md",
+        "examples/exo-ai-2025/crates/exo-hypergraph/README.md"
+      ]
+    },
+    {
+      "label": "rust_version",
+      "value_a": "1.77",
+      "value_b": "1.75.0",
+      "files_a": [
+        "crates/ruvector-mincut/README.md",
+        "crates/ruvix/qemu-swarm/README.md",
+        "crates/rvm/README.md",
+        "docs/development/CONTRIBUTING.md",
+        "docs/research/latent-space/implementation-plans/01-specification.md"
+      ],
+      "files_b": [
+        "examples/delta-behavior/CHANGELOG.md",
+        "examples/delta-behavior/README.md"
+      ]
+    },
+    {
+      "label": "rust_version",
+      "value_a": "1.70",
+      "value_b": "1.87",
+      "files_a": [
+        "crates/ruvector-attention-wasm/README.md",
+        "crates/ruvector-attention-wasm/pkg/README.md",
+        "crates/ruvector-mincut/docs/BENCHMARK_REPORT.md",
+        "crates/ruvector-postgres/src/sparse/README.md",
+        "docs/plans/subpolynomial-time-mincut/05-completion.md"
+      ],
+      "files_b": [
+        "crates/rvf/README.md",
+        "crates/rvf/rvf-federation/README.md",
+        "crates/rvf/rvf-node/README.md",
+        "examples/rvf/README.md",
+        "examples/rvf/scripts/README.md"
+      ]
+    },
+    {
+      "label": "rust_version",
+      "value_a": "1.70",
+      "value_b": "1.75",
+      "files_a": [
+        "crates/ruvector-attention-wasm/README.md",
+        "crates/ruvector-attention-wasm/pkg/README.md",
+        "crates/ruvector-mincut/docs/BENCHMARK_REPORT.md",
+        "crates/ruvector-postgres/src/sparse/README.md",
+        "docs/plans/subpolynomial-time-mincut/05-completion.md"
+      ],
+      "files_b": [
+        "benchmarks/graph/docs/QUICKSTART.md",
+        "crates/ruvector-postgres/docker/README.md",
+        "crates/ruvector-postgres/docs/BUILD.md",
+        "docs/rvagent/getting-started.md",
+        "examples/exo-ai-2025/crates/exo-wasm/README.md"
+      ]
+    },
+    {
+      "label": "rust_version",
+      "value_a": "1.70",
+      "value_b": "1.91",
+      "files_a": [
+        "crates/ruvector-attention-wasm/README.md",
+        "crates/ruvector-attention-wasm/pkg/README.md",
+        "crates/ruvector-mincut/docs/BENCHMARK_REPORT.md",
+        "crates/ruvector-postgres/src/sparse/README.md",
+        "docs/plans/subpolynomial-time-mincut/05-completion.md"
+      ],
+      "files_b": [
+        "crates/ruvllm-wasm/README.md",
+        "docs/adr/ADR-084-ruvllm-wasm-publish.md",
+        "docs/adr/ADR-086-neural-trader-wasm.md"
+      ]
+    },
+    {
+      "label": "rust_version",
+      "value_a": "1.70",
+      "value_b": "1.80",
+      "files_a": [
+        "crates/ruvector-attention-wasm/README.md",
+        "crates/ruvector-attention-wasm/pkg/README.md",
+        "crates/ruvector-mincut/docs/BENCHMARK_REPORT.md",
+        "crates/ruvector-postgres/src/sparse/README.md",
+        "docs/plans/subpolynomial-time-mincut/05-completion.md"
+      ],
+      "files_b": [
+        "docs/guides/INSTALLATION.md"
+      ]
+    },
+    {
+      "label": "rust_version",
+      "value_a": "1.70",
+      "value_b": "1.83",
+      "files_a": [
+        "crates/ruvector-attention-wasm/README.md",
+        "crates/ruvector-attention-wasm/pkg/README.md",
+        "crates/ruvector-mincut/docs/BENCHMARK_REPORT.md",
+        "crates/ruvector-postgres/src/sparse/README.md",
+        "docs/plans/subpolynomial-time-mincut/05-completion.md"
+      ],
+      "files_b": [
+        "docs/research/knowledge-export/QUICKSTART.md",
+        "tests/docker-integration/PR66_REVIEW_COMMENT.md",
+        "tests/docker-integration/PR66_TEST_REPORT.md"
+      ]
+    },
+    {
+      "label": "rust_version",
+      "value_a": "1.70",
+      "value_b": "1.85",
+      "files_a": [
+        "crates/ruvector-attention-wasm/README.md",
+        "crates/ruvector-attention-wasm/pkg/README.md",
+        "crates/ruvector-mincut/docs/BENCHMARK_REPORT.md",
+        "crates/ruvector-postgres/src/sparse/README.md",
+        "docs/plans/subpolynomial-time-mincut/05-completion.md"
+      ],
+      "files_b": [
+        "docs/adr/ADR-079-sql-audit-script-hardening.md"
+      ]
+    },
+    {
+      "label": "rust_version",
+      "value_a": "1.70",
+      "value_b": "1.91.1",
+      "files_a": [
+        "crates/ruvector-attention-wasm/README.md",
+        "crates/ruvector-attention-wasm/pkg/README.md",
+        "crates/ruvector-mincut/docs/BENCHMARK_REPORT.md",
+        "crates/ruvector-postgres/src/sparse/README.md",
+        "docs/plans/subpolynomial-time-mincut/05-completion.md"
+      ],
+      "files_b": [
+        "docs/benchmarks/BENCHMARK_COMPARISON.md",
+        "tests/docker-integration/FINAL_REVIEW_REPORT.md",
+        "tests/docker-integration/FINAL_SUMMARY.md",
+        "tests/docker-integration/FIXES_APPLIED.md",
+        "tests/docker-integration/SUCCESS_REPORT.md"
+      ]
+    },
+    {
+      "label": "rust_version",
+      "value_a": "1.70",
+      "value_b": "1.78",
+      "files_a": [
+        "crates/ruvector-attention-wasm/README.md",
+        "crates/ruvector-attention-wasm/pkg/README.md",
+        "crates/ruvector-mincut/docs/BENCHMARK_REPORT.md",
+        "crates/ruvector-postgres/src/sparse/README.md",
+        "docs/plans/subpolynomial-time-mincut/05-completion.md"
+      ],
+      "files_b": [
+        "examples/exo-ai-2025/crates/exo-backend-classical/README.md",
+        "examples/exo-ai-2025/crates/exo-core/README.md",
+        "examples/exo-ai-2025/crates/exo-exotic/README.md",
+        "examples/exo-ai-2025/crates/exo-federation/README.md",
+        "examples/exo-ai-2025/crates/exo-hypergraph/README.md"
+      ]
+    },
+    {
+      "label": "rust_version",
+      "value_a": "1.70",
+      "value_b": "1.75.0",
+      "files_a": [
+        "crates/ruvector-attention-wasm/README.md",
+        "crates/ruvector-attention-wasm/pkg/README.md",
+        "crates/ruvector-mincut/docs/BENCHMARK_REPORT.md",
+        "crates/ruvector-postgres/src/sparse/README.md",
+        "docs/plans/subpolynomial-time-mincut/05-completion.md"
+      ],
+      "files_b": [
+        "examples/delta-behavior/CHANGELOG.md",
+        "examples/delta-behavior/README.md"
+      ]
+    },
+    {
+      "label": "rust_version",
+      "value_a": "1.87",
+      "value_b": "1.75",
+      "files_a": [
+        "crates/rvf/README.md",
+        "crates/rvf/rvf-federation/README.md",
+        "crates/rvf/rvf-node/README.md",
+        "examples/rvf/README.md",
+        "examples/rvf/scripts/README.md"
+      ],
+      "files_b": [
+        "benchmarks/graph/docs/QUICKSTART.md",
+        "crates/ruvector-postgres/docker/README.md",
+        "crates/ruvector-postgres/docs/BUILD.md",
+        "docs/rvagent/getting-started.md",
+        "examples/exo-ai-2025/crates/exo-wasm/README.md"
+      ]
+    },
+    {
+      "label": "rust_version",
+      "value_a": "1.87",
+      "value_b": "1.91",
+      "files_a": [
+        "crates/rvf/README.md",
+        "crates/rvf/rvf-federation/README.md",
+        "crates/rvf/rvf-node/README.md",
+        "examples/rvf/README.md",
+        "examples/rvf/scripts/README.md"
+      ],
+      "files_b": [
+        "crates/ruvllm-wasm/README.md",
+        "docs/adr/ADR-084-ruvllm-wasm-publish.md",
+        "docs/adr/ADR-086-neural-trader-wasm.md"
+      ]
+    },
+    {
+      "label": "rust_version",
+      "value_a": "1.87",
+      "value_b": "1.80",
+      "files_a": [
+        "crates/rvf/README.md",
+        "crates/rvf/rvf-federation/README.md",
+        "crates/rvf/rvf-node/README.md",
+        "examples/rvf/README.md",
+        "examples/rvf/scripts/README.md"
+      ],
+      "files_b": [
+        "docs/guides/INSTALLATION.md"
+      ]
+    },
+    {
+      "label": "rust_version",
+      "value_a": "1.87",
+      "value_b": "1.83",
+      "files_a": [
+        "crates/rvf/README.md",
+        "crates/rvf/rvf-federation/README.md",
+        "crates/rvf/rvf-node/README.md",
+        "examples/rvf/README.md",
+        "examples/rvf/scripts/README.md"
+      ],
+      "files_b": [
+        "docs/research/knowledge-export/QUICKSTART.md",
+        "tests/docker-integration/PR66_REVIEW_COMMENT.md",
+        "tests/docker-integration/PR66_TEST_REPORT.md"
+      ]
+    },
+    {
+      "label": "rust_version",
+      "value_a": "1.87",
+      "value_b": "1.85",
+      "files_a": [
+        "crates/rvf/README.md",
+        "crates/rvf/rvf-federation/README.md",
+        "crates/rvf/rvf-node/README.md",
+        "examples/rvf/README.md",
+        "examples/rvf/scripts/README.md"
+      ],
+      "files_b": [
+        "docs/adr/ADR-079-sql-audit-script-hardening.md"
+      ]
+    },
+    {
+      "label": "rust_version",
+      "value_a": "1.87",
+      "value_b": "1.91.1",
+      "files_a": [
+        "crates/rvf/README.md",
+        "crates/rvf/rvf-federation/README.md",
+        "crates/rvf/rvf-node/README.md",
+        "examples/rvf/README.md",
+        "examples/rvf/scripts/README.md"
+      ],
+      "files_b": [
+        "docs/benchmarks/BENCHMARK_COMPARISON.md",
+        "tests/docker-integration/FINAL_REVIEW_REPORT.md",
+        "tests/docker-integration/FINAL_SUMMARY.md",
+        "tests/docker-integration/FIXES_APPLIED.md",
+        "tests/docker-integration/SUCCESS_REPORT.md"
+      ]
+    },
+    {
+      "label": "rust_version",
+      "value_a": "1.87",
+      "value_b": "1.78",
+      "files_a": [
+        "crates/rvf/README.md",
+        "crates/rvf/rvf-federation/README.md",
+        "crates/rvf/rvf-node/README.md",
+        "examples/rvf/README.md",
+        "examples/rvf/scripts/README.md"
+      ],
+      "files_b": [
+        "examples/exo-ai-2025/crates/exo-backend-classical/README.md",
+        "examples/exo-ai-2025/crates/exo-core/README.md",
+        "examples/exo-ai-2025/crates/exo-exotic/README.md",
+        "examples/exo-ai-2025/crates/exo-federation/README.md",
+        "examples/exo-ai-2025/crates/exo-hypergraph/README.md"
+      ]
+    },
+    {
+      "label": "rust_version",
+      "value_a": "1.87",
+      "value_b": "1.75.0",
+      "files_a": [
+        "crates/rvf/README.md",
+        "crates/rvf/rvf-federation/README.md",
+        "crates/rvf/rvf-node/README.md",
+        "examples/rvf/README.md",
+        "examples/rvf/scripts/README.md"
+      ],
+      "files_b": [
+        "examples/delta-behavior/CHANGELOG.md",
+        "examples/delta-behavior/README.md"
+      ]
+    },
+    {
+      "label": "rust_version",
+      "value_a": "1.75",
+      "value_b": "1.91",
+      "files_a": [
+        "benchmarks/graph/docs/QUICKSTART.md",
+        "crates/ruvector-postgres/docker/README.md",
+        "crates/ruvector-postgres/docs/BUILD.md",
+        "docs/rvagent/getting-started.md",
+        "examples/exo-ai-2025/crates/exo-wasm/README.md"
+      ],
+      "files_b": [
+        "crates/ruvllm-wasm/README.md",
+        "docs/adr/ADR-084-ruvllm-wasm-publish.md",
+        "docs/adr/ADR-086-neural-trader-wasm.md"
+      ]
+    },
+    {
+      "label": "rust_version",
+      "value_a": "1.75",
+      "value_b": "1.80",
+      "files_a": [
+        "benchmarks/graph/docs/QUICKSTART.md",
+        "crates/ruvector-postgres/docker/README.md",
+        "crates/ruvector-postgres/docs/BUILD.md",
+        "docs/rvagent/getting-started.md",
+        "examples/exo-ai-2025/crates/exo-wasm/README.md"
+      ],
+      "files_b": [
+        "docs/guides/INSTALLATION.md"
+      ]
+    },
+    {
+      "label": "rust_version",
+      "value_a": "1.75",
+      "value_b": "1.83",
+      "files_a": [
+        "benchmarks/graph/docs/QUICKSTART.md",
+        "crates/ruvector-postgres/docker/README.md",
+        "crates/ruvector-postgres/docs/BUILD.md",
+        "docs/rvagent/getting-started.md",
+        "examples/exo-ai-2025/crates/exo-wasm/README.md"
+      ],
+      "files_b": [
+        "docs/research/knowledge-export/QUICKSTART.md",
+        "tests/docker-integration/PR66_REVIEW_COMMENT.md",
+        "tests/docker-integration/PR66_TEST_REPORT.md"
+      ]
+    },
+    {
+      "label": "rust_version",
+      "value_a": "1.75",
+      "value_b": "1.85",
+      "files_a": [
+        "benchmarks/graph/docs/QUICKSTART.md",
+        "crates/ruvector-postgres/docker/README.md",
+        "crates/ruvector-postgres/docs/BUILD.md",
+        "docs/rvagent/getting-started.md",
+        "examples/exo-ai-2025/crates/exo-wasm/README.md"
+      ],
+      "files_b": [
+        "docs/adr/ADR-079-sql-audit-script-hardening.md"
+      ]
+    },
+    {
+      "label": "rust_version",
+      "value_a": "1.75",
+      "value_b": "1.91.1",
+      "files_a": [
+        "benchmarks/graph/docs/QUICKSTART.md",
+        "crates/ruvector-postgres/docker/README.md",
+        "crates/ruvector-postgres/docs/BUILD.md",
+        "docs/rvagent/getting-started.md",
+        "examples/exo-ai-2025/crates/exo-wasm/README.md"
+      ],
+      "files_b": [
+        "docs/benchmarks/BENCHMARK_COMPARISON.md",
+        "tests/docker-integration/FINAL_REVIEW_REPORT.md",
+        "tests/docker-integration/FINAL_SUMMARY.md",
+        "tests/docker-integration/FIXES_APPLIED.md",
+        "tests/docker-integration/SUCCESS_REPORT.md"
+      ]
+    },
+    {
+      "label": "rust_version",
+      "value_a": "1.75",
+      "value_b": "1.78",
+      "files_a": [
+        "benchmarks/graph/docs/QUICKSTART.md",
+        "crates/ruvector-postgres/docker/README.md",
+        "crates/ruvector-postgres/docs/BUILD.md",
+        "docs/rvagent/getting-started.md",
+        "examples/exo-ai-2025/crates/exo-wasm/README.md"
+      ],
+      "files_b": [
+        "examples/exo-ai-2025/crates/exo-backend-classical/README.md",
+        "examples/exo-ai-2025/crates/exo-core/README.md",
+        "examples/exo-ai-2025/crates/exo-exotic/README.md",
+        "examples/exo-ai-2025/crates/exo-federation/README.md",
+        "examples/exo-ai-2025/crates/exo-hypergraph/README.md"
+      ]
+    },
+    {
+      "label": "rust_version",
+      "value_a": "1.75",
+      "value_b": "1.75.0",
+      "files_a": [
+        "benchmarks/graph/docs/QUICKSTART.md",
+        "crates/ruvector-postgres/docker/README.md",
+        "crates/ruvector-postgres/docs/BUILD.md",
+        "docs/rvagent/getting-started.md",
+        "examples/exo-ai-2025/crates/exo-wasm/README.md"
+      ],
+      "files_b": [
+        "examples/delta-behavior/CHANGELOG.md",
+        "examples/delta-behavior/README.md"
+      ]
+    },
+    {
+      "label": "rust_version",
+      "value_a": "1.91",
+      "value_b": "1.80",
+      "files_a": [
+        "crates/ruvllm-wasm/README.md",
+        "docs/adr/ADR-084-ruvllm-wasm-publish.md",
+        "docs/adr/ADR-086-neural-trader-wasm.md"
+      ],
+      "files_b": [
+        "docs/guides/INSTALLATION.md"
+      ]
+    },
+    {
+      "label": "rust_version",
+      "value_a": "1.91",
+      "value_b": "1.83",
+      "files_a": [
+        "crates/ruvllm-wasm/README.md",
+        "docs/adr/ADR-084-ruvllm-wasm-publish.md",
+        "docs/adr/ADR-086-neural-trader-wasm.md"
+      ],
+      "files_b": [
+        "docs/research/knowledge-export/QUICKSTART.md",
+        "tests/docker-integration/PR66_REVIEW_COMMENT.md",
+        "tests/docker-integration/PR66_TEST_REPORT.md"
+      ]
+    },
+    {
+      "label": "rust_version",
+      "value_a": "1.91",
+      "value_b": "1.85",
+      "files_a": [
+        "crates/ruvllm-wasm/README.md",
+        "docs/adr/ADR-084-ruvllm-wasm-publish.md",
+        "docs/adr/ADR-086-neural-trader-wasm.md"
+      ],
+      "files_b": [
+        "docs/adr/ADR-079-sql-audit-script-hardening.md"
+      ]
+    },
+    {
+      "label": "rust_version",
+      "value_a": "1.91",
+      "value_b": "1.91.1",
+      "files_a": [
+        "crates/ruvllm-wasm/README.md",
+        "docs/adr/ADR-084-ruvllm-wasm-publish.md",
+        "docs/adr/ADR-086-neural-trader-wasm.md"
+      ],
+      "files_b": [
+        "docs/benchmarks/BENCHMARK_COMPARISON.md",
+        "tests/docker-integration/FINAL_REVIEW_REPORT.md",
+        "tests/docker-integration/FINAL_SUMMARY.md",
+        "tests/docker-integration/FIXES_APPLIED.md",
+        "tests/docker-integration/SUCCESS_REPORT.md"
+      ]
+    },
+    {
+      "label": "rust_version",
+      "value_a": "1.91",
+      "value_b": "1.78",
+      "files_a": [
+        "crates/ruvllm-wasm/README.md",
+        "docs/adr/ADR-084-ruvllm-wasm-publish.md",
+        "docs/adr/ADR-086-neural-trader-wasm.md"
+      ],
+      "files_b": [
+        "examples/exo-ai-2025/crates/exo-backend-classical/README.md",
+        "examples/exo-ai-2025/crates/exo-core/README.md",
+        "examples/exo-ai-2025/crates/exo-exotic/README.md",
+        "examples/exo-ai-2025/crates/exo-federation/README.md",
+        "examples/exo-ai-2025/crates/exo-hypergraph/README.md"
+      ]
+    },
+    {
+      "label": "rust_version",
+      "value_a": "1.91",
+      "value_b": "1.75.0",
+      "files_a": [
+        "crates/ruvllm-wasm/README.md",
+        "docs/adr/ADR-084-ruvllm-wasm-publish.md",
+        "docs/adr/ADR-086-neural-trader-wasm.md"
+      ],
+      "files_b": [
+        "examples/delta-behavior/CHANGELOG.md",
+        "examples/delta-behavior/README.md"
+      ]
+    },
+    {
+      "label": "rust_version",
+      "value_a": "1.80",
+      "value_b": "1.83",
+      "files_a": [
+        "docs/guides/INSTALLATION.md"
+      ],
+      "files_b": [
+        "docs/research/knowledge-export/QUICKSTART.md",
+        "tests/docker-integration/PR66_REVIEW_COMMENT.md",
+        "tests/docker-integration/PR66_TEST_REPORT.md"
+      ]
+    },
+    {
+      "label": "rust_version",
+      "value_a": "1.80",
+      "value_b": "1.85",
+      "files_a": [
+        "docs/guides/INSTALLATION.md"
+      ],
+      "files_b": [
+        "docs/adr/ADR-079-sql-audit-script-hardening.md"
+      ]
+    },
+    {
+      "label": "rust_version",
+      "value_a": "1.80",
+      "value_b": "1.91.1",
+      "files_a": [
+        "docs/guides/INSTALLATION.md"
+      ],
+      "files_b": [
+        "docs/benchmarks/BENCHMARK_COMPARISON.md",
+        "tests/docker-integration/FINAL_REVIEW_REPORT.md",
+        "tests/docker-integration/FINAL_SUMMARY.md",
+        "tests/docker-integration/FIXES_APPLIED.md",
+        "tests/docker-integration/SUCCESS_REPORT.md"
+      ]
+    },
+    {
+      "label": "rust_version",
+      "value_a": "1.80",
+      "value_b": "1.78",
+      "files_a": [
+        "docs/guides/INSTALLATION.md"
+      ],
+      "files_b": [
+        "examples/exo-ai-2025/crates/exo-backend-classical/README.md",
+        "examples/exo-ai-2025/crates/exo-core/README.md",
+        "examples/exo-ai-2025/crates/exo-exotic/README.md",
+        "examples/exo-ai-2025/crates/exo-federation/README.md",
+        "examples/exo-ai-2025/crates/exo-hypergraph/README.md"
+      ]
+    },
+    {
+      "label": "rust_version",
+      "value_a": "1.80",
+      "value_b": "1.75.0",
+      "files_a": [
+        "docs/guides/INSTALLATION.md"
+      ],
+      "files_b": [
+        "examples/delta-behavior/CHANGELOG.md",
+        "examples/delta-behavior/README.md"
+      ]
+    },
+    {
+      "label": "rust_version",
+      "value_a": "1.83",
+      "value_b": "1.85",
+      "files_a": [
+        "docs/research/knowledge-export/QUICKSTART.md",
+        "tests/docker-integration/PR66_REVIEW_COMMENT.md",
+        "tests/docker-integration/PR66_TEST_REPORT.md"
+      ],
+      "files_b": [
+        "docs/adr/ADR-079-sql-audit-script-hardening.md"
+      ]
+    },
+    {
+      "label": "rust_version",
+      "value_a": "1.83",
+      "value_b": "1.91.1",
+      "files_a": [
+        "docs/research/knowledge-export/QUICKSTART.md",
+        "tests/docker-integration/PR66_REVIEW_COMMENT.md",
+        "tests/docker-integration/PR66_TEST_REPORT.md"
+      ],
+      "files_b": [
+        "docs/benchmarks/BENCHMARK_COMPARISON.md",
+        "tests/docker-integration/FINAL_REVIEW_REPORT.md",
+        "tests/docker-integration/FINAL_SUMMARY.md",
+        "tests/docker-integration/FIXES_APPLIED.md",
+        "tests/docker-integration/SUCCESS_REPORT.md"
+      ]
+    },
+    {
+      "label": "rust_version",
+      "value_a": "1.83",
+      "value_b": "1.78",
+      "files_a": [
+        "docs/research/knowledge-export/QUICKSTART.md",
+        "tests/docker-integration/PR66_REVIEW_COMMENT.md",
+        "tests/docker-integration/PR66_TEST_REPORT.md"
+      ],
+      "files_b": [
+        "examples/exo-ai-2025/crates/exo-backend-classical/README.md",
+        "examples/exo-ai-2025/crates/exo-core/README.md",
+        "examples/exo-ai-2025/crates/exo-exotic/README.md",
+        "examples/exo-ai-2025/crates/exo-federation/README.md",
+        "examples/exo-ai-2025/crates/exo-hypergraph/README.md"
+      ]
+    },
+    {
+      "label": "rust_version",
+      "value_a": "1.83",
+      "value_b": "1.75.0",
+      "files_a": [
+        "docs/research/knowledge-export/QUICKSTART.md",
+        "tests/docker-integration/PR66_REVIEW_COMMENT.md",
+        "tests/docker-integration/PR66_TEST_REPORT.md"
+      ],
+      "files_b": [
+        "examples/delta-behavior/CHANGELOG.md",
+        "examples/delta-behavior/README.md"
+      ]
+    },
+    {
+      "label": "rust_version",
+      "value_a": "1.85",
+      "value_b": "1.91.1",
+      "files_a": [
+        "docs/adr/ADR-079-sql-audit-script-hardening.md"
+      ],
+      "files_b": [
+        "docs/benchmarks/BENCHMARK_COMPARISON.md",
+        "tests/docker-integration/FINAL_REVIEW_REPORT.md",
+        "tests/docker-integration/FINAL_SUMMARY.md",
+        "tests/docker-integration/FIXES_APPLIED.md",
+        "tests/docker-integration/SUCCESS_REPORT.md"
+      ]
+    },
+    {
+      "label": "rust_version",
+      "value_a": "1.85",
+      "value_b": "1.78",
+      "files_a": [
+        "docs/adr/ADR-079-sql-audit-script-hardening.md"
+      ],
+      "files_b": [
+        "examples/exo-ai-2025/crates/exo-backend-classical/README.md",
+        "examples/exo-ai-2025/crates/exo-core/README.md",
+        "examples/exo-ai-2025/crates/exo-exotic/README.md",
+        "examples/exo-ai-2025/crates/exo-federation/README.md",
+        "examples/exo-ai-2025/crates/exo-hypergraph/README.md"
+      ]
+    },
+    {
+      "label": "rust_version",
+      "value_a": "1.85",
+      "value_b": "1.75.0",
+      "files_a": [
+        "docs/adr/ADR-079-sql-audit-script-hardening.md"
+      ],
+      "files_b": [
+        "examples/delta-behavior/CHANGELOG.md",
+        "examples/delta-behavior/README.md"
+      ]
+    },
+    {
+      "label": "rust_version",
+      "value_a": "1.91.1",
+      "value_b": "1.78",
+      "files_a": [
+        "docs/benchmarks/BENCHMARK_COMPARISON.md",
+        "tests/docker-integration/FINAL_REVIEW_REPORT.md",
+        "tests/docker-integration/FINAL_SUMMARY.md",
+        "tests/docker-integration/FIXES_APPLIED.md",
+        "tests/docker-integration/SUCCESS_REPORT.md"
+      ],
+      "files_b": [
+        "examples/exo-ai-2025/crates/exo-backend-classical/README.md",
+        "examples/exo-ai-2025/crates/exo-core/README.md",
+        "examples/exo-ai-2025/crates/exo-exotic/README.md",
+        "examples/exo-ai-2025/crates/exo-federation/README.md",
+        "examples/exo-ai-2025/crates/exo-hypergraph/README.md"
+      ]
+    },
+    {
+      "label": "rust_version",
+      "value_a": "1.91.1",
+      "value_b": "1.75.0",
+      "files_a": [
+        "docs/benchmarks/BENCHMARK_COMPARISON.md",
+        "tests/docker-integration/FINAL_REVIEW_REPORT.md",
+        "tests/docker-integration/FINAL_SUMMARY.md",
+        "tests/docker-integration/FIXES_APPLIED.md",
+        "tests/docker-integration/SUCCESS_REPORT.md"
+      ],
+      "files_b": [
+        "examples/delta-behavior/CHANGELOG.md",
+        "examples/delta-behavior/README.md"
+      ]
+    },
+    {
+      "label": "rust_version",
+      "value_a": "1.78",
+      "value_b": "1.75.0",
+      "files_a": [
+        "examples/exo-ai-2025/crates/exo-backend-classical/README.md",
+        "examples/exo-ai-2025/crates/exo-core/README.md",
+        "examples/exo-ai-2025/crates/exo-exotic/README.md",
+        "examples/exo-ai-2025/crates/exo-federation/README.md",
+        "examples/exo-ai-2025/crates/exo-hypergraph/README.md"
+      ],
+      "files_b": [
+        "examples/delta-behavior/CHANGELOG.md",
+        "examples/delta-behavior/README.md"
+      ]
+    }
+  ]
+}
