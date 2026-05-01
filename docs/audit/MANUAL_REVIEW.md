@@ -79,7 +79,7 @@ and add a banner at the top of any aspirational doc.
   **One ADR number must win.** Renumber or merge into a single ADR with both numbers as aliases.
 
 * `docs/adr/ADR-026-rvcow-branching-and-real-cognitive-containers.md` is
-  99.7%% identical to `crates/rvf/docs/adr/ADR-031-rvcow-branching-and-real-cognitive-containers.md`.
+  99.7% identical to `crates/rvf/docs/adr/ADR-031-rvcow-branching-and-real-cognitive-containers.md`.
   **Same content, different ADR numbers across two ADR registries.** Pick a single registry
   for crate-level ADRs (e.g. `crates/rvf/docs/adr/`) and have the workspace registry link to it.
 
