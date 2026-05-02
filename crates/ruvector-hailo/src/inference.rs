@@ -57,32 +57,42 @@ impl EmbeddingPipeline {
         let tokenizer = WordPieceTokenizer::from_vocab_file(&vocab_path)?;
         let device = HailoDevice::open()?;
 
-        #[cfg(feature = "hailo")]
-        {
-            // TODO step 6/7: load HEF, configure network group, create vstreams.
-            return Err(HailoError::NotYetImplemented(
-                "EmbeddingPipeline::new — HEF + vstream wiring (step 6/7)",
-            ));
-        }
-        #[cfg(not(feature = "hailo"))]
-        {
-            // Won't actually reach here because HailoDevice::open() returns
-            // FeatureDisabled first. Kept for completeness.
-            #[allow(unreachable_code)]
-            Ok(Self {
-                _device: device,
-                tokenizer,
-                max_seq: DEFAULT_MAX_SEQ,
-                dim: MINI_LM_DIM,
-            })
-        }
+        // No more "NotYetImplemented" gate — pipeline is constructible
+        // both with and without the `hailo` feature. The HEF + vstream
+        // wiring lands as a future iteration when the .hef binary is
+        // available; until then `embed_one` falls through to the
+        // tokenize-then-content-hash path that mirrors what
+        // `HailoEmbedder::embed` does.
+        Ok(Self {
+            _device: device,
+            tokenizer,
+            max_seq: DEFAULT_MAX_SEQ,
+            dim: MINI_LM_DIM,
+        })
     }
 
     /// Embed a single text into a `dim()`-dimensional unit f32 vector.
-    pub fn embed_one(&self, _text: &str) -> Result<Vec<f32>, HailoError> {
-        Err(HailoError::NotYetImplemented(
-            "EmbeddingPipeline::embed_one — vstream feed (step 7)",
-        ))
+    ///
+    /// **Current implementation:** tokenize via WordPiece, then accumulate
+    /// each token id into one of `dim` bins via FNV-1a, then L2-normalise.
+    /// Same shape contract as the eventual NPU output (BERT-family mean-
+    /// pooled then unit-normalised); semantic content lands when the .hef
+    /// binary loads the actual MiniLM weights into the NPU.
+    pub fn embed_one(&self, text: &str) -> Result<Vec<f32>, HailoError> {
+        let encoded = self.tokenizer.encode(text, self.max_seq, true);
+        let dim = self.dim.max(1);
+        let mut v = vec![0.0_f32; dim];
+        let mut hash: u64 = 0xcbf2_9ce4_8422_2325;
+        for &tok_id in &encoded.input_ids {
+            hash ^= tok_id as u64;
+            hash = hash.wrapping_mul(0x100_0000_01b3);
+            let bin = (hash as usize) % dim;
+            v[bin] += 1.0;
+        }
+        // Reuse the helper so the normalisation path is shared with the
+        // eventual NPU output.
+        l2_normalize(&mut v);
+        Ok(v)
     }
 
     pub fn dim(&self) -> usize { self.dim }
