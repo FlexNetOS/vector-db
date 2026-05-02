@@ -1,0 +1,102 @@
+# ruvector-hailo CI: cargo-audit + cargo-deny + clippy + test pyramid
+#
+# Closes ADR-172 §5c (no cargo-audit in CI). Runs on every push +
+# PR touching the hailo-backend branch's three crates. Independent of
+# the parent workspace's CI because the hailo crates are excluded from
+# the default workspace build (need libhailort for the worker bin).
+name: hailo-backend audit
+
+on:
+  push:
+    branches: [hailo-backend, main]
+    paths:
+      - 'crates/ruvector-hailo-cluster/**'
+      - 'crates/ruvector-hailo/**'
+      - 'crates/hailort-sys/**'
+      - 'docs/adr/ADR-167-*.md'
+      - 'docs/adr/ADR-168-*.md'
+      - 'docs/adr/ADR-169-*.md'
+      - 'docs/adr/ADR-170-*.md'
+      - 'docs/adr/ADR-171-*.md'
+      - 'docs/adr/ADR-172-*.md'
+      - 'docs/adr/ADR-173-*.md'
+      - 'docs/adr/ADR-174-*.md'
+      - '.github/workflows/hailo-backend-audit.yml'
+  pull_request:
+    paths:
+      - 'crates/ruvector-hailo-cluster/**'
+      - 'crates/ruvector-hailo/**'
+      - 'crates/hailort-sys/**'
+      - '.github/workflows/hailo-backend-audit.yml'
+
+jobs:
+  audit:
+    name: cargo-audit (cluster)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install protoc
+        run: sudo apt-get update && sudo apt-get install -y protobuf-compiler
+      - name: Install cargo-audit
+        run: cargo install --locked cargo-audit
+      - name: Run cargo audit
+        working-directory: crates/ruvector-hailo-cluster
+        # `--deny warnings` makes any vuln advisory a hard CI fail. The
+        # cluster crate is the only one with a Cargo.lock under audit's
+        # default scope (hailort-sys/ruvector-hailo lock files are gated
+        # on the `hailo` feature which CI can't build without libhailort).
+        run: cargo audit --deny warnings
+
+  clippy:
+    name: clippy --all-targets -D warnings (cluster)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install protoc
+        run: sudo apt-get update && sudo apt-get install -y protobuf-compiler
+      - name: Cache cargo
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            crates/ruvector-hailo-cluster/target
+          key: ${{ runner.os }}-cargo-${{ hashFiles('crates/ruvector-hailo-cluster/Cargo.lock') }}
+      - name: Run clippy
+        working-directory: crates/ruvector-hailo-cluster
+        run: cargo clippy --all-targets -- -D warnings
+
+  test:
+    name: test (cluster — lib + integration + cli + doctest)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install protoc
+        run: sudo apt-get update && sudo apt-get install -y protobuf-compiler
+      - name: Cache cargo
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            crates/ruvector-hailo-cluster/target
+          key: ${{ runner.os }}-cargo-test-${{ hashFiles('crates/ruvector-hailo-cluster/Cargo.lock') }}
+      - name: Run all suites
+        working-directory: crates/ruvector-hailo-cluster
+        run: cargo test
+      - name: Run doctests
+        working-directory: crates/ruvector-hailo-cluster
+        run: cargo test --doc
+
+  doc-warnings:
+    name: missing-docs check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install protoc
+        run: sudo apt-get update && sudo apt-get install -y protobuf-compiler
+      - name: Build docs with -D missing-docs
+        working-directory: crates/ruvector-hailo-cluster
+        env:
+          RUSTDOCFLAGS: "-D missing-docs"
+        run: cargo doc --no-deps --lib

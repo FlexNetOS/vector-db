@@ -1,0 +1,56 @@
+# cargo-deny config for ruvector-hailo-cluster.
+#
+# Run with `cargo deny check` after installing cargo-deny.
+# CI surfaces this in the hailo-backend-audit workflow (planned iter 92
+# follow-up — workflow currently runs cargo-audit; cargo-deny lands once
+# this config has had a pass against the dep tree).
+#
+# Closes ADR-172 §5b/§5c (build supply chain hardening).
+
+[graph]
+# Targets we actually ship: x86 dev hosts + Pi 5 deploys.
+targets = [
+    { triple = "x86_64-unknown-linux-gnu" },
+    { triple = "aarch64-unknown-linux-gnu" },
+]
+
+[advisories]
+# Block on any unfixed vuln. Same threshold as the cargo-audit job.
+yanked = "deny"
+ignore = []
+
+[licenses]
+# Permissive licenses we accept. GPL-family stays denied for now (no
+# GPL deps in the cluster crate; flag if one sneaks in).
+allow = [
+    "MIT",
+    "Apache-2.0",
+    "Apache-2.0 WITH LLVM-exception",
+    "BSD-2-Clause",
+    "BSD-3-Clause",
+    "ISC",
+    "Unicode-3.0",
+    "Unicode-DFS-2016",
+    "Zlib",
+    "MPL-2.0",
+    "CC0-1.0",
+    "0BSD",
+]
+confidence-threshold = 0.93
+
+[bans]
+# Explicit bans for things we don't want creeping in.
+multiple-versions = "warn"
+wildcards = "deny"
+highlight = "all"
+
+# Deny known-unsound or notoriously slow crates if they appear via
+# transitive deps. Empty today; populate as the dep tree grows.
+deny = []
+
+[sources]
+# Only crates.io. No git or path deps from outside the workspace.
+unknown-registry = "deny"
+unknown-git = "deny"
+allow-registry = ["https://github.com/rust-lang/crates.io-index"]
+allow-git = []
