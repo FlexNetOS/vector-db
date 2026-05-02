@@ -13,6 +13,28 @@ related: [ADR-167, ADR-169, ADR-171, ADR-172]
 
 ## Status
 
+**Iter 137 (2026-05-02): bridge fully wired, embedding upstream
+production-deployable today (cpu-fallback path), LLM-on-NPU still
+blocked at the model-graph layer (same root cause as ADR-167).**
+
+| Surface | Status |
+|---|---|
+| `ruvllm-bridge` JSONL stdin/stdout adapter | ✅ Iter 124-125, 8 CLI integration tests |
+| Upstream embedding cluster | ✅ Iter 134/137: `--features cpu-fallback` produces a worker that returns real 384-dim semantic vectors via candle BERT-6 on host CPU. NPU stays idle. End-to-end validated locally with `ruvector-hailo-embed` (cold 800ms / cache 5µs). |
+| Llama-class HEF compile | ❌ Same Hailo-8 limits as ADR-167 BERT-6: `Gather` (token embedding lookup) and `Where` (attention-mask broadcast) ops aren't representable in Hailo's HN graph. The Dataflow Compiler tooling is installed and works (iter 132/135) — Llama just hits the same model-surgery blocker. |
+| GenAI HEFs from Hailo Model Zoo | ❌ All target hailo10h, none ship for hailo8 (verified iter 124) |
+
+**Practical interpretation:** ruvllm bridges into the embedding cluster
+today and gets real vectors for RAG retrieval / context embedding via
+cpu-fallback. The NPU acceleration story for the LLM prefill itself is
+the same multi-day model-graph surgery as ADR-167's BERT-6 path —
+documented but not scheduled, because cpu-fallback covers the embedding
+seam (which is what `ruvllm-bridge` actually consumes).
+
+---
+
+**Earlier (iter 125) snapshot** preserved below for context.
+
 **Host-side seam implemented** as of iter 125 (2026-05-02). Real LLM
 inference still requires HEF compile of the Llama-class prefill heads
 (vendor x86 host tooling — outside this repo's scope).

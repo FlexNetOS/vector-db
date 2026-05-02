@@ -1,66 +1,83 @@
-# ruvector-hailo / models — building the HEF
+# ruvector-hailo / models — model artifacts and provenance
 
-These binaries are not committed into the repository. To rebuild from the
-upstream `sentence-transformers/all-MiniLM-L6-v2` ONNX:
+Two model paths ship today. Pick whichever matches what you have.
 
-## Prereqs (x86 Linux only — runs on ruvultra)
+## Path A — CPU fallback (production-deployable, iter 134)
 
-1. **Hailo Dataflow Compiler 3.x** (developer license required).
-   Download from `https://hailo.ai/developer-zone/`.
-2. `python3 -m venv ~/hailo-dfc-venv && source ~/hailo-dfc-venv/bin/activate`
-3. `pip install hailo-dataflow-compiler-<version>-py3-none-linux_x86_64.whl`
-4. `pip install onnx transformers sentence-transformers`
-
-## Build steps
+The "ship today" path. Real BERT-6 inference via candle on host CPU
+(Cortex-A76 NEON on Pi 5, AVX2 on x86 hosts). NPU stays idle but you
+get real semantic vectors end-to-end. ~50-150 ms per embed on Pi 5.
 
 ```bash
-mkdir -p all-minilm-l6-v2 && cd all-minilm-l6-v2
+# 1. Fetch the three HF artifacts (~91 MB total, sha256-pinned)
+bash crates/ruvector-hailo-cluster/deploy/download-cpu-fallback-model.sh \
+    /var/lib/ruvector-hailo/model
 
-# 1. Pull ONNX + tokenizer
-python -c "
-from sentence_transformers import SentenceTransformer
-m = SentenceTransformer('sentence-transformers/all-MiniLM-L6-v2')
-m.save('./')
-import torch
-torch.onnx.export(m._first_module().auto_model,
-    (torch.zeros(1,128, dtype=torch.long),
-     torch.ones(1,128, dtype=torch.long)),
-    'model.onnx', input_names=['input_ids','attention_mask'],
-    output_names=['last_hidden_state'], opset_version=14,
-    dynamic_axes={'input_ids':{0:'batch'},'attention_mask':{0:'batch'},
-                  'last_hidden_state':{0:'batch'}})
-"
+# 2. Build the worker with cpu-fallback enabled
+cargo build --release --features cpu-fallback \
+    --bin ruvector-hailo-worker \
+    --manifest-path crates/ruvector-hailo-cluster/Cargo.toml
 
-# 2. Calibration corpus (10k lines of plain English)
-head -10000 ../../../bench_data/glove.6B.100d.txt | awk '{print $1}' > calib.txt
-
-# 3. Hailo DFC parse → optimize → compile
-hailo parser --hw-arch hailo8 --har-name all_minilm_l6_v2 model.onnx \
-   --start-node-names input_ids attention_mask \
-   --end-node-names last_hidden_state \
-   --net-input-shapes input_ids=[1,128],attention_mask=[1,128]
-
-hailo optimize --hw-arch hailo8 \
-   --calib-set-path calib.txt \
-   --use-random-calib-set \
-   all_minilm_l6_v2.har
-
-hailo compiler --hw-arch hailo8 all_minilm_l6_v2_optimized.har
-mv all_minilm_l6_v2_optimized.hef model.hef
-
-# 4. Sanity-check on Pi
-scp model.hef vocab.txt special_tokens.json genesis@cognitum-v0:~/ruvector/crates/ruvector-hailo/models/all-minilm-l6-v2/
-ssh genesis@cognitum-v0 hailortcli parse-hef ~/ruvector/crates/ruvector-hailo/models/all-minilm-l6-v2/model.hef
+# 3. Boot
+RUVECTOR_MODEL_DIR=/var/lib/ruvector-hailo/model \
+RUVECTOR_WORKER_BIND=0.0.0.0:50051 \
+    ./target/release/ruvector-hailo-worker
 ```
 
-## Expected I/O shapes after compile
+The worker reports `ready=true` on the gRPC health probe as soon as
+the safetensors load. `--features hailo` is optional — the cpu-fallback
+path doesn't need HailoRT installed.
+
+## Path B — HEF (NPU acceleration, iter 135 — blocked at model surgery)
+
+The Hailo Dataflow Compiler tooling is fully installed and the
+parser/optimize/compile pipeline runs end-to-end via
+`deploy/compile-hef.sh`. But the standard HuggingFace BERT export hits
+two ops that aren't representable in Hailo's HN graph:
+
+- `Gather` for token / token-type embedding lookups (table lookups,
+  not real ML ops)
+- `Where` / `Expand` for broadcasting the attention mask across QK^T
+
+The recommended surgery (~2-3 days):
+1. Pre-compute embeddings host-side: tokenize → embedding-table lookup
+   → send `embeddings_out` (shape `[1, 128, 384]` float) to the NPU
+2. Re-export the encoder block in isolation with
+   `start_node_names=[/embeddings/Add_1]` and `end_node_names=[last_hidden_state]`
+3. Apply the attention mask host-side after the encoder
+4. Modify `HailoEmbedder::embed` to do tokenize → embed-lookup →
+   send-to-NPU → mean-pool → L2-normalize
+
+Documented but not scheduled — Path A covers current throughput needs.
+
+## Tooling install (one-time, x86_64 Linux only)
+
+If you do want to push on Path B:
+
+```bash
+# Download from https://hailo.ai/developer-zone/sw-downloads/:
+#   * hailort_X.Y.Z_amd64.deb
+#   * hailo_dataflow_compiler-X.Y.Z-py3-none-linux_x86_64.whl
+# (or the AI Software Suite .run installer which bundles both)
+
+bash crates/ruvector-hailo-cluster/deploy/setup-hailo-compiler.sh ~/Downloads/hailo
+bash crates/ruvector-hailo-cluster/deploy/compile-hef.sh --out model.hef
+```
+
+The current `compile-hef.sh` uses `compile-hef.py` to drive the SDK
+directly (avoids the CLI's `-y` auto-recommendation that picks `/Where`
+as an end node). `export-minilm-onnx.py` does a clean `torch.onnx.export`
+that avoids optimum-cli's TF/keras dependency hell.
+
+## Expected I/O shapes (Path B once surgery is done)
 
 ```
-input  input_ids        [1, 128]  int32
-input  attention_mask   [1, 128]  int32
+input  embeddings_out   [1, 128, 384]  float32   # host pre-computes
+input  attention_mask   [1, 128]       int32     # masking applied host-side
 output last_hidden_state [1, 128, 384] float32
 ```
 
-Pooling (mean over sequence dim, masked by attention) is done on CPU after
-the NPU emits the per-token embeddings — see `src/inference.rs` once
-iteration 7 lands.
+Pooling (mean over sequence dim, masked by attention) is done host-side
+after the NPU emits per-token embeddings — same path as cpu-fallback
+uses today, just with the encoder forward pass on the NPU instead of
+candle.

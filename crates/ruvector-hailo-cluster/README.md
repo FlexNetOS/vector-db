@@ -6,8 +6,13 @@ in-process caching, and Tailscale-tag-based discovery.
 
 > **Status:** library + 3 CLI binaries production-shaped; **131 tests**
 > passing across lib unit / cluster integration / 3 CLI integration / 7
-> doctest suites. End-to-end NPU inference gated on HEF compilation
-> (see [ADR-167][adr167] §6).
+> doctest suites.
+>
+> **End-to-end embedding works today** via the iter-134 cpu-fallback
+> path — `cargo build --features cpu-fallback --bin ruvector-hailo-worker`
+> + `deploy/download-cpu-fallback-model.sh` produces a worker that
+> returns real 384-dim semantic vectors via candle BERT-6 on host CPU.
+> NPU acceleration is gated on HEF model surgery (see [ADR-167][adr167] §6).
 
 [adr167]: ../../docs/adr/ADR-167-ruvector-hailo-npu-embedding-backend.md
 [adr168]: ../../docs/adr/ADR-168-ruvector-hailo-cluster-cli-surface.md
