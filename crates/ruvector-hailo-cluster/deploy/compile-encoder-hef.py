@@ -49,16 +49,37 @@ def main(onnx_path: str, out_hef: str) -> None:
     print(f"    parsed HAR → {parsed_har}", flush=True)
 
     print("==> [optimize] random calibration set (FP→INT8)", flush=True)
-    # Iter 139c: drop optimization_level to 0 (CPU mode, least aggressive).
-    # This skips the SDK's LayerNorm decomposition algorithm that hits
-    # `KeyError: 'minilm_encoder/input_layer1'` on the encoder graph.
-    # Trade-off: less aggressive INT8 quantization → larger accuracy
-    # loss, but produces a working HEF for the first end-to-end shot.
+    # Iter 142: root-cause analysis of the iter-139 KeyError. The
+    # SDK's stats_collection._get_build_inputs() returns a dict keyed
+    # by the dataset keys ("hidden_states") but hailo_model.build()
+    # iterates over self.flow.input_nodes (internal layer names like
+    # "minilm_encoder/input_layer1") and looks them up in the dict.
+    # KeyError follows. Workaround: key the calibration dataset by the
+    # internal input layer name instead of the ONNX input name.
     runner.load_model_script("model_optimization_flavor(optimization_level=0)\n")
 
     rng = np.random.default_rng(seed=42)
+    # Discover the actual input layer name from the parsed network.
+    input_layer_name = None
+    try:
+        hn = runner.get_hn()
+        import json as _json
+        hn_d = _json.loads(hn) if isinstance(hn, str) else hn
+        for lname, layer in hn_d.get("layers", {}).items():
+            if layer.get("type") == "input_layer":
+                input_layer_name = lname
+                break
+    except Exception as e:
+        print(f"    warn: couldn't introspect HN ({e}); falling back to onnx name", flush=True)
+
+    calib_key = input_layer_name or "hidden_states"
+    print(f"    calibration dict key: {calib_key}", flush=True)
+    # Hailo's HN treats inputs as 4D NCHW with implicit channels=1, so
+    # [batch, seq, hidden] needs a channel dim → [batch, 1, seq, hidden].
+    # Without this you get
+    #   AccelerasValueError: Inference input shapes ... does not match HN shapes
     calib = {
-        "hidden_states": rng.standard_normal((64, SEQ_LEN, HIDDEN), dtype=np.float32),
+        calib_key: rng.standard_normal((64, 1, SEQ_LEN, HIDDEN), dtype=np.float32),
     }
     runner.optimize(calib)
     opt_har = work / f"{NET_NAME}_optimized.har"
