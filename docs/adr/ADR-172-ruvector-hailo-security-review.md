@@ -134,13 +134,28 @@ be safer.
 - udev rule `KERNEL=="hailo0", MODE="0660", GROUP="ruvector-hailo"`
 - `install.sh` creates the user/group + drops the udev file
 
-**3b. No rate limiting per peer.**
-Single client can DoS by saturating NPU at line rate. Workers process
+**3b. No rate limiting per peer.** [✅ MITIGATED — iter 104]
+Single client could DoS by saturating NPU at line rate. Workers process
 one embed at a time (Mutex), so concurrent attackers serialize — but
-that's still 100% utilization.
+that's still 100% utilization, and a runaway client thrashes the LRU
+cache before the NPU even sees the request.
 
-*Mitigation:* Tonic interceptor that rate-limits per source IP /
-client-cert fingerprint. `governor` crate (~50 LOC).
+*Mitigation (shipped iter 104):* New `crate::rate_limit` module wraps
+`governor` + `dashmap` into a per-peer leaky-bucket limiter. Worker
+installs a tonic `Interceptor` that runs `peer_identity(&req)` (mTLS
+leaf-cert sha256 prefix when present, peer IP otherwise, `"anonymous"`
+fallback) and consults the limiter; quota breach returns
+`Status::resource_exhausted` *before* the request reaches the cache or
+NPU. Opt-in via `RUVECTOR_RATE_LIMIT_RPS` (default 0 = disabled);
+optional `RUVECTOR_RATE_LIMIT_BURST` (defaults to RPS). Verified by 6
+unit tests on `RateLimiter` + `peer_identity` (burst exhaust, per-peer
+independence, env-var disabled / enabled, zero-rps short-circuit, IP
+fallback) + 2 end-to-end tests in `tests/rate_limit_interceptor.rs`
+(3rd-of-burst-2 returns ResourceExhausted with the ADR reference in the
+status message; off-path passes unrestricted traffic). Cert-subject
+identity path is exercised end-to-end by `tests/mtls_roundtrip.rs`
+which sets up the same `TlsConnectInfo` extension chain that
+`peer_identity` reads from.
 
 **3c. No audit log.** [✅ MITIGATED — iter 103]
 Worker tracing logged `text_len` only by default (no full text — earlier
@@ -238,7 +253,7 @@ session key. Out-of-band key exchange via QR code at provisioning.
 | 92 | MEDIUM | 5c — cargo-audit CI | new workflow + initial vuln triage |
 | 93 | MEDIUM | 3a — drop root | new user + udev rule + install.sh update |
 | 93 | MEDIUM | 2a — fp required with cache | CLI flag enforcement + docs (✅ shipped iter 101) |
-| 94 | MEDIUM | 3b — per-peer rate limit | governor interceptor |
+| 94 | MEDIUM | 3b — per-peer rate limit | governor interceptor (✅ shipped iter 104 via RUVECTOR_RATE_LIMIT_RPS env) |
 | 94 | MEDIUM | 2b — auto-fp quorum requirement | discover_fingerprint quorum mode (✅ shipped iter 102) |
 | 95 | MEDIUM | 3c — log text hash mode | --log-text-content flag (✅ shipped iter 103 via RUVECTOR_LOG_TEXT_CONTENT env) |
 | 96 | HIGH (future) | 6a — HEF signature verification | sig file + pubkey on worker startup |

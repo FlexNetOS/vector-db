@@ -15,6 +15,10 @@
 //!   RUVECTOR_TLS_CLIENT_CA path to PEM client CA bundle   (mTLS — optional)
 //!   RUVECTOR_LOG_TEXT_CONTENT  embed text audit mode: none|hash|full
 //!                              (ADR-172 §3c — default none = no leak)
+//!   RUVECTOR_RATE_LIMIT_RPS    Per-peer requests/sec quota; 0 = disabled
+//!                              (ADR-172 §3b — default 0)
+//!   RUVECTOR_RATE_LIMIT_BURST  Optional burst capacity; defaults to RPS
+//!                              if unset (only used when RPS > 0)
 //!
 //! When both `RUVECTOR_TLS_CERT` and `RUVECTOR_TLS_KEY` are set and the
 //! binary was built with `--features tls`, the worker serves over HTTPS
@@ -43,6 +47,8 @@ use ruvector_hailo_cluster::proto::{
 use tokio_stream::wrappers::ReceiverStream;
 use tonic::{transport::Server, Request, Response, Status};
 use tracing::{error, info, instrument, warn};
+
+use ruvector_hailo_cluster::rate_limit::{peer_identity, RateLimiter};
 
 /// Tracing / audit-log mode for embed text content (ADR-172 §3c iter 103).
 /// Default is `None` so we don't leak text content into logs by default;
@@ -366,6 +372,15 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     )?;
     info!(mode = ?log_text_content, "embed text-content audit mode");
 
+    // ADR-172 §3b iter-104: per-peer rate limiter. None = disabled (back-
+    // compat default); Some(_) when RUVECTOR_RATE_LIMIT_RPS > 0. Wrapped
+    // in Arc<Option<_>> so the interceptor closure captures cheaply and
+    // the always-install path stays type-uniform.
+    let rate_limiter = Arc::new(RateLimiter::from_env());
+    if rate_limiter.is_some() {
+        info!("per-peer rate limiter enabled (ADR-172 §3b iter 104)");
+    }
+
     let svc = WorkerService {
         embedder: Arc::new(embedder),
         version: format!("ruvector-hailo-worker {}", env!("CARGO_PKG_VERSION")),
@@ -420,8 +435,28 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             }
         }
         info!(addr = %bind, "ruvector-hailo-worker serving");
+        // Always install the interceptor; it's a no-op when the limiter
+        // is None. Avoids type-divergence between enabled/disabled arms.
+        let rl = Arc::clone(&rate_limiter);
+        // `Status` weighs ~176 bytes, which trips clippy's
+        // result_large_err on the closure return type. We can't
+        // change tonic's signature, so allow it locally.
+        #[allow(clippy::result_large_err)]
+        let interceptor = move |req: Request<()>| -> Result<Request<()>, Status> {
+            if let Some(limiter) = rl.as_ref() {
+                let peer = peer_identity(&req);
+                if limiter.check(&peer).is_err() {
+                    return Err(Status::resource_exhausted(format!(
+                        "rate limit exceeded for {} (ADR-172 §3b)",
+                        peer
+                    )));
+                }
+            }
+            Ok(req)
+        };
+        let intercepted = EmbeddingServer::with_interceptor(svc, interceptor);
         server
-            .add_service(EmbeddingServer::new(svc))
+            .add_service(intercepted)
             .serve_with_shutdown(bind, shutdown_signal())
             .await
             .map_err(|e| format!("serve: {}", e))?;

@@ -62,6 +62,7 @@ pub mod grpc_transport;
 pub mod health;
 pub mod pool;
 pub mod proto;
+pub mod rate_limit;
 pub mod shard;
 #[cfg(feature = "tls")]
 pub mod tls;

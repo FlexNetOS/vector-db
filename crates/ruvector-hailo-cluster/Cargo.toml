@@ -30,6 +30,12 @@ thiserror          = "2"
 tonic              = { version = "0.12", default-features = false, features = ["codegen", "prost", "channel", "server"] }
 prost              = "0.13"
 tokio              = { version = "1", default-features = false, features = ["rt-multi-thread", "macros", "net", "time", "signal", "sync"] }
+# ADR-172 §3b iter-104: per-peer leaky-bucket rate limiter. `dashmap`
+# gives a sharded concurrent map keyed by peer identity; `governor`
+# implements the bucket per peer. Both are pulled unconditionally — the
+# rate limiter is opt-in via env var but the code path always compiles.
+dashmap            = "6"
+governor           = { version = "0.7", default-features = false, features = ["std", "quanta"] }
 tokio-stream       = { version = "0.1", default-features = false, features = ["net"] }
 futures-core       = "0.3"
 serde              = { version = "1", features = ["derive"] }
