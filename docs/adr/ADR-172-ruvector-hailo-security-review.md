@@ -142,13 +142,19 @@ that's still 100% utilization.
 *Mitigation:* Tonic interceptor that rate-limits per source IP /
 client-cert fingerprint. `governor` crate (~50 LOC).
 
-**3c. No audit log.**
-Worker tracing logs embed text + request_id. Useful for ops but a
-privacy concern at scale (text content in logs forever). No way to
-opt out except `RUST_LOG=warn` which loses other diagnostics.
+**3c. No audit log.** [✅ MITIGATED — iter 103]
+Worker tracing logged `text_len` only by default (no full text — earlier
+draft of this section was overcautious), but had no way for ops to opt
+into content-correlated logging without dumping raw text via RUST_LOG=trace.
 
-*Mitigation:* Add `--log-text-content {full|hash|none}` flag. Default
-to `hash` (sha256 of input) so correlation works without leaking text.
+*Mitigation (shipped iter 103):* New `RUVECTOR_LOG_TEXT_CONTENT` env var
+on the worker — accepts `none|hash|full`. Default `none` preserves the
+existing zero-leak behavior. `hash` records the first 16 hex chars of
+sha256(text) for cross-system correlation without revealing content.
+`full` is the explicit debug-only opt-in. Tested via 6 unit cases on
+`LogTextContent::parse` + `LogTextContent::render` (default-none,
+named-mode parsing, unknown-mode error, render-none-as-dash, render-hash-
+is-deterministic-16-hex, render-full-passes-through).
 
 ### 4. Tracing / log injection — LOW
 
@@ -234,7 +240,7 @@ session key. Out-of-band key exchange via QR code at provisioning.
 | 93 | MEDIUM | 2a — fp required with cache | CLI flag enforcement + docs (✅ shipped iter 101) |
 | 94 | MEDIUM | 3b — per-peer rate limit | governor interceptor |
 | 94 | MEDIUM | 2b — auto-fp quorum requirement | discover_fingerprint quorum mode (✅ shipped iter 102) |
-| 95 | MEDIUM | 3c — log text hash mode | --log-text-content flag |
+| 95 | MEDIUM | 3c — log text hash mode | --log-text-content flag (✅ shipped iter 103 via RUVECTOR_LOG_TEXT_CONTENT env) |
 | 96 | HIGH (future) | 6a — HEF signature verification | sig file + pubkey on worker startup |
 | 97 | MEDIUM | 7a/7b — brain + LoRa | telemetry-only flag + X25519 LoRa |
 

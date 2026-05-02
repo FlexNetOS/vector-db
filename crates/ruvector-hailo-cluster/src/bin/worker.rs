@@ -13,6 +13,8 @@
 //!   RUVECTOR_TLS_CERT      path to PEM server cert        (TLS — feature `tls`)
 //!   RUVECTOR_TLS_KEY       path to PEM server private key (TLS — feature `tls`)
 //!   RUVECTOR_TLS_CLIENT_CA path to PEM client CA bundle   (mTLS — optional)
+//!   RUVECTOR_LOG_TEXT_CONTENT  embed text audit mode: none|hash|full
+//!                              (ADR-172 §3c — default none = no leak)
 //!
 //! When both `RUVECTOR_TLS_CERT` and `RUVECTOR_TLS_KEY` are set and the
 //! binary was built with `--features tls`, the worker serves over HTTPS
@@ -42,6 +44,56 @@ use tokio_stream::wrappers::ReceiverStream;
 use tonic::{transport::Server, Request, Response, Status};
 use tracing::{error, info, instrument, warn};
 
+/// Tracing / audit-log mode for embed text content (ADR-172 §3c iter 103).
+/// Default is `None` so we don't leak text content into logs by default;
+/// operators opt into `Hash` for cross-system correlation or `Full` for
+/// debug environments where text exposure is acceptable.
+#[derive(Clone, Copy, Debug)]
+enum LogTextContent {
+    /// No text content in logs (only `text_len`). Default.
+    None,
+    /// First 16 hex chars of sha256(text). Non-reversible correlation.
+    Hash,
+    /// Full text content. Debug only — never recommended for production.
+    Full,
+}
+
+impl LogTextContent {
+    fn parse(s: &str) -> Result<Self, String> {
+        match s {
+            "none" | "" => Ok(Self::None),
+            "hash" => Ok(Self::Hash),
+            "full" => Ok(Self::Full),
+            other => Err(format!(
+                "RUVECTOR_LOG_TEXT_CONTENT must be one of none|hash|full, got {:?}",
+                other
+            )),
+        }
+    }
+
+    /// Render the text in the configured mode. Returns "-" for `None`
+    /// so the tracing field is always populated (downstream parsers
+    /// don't have to handle missing-field cases).
+    fn render(self, text: &str) -> String {
+        match self {
+            Self::None => "-".to_string(),
+            Self::Hash => {
+                use sha2::{Digest, Sha256};
+                let mut h = Sha256::new();
+                h.update(text.as_bytes());
+                let d = h.finalize();
+                let mut hex = String::with_capacity(16);
+                for b in &d.as_slice()[..8] {
+                    use std::fmt::Write as _;
+                    write!(&mut hex, "{:02x}", b).unwrap();
+                }
+                hex
+            }
+            Self::Full => text.to_string(),
+        }
+    }
+}
+
 /// The actual gRPC service. Holds a thread-safe HailoEmbedder.
 struct WorkerService {
     embedder: Arc<HailoEmbedder>,
@@ -56,6 +108,8 @@ struct WorkerService {
     /// Phase 1 ships an empty string until step 6 (HEF) lands; coordinator
     /// treats empty fingerprint as "skip the check".
     fingerprint: String,
+    /// ADR-172 §3c iter-103 audit-log mode for embed text content.
+    log_text_content: LogTextContent,
     /// Process start time, for uptime reporting in GetStats.
     start: Instant,
     /// Atomic counters surfaced via GetStats.
@@ -69,7 +123,7 @@ struct WorkerService {
 
 #[tonic::async_trait]
 impl Embedding for WorkerService {
-    #[instrument(skip(self, request), fields(text_len, latency_us, dim, request_id))]
+    #[instrument(skip(self, request), fields(text_len, text_content, latency_us, dim, request_id))]
     async fn embed(
         &self,
         request: Request<EmbedRequest>,
@@ -82,8 +136,13 @@ impl Embedding for WorkerService {
         );
         let req = request.into_inner();
         let req_id_field: &str = if req_id_owned.is_empty() { "-" } else { &req_id_owned };
+        // ADR-172 §3c iter 103: render text content per configured mode.
+        // Default mode is None → "-", so legacy log scrapers see a
+        // populated field but get no leakable content.
+        let text_content_field = self.log_text_content.render(&req.text);
         tracing::Span::current()
             .record("text_len", req.text.len())
+            .record("text_content", text_content_field.as_str())
             .record("request_id", req_id_field);
 
         let start = Instant::now();
@@ -299,11 +358,20 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         }
     }
 
+    // ADR-172 §3c iter-103: parse the text-content audit mode. Default
+    // None means existing deploys see no behavior change; ops opt into
+    // hash for cross-system correlation or full for debug environments.
+    let log_text_content = LogTextContent::parse(
+        &std::env::var("RUVECTOR_LOG_TEXT_CONTENT").unwrap_or_default(),
+    )?;
+    info!(mode = ?log_text_content, "embed text-content audit mode");
+
     let svc = WorkerService {
         embedder: Arc::new(embedder),
         version: format!("ruvector-hailo-worker {}", env!("CARGO_PKG_VERSION")),
         device_id,
         fingerprint,
+        log_text_content,
         start: Instant::now(),
         embed_ok: AtomicU64::new(0),
         embed_err: AtomicU64::new(0),
@@ -373,5 +441,50 @@ async fn shutdown_signal() {
     tokio::select! {
         _ = sigterm.recv() => info!("SIGTERM received, shutting down"),
         _ = sigint.recv()  => info!("SIGINT received, shutting down"),
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    //! ADR-172 §3c iter-103 unit tests for the audit-log text-content
+    //! mode parser + renderer. The bin is its own crate (not the lib),
+    //! so these tests run via `cargo test --bin ruvector-hailo-worker`.
+    use super::LogTextContent;
+
+    #[test]
+    fn parse_default_empty_is_none() {
+        assert!(matches!(LogTextContent::parse("").unwrap(), LogTextContent::None));
+    }
+
+    #[test]
+    fn parse_named_modes() {
+        assert!(matches!(LogTextContent::parse("none").unwrap(), LogTextContent::None));
+        assert!(matches!(LogTextContent::parse("hash").unwrap(), LogTextContent::Hash));
+        assert!(matches!(LogTextContent::parse("full").unwrap(), LogTextContent::Full));
+    }
+
+    #[test]
+    fn parse_unknown_mode_errors() {
+        let e = LogTextContent::parse("partial").unwrap_err();
+        assert!(e.contains("none|hash|full"), "expected mode list in err: {}", e);
+    }
+
+    #[test]
+    fn render_none_returns_dash() {
+        assert_eq!(LogTextContent::None.render("any text"), "-");
+    }
+
+    #[test]
+    fn render_hash_is_16_hex_chars_deterministic() {
+        let h = LogTextContent::Hash.render("hello world");
+        assert_eq!(h.len(), 16, "expected 16-hex prefix, got {:?}", h);
+        assert!(h.chars().all(|c| c.is_ascii_hexdigit()), "non-hex char in {:?}", h);
+        assert_eq!(LogTextContent::Hash.render("hello world"), h);
+        assert_ne!(LogTextContent::Hash.render("hello world!"), h);
+    }
+
+    #[test]
+    fn render_full_passes_through() {
+        assert_eq!(LogTextContent::Full.render("payload"), "payload");
     }
 }
