@@ -12,6 +12,7 @@ on:
     paths:
       - 'crates/ruvector-hailo-cluster/**'
       - 'crates/ruvector-hailo/**'
+      - 'crates/ruvector-mmwave/**'
       - 'crates/hailort-sys/**'
       - 'docs/adr/ADR-167-*.md'
       - 'docs/adr/ADR-168-*.md'
@@ -26,6 +27,7 @@ on:
     paths:
       - 'crates/ruvector-hailo-cluster/**'
       - 'crates/ruvector-hailo/**'
+      - 'crates/ruvector-mmwave/**'
       - 'crates/hailort-sys/**'
       - '.github/workflows/hailo-backend-audit.yml'
 
@@ -111,6 +113,15 @@ jobs:
       - name: Run doctests
         working-directory: crates/ruvector-hailo-cluster
         run: cargo test --doc
+      # Iter 115/118: shared mmwave parser crate. Tested independently
+      # so a regression in the parser fails CI before it can corrupt
+      # both the firmware and the host bridge that depend on it.
+      - name: Test shared mmwave parser crate
+        working-directory: crates/ruvector-mmwave
+        run: cargo test --all-features
+      - name: Clippy shared mmwave parser crate
+        working-directory: crates/ruvector-mmwave
+        run: cargo clippy --all-targets --all-features -- -D warnings
 
   doc-warnings:
     name: missing-docs check
