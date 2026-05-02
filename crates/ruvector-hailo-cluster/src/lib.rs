@@ -121,6 +121,12 @@ pub struct FleetMemberState {
     /// `None` if the health probe failed; the stats RPC may still
     /// have succeeded (and vice versa).
     pub fingerprint: Option<String>,
+    /// On-die NPU temperature sensor 0 in Celsius. `None` if the worker
+    /// didn't populate it (older firmware) or the health probe failed.
+    /// Iter-96b deliverable from ADR-174 §93b.
+    pub npu_temp_ts0_celsius: Option<f32>,
+    /// On-die NPU temperature sensor 1 in Celsius.
+    pub npu_temp_ts1_celsius: Option<f32>,
     /// Per-worker counters from the GetStats RPC, or the transport
     /// error encountered (kept as a `Result` so a single bad worker
     /// doesn't poison the rest of the fleet snapshot).
@@ -629,9 +635,20 @@ impl HailoClusterEmbedder {
             .all_endpoints()
             .into_iter()
             .map(|w| {
-                let fingerprint = self.transport.health(&w).ok().map(|h| h.model_fingerprint);
+                // One health() RPC per worker — pulls fingerprint + NPU
+                // temps from the same call (iter 96 wired temps in).
+                let health = self.transport.health(&w).ok();
+                let fingerprint = health.as_ref().map(|h| h.model_fingerprint.clone());
+                let npu_temp_ts0_celsius = health.as_ref().and_then(|h| h.npu_temp_ts0_celsius);
+                let npu_temp_ts1_celsius = health.as_ref().and_then(|h| h.npu_temp_ts1_celsius);
                 let stats = self.transport.stats(&w);
-                FleetMemberState { endpoint: w, fingerprint, stats }
+                FleetMemberState {
+                    endpoint: w,
+                    fingerprint,
+                    npu_temp_ts0_celsius,
+                    npu_temp_ts1_celsius,
+                    stats,
+                }
             })
             .collect()
     }

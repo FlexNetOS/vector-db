@@ -165,6 +165,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                         &m.endpoint.name,
                         &m.endpoint.address,
                         m.fingerprint.as_deref().unwrap_or(""),
+                        m.npu_temp_ts0_celsius,
+                        m.npu_temp_ts1_celsius,
                         s,
                     )),
                     Err(e) => {
@@ -193,6 +195,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                             "worker":      m.endpoint.name,
                             "address":     m.endpoint.address,
                             "fingerprint": m.fingerprint,
+                            "npu_temp_ts0_celsius": m.npu_temp_ts0_celsius,
+                            "npu_temp_ts1_celsius": m.npu_temp_ts1_celsius,
                             "stats":       s,
                         });
                         println!("{}", line);
@@ -202,6 +206,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                             "worker":      m.endpoint.name,
                             "address":     m.endpoint.address,
                             "fingerprint": m.fingerprint,
+                            "npu_temp_ts0_celsius": m.npu_temp_ts0_celsius,
+                            "npu_temp_ts1_celsius": m.npu_temp_ts1_celsius,
                             "error":       e.to_string(),
                         });
                         println!("{}", line);
@@ -217,6 +223,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                         &m.endpoint.name,
                         &m.endpoint.address,
                         m.fingerprint.as_deref().unwrap_or(""),
+                        m.npu_temp_ts0_celsius,
+                        m.npu_temp_ts1_celsius,
                         s,
                     ),
                     Err(e) => {
@@ -227,24 +235,27 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                 }
             }
         } else {
-            println!("worker\taddress\tfingerprint\tembeds\terrors\tavg_us\tmax_us\tup_s");
+            println!("worker\taddress\tfingerprint\tnpu_t0\tnpu_t1\tembeds\terrors\tavg_us\tmax_us\tup_s");
             for m in &snapshots {
+                let fp = m.fingerprint.as_deref().unwrap_or("?");
+                let t0 = m.npu_temp_ts0_celsius
+                    .map(|t| format!("{:.1}", t)).unwrap_or_else(|| "?".into());
+                let t1 = m.npu_temp_ts1_celsius
+                    .map(|t| format!("{:.1}", t)).unwrap_or_else(|| "?".into());
                 match &m.stats {
                     Ok(s) => {
                         let avg_us = s.average_latency().map(|d| d.as_micros() as u64).unwrap_or(0);
                         let max_us = s.latency_max.map(|d| d.as_micros() as u64).unwrap_or(0);
-                        let fp = m.fingerprint.as_deref().unwrap_or("?");
                         println!(
-                            "{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}",
-                            m.endpoint.name, m.endpoint.address, fp,
+                            "{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}",
+                            m.endpoint.name, m.endpoint.address, fp, t0, t1,
                             s.embed_count, s.error_count,
                             avg_us, max_us, s.uptime.as_secs(),
                         );
                     }
                     Err(e) => {
-                        let fp = m.fingerprint.as_deref().unwrap_or("?");
-                        println!("{}\t{}\t{}\tERROR: {}",
-                            m.endpoint.name, m.endpoint.address, fp, e);
+                        println!("{}\t{}\t{}\t{}\t{}\tERROR: {}",
+                            m.endpoint.name, m.endpoint.address, fp, t0, t1, e);
                         had_error = true;
                     }
                 }
@@ -335,6 +346,7 @@ fn emit_prom_header() {
         ("ruvector_latency_microseconds_min","Smallest microsecond latency observed since boot.",               "gauge"),
         ("ruvector_latency_microseconds_max","Largest microsecond latency observed since boot.",                "gauge"),
         ("ruvector_uptime_seconds",          "Seconds since worker process started.",                           "gauge"),
+        ("ruvector_npu_temp_celsius",        "Hailo-8 on-die thermal sensor reading (sensor=ts0|ts1).",         "gauge"),
     ];
     for (name, help, kind) in lines {
         println!("# HELP {} {}", name, help);
@@ -345,10 +357,13 @@ fn emit_prom_header() {
 /// Emit one row per metric for a worker. Fingerprint goes on every row
 /// as a label so PromQL filters like `{fingerprint="fp:current"}` work
 /// for fleet drift detection.
+#[allow(clippy::too_many_arguments)]
 fn emit_prom_row(
     name: &str,
     address: &str,
     fingerprint: &str,
+    npu_t0: Option<f32>,
+    npu_t1: Option<f32>,
     s: &ruvector_hailo_cluster::transport::StatsSnapshot,
 ) {
     let labels = format!(
@@ -366,6 +381,19 @@ fn emit_prom_row(
         println!("ruvector_latency_microseconds_max{} {}", labels, d.as_micros() as u64);
     }
     println!("ruvector_uptime_seconds{} {}", labels, s.uptime.as_secs());
+    if let Some(t) = npu_t0 {
+        // Append `sensor` label so PromQL can split by ts0/ts1.
+        println!(
+            "ruvector_npu_temp_celsius{{worker={:?},address={:?},fingerprint={:?},sensor=\"ts0\"}} {:.3}",
+            name, address, fingerprint, t
+        );
+    }
+    if let Some(t) = npu_t1 {
+        println!(
+            "ruvector_npu_temp_celsius{{worker={:?},address={:?},fingerprint={:?},sensor=\"ts1\"}} {:.3}",
+            name, address, fingerprint, t
+        );
+    }
 }
 
 /// String version of `emit_prom_header` so the file path can build the
@@ -379,6 +407,7 @@ fn prom_header_string() -> String {
         ("ruvector_latency_microseconds_min","Smallest microsecond latency observed since boot.",               "gauge"),
         ("ruvector_latency_microseconds_max","Largest microsecond latency observed since boot.",                "gauge"),
         ("ruvector_uptime_seconds",          "Seconds since worker process started.",                           "gauge"),
+        ("ruvector_npu_temp_celsius",        "Hailo-8 on-die thermal sensor reading (sensor=ts0|ts1).",         "gauge"),
     ];
     let mut s = String::new();
     for (name, help, kind) in lines {
@@ -390,10 +419,13 @@ fn prom_header_string() -> String {
 
 /// String version of `emit_prom_row`. See `emit_prom_row` for the
 /// rationale on adding `fingerprint` as a label.
+#[allow(clippy::too_many_arguments)]
 fn prom_row_string(
     name: &str,
     address: &str,
     fingerprint: &str,
+    npu_t0: Option<f32>,
+    npu_t1: Option<f32>,
     s: &ruvector_hailo_cluster::transport::StatsSnapshot,
 ) -> String {
     let labels = format!(
@@ -428,6 +460,18 @@ fn prom_row_string(
         labels,
         s.uptime.as_secs()
     ));
+    if let Some(t) = npu_t0 {
+        out.push_str(&format!(
+            "ruvector_npu_temp_celsius{{worker={:?},address={:?},fingerprint={:?},sensor=\"ts0\"}} {:.3}\n",
+            name, address, fingerprint, t
+        ));
+    }
+    if let Some(t) = npu_t1 {
+        out.push_str(&format!(
+            "ruvector_npu_temp_celsius{{worker={:?},address={:?},fingerprint={:?},sensor=\"ts1\"}} {:.3}\n",
+            name, address, fingerprint, t
+        ));
+    }
     out
 }
 
