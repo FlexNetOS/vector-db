@@ -18,6 +18,42 @@ from pathlib import Path
 
 os.environ.setdefault("TRANSFORMERS_NO_TF", "1")
 
+# Iter 153 monkey-patch: the SDK's `ElementwiseAddDirectOp`
+# (and a handful of sibling acceleras op classes) inherit from
+# `keras.layers.Layer` but aren't decorated with
+# `@keras.saving.register_keras_serializable()`. Inside the optimizer,
+# `_decompose_layer_norm` calls `keras.deepcopy(model)` which serializes
+# to JSON then deserializes — and the deserialize step looks the class
+# up by name in Keras's registry. KeyError follows for any unregistered
+# class. Workaround: walk every module under
+# `hailo_model_optimization.acceleras` and register every Layer subclass
+# we find. This is what the SDK should do internally.
+import importlib
+import inspect
+import pkgutil
+try:
+    import keras
+    import hailo_model_optimization.acceleras as _acceleras_pkg
+    registered = 0
+    for _finder, _name, _ in pkgutil.walk_packages(
+        _acceleras_pkg.__path__, prefix="hailo_model_optimization.acceleras."
+    ):
+        try:
+            _mod = importlib.import_module(_name)
+        except Exception:
+            continue
+        for _attr_name, _attr in inspect.getmembers(_mod, inspect.isclass):
+            if (
+                _attr.__module__ == _name
+                and issubclass(_attr, keras.layers.Layer)
+                and getattr(_attr, "_keras_api_names", None) is None
+            ):
+                keras.saving.register_keras_serializable()(_attr)
+                registered += 1
+    print(f"==> registered {registered} acceleras Layer classes for Keras serialize")
+except Exception as e:
+    print(f"==> warn: keras-register monkey-patch failed: {type(e).__name__}: {e}")
+
 from hailo_sdk_client import ClientRunner
 import numpy as np
 
@@ -63,8 +99,15 @@ def main(onnx_path: str, out_hef: str) -> None:
     # recipe alls directives that ARE supported in 3.33: equalization,
     # disable ew_add fusing, optimization_level=0, matmul correction,
     # negative_exponent rank=0, ew_add 16-bit precision.
+    # Iter 146: add `multiproc_policy=disabled` (cribbed from
+    # tinyclip_vit_8m_16_text_3m_yfcc15m_text_encoder.alls). The
+    # iter-142b/144 ElementwiseAddDirectOp Keras deserialize bug fires
+    # inside a spawned subprocess that doesn't carry the SDK's custom
+    # layer registry. Disabling multiproc keeps the optimizer in-process
+    # so the @register_keras_serializable decorations stay loaded.
     bert_alls = """\
 model_optimization_config(calibration, batch_size=8, calibset_size=64)
+model_optimization_config(globals, multiproc_policy=disabled)
 pre_quantization_optimization(equalization, policy=enabled)
 pre_quantization_optimization(ew_add_fusing, policy=disabled)
 model_optimization_flavor(optimization_level=0, compression_level=0)
