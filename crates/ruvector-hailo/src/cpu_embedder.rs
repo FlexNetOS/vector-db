@@ -42,15 +42,37 @@ use crate::error::HailoError;
 use candle_core::{DType, Device, Tensor};
 use candle_nn::VarBuilder;
 use candle_transformers::models::bert::{BertModel, Config};
-use std::path::Path;
+use std::path::{Path, PathBuf};
+use std::sync::atomic::{AtomicUsize, Ordering};
 use std::sync::Mutex;
 use tokenizers::Tokenizer;
 
 /// CPU-side BERT-6 embedder. Held in `HailoEmbedder` as a fallback
-/// when no HEF is loaded. Thread-safe: forward inference is mutexed
-/// because candle's BERT impl is not Sync (holds owned Tensors).
+/// when no HEF is loaded.
+///
+/// **Iter 147 — parallel inference pool.** Holds N independent
+/// `Inner` instances behind separate `Mutex` locks. The `embed()` call
+/// round-robins through them with `try_lock`, falling back to the
+/// designated next slot if all are busy. This unblocks N concurrent
+/// embed() callers from queueing on a single mutex (which capped
+/// throughput at ~25 embeds/sec on x86 release, regardless of how
+/// many cluster threads were dispatching).
+///
+/// Memory cost: N safetensors mmaps that the OS dedupes when they
+/// open the same file, so the 90 MB weight blob is shared. Each
+/// `Inner` only adds the candle `BertModel` graph structure (~few
+/// hundred KB) so 4 instances ≈ 100 MB resident vs 90 MB for 1.
+///
+/// Pool size is set via `RUVECTOR_CPU_FALLBACK_POOL_SIZE` (default 1
+/// for backward compat; set to 4 on a Pi 5 for ~4× throughput).
 pub struct CpuEmbedder {
-    inner: Mutex<Inner>,
+    /// One Mutex per pool slot. `Vec<Mutex<Inner>>` (not
+    /// `Mutex<Vec<Inner>>`) so try_lock on individual slots doesn't
+    /// serialize through a single outer lock.
+    pool: Vec<Mutex<Inner>>,
+    /// Round-robin index for fair dispatch + bounded blocking when
+    /// all try_locks fail. Incremented on every embed() call.
+    next_slot: AtomicUsize,
     output_dim: usize,
     /// 128-token sequence cap matches all-MiniLM-L6-v2's training-time
     /// max. Raising this breaks RoPE/positional baked into the weights.
@@ -64,10 +86,31 @@ struct Inner {
 }
 
 impl CpuEmbedder {
-    /// Load the model from `model_dir`. Errors if the three required
-    /// files (model.safetensors, tokenizer.json, config.json) aren't
-    /// all present + parseable.
+    /// Load the model with the default pool size (1, or whatever
+    /// `RUVECTOR_CPU_FALLBACK_POOL_SIZE` is set to).
     pub fn open(model_dir: &Path) -> Result<Self, HailoError> {
+        let n = std::env::var("RUVECTOR_CPU_FALLBACK_POOL_SIZE")
+            .ok()
+            .and_then(|s| s.parse::<usize>().ok())
+            .filter(|&n| n >= 1)
+            .unwrap_or(1);
+        Self::open_with_pool(model_dir, n)
+    }
+
+    /// Load the model from `model_dir` with `pool_size` parallel
+    /// inference slots. Errors if the three required files
+    /// (model.safetensors, tokenizer.json, config.json) aren't all
+    /// present + parseable, or if `pool_size == 0`.
+    pub fn open_with_pool(
+        model_dir: &Path,
+        pool_size: usize,
+    ) -> Result<Self, HailoError> {
+        if pool_size == 0 {
+            return Err(HailoError::Tokenizer(
+                "pool_size must be >= 1".to_string(),
+            ));
+        }
+
         let weights_path = model_dir.join("model.safetensors");
         let tokenizer_path = model_dir.join("tokenizer.json");
         let config_path = model_dir.join("config.json");
@@ -104,25 +147,40 @@ impl CpuEmbedder {
             .map_err(|e| HailoError::Tokenizer(format!("parse config.json: {}", e)))?;
         let output_dim = config.hidden_size;
 
-        // Load weights via candle's safetensors mmap helper.
-        let vb = unsafe {
-            VarBuilder::from_mmaped_safetensors(&[&weights_path], DType::F32, &device)
+        // Load N independent BertModel instances. Each calls
+        // `from_mmaped_safetensors` against the same file; OS-level
+        // mmap dedupes the 90 MB weight blob into shared physical
+        // pages, so the per-slot memory cost is just the candle
+        // BertModel graph structure (~few hundred KB) — see iter-147
+        // commit message for the empirical breakdown.
+        let mut pool: Vec<Mutex<Inner>> = Vec::with_capacity(pool_size);
+        for _ in 0..pool_size {
+            let vb = unsafe {
+                VarBuilder::from_mmaped_safetensors(
+                    &[&weights_path],
+                    DType::F32,
+                    &device,
+                )
                 .map_err(|e| HailoError::Tokenizer(format!("load safetensors: {}", e)))?
-        };
-        let model = BertModel::load(vb, &config)
-            .map_err(|e| HailoError::Tokenizer(format!("BertModel::load: {}", e)))?;
-
-        // HF tokenizers — handles padding + truncation; faster than
-        // our own WordPiece walk.
-        let tokenizer = Tokenizer::from_file(&tokenizer_path)
-            .map_err(|e| HailoError::Tokenizer(format!("Tokenizer::from_file: {}", e)))?;
-
-        Ok(Self {
-            inner: Mutex::new(Inner {
+            };
+            let model = BertModel::load(vb, &config)
+                .map_err(|e| HailoError::Tokenizer(format!("BertModel::load: {}", e)))?;
+            // Tokenizer per slot — they're cheap (~few MB) and using
+            // one per slot avoids any internal mutability gotchas.
+            let tokenizer = Tokenizer::from_file(&tokenizer_path)
+                .map_err(|e| HailoError::Tokenizer(format!("Tokenizer::from_file: {}", e)))?;
+            pool.push(Mutex::new(Inner {
                 model,
                 tokenizer,
-                device,
-            }),
+                device: device.clone(),
+            }));
+        }
+        // Suppress unused-import warning when PathBuf isn't used in this build
+        let _ = std::mem::size_of::<PathBuf>();
+
+        Ok(Self {
+            pool,
+            next_slot: AtomicUsize::new(0),
             output_dim,
             max_seq: 128,
         })
@@ -132,12 +190,37 @@ impl CpuEmbedder {
         self.output_dim
     }
 
+    /// Pool size — number of parallel inference slots. Iter 147.
+    pub fn pool_size(&self) -> usize {
+        self.pool.len()
+    }
+
+    /// Acquire an inference slot. Iter 147 dispatch:
+    ///   1. round-robin pick a starting slot via the AtomicUsize
+    ///   2. try_lock that slot first (best case: parallel work)
+    ///   3. fall through with try_lock on every other slot
+    ///   4. if all are busy, block on the originally-picked slot
+    ///      (bounded wait, fair-ish under load)
+    fn acquire_slot(&self) -> std::sync::MutexGuard<'_, Inner> {
+        let n = self.pool.len();
+        let start = self.next_slot.fetch_add(1, Ordering::Relaxed) % n;
+        for i in 0..n {
+            let idx = (start + i) % n;
+            if let Ok(g) = self.pool[idx].try_lock() {
+                return g;
+            }
+        }
+        self.pool[start]
+            .lock()
+            .unwrap_or_else(|p| p.into_inner())
+    }
+
     /// Embed `text` into a unit-norm `output_dim`-length f32 vector.
     /// Mean-pools the BERT-6 output across the masked sequence and
     /// L2-normalises — matches what `sentence-transformers/all-MiniLM-L6-v2`
     /// produces from its native Python pipeline.
     pub fn embed(&self, text: &str) -> Result<Vec<f32>, HailoError> {
-        let mut g = self.inner.lock().unwrap_or_else(|p| p.into_inner());
+        let mut g = self.acquire_slot();
         let inner = &mut *g;
 
         let mut encoding = inner
