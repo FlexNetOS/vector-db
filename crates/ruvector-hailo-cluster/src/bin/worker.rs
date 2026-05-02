@@ -116,9 +116,11 @@ impl Embedding for WorkerService {
             device_id: self.device_id.clone(),
             model_fingerprint: self.fingerprint.clone(),
             // Worker is "ready" iff embedder.dimensions() returned a real
-            // dim from a loaded HEF. With the stubbed embedder
-            // dimensions() is 0 — report not-ready so the coordinator
-            // ejects this worker until step 6 lands.
+            // dim. Iter 87+: open() pre-declares MINI_LM_DIM = 384 so the
+            // worker reports ready=true and the coordinator dispatches
+            // even before the .hef lands (FNV-1a placeholder vectors).
+            // When HEF wiring lands the dim will come from the loaded
+            // network group's output shape instead.
             ready: self.embedder.dimensions() > 0,
         }))
     }

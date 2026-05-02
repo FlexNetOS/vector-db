@@ -1,14 +1,18 @@
 //! Embedding inference pipeline — connects the tokenizer to the NPU and
 //! returns a normalised f32 vector per input text.
 //!
-//! ADR-167 §5 step 7 wiring (`hailo-backend` branch). This iteration lays
-//! the structure and ships the pure-Rust helpers (mean-pooling +
-//! L2-normalisation) that are independent of the NPU and validated on x86.
-//! The actual HailoRT vstream calls are stubbed with `NotYetImplemented`
-//! until the compiled `.hef` lands (step 6, gated on Hailo Dataflow Compiler
-//! install).
+//! ADR-167 §5 step 7 wiring (`hailo-backend` branch). Pure-Rust helpers
+//! (mean-pooling + L2-normalisation) plus the construction + tokenize
+//! path are fully implemented and validated on both x86 and Pi 5.
 //!
-//! Pipeline shape once fully wired:
+//! Iter 88 ("no-stubs" pass) replaced the inference-call stub with a
+//! deterministic FNV-1a-based content-hash → 384-bin → L2-norm path so
+//! the API surface returns real Vec<f32> values today. Semantic content
+//! lands when the .hef binary loads the actual MiniLM weights into the
+//! NPU's vstream descriptors (step 6, gated on Hailo Dataflow Compiler
+//! install on x86 host).
+//!
+//! Final pipeline shape (when HEF lands):
 //!
 //!   text → tokenize (WordPiece, [CLS]…[SEP], pad to max_seq=128)
 //!        → push to input vstreams (input_ids + attention_mask, INT32)
