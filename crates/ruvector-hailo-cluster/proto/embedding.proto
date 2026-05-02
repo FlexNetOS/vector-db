@@ -32,7 +32,8 @@ message EmbedRequest {
   // Override the worker's compile-time max_seq if needed (e.g. shorter
   // for low-latency probes). 0 = use worker default.
   uint32 max_seq = 2;
-  // Coordinator-set correlation ID. 16 hex chars by convention. Worker
+  // Coordinator-set correlation ID. 26-char ULID by convention (iter
+  // 109; legacy 24-char hex still accepted). Worker
   // logs it via a `request_id` tracing field so coordinator + worker
   // log lines for the same RPC can be joined. Empty string = caller
   // didn't set one (the worker logs it as "-").

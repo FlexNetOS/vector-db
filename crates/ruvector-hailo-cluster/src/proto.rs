@@ -14,13 +14,24 @@ tonic::include_proto!("ruvector.hailo.v1");
 /// `x-request-id` without knowing the proto schema.
 pub const REQUEST_ID_HEADER: &str = "x-request-id";
 
-/// 24-hex-char correlation ID with a sortable timestamp prefix.
+/// Crockford's base32 alphabet for ULID encoding (no I, L, O, U).
+const CROCKFORD: &[u8; 32] = b"0123456789ABCDEFGHJKMNPQRSTVWXYZ";
+
+/// 26-char ULID correlation ID — sortable, standard, 80 bits entropy.
 ///
-/// Layout: `<16-hex-ms-since-epoch><8-hex-rand>` — 24 chars total.
-/// Lexically-sorted IDs match chronological order, so log queries
-/// like `grep request_id | sort | uniq` reveal call sequence without
-/// timestamp alignment. Random suffix has 32 bits of entropy from
-/// xorshift64* — collisions only matter within a single ms.
+/// Iter-109 (deferred-backlog item): switched from the legacy
+/// `<16-hex-ms><8-hex-rand>` 24-char format to a spec-compliant ULID
+/// (<https://github.com/ulid/spec>) so log-tooling that natively groks
+/// ULIDs (Datadog, Honeycomb, Vector, etc.) can decode the timestamp
+/// without a custom parser. Layout:
+///
+///   chars  0..10 : 48-bit unix-ms big-endian, base32 (Crockford)
+///   chars 10..26 : 80-bit randomness, base32 (Crockford)
+///
+/// Lexicographic sort still matches chronological order — that
+/// invariant is part of the ULID spec by construction. Random suffix
+/// has 80 bits of entropy from xorshift64* (two pulls); collisions
+/// within a single ms are astronomically unlikely.
 ///
 /// Public so callers (web handlers, batch ingest CLIs, custom
 /// transports) can generate matching IDs without going through
@@ -34,7 +45,12 @@ pub fn random_request_id() -> String {
         .duration_since(std::time::UNIX_EPOCH)
         .map(|d| d.as_millis() as u64)
         .unwrap_or(0);
-    let rand32 = STATE.with(|s| {
+    // Mask off bits above 48 — ULID timestamp is 48 bits big-endian.
+    // `now_ms` won't overflow 48 bits until year 10889.
+    let ts48 = now_ms & 0x0000_FFFF_FFFF_FFFF;
+
+    // Two xorshift64* pulls give us 128 random bits; we take 80.
+    let mut rng = STATE.with(|s| {
         let mut x = s.get();
         if x == 0 {
             x = std::time::SystemTime::now()
@@ -42,12 +58,50 @@ pub fn random_request_id() -> String {
                 .map(|d| d.as_nanos() as u64).unwrap_or(1);
             if x == 0 { x = 0x9E3779B97F4A7C15; }
         }
-        x ^= x << 13; x ^= x >> 7; x ^= x << 17;
-        s.set(x);
-        // Top 32 bits — they cycle through PRNG state most uniformly.
-        (x >> 32) as u32
+        x
     });
-    format!("{:016x}{:08x}", now_ms, rand32)
+    let mut next = || {
+        rng ^= rng << 13;
+        rng ^= rng >> 7;
+        rng ^= rng << 17;
+        rng
+    };
+    let r1 = next();
+    let r2 = next();
+    STATE.with(|s| s.set(rng));
+
+    // Compose: 48 ts bits + 80 rand bits = 128 bits, then base32-encode
+    // 5 bits at a time (most-significant first), 26 chars total.
+    // We pack into a 128-bit big integer split as (high u64, low u64):
+    //   high = ts48 << 16 | (top 16 bits of r1)
+    //   low  = (low 48 bits of r1) << 16 | (top 16 bits of r2)
+    let high: u64 = (ts48 << 16) | (r1 >> 48);
+    let low: u64 = (r1 << 16) | (r2 >> 48);
+
+    let mut out = [0u8; 26];
+    // Encode 26 characters of 5 bits each, MSB-first across the 130-bit
+    // logical integer (we only have 128 bits; the top 2 bits of char 0
+    // are zero, which is fine — ULID's first char is always 0..7).
+    for (i, slot) in out.iter_mut().enumerate() {
+        // bit position counted from the *most* significant bit of the
+        // 130-bit value, which is `(25 - i) * 5` from the LSB.
+        let shift = (25 - i) * 5;
+        let bits: u8 = if shift >= 64 {
+            // bits live entirely in `high` (offset shift-64 from its LSB)
+            ((high >> (shift - 64)) & 0x1F) as u8
+        } else if shift + 5 <= 64 {
+            // bits live entirely in `low`
+            ((low >> shift) & 0x1F) as u8
+        } else {
+            // straddle: take low part of `high` + high part of `low`
+            let lo_part = low >> shift;
+            let hi_part = high << (64 - shift);
+            ((hi_part | lo_part) & 0x1F) as u8
+        };
+        *slot = CROCKFORD[bits as usize];
+    }
+    // SAFETY: every byte we wrote is from CROCKFORD which is ASCII.
+    String::from_utf8(out.to_vec()).expect("CROCKFORD is ASCII")
 }
 
 /// Inject `request_id` as the `x-request-id` gRPC metadata header on
@@ -254,16 +308,23 @@ mod tests {
     }
 
     #[test]
-    fn random_request_id_has_24_hex_chars() {
+    fn random_request_id_has_26_crockford_chars() {
+        // Iter-109: ULID format is 26 chars from Crockford's base32
+        // (no I, L, O, U).
         let id = random_request_id();
-        assert_eq!(id.len(), 24, "expected 24-char id, got {:?}", id);
-        assert!(id.chars().all(|c| c.is_ascii_hexdigit()));
+        assert_eq!(id.len(), 26, "expected 26-char ULID, got {:?}", id);
+        for c in id.chars() {
+            assert!(
+                "0123456789ABCDEFGHJKMNPQRSTVWXYZ".contains(c),
+                "char {:?} not in Crockford base32 alphabet (id={:?})",
+                c, id
+            );
+        }
     }
 
     #[test]
     fn random_request_id_two_consecutive_ids_sort_chronologically() {
-        // Generate id1, sleep so the ms timestamp definitely advances,
-        // generate id2. id1 should sort before id2 lexically.
+        // ULID guarantee: lexicographic order matches creation order.
         let id1 = random_request_id();
         std::thread::sleep(std::time::Duration::from_millis(2));
         let id2 = random_request_id();
@@ -274,24 +335,41 @@ mod tests {
     #[test]
     fn random_request_id_uniqueness_within_same_ms() {
         let mut ids = std::collections::HashSet::new();
-        for _ in 0..100 {
+        for _ in 0..1000 {
             ids.insert(random_request_id());
         }
-        assert_eq!(ids.len(), 100, "duplicate IDs in 100 rapid calls");
+        // 80-bit randomness: collisions in 1000 same-ms calls are
+        // astronomically unlikely. If this ever fails, the entropy
+        // source has regressed.
+        assert_eq!(ids.len(), 1000, "duplicate ULIDs in 1000 rapid calls");
     }
 
     #[test]
     fn random_request_id_prefix_decodes_to_recent_ms() {
+        // ULID timestamp is the first 10 chars of Crockford base32 =
+        // 48 bits = unix ms. Decode and check it's within ±5s of now.
         let now_ms = std::time::SystemTime::now()
             .duration_since(std::time::UNIX_EPOCH)
             .unwrap()
             .as_millis() as u64;
         let id = random_request_id();
-        let prefix_ms = u64::from_str_radix(&id[..16], 16)
-            .expect("prefix should be parseable hex u64");
-        let delta = prefix_ms.abs_diff(now_ms);
-        assert!(delta < 5_000,
-            "prefix ms {} differs from now {} by {}ms", prefix_ms, now_ms, delta);
+        let prefix = &id[..10];
+        let mut ts: u64 = 0;
+        for c in prefix.chars() {
+            // Crockford alphabet → 0..32; only the digits we encode are
+            // present (we don't decode I/L/O/U aliases since we never
+            // emitted them).
+            let v = "0123456789ABCDEFGHJKMNPQRSTVWXYZ"
+                .find(c)
+                .expect("char must be from Crockford alphabet");
+            ts = (ts << 5) | (v as u64);
+        }
+        let delta = ts.abs_diff(now_ms);
+        assert!(
+            delta < 5_000,
+            "prefix ms {} differs from now {} by {}ms",
+            ts, now_ms, delta
+        );
     }
 
     #[test]
