@@ -96,15 +96,22 @@ it land here. Tested end-to-end via 3 new cases in `tests/embed_cli.rs`:
 (1) refusal without opt-in, (2) success with `--allow-empty-fingerprint`,
 (3) success with `--fingerprint <hex>` set.
 
-**2b. Worker-reported fingerprint is trusted blindly.**
-A malicious worker can claim any fingerprint. Cache key includes the
-*coordinator's expected* fp, which mitigates if it's set — but iter
-46's `--auto-fingerprint` flow asks the worker for the fp, so a hostile
-worker can pollute.
+**2b. Worker-reported fingerprint is trusted blindly.** [✅ MITIGATED — iter 102]
+A malicious worker could claim any fingerprint. Cache key includes the
+*coordinator's expected* fp, which mitigates if it's set — but the
+`--auto-fingerprint` flow asks the worker for the fp, so a hostile
+worker could pollute.
 
-*Mitigation:* When `--auto-fingerprint` is set, after discovering a fp,
-require at least 2 workers in the fleet to report the same fp before
-trusting it. Currently any single worker can establish "the" fp.
+*Mitigation (shipped iter 102):* New `discover_fingerprint_with_quorum`
+on `HailoClusterEmbedder` tallies every worker's reported fingerprint
+and only returns one with at least `min_agree` agreeing workers. The
+`embed` and `bench` CLIs default to `min_agree=2` when the fleet has
+≥2 workers (single-witness mode preserved for solo dev fleets).
+Operator override: `--auto-fingerprint-quorum <N>`. Empty fingerprints
+are excluded from the tally so "no model" can't masquerade as quorum
+agreement. Tested via 5 new unit cases: majority hit, no-majority
+fail-with-tally, solo-witness, all-empty rejected, all-unreachable
+error includes per-worker reasons.
 
 **2c. No cache encryption at rest.**
 Cache lives in process RAM only — not strictly an issue today. Will
@@ -226,7 +233,7 @@ session key. Out-of-band key exchange via QR code at provisioning.
 | 93 | MEDIUM | 3a — drop root | new user + udev rule + install.sh update |
 | 93 | MEDIUM | 2a — fp required with cache | CLI flag enforcement + docs (✅ shipped iter 101) |
 | 94 | MEDIUM | 3b — per-peer rate limit | governor interceptor |
-| 94 | MEDIUM | 2b — auto-fp quorum requirement | discover_fingerprint quorum mode |
+| 94 | MEDIUM | 2b — auto-fp quorum requirement | discover_fingerprint quorum mode (✅ shipped iter 102) |
 | 95 | MEDIUM | 3c — log text hash mode | --log-text-content flag |
 | 96 | HIGH (future) | 6a — HEF signature verification | sig file + pubkey on worker startup |
 | 97 | MEDIUM | 7a/7b — brain + LoRa | telemetry-only flag + X25519 LoRa |

@@ -41,6 +41,10 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let mut validate_fleet = false;
     let mut validate_only = false;
     let mut auto_fingerprint = false;
+    // ADR-172 §2b iter-102: minimum number of workers that must agree
+    // on the fingerprint during --auto-fingerprint discovery. 0 = use
+    // smart default (1 for single-worker fleets, 2 for ≥2-worker fleets).
+    let mut auto_fingerprint_quorum: usize = 0;
     // ADR-172 §2a iter-101 gate: if --cache > 0 is requested but the
     // fingerprint is empty (and didn't get filled in by --auto-fingerprint),
     // refuse to start unless the operator explicitly opted in.
@@ -92,6 +96,11 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             "--validate-fleet" => { validate_fleet = true; i += 1; }
             "--validate-only" => { validate_only = true; validate_fleet = true; i += 1; }
             "--auto-fingerprint" => { auto_fingerprint = true; i += 1; }
+            "--auto-fingerprint-quorum" => {
+                auto_fingerprint_quorum =
+                    args.get(i + 1).and_then(|s| s.parse().ok()).unwrap_or(0);
+                i += 2;
+            }
             "--allow-empty-fingerprint" => { allow_empty_fingerprint = true; i += 1; }
             "--request-id" => { request_id = args.get(i + 1).cloned().unwrap_or_default(); i += 2; }
             "--output" => {
@@ -166,25 +175,34 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let transport: Arc<dyn ruvector_hailo_cluster::transport::EmbeddingTransport + Send + Sync> =
         Arc::new(GrpcTransport::new()?);
 
-    // Auto-discover fingerprint from the first reachable worker if
-    // requested. Operator-friendly alternative to copy-pasting the
-    // sha256 from the deploy artifact — worst case we end up with the
-    // empty string (legacy fleet), which is fine.
+    // Auto-discover fingerprint from the fleet if requested. Quorum mode
+    // (ADR-172 §2b iter 102): when fleet has ≥2 workers and operator
+    // didn't pin --auto-fingerprint-quorum explicitly, default to 2 so a
+    // single hostile/stale worker can't poison the discovered fp. Single-
+    // worker dev fleets keep the legacy 1-of-1 behavior.
     if auto_fingerprint {
+        let resolved_quorum: usize = if auto_fingerprint_quorum > 0 {
+            auto_fingerprint_quorum
+        } else if workers.len() >= 2 {
+            2
+        } else {
+            1
+        };
         // Need a transient cluster with no enforcement (empty fingerprint)
-        // to probe one worker; rebuild below with the discovered value.
+        // to probe; rebuild below with the discovered value.
         let probe = HailoClusterEmbedder::new(
             workers.clone(),
             Arc::clone(&transport),
             dim,
             "".to_string(),
         )?;
-        match probe.discover_fingerprint() {
+        match probe.discover_fingerprint_with_quorum(resolved_quorum) {
             Ok(fp) if !fp.is_empty() => {
                 if !quiet {
                     eprintln!(
-                        "ruvector-hailo-embed: --auto-fingerprint discovered fp={:?} (overrides --fingerprint)",
-                        fp
+                        "ruvector-hailo-embed: --auto-fingerprint (quorum={}) discovered fp={:?} \
+                         (overrides --fingerprint)",
+                        resolved_quorum, fp
                     );
                 }
                 fingerprint = fp;
@@ -511,10 +529,15 @@ OPTIONS:
     --validate-only                 Validate as above, then exit without
                                      reading stdin. CI-friendly health
                                      gate.
-    --auto-fingerprint              Probe one worker for its fingerprint
+    --auto-fingerprint              Probe the fleet for its fingerprint
                                      and use that as the expected value.
                                      Pairs with --validate-fleet to
                                      auto-discover then enforce homogeneity.
+    --auto-fingerprint-quorum <N>   Minimum workers that must agree on the
+                                     fingerprint during --auto-fingerprint
+                                     (ADR-172 §2b). Default: 2 if fleet has
+                                     ≥2 workers, 1 otherwise. Set to 1 to
+                                     bypass the quorum check.
     --allow-empty-fingerprint       Opt out of the ADR-172 §2a safety gate
                                      that refuses --cache > 0 when the
                                      fingerprint is empty. Useful only for

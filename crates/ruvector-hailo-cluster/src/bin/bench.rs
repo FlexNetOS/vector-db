@@ -44,6 +44,9 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let mut quiet = false;
     let mut fingerprint: String = String::new();
     let mut auto_fingerprint = false;
+    // ADR-172 §2b iter-102: quorum threshold for auto-fingerprint. 0 =
+    // smart default (1 for solo fleet, 2 for ≥2 workers).
+    let mut auto_fingerprint_quorum: usize = 0;
     // ADR-172 §2a iter-101 gate — see embed.rs for the rationale; same
     // refusal applies here because bench drives the same cluster code.
     let mut allow_empty_fingerprint = false;
@@ -71,6 +74,11 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             "--quiet" => { quiet = true; i += 1; }
             "--fingerprint" => { fingerprint = args.get(i + 1).cloned().unwrap_or_default(); i += 2; }
             "--auto-fingerprint" => { auto_fingerprint = true; i += 1; }
+            "--auto-fingerprint-quorum" => {
+                auto_fingerprint_quorum =
+                    args.get(i + 1).and_then(|s| s.parse().ok()).unwrap_or(0);
+                i += 2;
+            }
             "--allow-empty-fingerprint" => { allow_empty_fingerprint = true; i += 1; }
             "--validate-fleet" => { validate_fleet = true; i += 1; }
             "--health-check" => {
@@ -126,21 +134,28 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let transport: Arc<dyn ruvector_hailo_cluster::transport::EmbeddingTransport + Send + Sync> =
         Arc::new(GrpcTransport::new()?);
 
-    // Optional auto-discover the fingerprint from worker[0] before
-    // wiring it into the real cluster — same pattern as embed.
+    // Auto-discover with quorum (ADR-172 §2b iter 102). Smart default:
+    // quorum=2 when fleet has ≥2 workers, quorum=1 for solo dev fleets.
     if auto_fingerprint {
+        let resolved_quorum: usize = if auto_fingerprint_quorum > 0 {
+            auto_fingerprint_quorum
+        } else if workers.len() >= 2 {
+            2
+        } else {
+            1
+        };
         let probe = HailoClusterEmbedder::new(
             workers.clone(),
             Arc::clone(&transport),
             dim,
             "".to_string(),
         )?;
-        match probe.discover_fingerprint() {
+        match probe.discover_fingerprint_with_quorum(resolved_quorum) {
             Ok(fp) if !fp.is_empty() => {
                 if !quiet {
                     eprintln!(
-                        "ruvector-hailo-cluster-bench: --auto-fingerprint discovered fp={:?}",
-                        fp
+                        "ruvector-hailo-cluster-bench: --auto-fingerprint (quorum={}) discovered fp={:?}",
+                        resolved_quorum, fp
                     );
                 }
                 fingerprint = fp;
@@ -500,8 +515,11 @@ OPTIONS:
                                      a metrics file silently.
     --fingerprint <hex>             Reject workers reporting different
                                      fingerprints. Empty = no enforcement.
-    --auto-fingerprint              Probe one worker for its fingerprint
+    --auto-fingerprint              Probe the fleet for its fingerprint
                                      and use that as the expected value.
+    --auto-fingerprint-quorum <N>   Workers that must agree on the fp
+                                     (ADR-172 §2b). Default: 2 if fleet
+                                     has ≥2 workers, 1 otherwise.
     --allow-empty-fingerprint       Opt out of the ADR-172 §2a safety gate
                                      that refuses --cache > 0 with empty fp.
                                      Risks silent stale-serve from drift.

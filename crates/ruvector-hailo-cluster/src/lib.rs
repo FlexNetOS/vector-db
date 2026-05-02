@@ -306,6 +306,12 @@ impl HailoClusterEmbedder {
     /// Errors with `AllWorkersFailed` if every health probe fails. Stops
     /// at the first success — operator can re-run with `validate_fleet()`
     /// to confirm the rest of the fleet agrees.
+    ///
+    /// **Trust note (ADR-172 §2b):** this trusts the first reachable
+    /// worker, so a single hostile or out-of-date worker can poison the
+    /// discovered fingerprint. Production deploys with ≥2 workers should
+    /// prefer [`Self::discover_fingerprint_with_quorum`] (the CLIs do
+    /// this automatically when the fleet has ≥2 workers).
     pub fn discover_fingerprint(&self) -> Result<String, ClusterError> {
         let mut last_err: Option<ClusterError> = None;
         for endpoint in self.pool.all_endpoints() {
@@ -321,6 +327,63 @@ impl HailoClusterEmbedder {
                 None => "no workers in pool".into(),
             }
         )))
+    }
+
+    /// Quorum-based fingerprint discovery (ADR-172 §2b mitigation, iter
+    /// 102). Probes every worker in the pool, tallies the most-reported
+    /// fingerprint, and returns it iff at least `min_agree` workers
+    /// reported it. A single hostile worker therefore can't establish
+    /// "the" fingerprint when `min_agree >= 2`.
+    ///
+    /// `min_agree == 1` is the legacy single-witness mode (equivalent
+    /// to picking the most popular reported fp); use it for single-
+    /// worker dev fleets where quorum is impossible.
+    ///
+    /// Empty fingerprints are excluded from the tally — they mean "the
+    /// worker hasn't loaded a model yet" and aren't a meaningful vote.
+    pub fn discover_fingerprint_with_quorum(
+        &self,
+        min_agree: usize,
+    ) -> Result<String, ClusterError> {
+        use std::collections::HashMap;
+        let endpoints = self.pool.all_endpoints();
+        let mut tally: HashMap<String, usize> = HashMap::new();
+        let mut probed = 0usize;
+        let mut errs: Vec<String> = Vec::new();
+        for endpoint in &endpoints {
+            match self.transport.health(endpoint) {
+                Ok(report) => {
+                    probed += 1;
+                    if !report.model_fingerprint.is_empty() {
+                        *tally.entry(report.model_fingerprint).or_insert(0) += 1;
+                    }
+                }
+                Err(e) => errs.push(format!("{}: {}", endpoint.name, e)),
+            }
+        }
+        if probed == 0 {
+            return Err(ClusterError::AllWorkersFailed(format!(
+                "discover_fingerprint_with_quorum: every worker's health probe failed: {}",
+                errs.join("; ")
+            )));
+        }
+        let (best_fp, best_count) = tally
+            .iter()
+            .max_by_key(|(_, n)| *n)
+            .map(|(fp, n)| (fp.clone(), *n))
+            .unwrap_or_else(|| ("".into(), 0));
+        if best_count < min_agree.max(1) {
+            return Err(ClusterError::AllWorkersFailed(format!(
+                "discover_fingerprint_with_quorum: best fp had {} agreeing workers, \
+                 need {}; tally={:?} (probed={}, unreachable={})",
+                best_count,
+                min_agree.max(1),
+                tally,
+                probed,
+                errs.len()
+            )));
+        }
+        Ok(best_fp)
     }
 
     /// Synchronous startup validation. Probes every worker via
@@ -1140,6 +1203,107 @@ mod tests {
         match c.discover_fingerprint() {
             Err(ClusterError::AllWorkersFailed(msg)) => {
                 assert!(msg.contains("discover_fingerprint"));
+            }
+            other => panic!("expected AllWorkersFailed, got {:?}", other.map(|s| s.to_string())),
+        }
+    }
+
+    // ---- ADR-172 §2b iter-102 quorum tests ----
+
+    #[test]
+    fn quorum_majority_agrees_returns_majority_fp() {
+        // 3 workers; 2 report fp:A, 1 reports fp:B. quorum=2 should
+        // pick fp:A and ignore the lone fp:B.
+        let mut outcomes = std::collections::HashMap::new();
+        outcomes.insert("pi-0".into(), ValidationOutcome::Ready { fingerprint: "fp:A".into() });
+        outcomes.insert("pi-1".into(), ValidationOutcome::Ready { fingerprint: "fp:A".into() });
+        outcomes.insert("pi-2".into(), ValidationOutcome::Ready { fingerprint: "fp:B".into() });
+        let transport = Arc::new(PerWorkerHealth { outcomes });
+        let workers = vec![
+            WorkerEndpoint::new("pi-0", "10.0.0.0:1"),
+            WorkerEndpoint::new("pi-1", "10.0.0.1:1"),
+            WorkerEndpoint::new("pi-2", "10.0.0.2:1"),
+        ];
+        let c = HailoClusterEmbedder::new(workers, transport, 4, "").expect("init");
+        let fp = c.discover_fingerprint_with_quorum(2).expect("majority hit");
+        assert_eq!(fp, "fp:A");
+    }
+
+    #[test]
+    fn quorum_no_majority_errors_with_tally() {
+        // 3 workers, 3 different fingerprints — no quorum possible.
+        let mut outcomes = std::collections::HashMap::new();
+        outcomes.insert("pi-0".into(), ValidationOutcome::Ready { fingerprint: "fp:A".into() });
+        outcomes.insert("pi-1".into(), ValidationOutcome::Ready { fingerprint: "fp:B".into() });
+        outcomes.insert("pi-2".into(), ValidationOutcome::Ready { fingerprint: "fp:C".into() });
+        let transport = Arc::new(PerWorkerHealth { outcomes });
+        let workers = vec![
+            WorkerEndpoint::new("pi-0", "10.0.0.0:1"),
+            WorkerEndpoint::new("pi-1", "10.0.0.1:1"),
+            WorkerEndpoint::new("pi-2", "10.0.0.2:1"),
+        ];
+        let c = HailoClusterEmbedder::new(workers, transport, 4, "").expect("init");
+        match c.discover_fingerprint_with_quorum(2) {
+            Err(ClusterError::AllWorkersFailed(msg)) => {
+                assert!(msg.contains("need 2"), "expected quorum=2 message: {}", msg);
+                assert!(msg.contains("tally="), "expected tally in error: {}", msg);
+            }
+            other => panic!("expected AllWorkersFailed, got {:?}", other.map(|s| s.to_string())),
+        }
+    }
+
+    #[test]
+    fn quorum_one_acts_like_single_witness() {
+        // min_agree=1 lets a single-worker dev fleet still use quorum
+        // discovery without changing semantics from discover_fingerprint().
+        let mut outcomes = std::collections::HashMap::new();
+        outcomes.insert("pi-0".into(), ValidationOutcome::Ready { fingerprint: "fp:solo".into() });
+        let transport = Arc::new(PerWorkerHealth { outcomes });
+        let workers = vec![WorkerEndpoint::new("pi-0", "10.0.0.0:1")];
+        let c = HailoClusterEmbedder::new(workers, transport, 4, "").expect("init");
+        let fp = c.discover_fingerprint_with_quorum(1).expect("solo worker");
+        assert_eq!(fp, "fp:solo");
+    }
+
+    #[test]
+    fn quorum_excludes_empty_fingerprints_from_tally() {
+        // 3 workers, all return empty fingerprint (legacy fleet).
+        // Tally is empty → best_count=0 → quorum>=1 fails. This
+        // protects against treating "no model" as quorum agreement.
+        let mut outcomes = std::collections::HashMap::new();
+        outcomes.insert("pi-0".into(), ValidationOutcome::Ready { fingerprint: "".into() });
+        outcomes.insert("pi-1".into(), ValidationOutcome::Ready { fingerprint: "".into() });
+        outcomes.insert("pi-2".into(), ValidationOutcome::Ready { fingerprint: "".into() });
+        let transport = Arc::new(PerWorkerHealth { outcomes });
+        let workers = vec![
+            WorkerEndpoint::new("pi-0", "10.0.0.0:1"),
+            WorkerEndpoint::new("pi-1", "10.0.0.1:1"),
+            WorkerEndpoint::new("pi-2", "10.0.0.2:1"),
+        ];
+        let c = HailoClusterEmbedder::new(workers, transport, 4, "").expect("init");
+        match c.discover_fingerprint_with_quorum(1) {
+            Err(ClusterError::AllWorkersFailed(msg)) => {
+                assert!(msg.contains("0 agreeing"), "expected zero-agreement msg: {}", msg);
+            }
+            other => panic!("expected error for empty-fp tally, got {:?}", other.map(|s| s.to_string())),
+        }
+    }
+
+    #[test]
+    fn quorum_all_unreachable_errors_with_per_worker_reasons() {
+        let mut outcomes = std::collections::HashMap::new();
+        outcomes.insert("pi-0".into(), ValidationOutcome::Unreachable);
+        outcomes.insert("pi-1".into(), ValidationOutcome::Unreachable);
+        let transport = Arc::new(PerWorkerHealth { outcomes });
+        let workers = vec![
+            WorkerEndpoint::new("pi-0", "10.0.0.0:1"),
+            WorkerEndpoint::new("pi-1", "10.0.0.1:1"),
+        ];
+        let c = HailoClusterEmbedder::new(workers, transport, 4, "").expect("init");
+        match c.discover_fingerprint_with_quorum(2) {
+            Err(ClusterError::AllWorkersFailed(msg)) => {
+                assert!(msg.contains("pi-0"), "expected per-worker err: {}", msg);
+                assert!(msg.contains("pi-1"), "expected per-worker err: {}", msg);
             }
             other => panic!("expected AllWorkersFailed, got {:?}", other.map(|s| s.to_string())),
         }
