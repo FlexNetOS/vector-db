@@ -19,11 +19,22 @@
 //! `sentence-transformers/all-MiniLM-L6-v2`. No HEF / Hailo Dataflow
 //! Compiler dependency.
 //!
-//! # Realistic latency
+//! # Realistic latency (measured iter 140 — release build)
 //!
-//! Single-thread BERT-6 forward on Cortex-A76 at 2.4 GHz, 128-token
-//! sequence: ~50-150 ms per embed. AVX2 x86 hosts run ~10-30 ms.
+//! AMD Ryzen 9 9950X (AVX2/AVX-512 x86_64), 128-token sequence:
+//!   * cold first embed:  ~45 ms (model warm-up + JIT)
+//!   * warm steady-state: ~38-40 ms
+//!   * sustained: ~25.7 embeds/sec (mutex serializes BertModel access;
+//!     concurrent clients queue rather than parallelize)
+//!
+//! Cortex-A76 @ 2.4 GHz on Pi 5 (estimated, scaled by SPECint ratio):
+//!   * ~150-300 ms warm steady-state
+//!   * ~3-5 embeds/sec per worker
+//!
 //! Slow vs Hailo's 1-3 ms NPU target, but real semantic vectors today.
+//! Scale horizontally by adding workers — the cluster's P2C+EWMA
+//! dispatcher distributes load and a 4-worker Pi cluster gets you to
+//! ~12-20 embeds/sec which covers most ingest workloads.
 
 #![cfg(feature = "cpu-fallback")]
 

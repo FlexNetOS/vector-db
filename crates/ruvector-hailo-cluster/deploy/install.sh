@@ -1,8 +1,17 @@
 #!/usr/bin/env bash
-# Install ruvector-hailo-worker on a Pi 5 + AI HAT+.
+# Install ruvector-hailo-worker on a Pi 5 (with or without AI HAT+).
 #
-# Run on the Pi (not on a dev host) after building the binary with:
-#   cargo build --release --features hailo --bin ruvector-hailo-worker
+# Build on the Pi (or cross-compile for aarch64) before running this:
+#
+#   # CPU fallback path (works on any Pi 5; ~40-150 ms / embed):
+#   cargo build --release --features cpu-fallback \
+#       --bin ruvector-hailo-worker \
+#       --manifest-path crates/ruvector-hailo-cluster/Cargo.toml
+#
+#   # Production path (Pi 5 + AI HAT+, NPU acceleration when HEF lands):
+#   cargo build --release --features hailo,cpu-fallback \
+#       --bin ruvector-hailo-worker \
+#       --manifest-path crates/ruvector-hailo-cluster/Cargo.toml
 #
 # Idempotent — re-run after upgrading the binary.
 #
@@ -28,7 +37,10 @@ if [[ $EUID -ne 0 ]]; then
 fi
 if [[ $# -lt 2 ]]; then
   echo "usage: $0 <path/to/ruvector-hailo-worker> <path/to/models-dir>" >&2
-  echo "  models-dir must contain model.hef, vocab.txt, special_tokens.json" >&2
+  echo "  models-dir must contain at least one of:" >&2
+  echo "    model.hef + vocab.txt + special_tokens.json (NPU path, iter 167)" >&2
+  echo "    model.safetensors + tokenizer.json + config.json (cpu-fallback, iter 134)" >&2
+  echo "  Run deploy/download-cpu-fallback-model.sh to fetch the latter." >&2
   exit 1
 fi
 
@@ -41,8 +53,17 @@ fi
 if [[ ! -d "$MODELS_SRC" ]]; then
   echo "models dir not found: $MODELS_SRC" >&2; exit 1
 fi
-if [[ ! -f "$MODELS_SRC/model.hef" ]]; then
-  echo "warning: $MODELS_SRC/model.hef missing — worker will fail to start" >&2
+if [[ -f "$MODELS_SRC/model.hef" ]]; then
+  echo "==> NPU path detected: model.hef present"
+elif [[ -f "$MODELS_SRC/model.safetensors" ]]; then
+  echo "==> CPU fallback path detected: model.safetensors present"
+  if [[ ! -f "$MODELS_SRC/tokenizer.json" ]] || [[ ! -f "$MODELS_SRC/config.json" ]]; then
+    echo "warning: cpu-fallback also needs tokenizer.json + config.json" >&2
+    echo "         re-run deploy/download-cpu-fallback-model.sh to fetch all three" >&2
+  fi
+else
+  echo "warning: neither model.hef nor model.safetensors found in $MODELS_SRC" >&2
+  echo "         worker will start but embed RPCs will return NoModelLoaded" >&2
 fi
 
 DEPLOY_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"

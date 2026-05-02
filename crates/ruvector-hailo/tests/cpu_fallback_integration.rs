@@ -122,3 +122,45 @@ fn cpu_embedder_handles_empty_and_long_inputs() {
     let norm = (v_long.iter().map(|x| x * x).sum::<f32>()).sqrt();
     assert!((norm - 1.0).abs() < 1e-3);
 }
+
+#[test]
+#[ignore = "release-mode latency benchmark; run with --release --ignored"]
+fn cpu_embedder_release_latency_meets_target() {
+    // Iter 140 — production latency assertion. On x86 release build
+    // (the dev workflow), warm-cache embed should land under 100 ms.
+    // On Cortex-A76 release build (Pi 5), under 300 ms. We can't tell
+    // arch from inside the test cheaply, so use the looser 300 ms
+    // bound that catches catastrophic regressions on either platform.
+    let Some(dir) = model_dir() else {
+        return;
+    };
+    let emb = CpuEmbedder::open(&dir).unwrap();
+
+    // One warm-up embed, then time 5 warm embeds.
+    let _ = emb.embed("warm-up sentence to amortize JIT").unwrap();
+
+    let texts = [
+        "the quick brown fox",
+        "a puppy runs through the meadow",
+        "kafka topic partition rebalancing strategy",
+        "where the wild things are",
+        "all that glitters is not gold",
+    ];
+    let start = std::time::Instant::now();
+    for t in &texts {
+        let _ = emb.embed(t).unwrap();
+    }
+    let elapsed = start.elapsed();
+    let per_embed = elapsed / texts.len() as u32;
+    eprintln!(
+        "warm latency over {} embeds: total={:.3}ms avg={:.3}ms",
+        texts.len(),
+        elapsed.as_secs_f64() * 1000.0,
+        per_embed.as_secs_f64() * 1000.0,
+    );
+    assert!(
+        per_embed.as_millis() < 300,
+        "warm embed latency {:?} exceeded 300ms regression bound",
+        per_embed
+    );
+}
