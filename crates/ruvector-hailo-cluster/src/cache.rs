@@ -69,7 +69,7 @@ struct Entry {
 }
 
 /// Counters for ops-side observability.
-#[derive(Clone, Debug, Default, PartialEq, Eq)]
+#[derive(Clone, Debug, Default, PartialEq, Eq, serde::Serialize)]
 pub struct CacheStats {
     /// Configured maximum entries; 0 = cache disabled.
     pub capacity: usize,
@@ -81,6 +81,41 @@ pub struct CacheStats {
     pub misses: u64,
     /// Total entries dropped — capacity overflow, TTL expiry, or `clear`.
     pub evictions: u64,
+    /// Iter-108: configured time-to-live in seconds, if any. `None`
+    /// means LRU-only (entries live until capacity-pressure evicts them).
+    /// Surfaced so embedded long-running coordinators can plumb the
+    /// value into Prometheus/JSON dashboards without re-reading env.
+    #[serde(default)]
+    pub ttl_seconds: Option<u64>,
+}
+
+impl CacheStats {
+    /// `true` when the cache was constructed with non-zero capacity.
+    /// Convenience for "should I bother emitting these metrics?" checks
+    /// in CLI-level rendering paths.
+    pub fn is_enabled(&self) -> bool {
+        self.capacity > 0
+    }
+
+    /// `hits + misses`. Returns 0 if the cache hasn't seen any traffic
+    /// yet, which is the natural input to a hit-rate guard.
+    pub fn total_requests(&self) -> u64 {
+        self.hits.saturating_add(self.misses)
+    }
+
+    /// Hit rate in `[0.0, 1.0]`. Returns `0.0` when the cache hasn't
+    /// seen any requests — same convention bench.rs has used inline
+    /// since iter 80 (now centralised so callers stop re-implementing
+    /// it). NaN-safe: f64 division by zero is short-circuited via the
+    /// `total_requests() > 0` guard.
+    pub fn hit_rate(&self) -> f64 {
+        let total = self.total_requests();
+        if total == 0 {
+            0.0
+        } else {
+            self.hits as f64 / total as f64
+        }
+    }
 }
 
 impl EmbeddingCache {
@@ -243,6 +278,9 @@ impl EmbeddingCache {
     pub fn stats(&self) -> CacheStats {
         let mut s = CacheStats {
             capacity: self.capacity,
+            // Iter-108: surface TTL config so dashboards can plot the
+            // configured budget alongside the realized eviction rate.
+            ttl_seconds: self.ttl.map(|d| d.as_secs()),
             ..Default::default()
         };
         for sh in self.shards.iter() {
@@ -292,6 +330,63 @@ mod tests {
         assert_eq!(s.size, 0);
         assert_eq!(s.hits, 0);
         assert_eq!(s.misses, 0);
+    }
+
+    // ---- ADR-167 §8 iter-108 CacheStats accessor tests ----
+
+    #[test]
+    fn stats_is_enabled_reflects_capacity() {
+        assert!(!EmbeddingCache::new(0).stats().is_enabled());
+        assert!(EmbeddingCache::new(64).stats().is_enabled());
+    }
+
+    #[test]
+    fn stats_ttl_seconds_round_trips() {
+        // None on the constructor surfaces as None on the snapshot.
+        assert!(EmbeddingCache::new(64).stats().ttl_seconds.is_none());
+        // Some(Duration::from_secs(N)) -> Some(N).
+        let s = EmbeddingCache::with_ttl(64, Some(Duration::from_secs(42))).stats();
+        assert_eq!(s.ttl_seconds, Some(42));
+    }
+
+    #[test]
+    fn stats_hit_rate_returns_zero_for_empty_traffic() {
+        let s = EmbeddingCache::new(16).stats();
+        // 0 hits + 0 misses must short-circuit to 0.0 (no NaN).
+        assert_eq!(s.hit_rate(), 0.0);
+        assert_eq!(s.total_requests(), 0);
+    }
+
+    #[test]
+    fn stats_hit_rate_matches_inline_division() {
+        // Build a cache with a few synthetic hits/misses by hand —
+        // construct a CacheStats directly so the test doesn't depend
+        // on the eviction policy of the live cache.
+        let s = CacheStats {
+            capacity: 64,
+            size: 4,
+            hits: 30,
+            misses: 10,
+            evictions: 0,
+            ttl_seconds: None,
+        };
+        assert_eq!(s.total_requests(), 40);
+        assert!((s.hit_rate() - 0.75).abs() < 1e-9);
+    }
+
+    #[test]
+    fn stats_serializes_to_json_with_ttl_field() {
+        let s = CacheStats {
+            capacity: 8,
+            size: 2,
+            hits: 5,
+            misses: 3,
+            evictions: 1,
+            ttl_seconds: Some(60),
+        };
+        let json = serde_json::to_string(&s).expect("serialize");
+        assert!(json.contains("\"ttl_seconds\":60"), "missing ttl: {}", json);
+        assert!(json.contains("\"hits\":5"), "missing hits: {}", json);
     }
 
     #[test]

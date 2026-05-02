@@ -381,18 +381,19 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let cache_stats = if cache_cap > 0 {
         let s = cluster.cache_stats();
         if !quiet {
+            // Iter-108: use the centralised hit_rate accessor instead
+            // of recomputing the division inline. ttl_seconds is added
+            // to the line so a TTL-bounded run is grep-able from the
+            // bench summary.
+            let ttl_str = match s.ttl_seconds {
+                Some(t) => format!(" ttl_secs={}", t),
+                None => String::new(),
+            };
             println!(
-                "cache: cap={} size={} hits={} misses={} evictions={} hit_rate={:.3}",
-                s.capacity,
-                s.size,
-                s.hits,
-                s.misses,
-                s.evictions,
-                if s.hits + s.misses > 0 {
-                    (s.hits as f64) / ((s.hits + s.misses) as f64)
-                } else {
-                    0.0
-                },
+                "cache: cap={} size={} hits={} misses={} evictions={} hit_rate={:.3}{}",
+                s.capacity, s.size, s.hits, s.misses, s.evictions,
+                s.hit_rate(),
+                ttl_str,
             );
         }
         Some(s)
