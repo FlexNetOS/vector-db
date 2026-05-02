@@ -24,5 +24,10 @@ thiserror   = "2"
 hailort-sys = { path = "../hailort-sys" }
 
 [dev-dependencies]
-anyhow   = "1"
-proptest = "1"
+anyhow    = "1"
+proptest  = "1"
+criterion = { version = "0.5", default-features = false, features = ["plotters", "cargo_bench_support"] }
+
+[[bench]]
+name    = "wordpiece_throughput"
+harness = false
