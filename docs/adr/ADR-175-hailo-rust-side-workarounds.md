@@ -11,10 +11,37 @@ related: [ADR-167, ADR-172, ADR-173]
 
 ## Status
 
-**Accepted** as of iter 147 (2026-05-02). Recommends Option E (cpu-fallback
-embedder pool, already shipped) as the production path. Options A and C
-documented as future work that becomes worthwhile only if cpu-fallback
-becomes throughput-bound.
+**Accepted, with major update at iter 156b (2026-05-02): Option A
+unblocked via Rust-side SDK monkey-patch.** A working
+`encoder.hef` was compiled for `sentence-transformers/all-MiniLM-L6-v2`
+on Hailo-8 — 15.7 MB,
+sha256 `cdbc892765d3099f74723ee6c28ab3f0daade2358827823ba08d2969b07ebd40`.
+
+The 156-iteration arc resolved every SDK bug encountered:
+1. KeyError input_layer1 (iter 142): keyed calibration dict by
+   internal HN layer name discovered via `runner.get_hn()` introspection
+2. AccelerasValueError shape (iter 142b): reshape calibration to
+   NCHW with implicit channels=1
+3. ElementwiseAddDirectOp Keras deserialize (iter 153): walk every
+   `acceleras` module at import time and apply
+   `keras.saving.register_keras_serializable()` to every
+   `keras.layers.Layer` subclass we find. This is what the SDK should
+   do internally; we patch it externally before `runner.optimize()`.
+4. tf_rgb_to_hailo_rgb features alignment (iter 156b): drop the
+   rank-4 attention mask input entirely; use single-input encoder
+   (full attention, host-side post-NPU mean-pool applies the real
+   padding mask). Same final embedding semantics.
+
+**Production path now has TWO routes**:
+- Option E (cpu-fallback, iter 147): works on any Pi 5, 7 embeds/sec/worker
+- **Option A (NPU acceleration, iter 156b): unblocked! Wire the
+  encoder.hef + host-side embedding lookup + post-NPU pool into
+  `HailoEmbedder::embed`. Expected speedup: 7/sec → ~330/sec/worker
+  (50× from NPU forward pass at ~3 ms vs ~150 ms CPU).**
+
+Iter 157+ work: wire the HEF path through `HailoEmbedder` (~150 LOC of
+Rust per the iter-139 estimate). Until then cpu-fallback remains the
+shipping default.
 
 ## 1. Context
 
