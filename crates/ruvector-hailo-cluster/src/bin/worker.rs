@@ -8,7 +8,10 @@
 //!
 //! Env vars:
 //!   RUVECTOR_WORKER_BIND   socket addr to listen on   (default 0.0.0.0:50051)
-//!   RUVECTOR_MODEL_DIR     dir holding model.hef + vocab.txt
+//!   RUVECTOR_MODEL_DIR     dir holding either:
+//!                            * NPU path:  model.hef + vocab.txt + special_tokens.json
+//!                            * cpu-fallback (iter 134): model.safetensors + tokenizer.json + config.json
+//!                          Worker auto-detects which is present.
 //!                          (default ./models/all-minilm-l6-v2)
 //!   RUVECTOR_TLS_CERT      path to PEM server cert        (TLS — feature `tls`)
 //!   RUVECTOR_TLS_KEY       path to PEM server private key (TLS — feature `tls`)
@@ -355,8 +358,10 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         error!(error = %e, model_dir = %model_dir.display(), "HailoEmbedder::open failed");
         format!(
             "failed to open HailoEmbedder at {}: {} \
-             (rebuild with --features hailo on a Pi 5 + AI HAT+, \
-              and ensure model.hef + vocab.txt exist)",
+             (build with --features cpu-fallback for the host-CPU path \
+             [model.safetensors + tokenizer.json + config.json — fetch via \
+             deploy/download-cpu-fallback-model.sh], or --features hailo \
+             for the NPU path on a Pi 5 + AI HAT+ [model.hef + vocab.txt])",
             model_dir.display(),
             e
         )
