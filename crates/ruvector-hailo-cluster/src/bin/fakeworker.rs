@@ -79,6 +79,8 @@ impl Embedding for FakeWorker {
             device_id: format!("fake:{}", self.name),
             model_fingerprint: self.fingerprint.clone(),
             ready: true,
+            npu_temp_ts0_celsius: 0.0,
+            npu_temp_ts1_celsius: 0.0,
         }))
     }
 

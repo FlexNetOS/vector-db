@@ -183,6 +183,13 @@ pub struct HealthReport {
     pub model_fingerprint: String,
     /// `true` when the worker has loaded a model and is accepting embeds.
     pub ready: bool,
+    /// Iter-96 (ADR-174 §93 follow-up): on-die NPU temperature in Celsius
+    /// from sensor 0 (front-of-die). `None` if the worker couldn't read,
+    /// the firmware doesn't support the opcode, or the worker is older
+    /// than iter 96. Coordinator treats `None` as "skip the temp gauge".
+    pub npu_temp_ts0_celsius: Option<f32>,
+    /// Iter-96: on-die NPU temperature from sensor 1 (back-of-die).
+    pub npu_temp_ts1_celsius: Option<f32>,
 }
 
 /// Trivial transport that always errors `NotYetImplemented`. Used by the

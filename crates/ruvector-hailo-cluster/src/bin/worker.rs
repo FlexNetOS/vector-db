@@ -122,6 +122,13 @@ impl Embedding for WorkerService {
             // When HEF wiring lands the dim will come from the loaded
             // network group's output shape instead.
             ready: self.embedder.dimensions() > 0,
+            // Iter-96 (ADR-174 §93): live NPU temperature read on every
+            // health probe. 0.0 if read fails (older firmware variants
+            // don't expose the opcode); coordinator side maps 0.0 → None.
+            npu_temp_ts0_celsius: self.embedder.chip_temperature()
+                .map(|(t, _)| t).unwrap_or(0.0),
+            npu_temp_ts1_celsius: self.embedder.chip_temperature()
+                .map(|(_, t)| t).unwrap_or(0.0),
         }))
     }
 

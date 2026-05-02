@@ -165,11 +165,17 @@ impl EmbeddingTransport for GrpcTransport {
                     reason: format!("health RPC: {}", s),
                 })?
                 .into_inner();
+            // Treat 0.0 as "no reading" — older workers (pre-iter-96)
+            // don't populate these fields so they default to 0.0; same
+            // for workers whose chip_temperature() returned None.
+            let to_opt = |c: f32| if c == 0.0 { None } else { Some(c) };
             Ok(HealthReport {
                 version: resp.version,
                 device_id: resp.device_id,
                 model_fingerprint: resp.model_fingerprint,
                 ready: resp.ready,
+                npu_temp_ts0_celsius: to_opt(resp.npu_temp_ts0_celsius),
+                npu_temp_ts1_celsius: to_opt(resp.npu_temp_ts1_celsius),
             })
         })
     }
@@ -325,6 +331,8 @@ mod tests {
                 device_id: self.device_id.clone(),
                 model_fingerprint: self.fingerprint.clone(),
                 ready: true,
+            npu_temp_ts0_celsius: 0.0,
+            npu_temp_ts1_celsius: 0.0,
             }))
         }
         async fn get_stats(

@@ -863,6 +863,8 @@ mod tests {
                 device_id: "fake:0".into(),
                 model_fingerprint: "fp:fake".into(),
                 ready: true,
+                npu_temp_ts0_celsius: None,
+                npu_temp_ts1_celsius: None,
             })
         }
     }
@@ -979,12 +981,16 @@ mod tests {
                     device_id: format!("test:{}", w.name),
                     model_fingerprint: fingerprint.clone(),
                     ready: true,
+                npu_temp_ts0_celsius: None,
+                npu_temp_ts1_celsius: None,
                 }),
                 Some(ValidationOutcome::NotReady { fingerprint }) => Ok(HealthReport {
                     version: "test".into(),
                     device_id: format!("test:{}", w.name),
                     model_fingerprint: fingerprint.clone(),
                     ready: false,
+                npu_temp_ts0_celsius: None,
+                npu_temp_ts1_celsius: None,
                 }),
                 _ => Err(ClusterError::Transport {
                     worker: w.name.clone(),

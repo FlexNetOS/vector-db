@@ -138,6 +138,8 @@ mod tests {
             device_id: "0001:01:00.0".into(),
             model_fingerprint: "sha256:abc".into(),
             ready: true,
+            npu_temp_ts0_celsius: 0.0,
+            npu_temp_ts1_celsius: 0.0,
         };
         assert!(health.ready);
         assert_eq!(health.device_id, "0001:01:00.0");

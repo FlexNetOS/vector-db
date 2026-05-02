@@ -74,6 +74,8 @@ impl Embedding for DelayWorker {
             device_id: self.name.clone(),
             model_fingerprint: "fp:test".into(),
             ready: true,
+            npu_temp_ts0_celsius: 0.0,
+            npu_temp_ts1_celsius: 0.0,
         }))
     }
     async fn get_stats(

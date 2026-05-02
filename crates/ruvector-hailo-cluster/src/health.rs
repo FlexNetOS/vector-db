@@ -230,6 +230,8 @@ mod tests {
                 device_id: "toggle:0".into(),
                 model_fingerprint: "fp:toggle".into(),
                 ready: self.ready.load(Ordering::SeqCst),
+                npu_temp_ts0_celsius: None,
+                npu_temp_ts1_celsius: None,
             })
         }
     }
@@ -291,6 +293,8 @@ mod tests {
                 device_id: "fixed:0".into(),
                 model_fingerprint: self.fingerprint.clone(),
                 ready: true,
+                npu_temp_ts0_celsius: None,
+                npu_temp_ts1_celsius: None,
             })
         }
     }

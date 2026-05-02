@@ -68,6 +68,12 @@ message HealthResponse {
   string device_id = 2;          // PCIe BDF, e.g. "0001:01:00.0"
   string model_fingerprint = 3;  // sha256 of HEF + tokenizer (hex)
   bool   ready = 4;              // false during boot / during HEF reload
+  // Iter-96 (ADR-174 §93 follow-up): on-die NPU temperature in Celsius.
+  // Hailo-8 has two thermal sensors per die; both reported.
+  // 0.0 means "read failed" or "no sensor reported" — coordinator
+  // treats either as "skip the temp gauge for this tick".
+  float  npu_temp_ts0_celsius = 5;
+  float  npu_temp_ts1_celsius = 6;
 }
 
 message StatsRequest {}

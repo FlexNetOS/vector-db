@@ -40,6 +40,8 @@ impl EmbeddingTransport for InstantTransport {
             device_id: "instant:0".into(),
             model_fingerprint: "fp:instant".into(),
             ready: true,
+            npu_temp_ts0_celsius: None,
+            npu_temp_ts1_celsius: None,
         })
     }
 }
