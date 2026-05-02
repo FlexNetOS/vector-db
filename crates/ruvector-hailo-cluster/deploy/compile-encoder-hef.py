@@ -37,10 +37,11 @@ def main(onnx_path: str, out_hef: str) -> None:
     runner.translate_onnx_model(
         str(onnx_path),
         net_name=NET_NAME,
-        start_node_names=["hidden_states"],
+        start_node_names=["hidden_states", "attention_softmax_mask"],
         end_node_names=["last_hidden_state"],
         net_input_shapes={
             "hidden_states": [1, SEQ_LEN, HIDDEN],
+            "attention_softmax_mask": [1, 1, 1, SEQ_LEN],
         },
     )
 
@@ -48,39 +49,68 @@ def main(onnx_path: str, out_hef: str) -> None:
     runner.save_har(str(parsed_har))
     print(f"    parsed HAR → {parsed_har}", flush=True)
 
-    print("==> [optimize] random calibration set (FP→INT8)", flush=True)
-    # Iter 142: root-cause analysis of the iter-139 KeyError. The
-    # SDK's stats_collection._get_build_inputs() returns a dict keyed
-    # by the dataset keys ("hidden_states") but hailo_model.build()
-    # iterates over self.flow.input_nodes (internal layer names like
-    # "minilm_encoder/input_layer1") and looks them up in the dict.
-    # KeyError follows. Workaround: key the calibration dataset by the
-    # internal input layer name instead of the ONNX input name.
-    runner.load_model_script("model_optimization_flavor(optimization_level=0)\n")
+    print("==> [optimize] Hailo Model Zoo BERT recipe (iter 144)", flush=True)
+    # Iter 144 — adopt Hailo's official BERT alls recipe from
+    # `hailo_model_zoo/cfg/alls/generic/bert_base_uncased.alls`. The
+    # `set_input_mask_to_softmax()` directive is the missing piece —
+    # it tells the SDK that the second input is the additive mask for
+    # softmax, which routes through the SDK's well-tested transformer
+    # codepath instead of the generic optimizer that hits the
+    # iter-139/142 SDK bug chain.
+    # Iter 144b: drop `set_input_mask_to_softmax()` — that command was
+    # added in DFC > 3.33 (verified via grep of installed SDK
+    # site-packages: zero matches anywhere). Keep the rest of the BERT
+    # recipe alls directives that ARE supported in 3.33: equalization,
+    # disable ew_add fusing, optimization_level=0, matmul correction,
+    # negative_exponent rank=0, ew_add 16-bit precision.
+    bert_alls = """\
+model_optimization_config(calibration, batch_size=8, calibset_size=64)
+pre_quantization_optimization(equalization, policy=enabled)
+pre_quantization_optimization(ew_add_fusing, policy=disabled)
+model_optimization_flavor(optimization_level=0, compression_level=0)
+pre_quantization_optimization(matmul_correction, layers={matmul*}, correction_type=zp_comp_block)
+model_optimization_config(negative_exponent, layers={*}, rank=0)
+quantization_param({ew_add*}, precision_mode=a16_w16)
+"""
+    runner.load_model_script(bert_alls)
 
     rng = np.random.default_rng(seed=42)
-    # Discover the actual input layer name from the parsed network.
-    input_layer_name = None
+    # Discover internal input layer names from the parsed HN, in
+    # declaration order, so we can pair them with our calibration data.
+    input_layer_names = []
     try:
         hn = runner.get_hn()
         import json as _json
         hn_d = _json.loads(hn) if isinstance(hn, str) else hn
         for lname, layer in hn_d.get("layers", {}).items():
             if layer.get("type") == "input_layer":
-                input_layer_name = lname
-                break
+                input_layer_names.append(lname)
     except Exception as e:
-        print(f"    warn: couldn't introspect HN ({e}); falling back to onnx name", flush=True)
+        print(f"    warn: couldn't introspect HN ({e})", flush=True)
 
-    calib_key = input_layer_name or "hidden_states"
-    print(f"    calibration dict key: {calib_key}", flush=True)
+    print(f"    parsed input layers: {input_layer_names}", flush=True)
+
     # Hailo's HN treats inputs as 4D NCHW with implicit channels=1, so
-    # [batch, seq, hidden] needs a channel dim → [batch, 1, seq, hidden].
-    # Without this you get
-    #   AccelerasValueError: Inference input shapes ... does not match HN shapes
-    calib = {
-        calib_key: rng.standard_normal((64, 1, SEQ_LEN, HIDDEN), dtype=np.float32),
-    }
+    # [batch, seq, hidden] reshapes to [batch, 1, seq, hidden].
+    # The mask is already 4D [batch, 1, 1, seq].
+    if len(input_layer_names) >= 2:
+        calib = {
+            input_layer_names[0]: rng.standard_normal(
+                (64, 1, SEQ_LEN, HIDDEN), dtype=np.float32
+            ),
+            input_layer_names[1]: np.zeros(
+                (64, 1, 1, SEQ_LEN), dtype=np.float32
+            ),
+        }
+    else:
+        calib = {
+            "hidden_states": rng.standard_normal(
+                (64, 1, SEQ_LEN, HIDDEN), dtype=np.float32
+            ),
+            "attention_softmax_mask": np.zeros(
+                (64, 1, 1, SEQ_LEN), dtype=np.float32
+            ),
+        }
     runner.optimize(calib)
     opt_har = work / f"{NET_NAME}_optimized.har"
     runner.save_har(str(opt_har))
