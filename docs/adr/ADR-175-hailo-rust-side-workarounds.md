@@ -187,6 +187,25 @@ be ~150-200ms). Aggregate throughput at 4 workers (4-Pi cluster):
 at startup confirms the model loads + first inference works
 (`startup self-test embed ok dim=384`).
 
+**Mixed-cluster dispatch validation** (iter 154, x86 + Pi 5 workers
+behind a single coordinator, concurrency=8, 10 s):
+
+| Metric | Mixed cluster |
+|---|---:|
+| throughput | 43.8 / sec |
+| p50 latency | 175 ms |
+| p99 latency | 826 ms |
+| errors | 0 / 446 |
+
+P2C+EWMA correctly biased traffic toward the faster local x86 worker
+(~9:1 vs Pi). Latency tail tracks the slower Pi worker that
+occasionally got picked. Confirms ADR-167 §8 dispatch invariants under
+heterogeneous fleet load.
+
+**Full systemd-managed Pi 5 deploy** (iter 152): `install.sh` →
+`systemctl start` → `kill -9 <pid>` → systemd respawned new PID,
+status `active`. Drop-root user `ruvector-worker` per ADR-172 §3a.
+
 **Memory cost**: ~100 MB resident at pool=4 (vs 90 MB at pool=1) —
 the safetensors mmap dominates and is shared.
 

@@ -70,6 +70,13 @@ def main(onnx_path: str, out_hef: str) -> None:
 
     print(f"==> [parse] {onnx_path}", flush=True)
     runner = ClientRunner(hw_arch=HW_ARCH)
+    # Iter 154: explicit input formats. Without these, Hailo's allocator
+    # treats the rank-4 mask input as an "RGB image" and applies a
+    # `tf_rgb_to_hailo_rgb` format conversion that requires C aligned
+    # to 8. Our mask has C=1 → "output features not aligned to 8" hard
+    # fail at compile-time. Spelling out the dim semantics tells the
+    # allocator these are pure feature tensors, not images.
+    from hailo_sdk_client.exposed_definitions import Dims
     runner.translate_onnx_model(
         str(onnx_path),
         net_name=NET_NAME,
@@ -78,6 +85,14 @@ def main(onnx_path: str, out_hef: str) -> None:
         net_input_shapes={
             "hidden_states": [1, SEQ_LEN, HIDDEN],
             "attention_softmax_mask": [1, 1, 1, SEQ_LEN],
+        },
+        net_input_format={
+            # rank-3 hidden_states: NWC (Hailo default for rank-3)
+            "hidden_states": [Dims.BATCH, Dims.WIDTH, Dims.CHANNELS],
+            # rank-4 mask: NCHW with C=1 — explicitly mark as feature
+            # tensor (not RGB image) so the allocator skips the
+            # rgb-to-rgb format conversion.
+            "attention_softmax_mask": [Dims.BATCH, Dims.CHANNELS, Dims.HEIGHT, Dims.WIDTH],
         },
     )
 
