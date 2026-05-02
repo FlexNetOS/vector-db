@@ -49,13 +49,21 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     // posted to the hailo-backend cluster via the embed RPC. The
     // cluster's existing §1b mTLS gate, §2a fp+cache gate, and §3b
     // rate-limit interceptor all apply to this traffic the same way
-    // they do to embed/bench. Plaintext gRPC for now (Tailscale handles
-    // wire encryption); add `--features tls` + the TLS flag set for
-    // production deploys with mTLS-only clusters.
+    // they do to embed/bench.
     let mut workers_csv: Option<String> = None;
     let mut dim: usize = 384;
     let mut fingerprint: String = String::new();
     let mut allow_empty_fingerprint = false;
+
+    // Iter 120: TLS / mTLS flag plumbing — parity with the cluster's
+    // iter-99/100 stack. All four are only meaningful under
+    // `--features tls`; without that feature, the binary still parses
+    // the flags and errors loudly so an operator gets a clear "this
+    // build doesn't have tls" message rather than silent plaintext.
+    let mut tls_ca: Option<String> = None;
+    let mut tls_domain: Option<String> = None;
+    let mut tls_client_cert: Option<String> = None;
+    let mut tls_client_key: Option<String> = None;
 
     let mut i = 1;
     while i < args.len() {
@@ -106,6 +114,22 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                 allow_empty_fingerprint = true;
                 i += 1;
             }
+            "--tls-ca" => {
+                tls_ca = args.get(i + 1).cloned();
+                i += 2;
+            }
+            "--tls-domain" => {
+                tls_domain = args.get(i + 1).cloned();
+                i += 2;
+            }
+            "--tls-client-cert" => {
+                tls_client_cert = args.get(i + 1).cloned();
+                i += 2;
+            }
+            "--tls-client-key" => {
+                tls_client_key = args.get(i + 1).cloned();
+                i += 2;
+            }
             "--help" | "-h" => {
                 print_help();
                 return Ok(());
@@ -138,7 +162,74 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         if workers.is_empty() {
             return Err("--workers list is empty".into());
         }
-        let transport: Arc<dyn EmbeddingTransport + Send + Sync> = Arc::new(GrpcTransport::new()?);
+
+        // Iter 120: TLS path. When --tls-ca is set we build a
+        // `GrpcTransport::with_tls(...)` instead of plain
+        // `GrpcTransport::new()`. mTLS happens via
+        // `with_client_identity` when both --tls-client-cert and
+        // --tls-client-key are also set; supplying just one half is
+        // a misconfiguration and must fail loudly (same gate shape as
+        // worker.rs's RUVECTOR_TLS_CERT/KEY pair).
+        let transport: Arc<dyn EmbeddingTransport + Send + Sync> = if tls_ca.is_some()
+            || tls_domain.is_some()
+            || tls_client_cert.is_some()
+            || tls_client_key.is_some()
+        {
+            #[cfg(not(feature = "tls"))]
+            {
+                return Err(
+                    "TLS flags supplied but this build wasn't compiled with --features tls; \
+                     rebuild with `cargo build --features tls` or drop the --tls-* flags"
+                        .into(),
+                );
+            }
+            #[cfg(feature = "tls")]
+            {
+                let ca = tls_ca.ok_or(
+                    "--tls-ca <path> is required when any --tls-* flag is set",
+                )?;
+                // Operator can pin the SNI domain explicitly; otherwise
+                // we extract it from the first worker's address (host
+                // part). The cluster-side iter-99 path uses the same
+                // helper.
+                let domain = tls_domain.unwrap_or_else(|| {
+                    ruvector_hailo_cluster::tls::domain_from_address(&workers[0].address)
+                        .to_string()
+                });
+                let mut tls = ruvector_hailo_cluster::tls::TlsClient::from_pem_files(
+                    &ca, domain,
+                )?;
+                match (&tls_client_cert, &tls_client_key) {
+                    (Some(c), Some(k)) => {
+                        tls = tls.with_client_identity(c, k)?;
+                        if !quiet {
+                            eprintln!(
+                                "ruvector-mmwave-bridge: mTLS active (cert={}, key={})",
+                                c, k
+                            );
+                        }
+                    }
+                    (Some(_), None) | (None, Some(_)) => {
+                        return Err(
+                            "--tls-client-cert and --tls-client-key must both be set or both unset (ADR-172 §1b)"
+                                .into(),
+                        );
+                    }
+                    (None, None) => {
+                        if !quiet {
+                            eprintln!("ruvector-mmwave-bridge: TLS active (server-auth only; no client cert)");
+                        }
+                    }
+                }
+                Arc::new(GrpcTransport::with_tls(
+                    Duration::from_secs(5),
+                    Duration::from_secs(2),
+                    tls,
+                )?)
+            }
+        } else {
+            Arc::new(GrpcTransport::new()?)
+        };
         let c = HailoClusterEmbedder::new(workers, transport, dim, fingerprint.clone())?;
         if !quiet {
             eprintln!(
@@ -498,6 +589,10 @@ OPTIONS:\n    \
     --dim <N>                    Expected embedding dim (default 384).\n    \
     --fingerprint <hex>          Reject workers reporting a different fp.\n    \
     --allow-empty-fingerprint    Bypass the ADR-172 §2a empty-fp gate.\n    \
+    --tls-ca <path>              Server CA bundle (PEM). Enables TLS — coerces\n                                  workers to https:// (ADR-172 §1a). Requires\n                                  the binary to be built with --features tls.\n    \
+    --tls-domain <name>          SNI / cert-SAN to assert. Default: hostname\n                                  of the first --workers entry.\n    \
+    --tls-client-cert <path>     PEM client cert for mTLS (ADR-172 §1b).\n                                  Must be paired with --tls-client-key.\n    \
+    --tls-client-key <path>      PEM private key matching --tls-client-cert.\n    \
     --help                       This message.\n    \
     --version                    Print version.\n\
 \n\
