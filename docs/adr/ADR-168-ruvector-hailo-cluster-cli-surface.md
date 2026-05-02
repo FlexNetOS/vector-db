@@ -44,6 +44,7 @@ plus a sensor-bridge bin added in iter 116:
 | `ruvector-hailo-stats` | Client: fleet observability | no | optional `--watch` |
 | `ruvector-hailo-cluster-bench` | Client: load harness | no | bounded duration |
 | `ruvector-mmwave-bridge` | Sensor: 60 GHz mmWave radar UART → cluster embed RPC (iter 116) | n/a (UART or simulator) | yes (radar event stream) |
+| `ruview-csi-bridge` | Sensor: RuView ADR-018 CSI UDP → cluster embed RPC (ADR-171, iter 123) | n/a (UDP listener) | yes (CSI frame stream) |
 
 ### Shared flag vocabulary
 
