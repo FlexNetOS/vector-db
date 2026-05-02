@@ -120,10 +120,13 @@ impl WordPieceTokenizer {
         //
         // pad_to_max_seq still honoured at any size.
         if max_seq == 0 {
-            let attention = if pad_to_max_seq { Vec::new() } else { Vec::new() };
+            // pad_to_max_seq has no effect at length 0 — both branches
+            // yield an empty mask. Bind to underscore to keep the
+            // signature stable.
+            let _ = pad_to_max_seq;
             return EncodedInput {
                 input_ids: Vec::new(),
-                attention_mask: attention,
+                attention_mask: Vec::new(),
                 actual_len: 0,
             };
         }
