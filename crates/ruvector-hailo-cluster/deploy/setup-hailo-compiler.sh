@@ -96,9 +96,37 @@ else
 fi
 
 VENV_PY="$VENV_DIR/bin/python"
-echo "    installing wheel + optimum into venv"
+echo "    installing wheel + Hailo's pinned deps + ONNX export deps into venv"
+# Iter 134 — install in three phases so we get a working set:
+#   (a) the dataflow compiler wheel (which has loose deps)
+#   (b) Hailo's official requirements.txt if it's alongside the wheel —
+#       this pins TF 2.18 + protobuf 3.20.3 + onnx 1.16, which is the
+#       exact combo their SDK was tested against
+#   (c) torch + transformers (no-deps so we don't clobber Hailo's pins)
+#       for the ONNX export step driven by export-minilm-onnx.py.
+#       The export script sets TRANSFORMERS_NO_TF=1 so we don't need
+#       tf-keras (which would pull in TF 2.21 + proto 4 + break Hailo).
 uv pip install --python "$VENV_PY" "$WHL_FILE"
-uv pip install --python "$VENV_PY" 'optimum[exporters]>=1.20'
+
+REQ_FILE="$DOWNLOAD_DIR/requirements.txt"
+if [[ ! -f "$REQ_FILE" ]]; then
+  # Fall back to the suite's requirements.txt if the operator extracted
+  # the AI SW Suite .run installer to a sibling dir.
+  REQ_FILE="$(ls -1 "$DOWNLOAD_DIR"/../*hailo*suite*/requirements.txt 2>/dev/null | head -n 1)"
+fi
+if [[ -f "$REQ_FILE" ]]; then
+  echo "    installing Hailo official requirements.txt: $REQ_FILE"
+  uv pip install --python "$VENV_PY" -r "$REQ_FILE"
+else
+  echo "    no Hailo requirements.txt found — installing minimum pin set"
+  uv pip install --python "$VENV_PY" 'tensorflow==2.18.*' 'protobuf==3.20.3' 'onnx==1.16.0' 'numpy<2'
+fi
+
+echo "    installing torch + transformers (--no-deps to preserve Hailo pins)"
+uv pip install --python "$VENV_PY" --index-url https://download.pytorch.org/whl/cpu 'torch==2.4.*'
+uv pip install --python "$VENV_PY" --no-deps 'transformers>=4.40,<4.50'
+# transformers needs a few runtime deps that aren't in Hailo's req set
+uv pip install --python "$VENV_PY" --no-deps 'tokenizers>=0.19' 'safetensors' 'huggingface-hub'
 
 # Persist the venv path so compile-hef.sh's iter-131 invocation finds it.
 # Symlink rather than env-var so it survives shell-context loss.

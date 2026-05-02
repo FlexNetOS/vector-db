@@ -140,3 +140,9 @@ agentdb.rvf
 agentdb.rvf.lock
 .kalshi
 bench_data/
+
+# Hailo Dataflow Compiler droppings — `hailo` CLI writes these into
+# whatever cwd it's invoked from, even with --output-dir set. Always
+# transient so any tree they land in should ignore them.
+acceleras.log
+hailo_sdk.client.log

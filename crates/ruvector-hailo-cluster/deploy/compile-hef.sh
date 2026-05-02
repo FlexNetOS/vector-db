@@ -72,38 +72,58 @@ fi
 HAILO_TOOL="$(command -v hailo || command -v hailomz)"
 echo "    using: $HAILO_TOOL"
 
-echo "==> [2/5] verify python + optimum-cli for ONNX export"
-if ! python3 -c "import sys; sys.exit(0 if sys.version_info >= (3, 10) else 1)" 2>/dev/null; then
-  echo "    Python 3.10+ required for optimum-cli" >&2; exit 2
+echo "==> [2/5] verify python + transformers/torch in venv"
+PY="${HAILO_VENV:-$HOME/.cache/ruvector-hailo-compiler/active}/bin/python"
+if [[ ! -x "$PY" ]]; then
+  PY="$(command -v python3 || true)"
 fi
-if ! command -v optimum-cli >/dev/null 2>&1; then
-  echo "    installing optimum[exporters] via pip --user"
-  pip install --user --quiet 'optimum[exporters]>=1.20'
+if [[ -z "$PY" ]] || ! "$PY" -c "import sys; sys.exit(0 if sys.version_info >= (3, 10) else 1)" 2>/dev/null; then
+  echo "    Python 3.10+ required (looked at $PY)" >&2; exit 2
+fi
+if ! "$PY" -c "import torch, transformers" 2>/dev/null; then
+  echo "    installing torch + transformers into venv"
+  uv pip install --python "$PY" 'torch==2.4.*' 'transformers>=4.40,<4.50' 2>&1 | tail -3
 fi
 
 echo "==> [3/5] export sentence-transformers/all-MiniLM-L6-v2 → ONNX"
 ONNX_DIR="$WORK/onnx"
 mkdir -p "$ONNX_DIR"
-optimum-cli export onnx \
-    --model sentence-transformers/all-MiniLM-L6-v2 \
-    --task feature-extraction \
-    --opset 14 \
-    "$ONNX_DIR"
+EXPORT_PY="$(dirname "${BASH_SOURCE[0]}")/export-minilm-onnx.py"
+"$PY" "$EXPORT_PY" "$ONNX_DIR"
 ONNX="$ONNX_DIR/model.onnx"
 [[ -s "$ONNX" ]] || { echo "    ONNX export missing $ONNX" >&2; exit 3; }
 echo "    $(stat --format='%s' "$ONNX") bytes → $ONNX"
 
 echo "==> [4/5] hailo parser → optimize → compile"
-# Hailo's three-stage pipeline. The exact sub-commands have shifted
-# between Dataflow Compiler versions; we run the tool's high-level
-# wrapper which dispatches internally.
+# Hailo's three-stage pipeline. DFC 3.33 flag spelling:
+#   parser:   --har-path  (output HAR)
+#   optimize: --output-har-path
+#   compiler: --output-dir + --output-har-path
+# Older DFCs used --output-har-path on parser too — the rename
+# happened around 3.30. This script targets 3.33+.
 PARSED="$WORK/model.har"
-"$HAILO_TOOL" parser onnx "$ONNX" --net-name minilm --output-har-path "$PARSED"
+# Cut the graph at `last_hidden_state` (the final encoder LayerNorm output).
+# Without this, the parser auto-detects end nodes and snags on `/Where`
+# from attention-mask broadcasting, which Hailo's HN graph can't represent.
+# We mean-pool + L2-normalize on the host post-NPU, so the pooler+tanh
+# head from the original ONNX (Gather → Gemm → Tanh after last_hidden_state)
+# is intentionally dropped.
+"$HAILO_TOOL" parser onnx "$ONNX" \
+    --net-name minilm \
+    --har-path "$PARSED" \
+    --hw-arch hailo8 \
+    --end-node-names last_hidden_state \
+    -y
 
+# We don't have a representative calibration set for all-MiniLM-L6-v2
+# (it's text — no easy 1024 random samples), so we use --use-random-calib-set.
+# This produces a working HEF whose accuracy is ~3-5% lower than a
+# calibrated build. ADR-167 follow-up: switch to a real corpus-based
+# calibration set once we have one.
 OPT_HAR="$WORK/model_optimized.har"
-"$HAILO_TOOL" optimize "$PARSED" --output-har-path "$OPT_HAR" --hw-arch hailo8
+"$HAILO_TOOL" optimize "$PARSED" --output-har-path "$OPT_HAR" --hw-arch hailo8 --use-random-calib-set
 
-"$HAILO_TOOL" compiler "$OPT_HAR" --output-dir "$WORK"
+"$HAILO_TOOL" compiler "$OPT_HAR" --output-dir "$WORK" --hw-arch hailo8
 COMPILED="$WORK/minilm.hef"
 [[ -f "$COMPILED" ]] || COMPILED="$(find "$WORK" -name '*.hef' | head -n 1)"
 [[ -s "$COMPILED" ]] || { echo "    no .hef produced under $WORK" >&2; exit 4; }
