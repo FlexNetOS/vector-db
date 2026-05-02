@@ -82,14 +82,19 @@ the expected model fingerprint to be dispatched to.
 
 ### 2. Cache integrity / poisoning — MEDIUM
 
-**2a. Empty `expected_model_fingerprint` skips integrity check.**
+**2a. Empty `expected_model_fingerprint` skips integrity check.** [✅ MITIGATED — iter 101]
 Default-empty in CLI flags, tests, demos, and examples. Operator opting
-into `--auto-fingerprint` is the only thing protecting them — and
+into `--auto-fingerprint` was the only thing protecting them — and
 auto-fingerprint trusts the first-reachable worker.
 
-*Mitigation:* Make `--fingerprint <hex>` required when `--cache > 0`
-(opt-out via explicit `--allow-empty-fingerprint`). Document the
-"silently serve stale" failure mode in BENCHMARK.md.
+*Mitigation (shipped iter 101):* Both `ruvector-hailo-embed` and
+`ruvector-hailo-cluster-bench` now refuse to start when `--cache > 0`
+is requested with an empty fingerprint, unless the operator explicitly
+opts in via `--allow-empty-fingerprint`. Refusal happens before any RPC
+fires; the error message names ADR-172 §2a so operators searching for
+it land here. Tested end-to-end via 3 new cases in `tests/embed_cli.rs`:
+(1) refusal without opt-in, (2) success with `--allow-empty-fingerprint`,
+(3) success with `--fingerprint <hex>` set.
 
 **2b. Worker-reported fingerprint is trusted blindly.**
 A malicious worker can claim any fingerprint. Cache key includes the
@@ -219,7 +224,7 @@ session key. Out-of-band key exchange via QR code at provisioning.
 | 92 | HIGH | 1b — mTLS client auth | --require-client-cert worker flag (✅ shipped iter 100 via RUVECTOR_TLS_CLIENT_CA) |
 | 92 | MEDIUM | 5c — cargo-audit CI | new workflow + initial vuln triage |
 | 93 | MEDIUM | 3a — drop root | new user + udev rule + install.sh update |
-| 93 | MEDIUM | 2a — fp required with cache | CLI flag enforcement + docs |
+| 93 | MEDIUM | 2a — fp required with cache | CLI flag enforcement + docs (✅ shipped iter 101) |
 | 94 | MEDIUM | 3b — per-peer rate limit | governor interceptor |
 | 94 | MEDIUM | 2b — auto-fp quorum requirement | discover_fingerprint quorum mode |
 | 95 | MEDIUM | 3c — log text hash mode | --log-text-content flag |

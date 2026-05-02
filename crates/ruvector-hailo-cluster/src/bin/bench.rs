@@ -44,6 +44,9 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let mut quiet = false;
     let mut fingerprint: String = String::new();
     let mut auto_fingerprint = false;
+    // ADR-172 §2a iter-101 gate — see embed.rs for the rationale; same
+    // refusal applies here because bench drives the same cluster code.
+    let mut allow_empty_fingerprint = false;
     let mut validate_fleet = false;
     // 0 = no background health-checker. >0 = probe every N seconds in
     // a background tokio task; mismatched fingerprints get hard-ejected
@@ -68,6 +71,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             "--quiet" => { quiet = true; i += 1; }
             "--fingerprint" => { fingerprint = args.get(i + 1).cloned().unwrap_or_default(); i += 2; }
             "--auto-fingerprint" => { auto_fingerprint = true; i += 1; }
+            "--allow-empty-fingerprint" => { allow_empty_fingerprint = true; i += 1; }
             "--validate-fleet" => { validate_fleet = true; i += 1; }
             "--health-check" => {
                 health_check_secs = args.get(i + 1).and_then(|s| s.parse().ok()).unwrap_or(0);
@@ -157,6 +161,17 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                 fingerprint.clear();
             }
         }
+    }
+
+    // ADR-172 §2a mitigation (iter 101): same gate as embed.rs — refuse
+    // to enable cache without a fingerprint binding it.
+    if cache_cap > 0 && fingerprint.is_empty() && !allow_empty_fingerprint {
+        return Err(
+            "refusing --cache > 0 with empty fingerprint (ADR-172 §2a); pass \
+             --fingerprint <hex> or --auto-fingerprint, or opt out with \
+             --allow-empty-fingerprint"
+                .into(),
+        );
     }
 
     let cluster = Arc::new({
@@ -487,6 +502,9 @@ OPTIONS:
                                      fingerprints. Empty = no enforcement.
     --auto-fingerprint              Probe one worker for its fingerprint
                                      and use that as the expected value.
+    --allow-empty-fingerprint       Opt out of the ADR-172 §2a safety gate
+                                     that refuses --cache > 0 with empty fp.
+                                     Risks silent stale-serve from drift.
     --validate-fleet                Probe every worker on startup;
                                      refuse to bench (exit 2) if fleet
                                      has 0 healthy workers. Pairs with

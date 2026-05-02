@@ -41,6 +41,10 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let mut validate_fleet = false;
     let mut validate_only = false;
     let mut auto_fingerprint = false;
+    // ADR-172 §2a iter-101 gate: if --cache > 0 is requested but the
+    // fingerprint is empty (and didn't get filled in by --auto-fingerprint),
+    // refuse to start unless the operator explicitly opted in.
+    let mut allow_empty_fingerprint = false;
     let mut request_id: String = String::new();
     // "head" (default), "full", "none". head = first 8 components;
     // full = entire vector; none = drop the vector, keep dim + latency.
@@ -88,6 +92,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             "--validate-fleet" => { validate_fleet = true; i += 1; }
             "--validate-only" => { validate_only = true; validate_fleet = true; i += 1; }
             "--auto-fingerprint" => { auto_fingerprint = true; i += 1; }
+            "--allow-empty-fingerprint" => { allow_empty_fingerprint = true; i += 1; }
             "--request-id" => { request_id = args.get(i + 1).cloned().unwrap_or_default(); i += 2; }
             "--output" => {
                 let v = args.get(i + 1).cloned().unwrap_or_default();
@@ -203,6 +208,20 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                 fingerprint.clear();
             }
         }
+    }
+
+    // ADR-172 §2a HIGH-MEDIUM mitigation (iter 101): refuse to enable
+    // the in-process cache without a fingerprint to bind it to. An empty
+    // fingerprint means *any* worker can poison the cache (silent stale
+    // serve from a mismatched HEF/vocab). Operators who explicitly want
+    // the legacy behavior pass --allow-empty-fingerprint.
+    if cache_cap > 0 && fingerprint.is_empty() && !allow_empty_fingerprint {
+        return Err(
+            "refusing --cache > 0 with empty fingerprint (ADR-172 §2a); pass \
+             --fingerprint <hex> or --auto-fingerprint, or opt out with \
+             --allow-empty-fingerprint"
+                .into(),
+        );
     }
 
     let cluster = {
@@ -496,6 +515,12 @@ OPTIONS:
                                      and use that as the expected value.
                                      Pairs with --validate-fleet to
                                      auto-discover then enforce homogeneity.
+    --allow-empty-fingerprint       Opt out of the ADR-172 §2a safety gate
+                                     that refuses --cache > 0 when the
+                                     fingerprint is empty. Useful only for
+                                     legacy fleets that haven't published a
+                                     fingerprint yet; risks silent stale-
+                                     serve from a mismatched HEF.
     --request-id <id>               Caller-supplied tracing token sent
                                      with every embed RPC via gRPC
                                      metadata. Workers' tracing spans
