@@ -27,12 +27,13 @@
 //! with `TODO(iter-B)` comments below.
 
 mod parser;
+mod selftest;
 
 use anyhow::Result;
 use esp_idf_hal::peripherals::Peripherals;
 use esp_idf_hal::uart::{config::Config as UartConfig, UartDriver};
 use esp_idf_hal::units::Hertz;
-use log::{info, warn};
+use log::{error, info, warn};
 use parser::{Event, Mr60Parser};
 use std::time::{Duration, Instant};
 
@@ -96,6 +97,13 @@ impl RadarState {
 const DEFAULT_RX_GPIO: u8 = 17;
 const DEFAULT_TX_GPIO: u8 = 18;
 
+/// Self-test result kept around for the status loop to surface — see
+/// the iter-114 comment in `main()` for the no-buffer rationale.
+#[derive(Debug, Clone, Copy)]
+enum SelftestOutcome {
+    Pass(usize),
+}
+
 /// MR60BHA2 default UART baud (per Seeed datasheet).
 const RADAR_BAUD: u32 = 115_200;
 
@@ -113,6 +121,36 @@ fn main() -> Result<()> {
         "expecting MR60BHA2 on UART1 rx=GPIO{} tx=GPIO{} @ {} baud",
         DEFAULT_RX_GPIO, DEFAULT_TX_GPIO, RADAR_BAUD
     );
+
+    // Iter 114: on-device self-test. Synthesises the same fixture
+    // frames the host unit tests use, runs them through the parser
+    // *on Xtensa*, and asserts every event decodes to the expected
+    // value. Catches:
+    //   - Endianness drift (Xtensa is LE, but a future arch port
+    //     might land an unconfigured bigendian build)
+    //   - cross-compile codegen bugs in the state machine
+    //   - silent data corruption in the static fixture buffers
+    //
+    // The result is threaded into the 1 Hz status print so it remains
+    // visible across reboots — USB-Serial-JTAG has no rx-side buffer,
+    // so a one-shot info!() at boot is lost the moment the host's
+    // `cat /dev/ttyACM0` opens the port. Repeating the result on every
+    // status line trades 30 bytes per line for guaranteed observability.
+    let selftest_outcome: SelftestOutcome = match selftest::run() {
+        Ok(n) => {
+            info!("self-test: {}/{} parser fixtures decoded correctly", n, n);
+            SelftestOutcome::Pass(n)
+        }
+        Err(reason) => {
+            error!("self-test FAILED: {}", reason);
+            error!("halting — refusing to enter UART loop with a broken parser");
+            // Spin forever; the watchdog will eventually reboot us
+            // and we'll re-test on the next attempt.
+            loop {
+                std::thread::sleep(Duration::from_secs(60));
+            }
+        }
+    };
 
     let peripherals = Peripherals::take()?;
     // We pin to UART1 because UART0 is reserved for the boot console
@@ -157,7 +195,7 @@ fn main() -> Result<()> {
         }
 
         if last_print.elapsed() >= STATUS_INTERVAL {
-            print_state(&state);
+            print_state(&state, &selftest_outcome);
             last_print = Instant::now();
         }
         // TODO(iter-B): post the latest state to the ruvector-hailo
@@ -167,9 +205,12 @@ fn main() -> Result<()> {
     }
 }
 
-fn print_state(s: &RadarState) {
+fn print_state(s: &RadarState, selftest: &SelftestOutcome) {
+    let st = match selftest {
+        SelftestOutcome::Pass(n) => format!("selftest=PASS({})", n),
+    };
     info!(
-        "vitals hr_bpm={:?} br_bpm={:?} dist_cm={:?} present={:?} frames_total={} corrupt={} unknown={}",
+        "vitals hr_bpm={:?} br_bpm={:?} dist_cm={:?} present={:?} frames_total={} corrupt={} unknown={} {}",
         s.heart_rate_bpm,
         s.breathing_bpm,
         s.distance_cm,
@@ -177,5 +218,6 @@ fn print_state(s: &RadarState) {
         s.frames_total,
         s.frames_corrupt,
         s.frames_unknown,
+        st,
     );
 }

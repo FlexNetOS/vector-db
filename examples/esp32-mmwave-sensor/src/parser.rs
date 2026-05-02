@@ -71,6 +71,14 @@ enum State {
     Trailer,
 }
 
+/// `~xor(bytes)` per the Seeed protocol — XOR-fold all bytes then
+/// invert. Public so the on-device self-test in main.rs can construct
+/// matching fixture frames; tests in `mod tests` use it via the
+/// `frame()` helper.
+pub fn invert_xor_public(bytes: &[u8]) -> u8 {
+    invert_xor(bytes)
+}
+
 /// Streaming MR60BHA2 frame parser. Feed bytes one-at-a-time or in
 /// slices; parsed events are returned as `Option<Event>` per byte.
 pub struct Mr60Parser {
