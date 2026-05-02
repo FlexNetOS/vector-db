@@ -37,11 +37,10 @@ def main(onnx_path: str, out_hef: str) -> None:
     runner.translate_onnx_model(
         str(onnx_path),
         net_name=NET_NAME,
-        start_node_names=["hidden_states", "extended_attention_mask"],
+        start_node_names=["hidden_states"],
         end_node_names=["last_hidden_state"],
         net_input_shapes={
             "hidden_states": [1, SEQ_LEN, HIDDEN],
-            "extended_attention_mask": [1, 1, 1, SEQ_LEN],
         },
     )
 
@@ -50,10 +49,13 @@ def main(onnx_path: str, out_hef: str) -> None:
     print(f"    parsed HAR → {parsed_har}", flush=True)
 
     print("==> [optimize] random calibration set (FP→INT8)", flush=True)
+    # Iter 139 (single-input form): random calibration. The single-input
+    # graph avoids the multi-input LayerNorm decomposition KeyError seen
+    # in the iter-139 first attempt. Full-precision can't compile —
+    # Hailo-8 hardware requires INT8 quantized weights.
     rng = np.random.default_rng(seed=42)
     calib = {
         "hidden_states": rng.standard_normal((64, SEQ_LEN, HIDDEN), dtype=np.float32),
-        "extended_attention_mask": np.zeros((64, 1, 1, SEQ_LEN), dtype=np.float32),
     }
     runner.optimize(calib)
     opt_har = work / f"{NET_NAME}_optimized.har"

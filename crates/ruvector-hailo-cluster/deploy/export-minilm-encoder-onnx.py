@@ -38,21 +38,26 @@ HIDDEN = 384
 
 
 class EncoderOnly(torch.nn.Module):
-    """Wraps BertEncoder so it takes hidden_states + extended mask as
-    inputs directly — no embedding lookup, no mask broadcasting inside."""
+    """Wraps BertEncoder so it takes only hidden_states as input.
+
+    The attention mask is baked in as a constant zero (no padding —
+    full sequence attended). Trade-off: the worker must always pad to
+    SEQ_LEN tokens; partial sequences get the same shape but with the
+    right tokens. Works fine for sentence embeddings since shorter
+    inputs are padded with [PAD] tokens anyway, and post-NPU mean-pool
+    can apply the real mask host-side over the encoder output.
+
+    Single-input form sidesteps the SDK's multi-input LayerNorm
+    decomposition KeyError (iter 139 first attempt)."""
 
     def __init__(self, model):
         super().__init__()
         self.encoder = model.encoder
 
-    def forward(self, hidden_states, extended_attention_mask):
-        # `extended_attention_mask` is the additive bias shape
-        # `[B, 1, 1, S]` already in float (0 for keep, -10000 for mask).
-        # Pass it through as-is — the encoder's self-attention adds it
-        # to the QK^T scores before softmax. No `Where`/`Expand` needed.
+    def forward(self, hidden_states):
         out = self.encoder(
             hidden_states=hidden_states,
-            attention_mask=extended_attention_mask,
+            attention_mask=None,  # full attention; host masks the output
             return_dict=True,
         )
         return out.last_hidden_state
@@ -69,14 +74,13 @@ def main(out_dir: str) -> None:
 
     print(f"==> dummy inputs (batch=1, seq={SEQ_LEN}, hidden={HIDDEN})", flush=True)
     hidden_states = torch.randn(1, SEQ_LEN, HIDDEN)
-    extended_mask = torch.zeros(1, 1, 1, SEQ_LEN)
 
     print(f"==> torch.onnx.export → {onnx_path}", flush=True)
     torch.onnx.export(
         encoder_only,
-        (hidden_states, extended_mask),
+        (hidden_states,),
         str(onnx_path),
-        input_names=["hidden_states", "extended_attention_mask"],
+        input_names=["hidden_states"],
         output_names=["last_hidden_state"],
         opset_version=OPSET,
         do_constant_folding=True,
