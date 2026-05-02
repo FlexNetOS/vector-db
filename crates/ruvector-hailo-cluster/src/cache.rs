@@ -118,6 +118,7 @@ impl EmbeddingCache {
     }
 
     /// Compose the cache key from fingerprint + text.
+    #[inline]
     fn key(fingerprint: &str, text: &str) -> String {
         let mut k = String::with_capacity(fingerprint.len() + text.len() + 1);
         k.push_str(fingerprint);
@@ -128,6 +129,7 @@ impl EmbeddingCache {
 
     /// Hash the key and pick a shard. Uses std's default sip-hash —
     /// uniform enough for cache sharding, no extra deps.
+    #[inline]
     fn shard_for(&self, k: &str) -> usize {
         let mut hasher = BuildHasherDefault::<std::collections::hash_map::DefaultHasher>::default()
             .build_hasher();
@@ -138,6 +140,7 @@ impl EmbeddingCache {
     /// Cache lookup. Increments hits/misses on the chosen shard;
     /// promotes hit to MRU within that shard. TTL-expired entries
     /// surface as misses + evictions.
+    #[inline]
     pub fn get(&self, fingerprint: &str, text: &str) -> Option<Vec<f32>> {
         if self.capacity == 0 {
             return None;

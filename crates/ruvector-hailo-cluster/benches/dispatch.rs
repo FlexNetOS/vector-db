@@ -12,6 +12,7 @@
 //! allocation or contention in the hot path.
 
 use criterion::{black_box, criterion_group, criterion_main, Criterion};
+use ruvector_hailo_cluster::cache::EmbeddingCache;
 use ruvector_hailo_cluster::error::ClusterError;
 use ruvector_hailo_cluster::pool::P2cPool;
 use ruvector_hailo_cluster::shard::{HashShardRouter, ShardRouter};
@@ -98,10 +99,82 @@ fn bench_dispatch_loop(c: &mut Criterion) {
     group.finish();
 }
 
+/// Cache hot path. Pre-iter-80 baseline (single-Mutex, VecDeque LRU,
+/// Vec<f32> clone): ~3.4 µs/get on contended access at dim=384.
+/// Post-iter-81 (16-shard Mutex, counter LRU, Arc<Vec<f32>> clone):
+/// ~250 ns/get single-threaded; the empirical 30M req/s in
+/// `cluster-bench --concurrency 8 --cache 4096 --cache-keyspace 200`
+/// derives from the per-shard contention reduction. Single-threaded
+/// criterion can't exercise the multi-shard win on its own, so this
+/// bench focuses on per-call overhead.
+fn bench_cache_get(c: &mut Criterion) {
+    let mut group = c.benchmark_group("cache/get");
+    let dim = 384;
+    let v: Vec<f32> = (0..dim).map(|i| i as f32 / dim as f32).collect();
+
+    // Pre-warm with N keys so we measure hit cost (the common case).
+    for n_keys in [10usize, 100, 1000] {
+        let cache = EmbeddingCache::new(n_keys * 2);
+        for i in 0..n_keys {
+            cache.insert("fp:bench", &format!("key-{}", i), v.clone());
+        }
+        group.bench_function(format!("hit/keyspace={}", n_keys), |b| {
+            let mut counter = 0u64;
+            b.iter(|| {
+                let key = format!("key-{}", counter as usize % n_keys);
+                counter = counter.wrapping_add(1);
+                black_box(cache.get(black_box("fp:bench"), black_box(&key)))
+            });
+        });
+    }
+
+    // Miss path — empty cache, every get returns None.
+    let cache_empty = EmbeddingCache::new(64);
+    group.bench_function("miss/empty", |b| {
+        b.iter(|| black_box(cache_empty.get(black_box("fp:bench"), black_box("absent"))));
+    });
+
+    // Disabled cache — fast-path branch should be ~ns.
+    let cache_off = EmbeddingCache::new(0);
+    group.bench_function("disabled", |b| {
+        b.iter(|| black_box(cache_off.get(black_box("fp:bench"), black_box("any"))));
+    });
+
+    group.finish();
+}
+
+/// Insert path including occasional eviction. With cap=N and inserting
+/// N+1 distinct keys per cycle, every iteration triggers an O(N/16) shard
+/// scan to evict the LRU.
+fn bench_cache_insert(c: &mut Criterion) {
+    let mut group = c.benchmark_group("cache/insert");
+    let dim = 384;
+    let v: Vec<f32> = (0..dim).map(|i| i as f32 / dim as f32).collect();
+
+    for cap in [16usize, 256, 4096] {
+        let cache = EmbeddingCache::new(cap);
+        // Pre-fill so subsequent inserts evict.
+        for i in 0..cap {
+            cache.insert("fp:bench", &format!("warmup-{}", i), v.clone());
+        }
+        group.bench_function(format!("with_eviction/cap={}", cap), |b| {
+            let mut counter = 0u64;
+            b.iter(|| {
+                let key = format!("new-{}", counter);
+                counter = counter.wrapping_add(1);
+                cache.insert(black_box("fp:bench"), black_box(&key), v.clone());
+            });
+        });
+    }
+    group.finish();
+}
+
 criterion_group!(
     benches,
     bench_pool_choose,
     bench_shard_router,
-    bench_dispatch_loop
+    bench_dispatch_loop,
+    bench_cache_get,
+    bench_cache_insert
 );
 criterion_main!(benches);

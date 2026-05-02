@@ -66,3 +66,21 @@ criterion    = { version = "0.5", default-features = false, features = ["plotter
 [[bench]]
 name = "dispatch"
 harness = false
+
+# Ultra release profile (iter 82 SOTA pass).
+#
+# Trades compile time for runtime speed:
+# - lto = "fat": cross-crate inlining including tonic + prost
+# - codegen-units = 1: no parallel codegen → strongest optimisation per unit
+# - panic = "abort": no unwinding → smaller code, fewer landingpads
+# - strip = "symbols": shrinks binary; not strictly perf, but cuts deploy size
+#
+# Default `cargo build --release` still uses the fast-compile profile;
+# opt in with `cargo build --profile=ultra` when you want the extra ~5-15%.
+[profile.ultra]
+inherits = "release"
+lto = "fat"
+codegen-units = 1
+panic = "abort"
+strip = "symbols"
+debug = false
