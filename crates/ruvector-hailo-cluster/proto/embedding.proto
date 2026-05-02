@@ -1,0 +1,86 @@
+syntax = "proto3";
+
+// ruvector Hailo embedding service — multi-Pi cluster RPC surface.
+// Compiled by tonic-build into Rust stubs in step 14 (ADR-167 §5).
+package ruvector.hailo.v1;
+
+service Embedding {
+  // Single-text embed. Worker tokenizes locally + runs through its own
+  // /dev/hailo0 + returns the L2-normalised vector.
+  rpc Embed (EmbedRequest) returns (EmbedResponse);
+
+  // Batched server-streaming embed. Client sends N texts in one RPC;
+  // worker streams back per-text responses as soon as each is ready.
+  // Eliminates per-call RPC overhead; lets the NPU pipeline multiple
+  // texts without round-trip stalls. Order is preserved via `index`.
+  rpc EmbedStream (EmbedBatchRequest) returns (stream EmbedStreamResponse);
+
+  // Cheap health probe for the coordinator's per-worker EWMA tracker.
+  // Returns version + device id + model fingerprint so the coordinator
+  // can refuse to fan out to a worker running a different model.
+  rpc Health (HealthRequest) returns (HealthResponse);
+
+  // Worker-side counters + latency stats. Sampled snapshot — no
+  // expensive aggregation server-side. Coordinator can scrape this for
+  // dashboards / Prometheus pipelines without a separate /metrics
+  // endpoint.
+  rpc GetStats (StatsRequest) returns (StatsResponse);
+}
+
+message EmbedRequest {
+  string text = 1;
+  // Override the worker's compile-time max_seq if needed (e.g. shorter
+  // for low-latency probes). 0 = use worker default.
+  uint32 max_seq = 2;
+  // Coordinator-set correlation ID. 16 hex chars by convention. Worker
+  // logs it via a `request_id` tracing field so coordinator + worker
+  // log lines for the same RPC can be joined. Empty string = caller
+  // didn't set one (the worker logs it as "-").
+  string request_id = 3;
+}
+
+message EmbedResponse {
+  repeated float vector = 1;   // unit-norm f32, length = dim
+  uint32 dim = 2;              // 384 for all-MiniLM-L6-v2
+  int64  latency_us = 3;       // server-side wall time
+}
+
+// Batched embed request used by EmbedStream.
+message EmbedBatchRequest {
+  repeated string texts = 1;
+  uint32 max_seq = 2;
+  string request_id = 3;       // batch-level correlation
+}
+
+// One per-text streamed reply. Order in the stream may not match input
+// order under future parallelism; consumers must use `index`.
+message EmbedStreamResponse {
+  uint32 index = 1;            // 0..N-1, matches input slot
+  repeated float vector = 2;
+  uint32 dim = 3;
+  int64  latency_us = 4;       // per-text wall time on the worker
+}
+
+message HealthRequest {}
+
+message HealthResponse {
+  string version = 1;            // "ruvector-hailo X.Y.Z"
+  string device_id = 2;          // PCIe BDF, e.g. "0001:01:00.0"
+  string model_fingerprint = 3;  // sha256 of HEF + tokenizer (hex)
+  bool   ready = 4;              // false during boot / during HEF reload
+}
+
+message StatsRequest {}
+
+message StatsResponse {
+  uint64 embed_count          = 1;  // successful embed RPCs since boot
+  uint64 error_count          = 2;  // failed embed RPCs since boot
+  uint64 health_count         = 3;  // health RPCs since boot
+  // Wall-clock latency stats over a moving window (server-side).
+  // Coordinator can scrape these into a Prometheus counter/histogram.
+  uint64 latency_us_sum       = 4;  // monotonic sum
+  uint64 latency_us_min       = 5;  // since boot
+  uint64 latency_us_max       = 6;  // since boot
+  // Wall-clock seconds since the worker process started.
+  uint64 uptime_seconds       = 7;
+}

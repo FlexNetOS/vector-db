@@ -1,0 +1,222 @@
+//! `ruvector-hailo-fakeworker` — runs a configurable mock embedding
+//! worker as a real binary. Lets you demo the full cluster path
+//! (`ruvector-hailo-embed --workers …` → coordinator → tonic gRPC →
+//! worker) on localhost today, before the actual HEF lands.
+//!
+//! Returns deterministic, content-derived vectors so a coordinator
+//! pointed at multiple fakeworkers gets *consistent* output across
+//! workers (same fingerprint, same dim) — exercises the fleet-integrity
+//! path realistically.
+//!
+//! Env vars:
+//!
+//!   RUVECTOR_FAKE_BIND        listen addr           (default 0.0.0.0:50052)
+//!   RUVECTOR_FAKE_DIM         vector dimensionality (default 384)
+//!   RUVECTOR_FAKE_LATENCY_MS  artificial delay      (default 0)
+//!   RUVECTOR_FAKE_NAME        worker name in logs   (default fakeworker)
+//!   RUVECTOR_FAKE_FINGERPRINT model fp string       (default fp:fakeworker)
+
+use std::sync::Arc;
+use std::time::Duration;
+
+use std::pin::Pin;
+
+use ruvector_hailo_cluster::proto::embedding_server::{Embedding, EmbeddingServer};
+use ruvector_hailo_cluster::proto::{
+    EmbedBatchRequest, EmbedRequest, EmbedResponse, EmbedStreamResponse, HealthRequest,
+    HealthResponse, StatsRequest, StatsResponse,
+};
+use tokio_stream::wrappers::ReceiverStream;
+use tonic::{transport::Server, Request, Response, Status};
+use tracing::{info, instrument};
+
+struct FakeWorker {
+    name: String,
+    dim: usize,
+    latency: Duration,
+    fingerprint: String,
+}
+
+#[tonic::async_trait]
+impl Embedding for FakeWorker {
+    #[instrument(skip(self, request), fields(text_len, latency_us, request_id))]
+    async fn embed(
+        &self,
+        request: Request<EmbedRequest>,
+    ) -> Result<Response<EmbedResponse>, Status> {
+        let req_id_owned = ruvector_hailo_cluster::proto::extract_request_id(
+            &request,
+            &request.get_ref().request_id,
+        );
+        let req = request.into_inner();
+        let req_id_field: &str = if req_id_owned.is_empty() { "-" } else { &req_id_owned };
+        tracing::Span::current()
+            .record("text_len", req.text.len())
+            .record("request_id", req_id_field);
+
+        if !self.latency.is_zero() {
+            tokio::time::sleep(self.latency).await;
+        }
+
+        let v = deterministic_vector(&req.text, self.dim);
+        let latency_us = self.latency.as_micros() as i64;
+        tracing::Span::current().record("latency_us", latency_us);
+        info!("fakeworker embed");
+        Ok(Response::new(EmbedResponse {
+            vector: v,
+            dim: self.dim as u32,
+            latency_us,
+        }))
+    }
+
+    #[instrument(skip_all)]
+    async fn health(
+        &self,
+        _request: Request<HealthRequest>,
+    ) -> Result<Response<HealthResponse>, Status> {
+        Ok(Response::new(HealthResponse {
+            version: format!("ruvector-hailo-fakeworker {}", env!("CARGO_PKG_VERSION")),
+            device_id: format!("fake:{}", self.name),
+            model_fingerprint: self.fingerprint.clone(),
+            ready: true,
+        }))
+    }
+
+    type EmbedStreamStream =
+        Pin<Box<dyn futures_core::Stream<Item = Result<EmbedStreamResponse, Status>> + Send + 'static>>;
+
+    #[instrument(skip(self, request), fields(batch_size, request_id))]
+    async fn embed_stream(
+        &self,
+        request: Request<EmbedBatchRequest>,
+    ) -> Result<Response<Self::EmbedStreamStream>, Status> {
+        let req_id_owned = ruvector_hailo_cluster::proto::extract_request_id(
+            &request,
+            &request.get_ref().request_id,
+        );
+        let req = request.into_inner();
+        let req_id_field: &str = if req_id_owned.is_empty() { "-" } else { &req_id_owned };
+        tracing::Span::current()
+            .record("batch_size", req.texts.len())
+            .record("request_id", req_id_field);
+        // Top-level info on entry — single embed has one too, so both
+        // RPCs leave a visible audit trail with the same fields. The
+        // span's `request_id` field is the cross-system correlation key.
+        info!("fakeworker embed_stream");
+
+        let dim = self.dim as u32;
+        let latency = self.latency;
+        let (tx, rx) = tokio::sync::mpsc::channel::<Result<EmbedStreamResponse, Status>>(
+            req.texts.len().max(1),
+        );
+
+        tokio::task::spawn(async move {
+            for (i, text) in req.texts.into_iter().enumerate() {
+                if !latency.is_zero() {
+                    tokio::time::sleep(latency).await;
+                }
+                let v = deterministic_vector(&text, dim as usize);
+                let item = Ok(EmbedStreamResponse {
+                    index: i as u32,
+                    vector: v,
+                    dim,
+                    latency_us: latency.as_micros() as i64,
+                });
+                if tx.send(item).await.is_err() { break; }
+            }
+        });
+
+        Ok(Response::new(Box::pin(ReceiverStream::new(rx))))
+    }
+
+    #[instrument(skip_all)]
+    async fn get_stats(
+        &self,
+        _request: Request<StatsRequest>,
+    ) -> Result<Response<StatsResponse>, Status> {
+        // Fakeworker is for demos; doesn't track real counters.
+        Ok(Response::new(StatsResponse::default()))
+    }
+}
+
+/// Build a `dim`-element f32 vector that's content-derived but cheap to
+/// compute — same input across fakeworkers yields the same vector,
+/// which is what a real worker fleet does.
+fn deterministic_vector(text: &str, dim: usize) -> Vec<f32> {
+    // Seed an LCG with a non-cryptographic hash of the text bytes.
+    let mut seed: u64 = 0xcbf2_9ce4_8422_2325;
+    for &b in text.as_bytes() {
+        seed = seed.wrapping_mul(0x100_0000_01b3) ^ (b as u64);
+    }
+    (0..dim)
+        .map(|_| {
+            seed = seed.wrapping_mul(6364136223846793005).wrapping_add(1442695040888963407);
+            // Map u64 → f32 in [-1, 1)
+            ((seed >> 32) as i32 as f32) / (i32::MAX as f32)
+        })
+        .collect()
+}
+
+fn main() -> Result<(), Box<dyn std::error::Error>> {
+    tracing_subscriber::fmt()
+        .with_env_filter(
+            tracing_subscriber::EnvFilter::try_from_default_env()
+                .unwrap_or_else(|_| tracing_subscriber::EnvFilter::new("info")),
+        )
+        .with_writer(std::io::stderr)
+        .init();
+
+    let bind: std::net::SocketAddr = std::env::var("RUVECTOR_FAKE_BIND")
+        .unwrap_or_else(|_| "0.0.0.0:50052".into())
+        .parse()?;
+    let dim: usize = std::env::var("RUVECTOR_FAKE_DIM")
+        .ok()
+        .and_then(|s| s.parse().ok())
+        .unwrap_or(384);
+    let latency_ms: u64 = std::env::var("RUVECTOR_FAKE_LATENCY_MS")
+        .ok()
+        .and_then(|s| s.parse().ok())
+        .unwrap_or(0);
+    let name = std::env::var("RUVECTOR_FAKE_NAME")
+        .unwrap_or_else(|_| "fakeworker".into());
+    let fingerprint = std::env::var("RUVECTOR_FAKE_FINGERPRINT")
+        .unwrap_or_else(|_| "fp:fakeworker".into());
+
+    info!(
+        bind = %bind, dim, latency_ms, name = %name, fingerprint = %fingerprint,
+        "ruvector-hailo-fakeworker starting"
+    );
+
+    let svc = FakeWorker {
+        name,
+        dim,
+        latency: Duration::from_millis(latency_ms),
+        fingerprint,
+    };
+
+    let rt = tokio::runtime::Builder::new_multi_thread()
+        .worker_threads(2)
+        .enable_all()
+        .build()?;
+
+    rt.block_on(async move {
+        info!(addr = %bind, "ruvector-hailo-fakeworker serving");
+        Server::builder()
+            .add_service(EmbeddingServer::new(svc))
+            .serve_with_shutdown(bind, shutdown_signal())
+            .await
+    })?;
+
+    Ok(())
+}
+
+async fn shutdown_signal() {
+    use tokio::signal::unix::{signal, SignalKind};
+    let _ = Arc::new(()); // keep the unused-import lint quiet without bringing prelude in
+    let mut sigterm = signal(SignalKind::terminate()).expect("install SIGTERM");
+    let mut sigint = signal(SignalKind::interrupt()).expect("install SIGINT");
+    tokio::select! {
+        _ = sigterm.recv() => info!("SIGTERM received"),
+        _ = sigint.recv()  => info!("SIGINT received"),
+    }
+}

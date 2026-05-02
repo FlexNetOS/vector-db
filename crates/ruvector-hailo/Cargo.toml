@@ -1,0 +1,28 @@
+[package]
+name = "ruvector-hailo"
+version = "0.1.0"
+edition = "2021"
+description = "ruvector embedding backend for the Hailo-8 NPU (ADR-167)"
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/ruvnet/ruvector"
+keywords = ["ruvector", "hailo", "npu", "embedding", "edge-ai"]
+categories = ["embedded", "science"]
+
+# `hailo` feature gates the actual NPU runtime path. Building without the
+# feature compiles a stub that errors at runtime — useful for `cargo check`
+# on x86 hosts and for compilation on devices without a Hailo HAT.
+[features]
+default = []
+# Activates the real Hailo NPU runtime path — propagates to hailort-sys.
+hailo = ["hailort-sys/hailo"]
+
+# Standalone (excluded from parent workspace until iteration 11 lands).
+[workspace]
+
+[dependencies]
+thiserror   = "2"
+hailort-sys = { path = "../hailort-sys" }
+
+[dev-dependencies]
+anyhow   = "1"
+proptest = "1"
