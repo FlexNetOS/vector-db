@@ -36,6 +36,11 @@ pub struct GrpcTransport {
     connect_timeout: Duration,
     /// Per-RPC deadline.
     rpc_timeout: Duration,
+    /// Optional TLS config — when `Some`, every channel dialed uses
+    /// `https://` scheme and rustls (ADR-172 §1a HIGH mitigation, iter 99).
+    /// Constructed via [`Self::with_tls`] under the `tls` feature.
+    #[cfg(feature = "tls")]
+    tls: Option<crate::tls::TlsClient>,
 }
 
 impl GrpcTransport {
@@ -61,7 +66,24 @@ impl GrpcTransport {
             channels: Mutex::new(HashMap::new()),
             connect_timeout: connect,
             rpc_timeout: rpc,
+            #[cfg(feature = "tls")]
+            tls: None,
         })
+    }
+
+    /// TLS-enabled constructor (ADR-172 §1a HIGH mitigation, iter 99).
+    /// Available only under `--features tls`. Every channel dialed
+    /// after this is constructed will be `https://` and validated against
+    /// the supplied [`crate::tls::TlsClient`] CA bundle.
+    #[cfg(feature = "tls")]
+    pub fn with_tls(
+        connect: Duration,
+        rpc: Duration,
+        tls: crate::tls::TlsClient,
+    ) -> Result<Self, ClusterError> {
+        let mut t = Self::with_timeouts(connect, rpc)?;
+        t.tls = Some(tls);
+        Ok(t)
     }
 
     /// Get-or-create a channel for the given worker address. Channel
@@ -71,20 +93,39 @@ impl GrpcTransport {
         if let Some(c) = self.channels.lock().unwrap().get(&worker.address) {
             return Ok(c.clone());
         }
-        // Slow path: dial. Use http:// scheme for plaintext; iter 16 swaps
-        // to https:// when Tailscale-attested TLS lands.
-        let url = if worker.address.starts_with("http") {
-            worker.address.clone()
+        // Slow path: dial. Default plaintext http://; when TLS is
+        // configured we coerce to https:// regardless of how the address
+        // was specified, so a stray `http://` prefix can't downgrade us.
+        let raw = worker.address.as_str();
+        let stripped = raw
+            .strip_prefix("https://")
+            .or_else(|| raw.strip_prefix("http://"))
+            .unwrap_or(raw);
+        #[cfg(feature = "tls")]
+        let url = if self.tls.is_some() {
+            format!("https://{}", stripped)
         } else {
-            format!("http://{}", worker.address)
+            format!("http://{}", stripped)
         };
+        #[cfg(not(feature = "tls"))]
+        let url = format!("http://{}", stripped);
         let connect_to = self.connect_timeout;
+        #[cfg(feature = "tls")]
+        let tls_cfg = self.tls.clone();
         let channel = self
             .runtime
             .block_on(async move {
                 let endpoint = Endpoint::from_shared(url)
                     .map_err(|e| format!("bad endpoint: {}", e))?
                     .connect_timeout(connect_to);
+                #[cfg(feature = "tls")]
+                let endpoint = if let Some(tls) = tls_cfg {
+                    endpoint
+                        .tls_config(tls.into_inner())
+                        .map_err(|e| format!("tls_config: {}", e))?
+                } else {
+                    endpoint
+                };
                 endpoint
                     .connect()
                     .await

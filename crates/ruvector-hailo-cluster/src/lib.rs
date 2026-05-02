@@ -63,6 +63,8 @@ pub mod health;
 pub mod pool;
 pub mod proto;
 pub mod shard;
+#[cfg(feature = "tls")]
+pub mod tls;
 pub mod transport;
 
 pub use health::{HealthChecker, HealthCheckerConfig};

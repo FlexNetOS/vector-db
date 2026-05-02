@@ -34,14 +34,21 @@ below scope what each scenario adds.
 
 ### 1. Network attack surface (tonic gRPC) — HIGH
 
-**1a. No TLS / no mTLS.**
-All coordinator↔worker traffic is cleartext over WiFi/Tailnet/LAN.
+**1a. No TLS / no mTLS.** [✅ MITIGATED — iter 99]
+All coordinator↔worker traffic was cleartext over WiFi/Tailnet/LAN.
 Tailscale's WireGuard envelope mitigates Scenario B over the tailnet
-proper but doesn't help anything off-tailnet. LAN deploys are wide open.
+proper but doesn't help anything off-tailnet. LAN deploys were wide open.
 
-*Mitigation:* `--tls-cert / --tls-key / --tls-ca` flags. tonic's
-built-in `tonic::transport::ServerTlsConfig` + `ClientTlsConfig`. Default
-off (back-compat); document recommended-on for Scenario B+.
+*Mitigation (shipped iter 99):* New `tls` cargo feature on
+`ruvector-hailo-cluster` enables rustls-backed TLS via tonic's
+`ServerTlsConfig` + `ClientTlsConfig`. Worker reads `RUVECTOR_TLS_CERT`
++ `RUVECTOR_TLS_KEY` env vars (and optional `RUVECTOR_TLS_CLIENT_CA`
+for mTLS); coordinator constructs `GrpcTransport::with_tls(connect, rpc,
+TlsClient)` to dial `https://`. Feature is off by default (back-compat);
+recommended-on for Scenario B+. Tested via `tests/tls_roundtrip.rs` —
+self-signed cert generated at runtime, full embed + health roundtrip
+asserted, plus a negative test that plaintext clients fail cleanly
+against TLS-only servers.
 
 **1b. No client authentication.**
 Any tonic client reaching a worker can saturate `/dev/hailo0`. NPU is a
@@ -201,7 +208,7 @@ session key. Out-of-band key exchange via QR code at provisioning.
 
 | Iter | Severity | Item | Implementation |
 |---|---|---|---|
-| 91 | HIGH | 1a — TLS support | tonic ServerTlsConfig + ClientTlsConfig; docs |
+| 91 | HIGH | 1a — TLS support | tonic ServerTlsConfig + ClientTlsConfig; docs (✅ shipped iter 99) |
 | 91 | LOW | 4a/4b — request_id sanitisation | proto::extract_request_id 64-char cap + control-char strip |
 | 92 | HIGH | 1b — mTLS client auth | --require-client-cert worker flag |
 | 92 | MEDIUM | 5c — cargo-audit CI | new workflow + initial vuln triage |

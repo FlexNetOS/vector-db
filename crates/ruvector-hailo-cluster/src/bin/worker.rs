@@ -10,6 +10,14 @@
 //!   RUVECTOR_WORKER_BIND   socket addr to listen on   (default 0.0.0.0:50051)
 //!   RUVECTOR_MODEL_DIR     dir holding model.hef + vocab.txt
 //!                          (default ./models/all-minilm-l6-v2)
+//!   RUVECTOR_TLS_CERT      path to PEM server cert        (TLS — feature `tls`)
+//!   RUVECTOR_TLS_KEY       path to PEM server private key (TLS — feature `tls`)
+//!   RUVECTOR_TLS_CLIENT_CA path to PEM client CA bundle   (mTLS — optional)
+//!
+//! When both `RUVECTOR_TLS_CERT` and `RUVECTOR_TLS_KEY` are set and the
+//! binary was built with `--features tls`, the worker serves over HTTPS
+//! (rustls). Otherwise it falls back to plaintext gRPC and assumes the
+//! caller (e.g. Tailscale) handles transport security. ADR-172 §1a.
 //!
 //! Without the `hailo` feature, `HailoEmbedder::open()` returns
 //! `FeatureDisabled` and the worker exits with a clear message — useful
@@ -311,11 +319,45 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         .build()?;
 
     rt.block_on(async move {
+        let mut server = Server::builder();
+        #[cfg(feature = "tls")]
+        {
+            // Both vars must be set to opt-in. A partial config (cert
+            // without key, or vice versa) is a misconfiguration — fail
+            // loudly rather than silently dropping to plaintext.
+            let cert = std::env::var("RUVECTOR_TLS_CERT").ok();
+            let key = std::env::var("RUVECTOR_TLS_KEY").ok();
+            match (cert, key) {
+                (Some(c), Some(k)) => {
+                    let mut tls = ruvector_hailo_cluster::tls::TlsServer::from_pem_files(&c, &k)
+                        .map_err(|e| format!("tls server config: {}", e))?;
+                    if let Ok(ca) = std::env::var("RUVECTOR_TLS_CLIENT_CA") {
+                        tls = tls.with_client_ca(&ca)
+                            .map_err(|e| format!("tls client_ca: {}", e))?;
+                        info!(client_ca = %ca, "mTLS client cert verification enabled");
+                    }
+                    server = server.tls_config(tls.into_inner())
+                        .map_err(|e| format!("apply tls: {}", e))?;
+                    info!(cert = %c, "TLS enabled (ADR-172 §1a HIGH mitigation, iter 99)");
+                }
+                (Some(_), None) | (None, Some(_)) => {
+                    return Err(
+                        "RUVECTOR_TLS_CERT and RUVECTOR_TLS_KEY must both be set or both unset"
+                            .to_string(),
+                    );
+                }
+                (None, None) => {
+                    info!("TLS disabled — plaintext gRPC (rely on Tailscale or upstream)");
+                }
+            }
+        }
         info!(addr = %bind, "ruvector-hailo-worker serving");
-        Server::builder()
+        server
             .add_service(EmbeddingServer::new(svc))
             .serve_with_shutdown(bind, shutdown_signal())
             .await
+            .map_err(|e| format!("serve: {}", e))?;
+        Ok::<(), String>(())
     })?;
 
     Ok(())

@@ -101,6 +101,13 @@ jobs:
       - name: Run all suites
         working-directory: crates/ruvector-hailo-cluster
         run: cargo test
+      - name: Run all suites (--features tls)
+        # ADR-172 §1a iter-99 mitigation. The `tls` feature gates the
+        # rustls-backed transport + the tls_roundtrip integration test;
+        # CI must exercise it so a future regression on the TLS code
+        # path doesn't slip past the default-feature build.
+        working-directory: crates/ruvector-hailo-cluster
+        run: cargo test --features tls
       - name: Run doctests
         working-directory: crates/ruvector-hailo-cluster
         run: cargo test --doc

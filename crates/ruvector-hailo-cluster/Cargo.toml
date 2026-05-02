@@ -16,6 +16,11 @@ grpc = []
 # `hailo` propagates to ruvector-hailo so the worker binary actually
 # talks to /dev/hailo0. Default off so x86 dev hosts can still build.
 hailo = ["ruvector-hailo/hailo"]
+# `tls` enables rustls-backed TLS on GrpcTransport (client) and the
+# worker (server). Mitigates ADR-172 §1a HIGH (cleartext gRPC). Off by
+# default — Tailscale already encrypts the wire; opt-in for defense-in-
+# depth or non-Tailscale deploys.
+tls = ["tonic/tls"]
 
 # Standalone (excluded from parent workspace until cluster crate joins).
 [workspace]
@@ -62,6 +67,10 @@ protoc-bin-vendored = "3"
 anyhow       = "1"
 tokio-stream = { version = "0.1", features = ["net"] }
 criterion    = { version = "0.5", default-features = false, features = ["plotters", "cargo_bench_support"] }
+# Self-signed cert generation for the TLS roundtrip test. Only used
+# under `cargo test --features tls`; pulled regardless because dev-deps
+# can't be feature-gated cleanly, but build cost is small (~50KB).
+rcgen        = { version = "0.13", default-features = false, features = ["pem", "ring"] }
 
 [[bench]]
 name = "dispatch"
