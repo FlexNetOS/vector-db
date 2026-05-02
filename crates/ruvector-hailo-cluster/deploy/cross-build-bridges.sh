@@ -9,13 +9,21 @@
 #   ruview-csi-bridge        RuView ADR-018 CSI UDP
 #   ruvllm-bridge            ruvllm JSONL stdin/stdout adapter
 #
+# With --with-worker, also cross-compiles the cpu-fallback worker
+# (iter 134/137) — `--features cpu-fallback` doesn't need libhailort
+# either, so it slots into the same cross-build pipeline.
+#
 # Companion to deploy/cross-build.sh (which handles the worker-side
 # CLIs: embed, stats, fakeworker, cluster-bench).
 #
 # Usage:
-#   bash cross-build-bridges.sh [--deploy <pi-tailnet-or-local-name>]
+#   bash cross-build-bridges.sh [--with-worker] [--deploy <host>]
 #
-#   --deploy NAME   rsync the three bridges to NAME:/usr/local/bin/
+#   --with-worker   Also build ruvector-hailo-worker --features cpu-fallback.
+#                   Result is an aarch64 ELF that runs on any Pi 5 (no AI
+#                   HAT+ required) and serves real BERT-6 embeddings via
+#                   candle on the host CPU. ~40-150 ms / embed on Pi 5.
+#   --deploy NAME   rsync the binaries to NAME:/usr/local/bin/
 #                   (uses tailscale ssh if NAME is on the tailnet,
 #                    plain ssh otherwise; expects passwordless ssh).
 #
@@ -26,6 +34,7 @@ set -euo pipefail
 CRATE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")"/.. && pwd)"
 TARGET="aarch64-unknown-linux-gnu"
 BINS=(ruvector-mmwave-bridge ruview-csi-bridge ruvllm-bridge)
+WITH_WORKER=0
 
 DEPLOY_HOST=""
 while [[ $# -gt 0 ]]; do
@@ -34,6 +43,10 @@ while [[ $# -gt 0 ]]; do
       DEPLOY_HOST="${2:-}"
       [[ -z "$DEPLOY_HOST" ]] && { echo "--deploy needs a host" >&2; exit 1; }
       shift 2
+      ;;
+    --with-worker)
+      WITH_WORKER=1
+      shift
       ;;
     -h|--help)
       sed -n '2,30p' "$0" | sed 's/^# \?//'
@@ -73,6 +86,15 @@ for bin in "${BINS[@]}"; do
       CARGO_TARGET_AARCH64_UNKNOWN_LINUX_GNU_LINKER=aarch64-linux-gnu-gcc \
       cargo build --release --target "$TARGET" --bin "$bin"
 done
+
+if [[ $WITH_WORKER -eq 1 ]]; then
+  echo "    [+] ruvector-hailo-worker (--features cpu-fallback, iter 140)"
+  env -u RUSTFLAGS \
+      CARGO_TARGET_AARCH64_UNKNOWN_LINUX_GNU_LINKER=aarch64-linux-gnu-gcc \
+      cargo build --release --target "$TARGET" \
+          --features cpu-fallback --bin ruvector-hailo-worker
+  BINS+=(ruvector-hailo-worker)
+fi
 
 echo "==> [4/5] verify each artifact is aarch64 ELF"
 ALL_OK=1
