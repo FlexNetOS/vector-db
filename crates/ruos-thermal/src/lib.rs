@@ -90,6 +90,86 @@ impl Snapshot {
     }
 }
 
+/// Named clock profiles defined in ADR-174 §Clock profiles. Each
+/// resolves to a target `scaling_max_freq` for every cpufreq policy.
+///
+/// Pre-iter-94 these existed only as English in the ADR; iter-94
+/// (this code) makes them switchable at runtime via `apply_profile`.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum ClockProfile {
+    /// 1.4 GHz — battery / solar / fanless. ~3 W sustained.
+    Eco,
+    /// 2.4 GHz — Pi 5 stock. Passive heatsink. ~5 W.
+    Default,
+    /// 2.6 GHz — large heatsink. Validated thermal envelope. ~7 W.
+    SafeOverclock,
+    /// 2.8 GHz — requires active fan. ~10 W.
+    Aggressive,
+    /// 3.0 GHz — heatsink + fan, monitored. Voids warranty; can degrade
+    /// silicon over time. Documented prominently in install path.
+    Max,
+}
+
+impl ClockProfile {
+    /// Target max frequency in Hz for this profile.
+    pub fn target_max_hz(self) -> u64 {
+        match self {
+            ClockProfile::Eco => 1_400_000_000,
+            ClockProfile::Default => 2_400_000_000,
+            ClockProfile::SafeOverclock => 2_600_000_000,
+            ClockProfile::Aggressive => 2_800_000_000,
+            ClockProfile::Max => 3_000_000_000,
+        }
+    }
+
+    /// Estimated sustained draw in watts for the Pi 5 + AI HAT+ stack.
+    /// Numbers from ADR-174 §Combined edge-node thermal envelope.
+    pub fn estimated_watts(self) -> f32 {
+        match self {
+            ClockProfile::Eco => 3.0,
+            ClockProfile::Default => 5.0,
+            ClockProfile::SafeOverclock => 7.0,
+            ClockProfile::Aggressive => 10.0,
+            ClockProfile::Max => 13.0,
+        }
+    }
+
+    /// Parse `eco`, `default`, `safe-overclock`, `aggressive`, `max`.
+    /// Returns None for unknown names — caller decides how to surface.
+    pub fn from_name(s: &str) -> Option<Self> {
+        match s {
+            "eco" => Some(ClockProfile::Eco),
+            "default" => Some(ClockProfile::Default),
+            "safe-overclock" | "safe" => Some(ClockProfile::SafeOverclock),
+            "aggressive" => Some(ClockProfile::Aggressive),
+            "max" => Some(ClockProfile::Max),
+            _ => None,
+        }
+    }
+
+    /// Canonical name (matches the parser).
+    pub fn name(self) -> &'static str {
+        match self {
+            ClockProfile::Eco => "eco",
+            ClockProfile::Default => "default",
+            ClockProfile::SafeOverclock => "safe-overclock",
+            ClockProfile::Aggressive => "aggressive",
+            ClockProfile::Max => "max",
+        }
+    }
+
+    /// All profiles, low → high. Useful for `--show-profiles`.
+    pub fn all() -> &'static [ClockProfile] {
+        &[
+            ClockProfile::Eco,
+            ClockProfile::Default,
+            ClockProfile::SafeOverclock,
+            ClockProfile::Aggressive,
+            ClockProfile::Max,
+        ]
+    }
+}
+
 /// sysfs-backed thermal reader. The two root paths are configurable
 /// so tests can point at a synthetic tree under `tempfile`.
 pub struct ThermalSensor {
@@ -158,6 +238,40 @@ impl ThermalSensor {
         }
 
         Ok(snap)
+    }
+}
+
+impl ThermalSensor {
+    /// Write `profile.target_max_hz()` to every cpufreq policy's
+    /// `scaling_max_freq` (in kHz, sysfs convention). Returns the
+    /// number of policies updated; missing-policy errors don't abort.
+    ///
+    /// **Caller must hold CAP_SYS_NICE / be root** — sysfs cpufreq writes
+    /// are privileged. Failure to open the file (EACCES) is surfaced as
+    /// `io::ErrorKind::PermissionDenied` from the *first* failing policy
+    /// so the operator sees an actionable error instead of a half-applied
+    /// state.
+    ///
+    /// Iter-94 deliverable from ADR-174's roadmap. Iter 93's reader
+    /// remains the source of truth for *current* state — this just adds
+    /// the writer path.
+    pub fn apply_profile(&self, profile: ClockProfile) -> io::Result<usize> {
+        let target_khz = profile.target_max_hz() / 1000;
+        let mut applied = 0usize;
+        let entries = fs::read_dir(&self.cpufreq_root)?;
+        for entry in entries.flatten() {
+            let path = entry.path();
+            let name = match path.file_name().and_then(|n| n.to_str()) {
+                Some(n) => n,
+                None => continue,
+            };
+            if parse_cpufreq_policy(name).is_some() {
+                let target = path.join("scaling_max_freq");
+                fs::write(&target, target_khz.to_string())?;
+                applied += 1;
+            }
+        }
+        Ok(applied)
     }
 }
 
@@ -297,6 +411,58 @@ mod tests {
         assert_eq!(snap.cpu_policies[0].max_hz, 2_400_000_000);
         assert_eq!(snap.cpu_policies[0].governor, "ondemand");
         assert_eq!(snap.cpu_policies[1].governor, "performance");
+    }
+
+    #[test]
+    fn clock_profile_parse_and_target_freqs() {
+        // Round-trip name → enum → target_hz.
+        for p in ClockProfile::all() {
+            let parsed = ClockProfile::from_name(p.name());
+            assert_eq!(parsed, Some(*p));
+            assert!(p.target_max_hz() >= 1_400_000_000);
+            assert!(p.target_max_hz() <= 3_000_000_000);
+            assert!(p.estimated_watts() >= 3.0);
+            assert!(p.estimated_watts() <= 13.0);
+        }
+        // Synonym + bad input.
+        assert_eq!(ClockProfile::from_name("safe"), Some(ClockProfile::SafeOverclock));
+        assert_eq!(ClockProfile::from_name("turbo"), None);
+        assert_eq!(ClockProfile::from_name(""), None);
+    }
+
+    #[test]
+    fn apply_profile_writes_target_to_each_policy() {
+        let tmp = TempDir::new().unwrap();
+        let (thermal, cpufreq) = write_synthetic_sysfs(&tmp);
+        let sensor = ThermalSensor::with_roots(thermal, cpufreq.clone());
+
+        // Synthetic tree has 2 policies.
+        let applied = sensor.apply_profile(ClockProfile::SafeOverclock).unwrap();
+        assert_eq!(applied, 2);
+
+        // Verify both policy0 + policy1 now show the new max.
+        let p0 = fs::read_to_string(cpufreq.join("policy0/scaling_max_freq")).unwrap();
+        let p1 = fs::read_to_string(cpufreq.join("policy1/scaling_max_freq")).unwrap();
+        // SafeOverclock = 2_600_000_000 Hz → 2_600_000 kHz on disk.
+        assert_eq!(p0.trim(), "2600000");
+        assert_eq!(p1.trim(), "2600000");
+
+        // Re-read with the sensor → snapshot reflects the new max.
+        let snap = sensor.read().unwrap();
+        assert_eq!(snap.cpu_policies.len(), 2);
+        assert_eq!(snap.cpu_policies[0].max_hz, 2_600_000_000);
+        assert_eq!(snap.cpu_policies[1].max_hz, 2_600_000_000);
+    }
+
+    #[test]
+    fn apply_profile_eco_underclocks() {
+        let tmp = TempDir::new().unwrap();
+        let (thermal, cpufreq) = write_synthetic_sysfs(&tmp);
+        let sensor = ThermalSensor::with_roots(thermal, cpufreq.clone());
+        let applied = sensor.apply_profile(ClockProfile::Eco).unwrap();
+        assert_eq!(applied, 2);
+        let p0 = fs::read_to_string(cpufreq.join("policy0/scaling_max_freq")).unwrap();
+        assert_eq!(p0.trim(), "1400000"); // 1.4 GHz in kHz
     }
 
     #[test]
