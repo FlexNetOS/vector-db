@@ -32,6 +32,50 @@ below for historical context. The current cumulative state:
 | Cache TTL exposed in stats | Iter 108 |
 | HEF compile pipeline (real semantic vectors) | ❌ External blocker — Hailo Dataflow Compiler is proprietary x86-host tooling, runs outside this repo |
 | **Placeholder vectors removed (iter 130)** | ✅ `embed()` now returns `HailoError::NoModelLoaded` instead of FNV-1a content hashes; `health.ready` flips false via the new `HailoEmbedder::has_model()` gate so the cluster's `validate_fleet` correctly identifies model-less workers |
+| **HEF acquisition recipe (iter 131-132)** | ✅ Three documented paths to land a `model.hef` artifact, with realistic caveats per path. |
+
+### HEF acquisition: the actual three paths (iter 131-132)
+
+**Path A: install the Hailo Dataflow Compiler + compile from ONNX**
+- Operator-side prerequisites (one-time): create free Hailo developer
+  account at <https://hailo.ai/developer-zone/sw-downloads/>, download
+  `hailort_X.Y.Z_amd64.deb` + `hailo_dataflow_compiler-X.Y.Z-py3-none-linux_x86_64.whl`.
+- `deploy/setup-hailo-compiler.sh /path/to/downloads` — uses `uv` to
+  materialise a Python 3.10 venv (vendor wheel breaks on Python 3.12
+  shipped with Ubuntu 24.04+), installs the wheel + optimum-cli into
+  the venv, sudo-installs the runtime .deb.
+- `deploy/compile-hef.sh` — exports
+  `sentence-transformers/all-MiniLM-L6-v2` to ONNX, runs Hailo's
+  parser → optimize → compiler pipeline, drops `model.hef`.
+- **This is the only documented path that targets Hailo-8** (the chip
+  on the Pi 5 + AI HAT+).
+
+**Path B: pre-compiled HEFs from Hailo Model Zoo**
+- Two repos: <https://github.com/hailo-ai/hailo_model_zoo> (general
+  vision/NLP) and <https://github.com/hailo-ai/hailo_model_zoo_genai>
+  (LLMs).
+- Reality check (verified 2026-05-02): **every pre-compiled embedding/
+  LLM HEF in those zoos targets `hailo15h` or `hailo10h`, NOT
+  `hailo8`.** Examples:
+  - `bert_base_uncased.yaml`: `supported_hw_arch: [hailo15h, hailo10h]`
+  - `tinyclip_vit_8m_16_text_3m_yfcc15m_text_encoder` (3M params,
+    0.38G ops — would be ideal for Hailo-8): same hailo15h/10h
+    constraint
+  - `llama3.2/1b` GenAI HEF: `hef_h10h` field only, no `hef_h8` field
+- Path B is therefore **a non-starter for the Pi 5 + AI HAT+ today.**
+  Documents itself once Hailo publishes Hailo-8 builds of these
+  models, or when an operator upgrades to a Hailo-15h-equipped
+  Pi-class board.
+
+**Path C: pure-Rust CPU fallback**
+- Add `candle-transformers` dep, load `all-MiniLM-L6-v2` weights
+  (safetensors, ~90 MB), run BERT-6 on Cortex-A76 NEON.
+- ~400 LOC + ~50 MB of compiled deps.
+- NPU stays idle; NPU TOPS budget unused; but real semantic
+  embeddings work end-to-end today without any vendor tooling.
+- Realistic per-embed latency on Cortex-A76: ~50-150 ms (BERT-6
+  forward pass at 384-token sequence, single thread).
+- Documented as a future option; not yet implemented on this branch.
 | ADR-174 thermal subscriber Unix-socket protocol | ❌ Deferred (iter 95-97 plan never built) |
 | Long-running coordinator daemon | ❌ Not built — CLI bins are stateless |
 | Native AsyncEmbeddingTransport trait | ❌ Public API change deferred (no consumer demand yet) |

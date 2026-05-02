@@ -41,6 +41,27 @@ output contract doesn't change — same JSONL, just real embeddings.
   3. Tokio integration for KV-cache management
 - MicroLoRA adapter swap mechanics (planned iter; needs HEF too).
 
+**Hailo Model Zoo GenAI reality-check (verified 2026-05-02 via
+[hailo-ai/hailo_model_zoo_genai](https://github.com/hailo-ai/hailo_model_zoo_genai)):**
+
+Hailo distributes pre-compiled GenAI HEFs for:
+- `deepseek_r1`
+- `llama3.2/1b` (Q4_0)
+- `qwen2`, `qwen2.5`, `qwen2.5-coder`, `qwen3`
+
+**All target `hailo10h`** — the field `hef_h10h` is the only artifact
+in their manifest.json files. No `hef_h8h` / `hef_hailo8` field is
+present anywhere in the GenAI zoo. The Pi 5 + AI HAT+ runs Hailo-8,
+so Path B (download a pre-compiled GenAI HEF) is a **non-starter for
+this hardware today.**
+
+The realistic ruvllm-on-Pi-5 path is the same Path A as ADR-167:
+operator installs Hailo Dataflow Compiler, runs it against a
+Llama-class ONNX, produces a hailo8-targeted HEF locally. The
+deploy/compile-hef.sh from iter 131 + deploy/setup-hailo-compiler.sh
+from iter 132 are reusable for that compile (the Llama prefill ONNX
+gets substituted for all-MiniLM in the optimum-cli export step).
+
 Companion to ADR-171 (brain + ruview + LoRa). Together
 171/173 define the four workloads sharing each Pi 5 + AI HAT+ edge node:
 
