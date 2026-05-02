@@ -124,12 +124,12 @@ jobs:
         run: cargo clippy --all-targets --all-features -- -D warnings
 
   aarch64-cross-build:
-    # Iter 122: cross-compile the bridge for the Pi 5 (aarch64). The
-    # radar will physically attach to the Pi running the worker, so
-    # the bridge needs to deploy on the same arch. Catches a future
-    # std/no_std drift or a transitive dep that doesn't cross-compile
-    # before it surfaces on a real Pi.
-    name: cross-build aarch64 (mmwave-bridge)
+    # Iter 122/128: cross-compile every sensor bridge for the Pi 5
+    # (aarch64). All three bridges deploy on the same arch as the
+    # worker (radar lives on the Pi alongside the cluster), so each
+    # is guard-railed against a transitive dep that doesn't
+    # cross-compile.
+    name: cross-build aarch64 (all bridges)
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -139,13 +139,21 @@ jobs:
           sudo apt-get install -y protobuf-compiler gcc-aarch64-linux-gnu
       - name: Add aarch64 rustup target
         run: rustup target add aarch64-unknown-linux-gnu
-      - name: Cross-build bridge for aarch64
+      - name: Cross-build all three bridges for aarch64
         working-directory: crates/ruvector-hailo-cluster
         env:
           CARGO_TARGET_AARCH64_UNKNOWN_LINUX_GNU_LINKER: aarch64-linux-gnu-gcc
-        run: cargo build --release --target aarch64-unknown-linux-gnu --bin ruvector-mmwave-bridge
-      - name: Verify ELF is aarch64
-        run: file crates/ruvector-hailo-cluster/target/aarch64-unknown-linux-gnu/release/ruvector-mmwave-bridge
+        run: |
+          cargo build --release --target aarch64-unknown-linux-gnu --bin ruvector-mmwave-bridge
+          cargo build --release --target aarch64-unknown-linux-gnu --bin ruview-csi-bridge
+          cargo build --release --target aarch64-unknown-linux-gnu --bin ruvllm-bridge
+      - name: Verify each ELF is aarch64
+        run: |
+          for bin in ruvector-mmwave-bridge ruview-csi-bridge ruvllm-bridge; do
+            elf="crates/ruvector-hailo-cluster/target/aarch64-unknown-linux-gnu/release/$bin"
+            file "$elf" | grep -q 'ARM aarch64' || { echo "FAIL: $bin not aarch64"; exit 1; }
+            echo "  ✓ $bin"
+          done
 
   doc-warnings:
     name: missing-docs check
