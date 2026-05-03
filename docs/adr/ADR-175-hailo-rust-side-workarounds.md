@@ -17,6 +17,21 @@ unblocked via Rust-side SDK monkey-patch.** A working
 on Hailo-8 — 15.7 MB,
 sha256 `cdbc892765d3099f74723ee6c28ab3f0daade2358827823ba08d2969b07ebd40`.
 
+**Iter 163 final update (2026-05-03): Option A is now the production
+default.** ADR-176 P5 shipped end-to-end NPU acceleration on real Pi
+5 + AI HAT+ hardware:
+
+  cpu-fallback (Option E):     7.0 embeds/sec/worker
+  NPU HEF      (Option A):    67.3 embeds/sec/worker  (9.6× faster)
+  p50 latency:                 572 ms → 57 ms          (10× faster)
+  p99 latency:                 813 ms → 152 ms         (5.4× faster)
+
+`HailoEmbedder` (iter 162, ADR-176 P4) routes
+`HEF > cpu-fallback > NoModelLoaded` automatically. Operators
+following deploy/install.sh + dropping `model.hef` into the model
+dir get NPU acceleration with no other config changes. cpu-fallback
+remains the failover path when no HEF is available.
+
 The 156-iteration arc resolved every SDK bug encountered:
 1. KeyError input_layer1 (iter 142): keyed calibration dict by
    internal HN layer name discovered via `runner.get_hn()` introspection

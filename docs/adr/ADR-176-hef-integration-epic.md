@@ -1,7 +1,7 @@
 ---
 adr: 176
 title: "EPIC — Wire HEF into HailoEmbedder for NPU-accelerated production embeddings"
-status: in-progress
+status: accepted
 date: 2026-05-03
 authors: [ruvnet, claude-flow]
 related: [ADR-167, ADR-172, ADR-173, ADR-175]

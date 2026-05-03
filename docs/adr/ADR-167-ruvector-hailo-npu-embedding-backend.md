@@ -13,9 +13,23 @@ related: [ADR-SYS-0027, ADR-165, ADR-166]
 
 ## Status
 
-**Iter 134/135 (2026-05-02): CPU fallback path is production-deployable
-today; HEF compile is unblocked at the tooling layer but blocked at the
-model-graph layer.** Branch `hailo-backend`.
+**Iter 163 (2026-05-03): NPU acceleration is the production default.**
+The full embed path runs on Hailo-8 hardware end-to-end via
+`HailoEmbedder` → `HefEmbedder` → tokenize → host-side BertEmbeddings
+→ `HefPipeline::forward` (NPU) → mean-pool → L2-normalize. Measured
+on real cognitum-v0 (Pi 5 + AI HAT+) at concurrency=4:
+**67.3 embeds/sec/worker, p50=57ms, 9.6× over cpu-fallback.**
+See ADR-176 for the EPIC tracking the iter 158-164 integration work.
+cpu-fallback remains as the automatic failover when no `model.hef`
+is present in the model dir.
+
+---
+
+**Earlier (iter 134/135) snapshot — CPU fallback only, HEF blocked:**
+
+CPU fallback path is production-deployable today; HEF compile is
+unblocked at the tooling layer but blocked at the model-graph layer.
+Branch `hailo-backend`.
 
 | Surface | Status |
 |---|---|

@@ -8,11 +8,17 @@ in-process caching, and Tailscale-tag-based discovery.
 > passing across lib unit / cluster integration / 3 CLI integration / 7
 > doctest suites.
 >
-> **End-to-end embedding works today** via the iter-134 cpu-fallback
-> path — `cargo build --features cpu-fallback --bin ruvector-hailo-worker`
-> + `deploy/download-cpu-fallback-model.sh` produces a worker that
-> returns real 384-dim semantic vectors via candle BERT-6 on host CPU.
-> NPU acceleration is gated on HEF model surgery (see [ADR-167][adr167] §6).
+> **NPU acceleration is the production default** as of iter 163
+> (ADR-176). `cargo build --release --features hailo,cpu-fallback
+> --bin ruvector-hailo-worker` produces a worker that auto-detects
+> `model.hef` in the model dir and runs encoder forward pass on the
+> Hailo-8 NPU. Measured **67.3 embeds/sec/worker** on real Pi 5 +
+> AI HAT+ (9.6× over cpu-fallback baseline).
+>
+> **cpu-fallback remains the automatic failover.** When `model.hef`
+> isn't present, the worker uses host-CPU candle BERT-6 (~7
+> embeds/sec/worker on Pi 5). `deploy/download-cpu-fallback-model.sh`
+> fetches the safetensors trio with sha256 pinning.
 
 [adr167]: ../../docs/adr/ADR-167-ruvector-hailo-npu-embedding-backend.md
 [adr168]: ../../docs/adr/ADR-168-ruvector-hailo-cluster-cli-surface.md
