@@ -368,35 +368,69 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     })?;
     let device_id = embedder.device_id().to_string();
 
-    // Iter 145: startup self-test. When a model is loaded (cpu-fallback
-    // or HEF), do one embed to validate the full path before opening
-    // the gRPC port. Catches stale model files, corrupt safetensors,
-    // and op-set mismatches at boot rather than at first traffic.
-    // No-op when no model is loaded (worker still serves; embed RPCs
-    // return NoModelLoaded honestly).
+    // Iter 145/167: startup self-test. When a model is loaded
+    // (cpu-fallback or HEF), embed three reference phrases and
+    // check the semantic-ordering invariant
+    // sim(dog, puppy) > sim(dog, kafka). Catches stale model files,
+    // corrupt safetensors, op-set mismatches, AND silent quantization
+    // drift (which would degrade ranking quality without breaking
+    // dimensions). No-op when no model is loaded.
     if embedder.has_model() {
-        let probe_text = "ruvector-hailo-worker startup self-test";
-        match embedder.embed(probe_text) {
-            Ok(v) => {
-                let dim = v.len();
-                let head: Vec<String> =
-                    v.iter().take(4).map(|x| format!("{:.4}", x)).collect();
-                info!(
-                    dim,
-                    vec_head = %head.join(","),
-                    "startup self-test embed ok"
-                );
+        // Three references: two semantically close (animal/movement),
+        // one far (distributed-systems jargon). Any encoder that
+        // produces useful vectors should rank close > far.
+        let probes = [
+            "the quick brown fox jumps over the lazy dog",
+            "a puppy sprints across the meadow",
+            "kafka topic partition rebalancing strategy",
+        ];
+        let mut vecs = Vec::with_capacity(probes.len());
+        for p in probes {
+            match embedder.embed(p) {
+                Ok(v) => vecs.push(v),
+                Err(e) => {
+                    error!(error = %e, "startup self-test embed FAILED — refusing to serve");
+                    return Err(format!(
+                        "startup self-test embed failed: {} \
+                         (model dir loaded but inference path is broken; \
+                         fix the model artifacts and restart)",
+                        e
+                    )
+                    .into());
+                }
             }
-            Err(e) => {
-                error!(error = %e, "startup self-test embed FAILED — refusing to serve");
-                return Err(format!(
-                    "startup self-test embed failed: {} \
-                     (model dir loaded but inference path is broken; \
-                     fix the model artifacts and restart)",
-                    e
-                )
-                .into());
-            }
+        }
+        // L2-normalised → cosine = dot. Already-normalised by every
+        // embed path we ship, but the assertion holds either way as a
+        // ranking comparison.
+        fn cos(a: &[f32], b: &[f32]) -> f32 {
+            a.iter().zip(b.iter()).map(|(x, y)| x * y).sum()
+        }
+        let sim_close = cos(&vecs[0], &vecs[1]);
+        let sim_far = cos(&vecs[0], &vecs[2]);
+        let dim = vecs[0].len();
+        let head: Vec<String> = vecs[0].iter().take(4).map(|x| format!("{:.4}", x)).collect();
+        info!(
+            dim,
+            vec_head = %head.join(","),
+            sim_close = sim_close,
+            sim_far = sim_far,
+            "startup self-test embed ok"
+        );
+        if sim_close <= sim_far {
+            error!(
+                sim_close,
+                sim_far,
+                "startup self-test ranking invariant FAILED — sim(dog,puppy) <= sim(dog,kafka), \
+                 model is producing nonsense — refusing to serve"
+            );
+            return Err(format!(
+                "startup self-test ranking failed: sim(dog,puppy)={:.4} <= sim(dog,kafka)={:.4} \
+                 (encoder output is incoherent; check model artifacts, calibration, \
+                 or HEF compile parameters)",
+                sim_close, sim_far
+            )
+            .into());
         }
     } else {
         warn!(
