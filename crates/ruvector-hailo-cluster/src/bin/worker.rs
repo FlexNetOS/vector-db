@@ -43,6 +43,11 @@
 //!                              and any handler that hangs past the
 //!                              30× p99 headroom. tonic returns
 //!                              Status::cancelled when it fires.
+//!   RUVECTOR_MAX_PENDING_RESETS  CVE-2023-44487 rapid-reset cap
+//!                              (ADR-172 §3a iter 183 — default 32,
+//!                              floor 8). Caps unprocessed RST_STREAM
+//!                              frames; once exceeded, the server
+//!                              sends GOAWAY and closes the connection.
 //!
 //! When both `RUVECTOR_TLS_CERT` and `RUVECTOR_TLS_KEY` are set and the
 //! binary was built with `--features tls`, the worker serves over HTTPS
@@ -563,9 +568,27 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             request_timeout_secs,
             "per-RPC handler timeout set (ADR-172 §3a iter 182 slow-loris gate)"
         );
+        // Iter 183 — explicit CVE-2023-44487 rapid-reset cap. hyper/h2
+        // already mitigates by defaulting to 20 pending RST_STREAM
+        // frames, but pinning the value gives operators a tunable
+        // surface and makes the mitigation reviewable from the worker
+        // logs. 32 is a small step above the h2 default to leave room
+        // for legit reset jitter (e.g., a client cancelling a stream
+        // mid-flight) without weakening the cap meaningfully — a
+        // GOAWAY still fires after just 33 unprocessed resets.
+        let max_pending_resets: usize = std::env::var("RUVECTOR_MAX_PENDING_RESETS")
+            .ok()
+            .and_then(|s| s.parse::<usize>().ok())
+            .unwrap_or(32)
+            .max(8);
+        info!(
+            max_pending_resets,
+            "HTTP/2 max_pending_accept_reset_streams set (ADR-172 §3a iter 183 CVE-2023-44487 gate)"
+        );
         let mut server = Server::builder()
             .max_concurrent_streams(Some(max_streams))
-            .timeout(Duration::from_secs(request_timeout_secs));
+            .timeout(Duration::from_secs(request_timeout_secs))
+            .http2_max_pending_accept_reset_streams(Some(max_pending_resets));
         #[cfg(feature = "tls")]
         {
             // Both vars must be set to opt-in. A partial config (cert
