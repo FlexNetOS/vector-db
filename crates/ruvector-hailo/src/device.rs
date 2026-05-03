@@ -31,6 +31,15 @@ pub struct HailoDevice {
 }
 
 impl HailoDevice {
+    /// Raw vdevice handle for the HEF pipeline (iter 159+). Crate-
+    /// internal because callers shouldn't reach into the FFI; the
+    /// `HefPipeline` and friends use it under their own SAFETY
+    /// invariants.
+    #[cfg(feature = "hailo")]
+    pub(crate) fn raw_vdevice(&self) -> hailort_sys::hailo_vdevice {
+        self.handle
+    }
+
     /// Open a virtual Hailo device with default parameters. On a Pi 5 with
     /// the AI HAT+ this enumerates `/dev/hailo0` and brings up firmware.
     pub fn open() -> Result<Self, HailoError> {
