@@ -32,6 +32,11 @@
 //!                              floor 4096). Caps per-RPC alloc surface
 //!                              well below tonic's ~4 MB transport
 //!                              default to shrink the DoS surface.
+//!   RUVECTOR_MAX_CONCURRENT_STREAMS  HTTP/2 SETTINGS_MAX_CONCURRENT_STREAMS
+//!                              (ADR-172 §3a iter 181 — default 256,
+//!                              floor 8). Caps in-flight streams per
+//!                              connection so a single attacker socket
+//!                              can't pump unbounded RPCs at the worker.
 //!
 //! When both `RUVECTOR_TLS_CERT` and `RUVECTOR_TLS_KEY` are set and the
 //! binary was built with `--features tls`, the worker serves over HTTPS
@@ -514,7 +519,25 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         .build()?;
 
     rt.block_on(async move {
-        let mut server = Server::builder();
+        // Iter 181 — cap HTTP/2 SETTINGS_MAX_CONCURRENT_STREAMS so a
+        // single malicious connection can't spin up unbounded streams.
+        // tonic's default is no cap. The Pi NPU saturates at ~70 req/s
+        // (iter-179 measurements) so 256 in-flight streams is wasteful
+        // but harmless for legit callers; the value sits ~32× above
+        // observed legit peaks (bench c=8) and well below what a slow-
+        // loris attacker would want. Operators can tune via
+        // `RUVECTOR_MAX_CONCURRENT_STREAMS`; floor 8 to keep the
+        // health-check + bench path viable on misconfig.
+        let max_streams: u32 = std::env::var("RUVECTOR_MAX_CONCURRENT_STREAMS")
+            .ok()
+            .and_then(|s| s.parse::<u32>().ok())
+            .unwrap_or(256)
+            .max(8);
+        info!(
+            max_concurrent_streams = max_streams,
+            "HTTP/2 max_concurrent_streams set (ADR-172 §3a iter 181 DoS gate)"
+        );
+        let mut server = Server::builder().max_concurrent_streams(Some(max_streams));
         #[cfg(feature = "tls")]
         {
             // Both vars must be set to opt-in. A partial config (cert
