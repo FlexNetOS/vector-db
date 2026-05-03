@@ -11,6 +11,10 @@
 //!   ruvector-hailo-cluster-bench --workers 127.0.0.1:50071,127.0.0.1:50072 \
 //!     --concurrency 8 --duration-secs 10 --dim 384
 //!
+//! Iter 179: pass `--batch-size N` (N>1) to drive the streaming
+//! `embed_batch_blocking` RPC instead of unary `embed_one_blocking`,
+//! letting you A/B unary vs streaming dispatch at fixed concurrency.
+//!
 //! Output is plain-text on stdout; designed for `tee` + manual reading.
 
 use std::sync::atomic::{AtomicBool, AtomicU64, Ordering};
@@ -36,6 +40,12 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let mut dim: usize = 384;
     let mut concurrency: usize = 4;
     let mut duration_secs: u64 = 5;
+    // Iter 179 — when >1, each per-thread iteration calls
+    // `embed_batch_blocking` with a batch of N texts (streaming RPC) and
+    // counts each returned vector as one success. Lets us A/B unary vs
+    // streaming dispatch at fixed concurrency without spinning up a
+    // separate harness. 1 = unary (existing behavior).
+    let mut batch_size: usize = 1;
     let mut prom_path: Option<String> = None;
     let mut cache_cap: usize = 0;
     let mut cache_ttl_secs: u64 = 0;
@@ -71,6 +81,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             "--dim" => { dim = args.get(i + 1).and_then(|s| s.parse().ok()).unwrap_or(384); i += 2; }
             "--concurrency" => { concurrency = args.get(i + 1).and_then(|s| s.parse().ok()).unwrap_or(4); i += 2; }
             "--duration-secs" => { duration_secs = args.get(i + 1).and_then(|s| s.parse().ok()).unwrap_or(5); i += 2; }
+            "--batch-size" => { batch_size = args.get(i + 1).and_then(|s| s.parse().ok()).unwrap_or(1).max(1); i += 2; }
             "--prom" => { prom_path = args.get(i + 1).cloned(); i += 2; }
             "--cache" => { cache_cap = args.get(i + 1).and_then(|s| s.parse().ok()).unwrap_or(0); i += 2; }
             "--cache-ttl" => { cache_ttl_secs = args.get(i + 1).and_then(|s| s.parse().ok()).unwrap_or(0); i += 2; }
@@ -141,8 +152,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let workers = discovery.discover()?;
     if workers.is_empty() { return Err("0 workers discovered".into()); }
     if !quiet {
-        println!("# bench config: workers={} dim={} concurrency={} duration={}s",
-            workers.len(), dim, concurrency, duration_secs);
+        println!("# bench config: workers={} dim={} concurrency={} duration={}s batch_size={}",
+            workers.len(), dim, concurrency, duration_secs, batch_size);
     }
 
     // Trait-object Arc so we can clone-and-share between the
@@ -288,6 +299,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         let total_ok = Arc::clone(&total_ok);
         let total_err = Arc::clone(&total_err);
         let cache_keyspace = cache_keyspace;
+        let batch_size = batch_size;
         // Per-thread clone so the closure can format ids without locks.
         let request_id = request_id.clone();
         let h = thread::Builder::new()
@@ -295,37 +307,74 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             .spawn(move || {
                 let mut samples: Vec<u64> = Vec::with_capacity(cap);
                 let mut counter: u64 = 0;
+                // Iter 179: when batch_size>1, build N keys per
+                // iteration and call the streaming `embed_batch_blocking`
+                // RPC. Latency is tracked per-RPC (one sample covers all
+                // N items); throughput counts each returned vector as
+                // one success so unary vs streaming numbers stay
+                // apples-to-apples.
+                let mut batch_buf: Vec<String> = Vec::with_capacity(batch_size);
                 while !stop.load(Ordering::Relaxed) {
-                    let t0 = Instant::now();
                     // When cache_keyspace>0, all threads share the same
                     // bounded keyspace so requests overlap and the cache
                     // sees real hits. With keyspace=0 (default), every
                     // request gets a unique key — useful for measuring
                     // cold dispatch latency.
-                    let key = if cache_keyspace > 0 {
-                        format!("bench-{}", counter % (cache_keyspace as u64))
-                    } else {
-                        format!("bench-{}-{}", tid, counter)
-                    };
-                    // When --request-id is set, suffix tid+counter so
-                    // every RPC in the run gets a unique-but-correlated
-                    // id (`<run-token>.t3.c42`). Lets ops grep by run
-                    // prefix in worker logs.
-                    let r = if request_id.is_empty() {
-                        cluster.embed_one_blocking(&key)
-                    } else {
-                        let id = format!("{}.t{}.c{}", request_id, tid, counter);
-                        cluster.embed_one_blocking_with_request_id(&key, &id)
-                    };
-                    let elapsed_us = t0.elapsed().as_micros() as u64;
-                    match r {
-                        Ok(_) => {
-                            total_ok.fetch_add(1, Ordering::Relaxed);
-                            samples.push(elapsed_us);
+                    let make_key = |i: u64| -> String {
+                        if cache_keyspace > 0 {
+                            format!("bench-{}", i % (cache_keyspace as u64))
+                        } else {
+                            format!("bench-{}-{}", tid, i)
                         }
-                        Err(_) => { total_err.fetch_add(1, Ordering::Relaxed); }
+                    };
+
+                    if batch_size <= 1 {
+                        let key = make_key(counter);
+                        let t0 = Instant::now();
+                        // When --request-id is set, suffix tid+counter
+                        // so every RPC in the run gets a unique-but-
+                        // correlated id (`<run-token>.t3.c42`). Lets
+                        // ops grep by run prefix in worker logs.
+                        let r = if request_id.is_empty() {
+                            cluster.embed_one_blocking(&key)
+                        } else {
+                            let id = format!("{}.t{}.c{}", request_id, tid, counter);
+                            cluster.embed_one_blocking_with_request_id(&key, &id)
+                        };
+                        let elapsed_us = t0.elapsed().as_micros() as u64;
+                        match r {
+                            Ok(_) => {
+                                total_ok.fetch_add(1, Ordering::Relaxed);
+                                samples.push(elapsed_us);
+                            }
+                            Err(_) => { total_err.fetch_add(1, Ordering::Relaxed); }
+                        }
+                        counter += 1;
+                    } else {
+                        batch_buf.clear();
+                        for k in 0..batch_size as u64 {
+                            batch_buf.push(make_key(counter + k));
+                        }
+                        let t0 = Instant::now();
+                        let r = if request_id.is_empty() {
+                            cluster.embed_batch_blocking(&batch_buf)
+                        } else {
+                            let id = format!("{}.t{}.c{}", request_id, tid, counter);
+                            cluster.embed_batch_blocking_with_request_id(&batch_buf, &id)
+                        };
+                        let elapsed_us = t0.elapsed().as_micros() as u64;
+                        match r {
+                            Ok(vecs) => {
+                                let n = vecs.len() as u64;
+                                total_ok.fetch_add(n, Ordering::Relaxed);
+                                samples.push(elapsed_us);
+                            }
+                            Err(_) => {
+                                total_err.fetch_add(batch_size as u64, Ordering::Relaxed);
+                            }
+                        }
+                        counter += batch_size as u64;
                     }
-                    counter += 1;
                 }
                 samples
             })
@@ -512,6 +561,13 @@ DISCOVERY (exactly one):
 OPTIONS:
     --concurrency <N>               Concurrent client threads (default 4).
     --duration-secs <N>             Run length seconds (default 5).
+    --batch-size <N>                Items per RPC. 1 = unary
+                                     `embed_one_blocking` (default).
+                                     >1 = streaming `embed_batch_blocking`
+                                     RPC; throughput counts each returned
+                                     vector as one success so unary vs
+                                     streaming numbers stay comparable.
+                                     Latency is per-RPC (covers N items).
     --dim <N>                       Expected embedding dim (default 384).
     --prom <path>                   Write Prometheus textfile-collector
                                      output to <path> after the run, for
