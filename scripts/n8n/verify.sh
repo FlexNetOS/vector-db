@@ -30,9 +30,12 @@ RESP=$(curl -sS -X POST "${N8N_HOST}/webhook/kb-query" \
 echo "$RESP" | python3 -m json.tool
 
 echo "==> 4/4 assert"
-python3 - <<PY
+# Pass $RESP as argv[1] with a quoted heredoc so bash does NOT interpolate
+# into the Python source. Embedding $RESP directly inside ''' ... ''' would
+# misparse JSON escapes (\n, \t, ...) and break on JSON content containing $.
+python3 - "$RESP" <<'PY'
 import json, sys
-r = json.loads('''$RESP''')
+r = json.loads(sys.argv[1])
 hits = r.get("hits", [])
 assert hits, f"no hits returned: {r}"
 top = hits[0]
