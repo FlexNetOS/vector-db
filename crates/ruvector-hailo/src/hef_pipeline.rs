@@ -105,6 +105,33 @@ impl HefPipeline {
             what: "HEF path contains nul byte",
         })?;
 
+        // Iter 173 — security defense in depth: verify the HEF magic
+        // before handing the bytes to libhailort. The Hailo HEF format
+        // starts with `0x01 0x48 0x45 0x46` (`\x01HEF`). Catches:
+        //   * accidental file corruption / truncation
+        //   * wrong-file mistakes (operator drops a .onnx where .hef
+        //     was expected)
+        //   * targeted substitution with a non-HEF payload
+        // Costs ~4 bytes of read + a memcmp; sub-microsecond at boot.
+        // The iter-143 fingerprint is the cluster-wide drift gate; this
+        // is the per-worker "is this even a HEF" gate.
+        const HEF_MAGIC: [u8; 4] = [0x01, b'H', b'E', b'F'];
+        let mut header = [0u8; 4];
+        use std::io::Read as _;
+        let mut f = std::fs::File::open(hef_path).map_err(|e| {
+            HailoError::Tokenizer(format!("open HEF: {}", e))
+        })?;
+        f.read_exact(&mut header).map_err(|e| {
+            HailoError::Tokenizer(format!("read HEF header: {}", e))
+        })?;
+        if header != HEF_MAGIC {
+            return Err(HailoError::BadModelDir {
+                path: hef_path.display().to_string(),
+                what: "model.hef magic mismatch — not a Hailo HEF",
+            });
+        }
+        drop(f);
+
         // 1. Load HEF from disk.
         let mut hef: hailort_sys::hailo_hef = ptr::null_mut();
         // SAFETY: path is valid CString; HailoRT writes through `&mut hef`.
