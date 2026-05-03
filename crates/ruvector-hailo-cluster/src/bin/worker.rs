@@ -27,6 +27,11 @@
 //!                              (ADR-172 §3b — default 0)
 //!   RUVECTOR_RATE_LIMIT_BURST  Optional burst capacity; defaults to RPS
 //!                              if unset (only used when RPS > 0)
+//!   RUVECTOR_MAX_REQUEST_BYTES gRPC max_decoding_message_size cap
+//!                              (ADR-172 §3a iter 180 — default 65536,
+//!                              floor 4096). Caps per-RPC alloc surface
+//!                              well below tonic's ~4 MB transport
+//!                              default to shrink the DoS surface.
 //!
 //! When both `RUVECTOR_TLS_CERT` and `RUVECTOR_TLS_KEY` are set and the
 //! binary was built with `--features tls`, the worker serves over HTTPS
@@ -566,7 +571,32 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             }
             Ok(req)
         };
-        let intercepted = EmbeddingServer::with_interceptor(svc, interceptor);
+        // Iter 180 — cap the per-RPC decode budget. tonic's transport
+        // default lets each RPC allocate ~4 MB before the server even
+        // sees the request, which is gratuitous for an embed worker
+        // (typical sentence-transformer input is <10 KB; 64 KB is 6×
+        // safety margin). Operators on weird workloads can override via
+        // RUVECTOR_MAX_REQUEST_BYTES; we clamp the floor at 4 KB so a
+        // misconfig can't lock the worker out of accepting any RPC.
+        let max_req_bytes: usize = std::env::var("RUVECTOR_MAX_REQUEST_BYTES")
+            .ok()
+            .and_then(|s| s.parse::<usize>().ok())
+            .unwrap_or(64 * 1024)
+            .max(4 * 1024);
+        info!(
+            max_request_bytes = max_req_bytes,
+            "gRPC max_decoding_message_size set (ADR-172 §3a iter 180 DoS gate)"
+        );
+        // Note: `max_decoding_message_size` lives on the generated
+        // `EmbeddingServer`, not tonic's `InterceptedService` wrapper —
+        // apply it before wrapping. The `with_interceptor` static
+        // helper would re-build the inner with default limits, so we
+        // skip it and call `InterceptedService::new` ourselves.
+        let embed_server = EmbeddingServer::new(svc).max_decoding_message_size(max_req_bytes);
+        let intercepted = tonic::service::interceptor::InterceptedService::new(
+            embed_server,
+            interceptor,
+        );
         server
             .add_service(intercepted)
             .serve_with_shutdown(bind, shutdown_signal())
