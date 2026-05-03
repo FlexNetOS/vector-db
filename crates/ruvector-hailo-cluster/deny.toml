@@ -17,7 +17,14 @@ targets = [
 [advisories]
 # Block on any unfixed vuln. Same threshold as the cargo-audit job.
 yanked = "deny"
-ignore = []
+# Iter 177 — known unmaintained transitive deps; both have no CVEs,
+# no replacement upstream, and would only resolve via tonic/rustls
+# bumping their pin sets in a future major release. Documented here
+# so cargo-deny advisories pass cleanly.
+ignore = [
+    "RUSTSEC-2024-0436", # paste — transitive via candle (cpu-fallback feature)
+    "RUSTSEC-2025-0134", # rustls-pemfile — transitive via tonic-tls
+]
 
 [licenses]
 # Permissive licenses we accept. GPL-family stays denied for now (no
