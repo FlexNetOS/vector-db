@@ -13,15 +13,17 @@ related: [ADR-167, ADR-169, ADR-171, ADR-172]
 
 ## Status
 
-**Iter 137 (2026-05-02): bridge fully wired, embedding upstream
-production-deployable today (cpu-fallback path), LLM-on-NPU still
-blocked at the model-graph layer (same root cause as ADR-167).**
+**Iter 163 (2026-05-03): embedding upstream now NPU-accelerated end-
+to-end via ADR-176 P1-P5. ruvllm-bridge gets 9.6× faster vectors for
+free.** LLM-on-NPU (Llama prefill) still requires its own model
+surgery; the BERT-6 unblock pattern is documented and reusable.
 
 | Surface | Status |
 |---|---|
 | `ruvllm-bridge` JSONL stdin/stdout adapter | ✅ Iter 124-125, 8 CLI integration tests |
-| Upstream embedding cluster | ✅ Iter 134/137: `--features cpu-fallback` produces a worker that returns real 384-dim semantic vectors via candle BERT-6 on host CPU. NPU stays idle. End-to-end validated locally with `ruvector-hailo-embed` (cold 800ms / cache 5µs). |
-| Llama-class HEF compile | ❌ Same Hailo-8 limits as ADR-167 BERT-6: `Gather` (token embedding lookup) and `Where` (attention-mask broadcast) ops aren't representable in Hailo's HN graph. The Dataflow Compiler tooling is installed and works (iter 132/135) — Llama just hits the same model-surgery blocker. |
+| Upstream embedding cluster (cpu-fallback) | ✅ Iter 134/137: --features cpu-fallback path stayed as the failover; ~7 embeds/sec on Pi 5. |
+| Upstream embedding cluster (NPU) | ✅ Iter 156b-163: HEF compiled + integrated end-to-end. **67.3 embeds/sec/worker on Pi 5**, 9.6× over cpu-fallback. ruvllm-bridge sees this transparently — same gRPC contract, just faster vectors. See ADR-176 for the integration EPIC. |
+| Llama-class HEF compile | ❌ Same Hailo-8 limits but the iter-153 Keras monkey-patch + iter-156 single-input pattern from ADR-176 P1 is reusable for any transformer encoder. Llama prefill needs the same surgery (host-side embedding lookup + encoder-only HEF + post-NPU pool). |
 | GenAI HEFs from Hailo Model Zoo | ❌ All target hailo10h, none ship for hailo8 (verified iter 124) |
 
 **Practical interpretation:** ruvllm bridges into the embedding cluster

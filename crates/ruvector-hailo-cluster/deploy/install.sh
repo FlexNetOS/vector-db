@@ -53,11 +53,36 @@ fi
 if [[ ! -d "$MODELS_SRC" ]]; then
   echo "models dir not found: $MODELS_SRC" >&2; exit 1
 fi
-if [[ -f "$MODELS_SRC/model.hef" ]]; then
-  echo "==> NPU path detected: model.hef present"
-elif [[ -f "$MODELS_SRC/model.safetensors" ]]; then
-  echo "==> CPU fallback path detected: model.safetensors present"
-  if [[ ! -f "$MODELS_SRC/tokenizer.json" ]] || [[ ! -f "$MODELS_SRC/config.json" ]]; then
+# Iter 166 (ADR-176 P5b polish): the iter-162 dispatch needs the
+# safetensors trio EVEN on the NPU path — HefEmbedder uses
+# HostEmbeddings (loads model.safetensors + tokenizer.json + config.json
+# at boot) to compute the host-side embedding lookup before pushing to
+# the NPU. So model.hef alone isn't enough; we need both layouts merged.
+HAS_HEF=0
+HAS_SAFETENSORS=0
+HAS_TOKENIZER=0
+HAS_CONFIG=0
+[[ -f "$MODELS_SRC/model.hef" ]]          && HAS_HEF=1
+[[ -f "$MODELS_SRC/model.safetensors" ]]  && HAS_SAFETENSORS=1
+[[ -f "$MODELS_SRC/tokenizer.json" ]]     && HAS_TOKENIZER=1
+[[ -f "$MODELS_SRC/config.json" ]]        && HAS_CONFIG=1
+
+if (( HAS_HEF == 1 )); then
+  if (( HAS_SAFETENSORS == 1 && HAS_TOKENIZER == 1 && HAS_CONFIG == 1 )); then
+    echo "==> NPU path detected: model.hef + safetensors + tokenizer + config all present"
+    echo "    HefEmbedder dispatch will route through the Hailo-8 NPU"
+  else
+    echo "warning: model.hef present but safetensors trio incomplete" >&2
+    echo "         HefEmbedder needs all of:" >&2
+    (( HAS_SAFETENSORS == 0 )) && echo "           model.safetensors  (missing)" >&2
+    (( HAS_TOKENIZER   == 0 )) && echo "           tokenizer.json    (missing)" >&2
+    (( HAS_CONFIG      == 0 )) && echo "           config.json       (missing)" >&2
+    echo "         worker will fall through to NoModelLoaded — fix by running" >&2
+    echo "         deploy/download-cpu-fallback-model.sh into $MODELS_SRC first" >&2
+  fi
+elif (( HAS_SAFETENSORS == 1 )); then
+  echo "==> CPU fallback path detected: safetensors present, model.hef missing"
+  if (( HAS_TOKENIZER == 0 || HAS_CONFIG == 0 )); then
     echo "warning: cpu-fallback also needs tokenizer.json + config.json" >&2
     echo "         re-run deploy/download-cpu-fallback-model.sh to fetch all three" >&2
   fi
