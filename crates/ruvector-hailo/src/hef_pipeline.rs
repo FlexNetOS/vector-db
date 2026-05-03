@@ -304,6 +304,25 @@ impl HefPipeline {
             });
         }
 
+        // Iter 191 — override per-call FFI timeout. HailoRT's default
+        // `hailo_vstream_params_t.timeout_ms` is 10 s, which is ~700×
+        // a steady-state embed (14 ms NPU compute on iter-156b HEF).
+        // If the NPU hangs (driver wedge, PCIe link issue), the Mutex
+        // in HefEmbedder::Inner blocks for the full 10 s before any
+        // caller sees an error, well beyond our iter-182 30 s tonic
+        // bound. Cap at 2 s by default (~143× the steady-state cost,
+        // still room for tail latency under thermal throttling) so
+        // `HAILO_TIMEOUT` (status 4) surfaces fast and the worker
+        // can release the Mutex for the next request.
+        // Operators tune via `RUVECTOR_NPU_VSTREAM_TIMEOUT_MS`,
+        // floor 100 ms so a misconfig can't fail every embed.
+        let vstream_timeout_ms: u32 = std::env::var("RUVECTOR_NPU_VSTREAM_TIMEOUT_MS")
+            .ok()
+            .and_then(|s| s.parse::<u32>().ok())
+            .unwrap_or(2_000)
+            .max(100);
+        input_params.params.timeout_ms = vstream_timeout_ms;
+
         // 4. Create the input vstream from the params.
         let mut input_vstream: hailort_sys::hailo_input_vstream =
             ptr::null_mut();
@@ -350,6 +369,11 @@ impl HefPipeline {
                 where_: "hailo_make_output_vstream_params",
             });
         }
+        // Iter 191 — same vstream timeout cap on the output side.
+        // The read path (`hailo_vstream_read_raw_buffer`) blocks until
+        // the DMA completes; matching the input timeout keeps the
+        // forward-pass bound symmetric.
+        output_params.params.timeout_ms = vstream_timeout_ms;
 
         let mut output_vstream: hailort_sys::hailo_output_vstream =
             ptr::null_mut();
