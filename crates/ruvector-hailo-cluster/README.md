@@ -17,8 +17,87 @@ in-process caching, and Tailscale-tag-based discovery.
 >
 > **cpu-fallback remains the automatic failover.** When `model.hef`
 > isn't present, the worker uses host-CPU candle BERT-6 (~7
-> embeds/sec/worker on Pi 5). `deploy/download-cpu-fallback-model.sh`
-> fetches the safetensors trio with sha256 pinning.
+> embeds/sec/worker on Pi 5, ~3-4 on Pi 4). Hardware-agnostic across
+> aarch64; no AI HAT+ required (see [ADR-177][adr177]).
+> `deploy/download-cpu-fallback-model.sh` fetches the safetensors
+> trio with sha256 pinning.
+
+## Operator QUICKSTART (iter 171)
+
+Three deploy paths, pick whichever matches your hardware:
+
+### A — Pi 5 + AI HAT+ (NPU, fastest)
+
+```bash
+# On the Pi:
+bash deploy/download-cpu-fallback-model.sh /var/lib/ruvector-hailo/models/all-minilm-l6-v2
+bash deploy/download-encoder-hef.sh        /var/lib/ruvector-hailo/models/all-minilm-l6-v2
+cargo build --release --features hailo,cpu-fallback \
+    --bin ruvector-hailo-worker \
+    --manifest-path crates/ruvector-hailo-cluster/Cargo.toml
+sudo bash deploy/install.sh \
+    crates/ruvector-hailo-cluster/target/release/ruvector-hailo-worker \
+    /var/lib/ruvector-hailo/models/all-minilm-l6-v2
+sudo systemctl start ruvector-hailo-worker
+journalctl -u ruvector-hailo-worker -f          # watch self-test fire
+```
+
+Expected: 67 embeds/sec/worker, 57 ms p50.
+
+### B — Pi 4 / Pi 5 without AI HAT+ (cpu-fallback)
+
+Same workflow but skip the HEF download and build with `cpu-fallback`
+only:
+
+```bash
+# On x86 dev box, cross-compile:
+bash deploy/cross-build-bridges.sh --with-worker
+scp target/aarch64-unknown-linux-gnu/release/ruvector-hailo-worker pi:/tmp/
+
+# On the Pi:
+bash deploy/download-cpu-fallback-model.sh /var/lib/ruvector-hailo/models/all-minilm-l6-v2
+sudo bash deploy/install.sh /tmp/ruvector-hailo-worker /var/lib/ruvector-hailo/models/all-minilm-l6-v2
+sudo systemctl start ruvector-hailo-worker
+```
+
+Expected: 7 embeds/sec/worker on Pi 5, ~3-4 on Pi 4. See
+[ADR-177][adr177] for the full Pi 4 deploy story.
+
+### C — Local dev / x86 (cpu-fallback)
+
+```bash
+bash deploy/download-cpu-fallback-model.sh /tmp/cpu-fallback-test
+RUVECTOR_WORKER_BIND=127.0.0.1:50051 \
+RUVECTOR_MODEL_DIR=/tmp/cpu-fallback-test \
+RUVECTOR_CPU_FALLBACK_POOL_SIZE=4 \
+cargo run --release --features cpu-fallback --bin ruvector-hailo-worker \
+    --manifest-path crates/ruvector-hailo-cluster/Cargo.toml
+```
+
+Expected: 45 embeds/sec/worker on AVX2 release.
+
+### Verifying the deploy
+
+After `systemctl start`, journalctl should show:
+
+```text
+ruvector-hailo-worker starting bind=0.0.0.0:50051
+model fingerprint computed fingerprint=...
+startup self-test embed ok dim=384 sim_close=... sim_far=...
+ruvector-hailo-worker serving addr=0.0.0.0:50051
+```
+
+The `sim_close > sim_far` line is the iter-167 ranking gate — if it
+fails the worker exits non-zero.
+
+Test from another host:
+
+```bash
+echo "hello world" | ./target/release/ruvector-hailo-embed \
+    --workers <pi-host>:50051 --allow-empty-fingerprint
+```
+
+[adr177]: ../../docs/adr/ADR-177-pi4-no-hat-deploy.md
 
 [adr167]: ../../docs/adr/ADR-167-ruvector-hailo-npu-embedding-backend.md
 [adr168]: ../../docs/adr/ADR-168-ruvector-hailo-cluster-cli-surface.md
