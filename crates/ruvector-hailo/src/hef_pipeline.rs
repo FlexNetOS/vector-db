@@ -422,13 +422,38 @@ impl HefPipeline {
     /// dequantize on read because we configured both vstreams with
     /// `HAILO_FORMAT_TYPE_FLOAT32`. We pass FP32 bytes in, get FP32
     /// bytes out.
+    ///
+    /// Convenience wrapper around `forward_into` that allocates the
+    /// output Vec each call. For hot paths use `forward_into` and
+    /// reuse a buffer (iter 175).
     pub fn forward(&mut self, input: &[f32]) -> Result<Vec<f32>, HailoError> {
+        let mut out = vec![0.0f32; self.output_frame_bytes / 4];
+        self.forward_into(input, &mut out)?;
+        Ok(out)
+    }
+
+    /// FP32 forward pass writing into a caller-provided buffer.
+    /// Iter 175 — buffer pooling: lets `HefEmbedder` reuse a single
+    /// `last_hidden` Vec across calls so the NPU output (~196 KB for
+    /// the iter-156b 1×128×384 shape) doesn't churn the allocator at
+    /// 67 embeds/sec.
+    ///
+    /// `output` is resized to `output_frame_bytes / 4` if shorter.
+    pub fn forward_into(
+        &mut self,
+        input: &[f32],
+        output: &mut Vec<f32>,
+    ) -> Result<(), HailoError> {
         let expected_floats = self.input_frame_bytes / 4;
         if input.len() != expected_floats {
             return Err(HailoError::Shape {
                 expected: expected_floats,
                 actual: input.len(),
             });
+        }
+        let out_floats = self.output_frame_bytes / 4;
+        if output.len() < out_floats {
+            output.resize(out_floats, 0.0);
         }
 
         // Push the FP32 input. HailoRT internally quantizes to UINT8
@@ -449,12 +474,11 @@ impl HefPipeline {
         }
 
         // Pull the FP32 output. HailoRT dequantizes for us.
-        let mut out = vec![0.0f32; self.output_frame_bytes / 4];
-        // SAFETY: out.as_mut_ptr() points at out.len() * 4 writable bytes.
+        // SAFETY: output.as_mut_ptr() points at >= out_floats * 4 writable bytes.
         let status = unsafe {
             hailort_sys::hailo_vstream_read_raw_buffer(
                 self.output_vstream,
-                out.as_mut_ptr() as *mut std::ffi::c_void,
+                output.as_mut_ptr() as *mut std::ffi::c_void,
                 self.output_frame_bytes,
             )
         };
@@ -465,7 +489,7 @@ impl HefPipeline {
             });
         }
 
-        Ok(out)
+        Ok(())
     }
 
     pub fn input_shape(&self) -> [usize; 3] {

@@ -43,6 +43,10 @@ struct Inner {
     pipeline: HefPipeline,
     embeddings: HostEmbeddings,
     tokenizer: Tokenizer,
+    /// Iter 175 — pooled buffer for the NPU output. Sized once at
+    /// construct time to `seq_len * hidden`. Reused across embed()
+    /// calls to avoid the ~196 KB allocation per call.
+    last_hidden_buf: Vec<f32>,
 }
 
 impl HefEmbedder {
@@ -94,6 +98,7 @@ impl HefEmbedder {
                 pipeline,
                 embeddings,
                 tokenizer,
+                last_hidden_buf: vec![0.0; max_seq * output_dim],
             }),
             output_dim,
             max_seq,
@@ -156,17 +161,28 @@ impl HefEmbedder {
         }
 
         // 3. NPU forward pass (UINT8 quant happens inside HailoRT).
-        let last_hidden = inner.pipeline.forward(&embeds)?;
-        if last_hidden.len() != self.max_seq * self.output_dim {
+        // Iter 175 — write into the pre-allocated last_hidden_buf to
+        // skip a ~196 KB allocation per call.
+        // We split the borrow into pipeline + last_hidden_buf so the
+        // borrow checker accepts the &mut on both inner.pipeline and
+        // inner.last_hidden_buf simultaneously.
+        let Inner {
+            pipeline,
+            last_hidden_buf,
+            ..
+        } = inner;
+        pipeline.forward_into(&embeds, last_hidden_buf)?;
+        let expected_out = self.max_seq * self.output_dim;
+        if last_hidden_buf.len() < expected_out {
             return Err(HailoError::Shape {
-                expected: self.max_seq * self.output_dim,
-                actual: last_hidden.len(),
+                expected: expected_out,
+                actual: last_hidden_buf.len(),
             });
         }
 
         // 4. Mean-pool over the seq dim with attention mask.
         let mut pooled = mean_pool(
-            &last_hidden,
+            &last_hidden_buf[..expected_out],
             &attention_mask,
             self.max_seq,
             self.output_dim,
