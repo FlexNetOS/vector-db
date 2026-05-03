@@ -46,6 +46,20 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     // streaming dispatch at fixed concurrency without spinning up a
     // separate harness. 1 = unary (existing behavior).
     let mut batch_size: usize = 1;
+    // Iter 187 — TLS / mTLS knobs. Until iter 187 the TLS server-side
+    // path (iter 99/100) had no smoke-test from the bench side, so any
+    // breakage in the rustls handshake or mTLS chain went unnoticed.
+    // --tls-ca enables https://; --tls-domain overrides the SNI / SAN
+    // assertion (defaults to the hostname half of the first worker
+    // address); the client-cert pair attaches mTLS identity.
+    #[cfg(feature = "tls")]
+    let mut tls_ca: Option<String> = None;
+    #[cfg(feature = "tls")]
+    let mut tls_domain: Option<String> = None;
+    #[cfg(feature = "tls")]
+    let mut tls_client_cert: Option<String> = None;
+    #[cfg(feature = "tls")]
+    let mut tls_client_key: Option<String> = None;
     let mut prom_path: Option<String> = None;
     let mut cache_cap: usize = 0;
     let mut cache_ttl_secs: u64 = 0;
@@ -82,6 +96,14 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             "--concurrency" => { concurrency = args.get(i + 1).and_then(|s| s.parse().ok()).unwrap_or(4); i += 2; }
             "--duration-secs" => { duration_secs = args.get(i + 1).and_then(|s| s.parse().ok()).unwrap_or(5); i += 2; }
             "--batch-size" => { batch_size = args.get(i + 1).and_then(|s| s.parse().ok()).unwrap_or(1).max(1); i += 2; }
+            #[cfg(feature = "tls")]
+            "--tls-ca" => { tls_ca = args.get(i + 1).cloned(); i += 2; }
+            #[cfg(feature = "tls")]
+            "--tls-domain" => { tls_domain = args.get(i + 1).cloned(); i += 2; }
+            #[cfg(feature = "tls")]
+            "--tls-client-cert" => { tls_client_cert = args.get(i + 1).cloned(); i += 2; }
+            #[cfg(feature = "tls")]
+            "--tls-client-key" => { tls_client_key = args.get(i + 1).cloned(); i += 2; }
             "--prom" => { prom_path = args.get(i + 1).cloned(); i += 2; }
             "--cache" => { cache_cap = args.get(i + 1).and_then(|s| s.parse().ok()).unwrap_or(0); i += 2; }
             "--cache-ttl" => { cache_ttl_secs = args.get(i + 1).and_then(|s| s.parse().ok()).unwrap_or(0); i += 2; }
@@ -160,6 +182,61 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     // optional `auto_fingerprint` probe cluster and the real cluster
     // below. `Arc::clone` requires precise type match — implicit
     // unsizing only happens at construction-time, not on clone.
+    //
+    // Iter 187 — when --tls-ca is set, build a TlsClient and route
+    // through `GrpcTransport::with_tls`. The cluster keeps its
+    // existing trait-object shape; only the GrpcTransport differs.
+    // Partial TLS configs (e.g. cert without key) fail loudly.
+    #[cfg(feature = "tls")]
+    let transport: Arc<dyn ruvector_hailo_cluster::transport::EmbeddingTransport + Send + Sync> = {
+        if let Some(ca_path) = tls_ca.as_deref() {
+            // Resolve SNI: explicit --tls-domain wins, otherwise the
+            // hostname half of the first worker address. The cluster's
+            // worker pool may dial multiple addrs but rustls only
+            // checks one SAN per channel; `domain_from_address` strips
+            // host:port → host so any sane fleet name works.
+            let addr0 = workers.first().map(|w| w.address.clone()).unwrap_or_default();
+            let domain = tls_domain.clone().unwrap_or_else(|| {
+                ruvector_hailo_cluster::tls::domain_from_address(&addr0).to_string()
+            });
+            let mut tls = ruvector_hailo_cluster::tls::TlsClient::from_pem_files(ca_path, &domain)
+                .map_err(|e| format!("--tls-ca: {}", e))?;
+            match (tls_client_cert.as_deref(), tls_client_key.as_deref()) {
+                (Some(c), Some(k)) => {
+                    tls = tls.with_client_identity(c, k)
+                        .map_err(|e| format!("--tls-client-cert/--tls-client-key: {}", e))?;
+                    if !quiet {
+                        eprintln!("ruvector-hailo-cluster-bench: mTLS client identity attached");
+                    }
+                }
+                (Some(_), None) | (None, Some(_)) => {
+                    return Err(
+                        "--tls-client-cert and --tls-client-key must both be set or both unset".into(),
+                    );
+                }
+                (None, None) => {}
+            }
+            if !quiet {
+                eprintln!(
+                    "ruvector-hailo-cluster-bench: TLS enabled ca={} domain={}",
+                    ca_path, domain
+                );
+            }
+            Arc::new(GrpcTransport::with_tls(
+                Duration::from_secs(5),
+                Duration::from_secs(2),
+                tls,
+            )?)
+        } else {
+            if tls_domain.is_some() || tls_client_cert.is_some() || tls_client_key.is_some() {
+                return Err(
+                    "--tls-domain / --tls-client-cert / --tls-client-key require --tls-ca".into(),
+                );
+            }
+            Arc::new(GrpcTransport::new()?)
+        }
+    };
+    #[cfg(not(feature = "tls"))]
     let transport: Arc<dyn ruvector_hailo_cluster::transport::EmbeddingTransport + Send + Sync> =
         Arc::new(GrpcTransport::new()?);
 
@@ -603,6 +680,18 @@ OPTIONS:
                                      has 0 healthy workers. Pairs with
                                      --auto-fingerprint to discover-then-
                                      enforce in one CI step.
+    --tls-ca <path>                 Enable HTTPS by trusting the PEM CA
+                                     bundle at <path>. Without this the
+                                     bench dials plaintext gRPC.
+                                     (Requires --features tls.)
+    --tls-domain <name>             SNI / SAN value to assert against the
+                                     server cert. Defaults to the hostname
+                                     half of the first worker address.
+    --tls-client-cert <path>        mTLS client cert (PEM). Pair with
+                                     --tls-client-key.
+    --tls-client-key <path>         mTLS client private key (PEM). The
+                                     cert and key must both be set or
+                                     both unset.
     --health-check <secs>           Spawn a background health-checker
                                      that probes every <secs> seconds
                                      during the bench. Mismatched
