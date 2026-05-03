@@ -32,6 +32,13 @@
 //!                              floor 4096). Caps per-RPC alloc surface
 //!                              well below tonic's ~4 MB transport
 //!                              default to shrink the DoS surface.
+//!   RUVECTOR_MAX_RESPONSE_BYTES gRPC max_encoding_message_size cap
+//!                              (ADR-172 §3a iter 190 — default 16384,
+//!                              floor 4096). Defense-in-depth on the
+//!                              response side: the worker should never
+//!                              emit > ~1.6 KB per embed, but capping
+//!                              the encode budget bounds the blast
+//!                              radius of any hypothetical leak.
 //!   RUVECTOR_MAX_CONCURRENT_STREAMS  HTTP/2 SETTINGS_MAX_CONCURRENT_STREAMS
 //!                              (ADR-172 §3a iter 181 — default 256,
 //!                              floor 8). Caps in-flight streams per
@@ -716,12 +723,32 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             max_request_bytes = max_req_bytes,
             "gRPC max_decoding_message_size set (ADR-172 §3a iter 180 DoS gate)"
         );
+        // Iter 190 — defense-in-depth response size cap. The worker
+        // controls its own response shape (Vec<f32>[384] ≈ 1.6 KB +
+        // tonic framing for unary embed; streaming embed pumps the
+        // same per-item shape), so the encode-side cap shouldn't fire
+        // under any normal code path. Setting it explicitly bounds
+        // the blast radius of a hypothetical bug that ever returned a
+        // huge response (e.g. an accidentally-leaked debug payload).
+        // 16 KB is 10× the legitimate per-message size and well
+        // outside any plausible legit response.
+        let max_resp_bytes: usize = std::env::var("RUVECTOR_MAX_RESPONSE_BYTES")
+            .ok()
+            .and_then(|s| s.parse::<usize>().ok())
+            .unwrap_or(16 * 1024)
+            .max(4 * 1024);
+        info!(
+            max_response_bytes = max_resp_bytes,
+            "gRPC max_encoding_message_size set (ADR-172 §3a iter 190 belt-and-suspenders)"
+        );
         // Note: `max_decoding_message_size` lives on the generated
         // `EmbeddingServer`, not tonic's `InterceptedService` wrapper —
         // apply it before wrapping. The `with_interceptor` static
         // helper would re-build the inner with default limits, so we
         // skip it and call `InterceptedService::new` ourselves.
-        let embed_server = EmbeddingServer::new(svc).max_decoding_message_size(max_req_bytes);
+        let embed_server = EmbeddingServer::new(svc)
+            .max_decoding_message_size(max_req_bytes)
+            .max_encoding_message_size(max_resp_bytes);
         let intercepted = tonic::service::interceptor::InterceptedService::new(
             embed_server,
             interceptor,
