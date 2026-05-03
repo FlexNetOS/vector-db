@@ -25,6 +25,7 @@ phases shipped + hardware-validated end-to-end on cognitum-v0 (Pi 5
 | P5 | 163 | Pi deploy + bench → 9.6× throughput vs cpu-fallback |
 | P5 | 164 | Cosine ordering verified (NPU sim(close) > sim(far) Δ=+0.23) |
 | P5b | 168 | Cache + NPU bench — 100% hit ⇒ **15.86 M/sec** (226,000×) |
+| P5b | 169 | HEF release + `download-encoder-hef.sh` (adoption unblocked) |
 
 **Real Pi 5 measurements** (cluster-bench, concurrency=4, 15s,
 HEF worker on 50051 via systemd):
