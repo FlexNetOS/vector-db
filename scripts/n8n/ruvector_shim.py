@@ -149,6 +149,9 @@ def status() -> dict[str, Any]:
 @app.post("/v1/memories", status_code=201)
 def create_memory(req: CreateMemory) -> dict[str, Any]:
     content_hash = hashlib.sha256(req.content.encode("utf-8")).hexdigest()
+    # Compute the embedding outside the lock — it's pure CPU work, only
+    # depends on req.content, and would otherwise serialize all writers.
+    embedding = _embed(req.content)
     with _lock:
         # Deduplicate by (namespace, content_hash)
         for m in _memories:
@@ -161,7 +164,7 @@ def create_memory(req: CreateMemory) -> dict[str, Any]:
             namespace=req.namespace,
             tags=list(req.tags),
             metadata=dict(req.metadata),
-            embedding=_embed(req.content),
+            embedding=embedding,
             created_at=time.time(),
             content_hash=content_hash,
         )
@@ -204,9 +207,13 @@ def list_memories(namespace: str | None = None, limit: int = 50) -> dict[str, An
         snapshot = list(_memories)
     items = [m for m in snapshot if (namespace is None or m.namespace == namespace)]
     items.sort(key=lambda m: -m.created_at)
+    matching_total = len(items)
     items = items[: max(1, min(limit, 1000))]
     return {
-        "total": len(items),
+        # 'total' is the count of matching memories before truncation, so
+        # callers can detect when more rows exist than were returned.
+        "total": matching_total,
+        "returned": len(items),
         "items": [
             {
                 "id": m.id,
