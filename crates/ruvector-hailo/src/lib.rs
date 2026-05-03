@@ -16,6 +16,9 @@ pub mod tokenizer;
 #[cfg(feature = "cpu-fallback")]
 pub mod cpu_embedder;
 
+#[cfg(feature = "cpu-fallback")]
+pub mod host_embeddings;
+
 #[cfg(feature = "hailo")]
 pub mod hef_pipeline;
 
