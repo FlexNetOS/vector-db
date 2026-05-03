@@ -9,6 +9,7 @@ verbatim in `docs/audit/AUDIT_REPORT.md` so no information is lost.
 from __future__ import annotations
 
 import os
+import re
 import sys
 from pathlib import Path
 
@@ -31,6 +32,48 @@ def stub_for(canonical_rel_to_root: str, repo_label: str) -> str:
     )
 
 
+_EXCLUDE_DIRS = {".git", "node_modules", "target", "dist", "build", ".next", ".turbo"}
+
+
+def _iter_md_files(root: Path) -> list[Path]:
+    out: list[Path] = []
+    for dirpath, dirnames, filenames in os.walk(root):
+        dirnames[:] = [d for d in dirnames if d not in _EXCLUDE_DIRS]
+        for fn in filenames:
+            if fn.lower().endswith(".md"):
+                out.append(Path(dirpath) / fn)
+    return out
+
+
+def find_incoming_links(root: Path, target: Path) -> list[tuple[Path, int, str]]:
+    """Return [(file, line_number, link_text)] of markdown links pointing at *target*.
+
+    A link is considered to point at *target* if the link path, resolved
+    relative to the linking file's directory, equals *target*.
+    """
+    target = target.resolve()
+    hits: list[tuple[Path, int, str]] = []
+    link_re = re.compile(r"\]\(([^)#?\s]+)")
+    for md in _iter_md_files(root):
+        if md.resolve() == target:
+            continue
+        try:
+            for lineno, line in enumerate(md.read_text(errors="replace").splitlines(), 1):
+                for m in link_re.finditer(line):
+                    href = m.group(1)
+                    if href.startswith(("http://", "https://", "mailto:", "/")):
+                        continue
+                    try:
+                        resolved = (md.parent / href).resolve()
+                    except Exception:
+                        continue
+                    if resolved == target:
+                        hits.append((md, lineno, line.strip()))
+        except Exception:
+            continue
+    return hits
+
+
 def consolidate(root: Path, label: str, pairs: list[tuple[str, str]]) -> None:
     for canonical, duplicate in pairs:
         c = root / canonical
@@ -41,6 +84,15 @@ def consolidate(root: Path, label: str, pairs: list[tuple[str, str]]) -> None:
         if not d.exists():
             print(f"  SKIP missing duplicate: {duplicate}")
             continue
+        # Warn about incoming markdown links so the operator can repoint them
+        # before / after stubbing. We do not auto-rewrite to avoid silently
+        # touching files outside the duplicate set.
+        incoming = find_incoming_links(root, d)
+        if incoming:
+            print(f"  WARN {duplicate} has {len(incoming)} incoming markdown link(s):")
+            for src, lineno, snippet in incoming:
+                print(f"        - {src.relative_to(root)}:{lineno}: {snippet}")
+            print(f"        (repoint them at {canonical} after consolidation)")
         d.write_text(stub_for(canonical, label))
         print(f"  stub  {duplicate} -> {canonical}")
 
