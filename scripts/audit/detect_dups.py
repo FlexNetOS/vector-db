@@ -6,7 +6,7 @@ Usage:
 
 Outputs JSON to stdout containing:
     - exact_duplicates: groups of files with identical normalized content
-    - near_duplicates:  pairs with Jaccard(shingles) >= 0.85
+    - near_duplicates:  pairs with Jaccard(shingles) >= 0.70
     - contradictions:   files that pair-wise mention conflicting "version X.Y.Z" / counts / numerics
 """
 from __future__ import annotations

@@ -71,14 +71,22 @@ WEFTOS_PAIRS: list[tuple[str, str]] = [
 ]
 
 
+def _default_root() -> Path:
+    """Repo root inferred from this script's location: scripts/audit/consolidate.py."""
+    return Path(__file__).resolve().parent.parent.parent
+
+
 def main() -> int:
-    if len(sys.argv) != 2 or sys.argv[1] not in {"ruvector", "weftos"}:
-        print("usage: consolidate.py {ruvector|weftos}", file=sys.stderr)
+    if len(sys.argv) < 2 or len(sys.argv) > 3 or sys.argv[1] not in {"ruvector", "weftos"}:
+        print("usage: consolidate.py {ruvector|weftos} [repo_root]", file=sys.stderr)
         return 2
     label = sys.argv[1]
-    root = Path(f"/home/ubuntu/repos/{label}")
+    root = Path(sys.argv[2]).resolve() if len(sys.argv) == 3 else _default_root()
+    if not root.is_dir():
+        print(f"repo root not a directory: {root}", file=sys.stderr)
+        return 2
     pairs = RUVECTOR_PAIRS if label == "ruvector" else WEFTOS_PAIRS
-    print(f"# consolidating {len(pairs)} pair(s) in {label}")
+    print(f"# consolidating {len(pairs)} pair(s) in {label} (root={root})")
     consolidate(root, label, pairs)
     return 0
 
