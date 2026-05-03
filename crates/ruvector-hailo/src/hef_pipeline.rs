@@ -202,10 +202,22 @@ impl HefPipeline {
         let vdevice = device.raw_vdevice();
 
         // 1. Init default configure params for this HEF + vdevice.
-        // SAFETY: hef + vdevice are valid handles; the SDK writes
-        // through `&mut params`.
+        //
+        // SAFETY (zeroed): `hailo_configure_params_t` is a HailoRT POD
+        // C struct (verified iter-178 against /usr/include/hailo/hailort.h
+        // — only contains `hailo_configure_network_group_params_t[8]`
+        // arrays and primitive ints). All-zero bits are a valid
+        // initial state; the SDK overwrites fields via the pointer
+        // in the next call.
         let mut params: hailort_sys::hailo_configure_params_t =
             unsafe { std::mem::zeroed() };
+        // SAFETY (FFI call): `hef` is the valid handle returned by
+        // `hailo_create_hef_file` above and not yet released.
+        // `vdevice` came from `HailoDevice::raw_vdevice()` which is
+        // owned by `HailoDevice` whose lifetime outlives `self` via
+        // the iter-137 lib.rs Mutex. `&mut params` points at the
+        // freshly-zeroed struct on this stack frame which lives until
+        // the call returns.
         let status = unsafe {
             hailort_sys::hailo_init_configure_params_by_vdevice(
                 hef,
@@ -226,6 +238,14 @@ impl HefPipeline {
         let mut n_ng: usize = 1;
         let mut network_group: hailort_sys::hailo_configured_network_group =
             ptr::null_mut();
+        // SAFETY (FFI call): `vdevice` and `hef` valid as above.
+        // `&mut params` was just initialized by the previous SDK call.
+        // `&mut network_group` is a single-element out-buffer (n_ng=1
+        // before, the SDK writes `n_ng` to actual count and one
+        // network-group handle into the slot). HailoRT documents that
+        // failing to open writes 0 to n_ng so the post-check at
+        // n_ng != 1 catches both the >1 multi-group case and the 0
+        // case.
         let status = unsafe {
             hailort_sys::hailo_configure_vdevice(
                 vdevice,
@@ -251,8 +271,17 @@ impl HefPipeline {
         // 3. Build input vstream params, format=FLOAT32 so HailoRT
         // does the quantize for us. iter-156b HEF has one input.
         let mut input_count: usize = 1;
+        // SAFETY (zeroed): `hailo_input_vstream_params_by_name_t` is a
+        // POD C struct holding a name (fixed-size char array) plus
+        // `hailo_vstream_params_t`. Zero-init is a valid starting
+        // state; SDK overwrites all fields when populating.
         let mut input_params: hailort_sys::hailo_input_vstream_params_by_name_t =
             unsafe { std::mem::zeroed() };
+        // SAFETY (FFI call): `network_group` is the just-configured
+        // handle from above. The `unused` bool param is `false` per
+        // HailoRT 4.23 (formerly toggled scale-by-feature; now ignored).
+        // `&mut input_params` is a single-element out-buffer; we set
+        // input_count=1 beforehand so the SDK writes one params struct.
         let status = unsafe {
             hailort_sys::hailo_make_input_vstream_params(
                 network_group,
@@ -278,6 +307,11 @@ impl HefPipeline {
         // 4. Create the input vstream from the params.
         let mut input_vstream: hailort_sys::hailo_input_vstream =
             ptr::null_mut();
+        // SAFETY (FFI call): network_group + input_params valid from
+        // the previous calls. Count `1` matches the iter-156b HEF's
+        // single input; passing a wrong count would write past the
+        // single-slot &mut input_vstream out-buffer, which the
+        // input_count=1 check after step 3 prevents.
         let status = unsafe {
             hailort_sys::hailo_create_input_vstreams(
                 network_group,
@@ -295,8 +329,12 @@ impl HefPipeline {
 
         // 5. Same for output vstream.
         let mut output_count: usize = 1;
+        // SAFETY (zeroed): mirror of the input_params POD invariant.
         let mut output_params: hailort_sys::hailo_output_vstream_params_by_name_t =
             unsafe { std::mem::zeroed() };
+        // SAFETY (FFI call): mirror of make_input_vstream_params; same
+        // single-output assumption holds (iter-156b HEF emits one
+        // last_hidden_state tensor).
         let status = unsafe {
             hailort_sys::hailo_make_output_vstream_params(
                 network_group,
@@ -315,6 +353,7 @@ impl HefPipeline {
 
         let mut output_vstream: hailort_sys::hailo_output_vstream =
             ptr::null_mut();
+        // SAFETY (FFI call): mirror of create_input_vstreams.
         let status = unsafe {
             hailort_sys::hailo_create_output_vstreams(
                 network_group,
@@ -333,8 +372,15 @@ impl HefPipeline {
         // 6. Read vstream metadata for shape + quant. We use FLOAT32
         // format so HailoRT does quant for us; we keep the quant info
         // for diagnostics only.
+        // SAFETY (zeroed): hailo_vstream_info_t is a POD struct
+        // containing primitives + a `format_t` + a tagged union of
+        // `shape: hailo_3d_image_shape_t` xor `nms_shape: hailo_nms_shape_t`.
+        // Zero-init is valid; SDK fills both the discriminant
+        // (`format.order`) and the union body.
         let mut input_info: hailort_sys::hailo_vstream_info_t =
             unsafe { std::mem::zeroed() };
+        // SAFETY (FFI call): input_vstream returned by
+        // hailo_create_input_vstreams above and not yet released.
         let status = unsafe {
             hailort_sys::hailo_get_input_vstream_info(
                 input_vstream,
@@ -347,6 +393,7 @@ impl HefPipeline {
                 where_: "hailo_get_input_vstream_info",
             });
         }
+        // SAFETY (zeroed/FFI): same invariants as input.
         let mut output_info: hailort_sys::hailo_vstream_info_t =
             unsafe { std::mem::zeroed() };
         let status = unsafe {
@@ -362,8 +409,17 @@ impl HefPipeline {
             });
         }
 
-        // SAFETY: HEF compiled with rank-3 inputs, so the union holds
-        // a `shape: hailo_3d_image_shape_t`. NMS shape doesn't apply.
+        // SAFETY (union access): hailo_vstream_info_t holds a tagged
+        // union — `shape: hailo_3d_image_shape_t` for non-NMS layouts
+        // (everything our encoder produces) xor `nms_shape:
+        // hailo_nms_shape_t` for NMS post-process layouts. Discriminant
+        // lives in `format.order`. Iter-156b's HEF compiles a transformer
+        // encoder with no NMS — the parse log confirmed
+        // `End nodes mapped: '/encoder/layer.5/output/LayerNorm/Add_1'`
+        // which is a plain rank-3 tensor. If a future HEF added NMS we'd
+        // need to gate this read on `format.order != HAILO_FORMAT_ORDER_HAILO_NMS`
+        // before reading the union; for the iter-156b HEF this is
+        // unconditionally `shape`.
         let in_shape = unsafe { input_info.__bindgen_anon_1.shape };
         let out_shape = unsafe { output_info.__bindgen_anon_1.shape };
 
@@ -458,7 +514,21 @@ impl HefPipeline {
 
         // Push the FP32 input. HailoRT internally quantizes to UINT8
         // using the embedded scale + zero-point from the HEF.
-        // SAFETY: input.as_ptr() points at input.len() * 4 valid bytes.
+        //
+        // SAFETY (input write):
+        //   * `self.input_vstream` is a non-null handle from
+        //     `hailo_create_input_vstreams` (`open_inner`); not yet
+        //     released because Drop runs after the last `&mut self`
+        //     borrow ends.
+        //   * `input.as_ptr() as *const c_void` points at
+        //     `input.len() * 4` immutable, properly-aligned bytes
+        //     (Vec<f32> on x86/aarch64 is 4-byte aligned).
+        //   * `self.input_frame_bytes` was computed from the
+        //     `input_shape` Hailo reported in `open_inner` and the
+        //     bounds-check above (`input.len() == input_frame_bytes/4`)
+        //     guarantees we don't ask HailoRT to read past the buffer.
+        //   * `&mut self` serializes concurrent calls; no other thread
+        //     can mutate or drop `self.input_vstream` while this runs.
         let status = unsafe {
             hailort_sys::hailo_vstream_write_raw_buffer(
                 self.input_vstream,
@@ -474,7 +544,17 @@ impl HefPipeline {
         }
 
         // Pull the FP32 output. HailoRT dequantizes for us.
-        // SAFETY: output.as_mut_ptr() points at >= out_floats * 4 writable bytes.
+        //
+        // SAFETY (output read):
+        //   * `self.output_vstream` is a non-null handle from
+        //     `hailo_create_output_vstreams` (`open_inner`).
+        //   * `output.as_mut_ptr() as *mut c_void` points at
+        //     `output.len() * 4` writable, properly-aligned bytes.
+        //     The `output.resize(out_floats, 0.0)` above ensures
+        //     `output.len() >= out_floats`, so HailoRT writing exactly
+        //     `output_frame_bytes` cannot overrun.
+        //   * `&mut self` again serializes; no other writer for the
+        //     output buffer.
         let status = unsafe {
             hailort_sys::hailo_vstream_read_raw_buffer(
                 self.output_vstream,
