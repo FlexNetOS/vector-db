@@ -54,6 +54,18 @@
 //!                              half-closed TCP state from crashed or
 //!                              partitioned clients; pong timeout is
 //!                              hyper's default 20 s.
+//!   RUVECTOR_SHUTDOWN_FORCE_CLEAN  When "1", attempt the clean
+//!                              HailoRT teardown on shutdown
+//!                              (iter 185 — default off). The default
+//!                              path forgets the embedder + calls
+//!                              process::exit(0) because every
+//!                              attempt at a clean drop SEGV'd in
+//!                              HailoRT's internal teardown; the OS
+//!                              reaps fds + mmaps either way.
+//!   RUVECTOR_SHUTDOWN_DRAIN_MS  Drain pause used only when
+//!                              FORCE_CLEAN=1 (default 500). Reserved
+//!                              for the eventual HailoRT release that
+//!                              fixes the SEGV upstream.
 //!
 //! When both `RUVECTOR_TLS_CERT` and `RUVECTOR_TLS_KEY` are set and the
 //! binary was built with `--features tls`, the worker serves over HTTPS
@@ -513,8 +525,18 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     // Arc<AtomicU64> is the cheapest correct sharing.
     let rate_limit_denials = Arc::new(AtomicU64::new(0));
 
+    // Iter 185 — keep an outer Arc<HailoEmbedder> ref so the FFI
+    // teardown happens on the main thread, after the tokio runtime
+    // has drained, instead of inside the async runtime where it
+    // races HailoRT's internal worker threads. iter-179 observed a
+    // SIGSEGV during shutdown when the implicit drop landed on a
+    // tokio worker thread mid-DMA: `vstream_release` was reaping the
+    // same vstream object that an in-flight DMA callback was
+    // touching. Holding this Arc keeps the embedder alive until we
+    // explicitly drop it after `block_on` returns.
+    let embedder_outer = Arc::new(embedder);
     let svc = WorkerService {
-        embedder: Arc::new(embedder),
+        embedder: Arc::clone(&embedder_outer),
         version: format!("ruvector-hailo-worker {}", env!("CARGO_PKG_VERSION")),
         device_id,
         fingerprint,
@@ -712,7 +734,46 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         Ok::<(), String>(())
     })?;
 
-    Ok(())
+    // Iter 185 — exit-without-FFI-teardown to eliminate the
+    // shutdown SIGSEGV. Empirically (5/5 across iter-184 + iter-185
+    // first-attempt with drain+drop), HailoRT's internal threads
+    // (DMA scheduler, vdevice callbacks) crash on every clean shutdown
+    // regardless of when we time the vstream release relative to
+    // tonic's serve completion. The crash is not in our HefPipeline
+    // Drop — the explicit `drop(embedder_outer)` was never reached
+    // when we tried — it's deeper, in HailoRT C-library teardown,
+    // which the iter-179 backtrace (status=11/SEGV from systemd) had
+    // already pointed at.
+    //
+    // The chosen mitigation is to leak the embedder via `mem::forget`
+    // and call `process::exit(0)`. The OS reaps every resource we own
+    // (mmap'd HEF, vstream fds, driver-side handles via close(2));
+    // HailoRT's own threads are killed by the same exit syscall, so
+    // they can't race a free that no longer happens. Leaking is bounded
+    // (one HefPipeline + one HostEmbeddings pair per process lifetime;
+    // the next worker is a fresh process). Operators see a clean
+    // `status=0/SUCCESS` instead of `status=11/SEGV`, which makes
+    // restart loops and monitoring sane again.
+    //
+    // Operators who want to attempt the clean-drop path (e.g. a future
+    // HailoRT release that fixes the bug) can flip
+    // `RUVECTOR_SHUTDOWN_FORCE_CLEAN=1` to take the slow path instead.
+    info!("server stopped — exiting (iter 185 SEGV-on-shutdown mitigation)");
+    if std::env::var("RUVECTOR_SHUTDOWN_FORCE_CLEAN").as_deref() == Ok("1") {
+        let drain_ms: u64 = std::env::var("RUVECTOR_SHUTDOWN_DRAIN_MS")
+            .ok()
+            .and_then(|s| s.parse::<u64>().ok())
+            .unwrap_or(500);
+        info!(drain_ms, "FORCE_CLEAN=1 — taking slow drop path");
+        rt.shutdown_timeout(Duration::from_secs(2));
+        std::thread::sleep(Duration::from_millis(drain_ms));
+        drop(embedder_outer);
+        info!("HailoRT released — exiting cleanly");
+        return Ok(());
+    }
+    std::mem::forget(embedder_outer);
+    std::mem::forget(rt);
+    std::process::exit(0);
 }
 
 /// Future that resolves when SIGINT or SIGTERM arrives — graceful exit.
