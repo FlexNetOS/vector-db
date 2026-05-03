@@ -1,6 +1,9 @@
 services:
   n8n:
-    image: n8nio/n8n:latest
+    # Pin to a known-working version (verified end-to-end in this PR's audit
+    # workflow). Avoid `:latest` so the e2e smoke test does not break if n8n
+    # ships incompatible env-var changes upstream.
+    image: n8nio/n8n:1.74.3
     restart: unless-stopped
     ports:
       - "5678:5678"
@@ -8,7 +11,9 @@ services:
       - N8N_HOST=0.0.0.0
       - N8N_PORT=5678
       - N8N_PROTOCOL=http
-      - N8N_BASIC_AUTH_ACTIVE=false
+      # N8N_USER_MANAGEMENT_DISABLED + N8N_DIAGNOSTICS_ENABLED + N8N_TELEMETRY_ENABLED
+      # are all the supported way to run n8n in headless dev mode for 1.x.
+      # N8N_BASIC_AUTH_ACTIVE was removed in n8n 1.x and is therefore omitted.
       - N8N_DIAGNOSTICS_ENABLED=false
       - N8N_TELEMETRY_ENABLED=false
       - N8N_USER_MANAGEMENT_DISABLED=true

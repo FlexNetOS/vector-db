@@ -5,5 +5,7 @@ COPY ruvector_shim.py /app/ruvector_shim.py
 ENV PORT=8080
 ENV RUVECTOR_DATA_DIR=/data
 EXPOSE 8080
-# Use shell form so the PORT env var is honored at runtime; falls back to 8080.
-CMD python -m uvicorn ruvector_shim:app --host 0.0.0.0 --port "${PORT:-8080}"
+# Use shell form so the PORT env var is honored at runtime; `exec` makes
+# uvicorn replace /bin/sh as PID 1 so SIGTERM from `docker stop` is delivered
+# directly to it (avoiding the 10s graceful-shutdown timeout). Falls back to 8080.
+CMD exec python -m uvicorn ruvector_shim:app --host 0.0.0.0 --port "${PORT:-8080}"
