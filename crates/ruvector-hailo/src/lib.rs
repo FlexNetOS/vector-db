@@ -77,6 +77,13 @@ pub struct HailoEmbedder {
     /// `--features cpu-fallback`.
     #[cfg(feature = "cpu-fallback")]
     cpu_fallback: Option<crate::cpu_embedder::CpuEmbedder>,
+    /// Iter 162 (ADR-176 P4) — NPU acceleration via the iter-156b HEF
+    /// plus iter-160 host-side embeddings plus iter-161 end-to-end
+    /// pipeline. `Some(_)` when both `model.hef` and the safetensors
+    /// trio are present in `model_dir`. Takes precedence over
+    /// `cpu_fallback` in `embed()` dispatch.
+    #[cfg(all(feature = "hailo", feature = "cpu-fallback"))]
+    hef_embedder: Option<crate::hef_embedder::HefEmbedder>,
 }
 
 impl HailoEmbedder {
@@ -128,25 +135,65 @@ impl HailoEmbedder {
         #[cfg(all(not(feature = "hailo"), feature = "cpu-fallback"))]
         let device_id = "cpu-fallback:no-hailo-feature".to_string();
 
-        // Iter 133 path-C: load CPU fallback when the feature is on
-        // and the model dir has the HF safetensors trio. When there's
-        // no HEF (always true today — model surgery pending) the CPU
-        // fallback is the sole inference path.
+        // Iter 162 (ADR-176 P4) — open priority:
+        //   1. HEF + safetensors trio (NPU acceleration)
+        //   2. safetensors trio only (cpu-fallback)
+        //   3. neither (NoModelLoaded — health probe still serves)
+        //
+        // HEF requires both `hailo` (for HefPipeline) and `cpu-fallback`
+        // (for HostEmbeddings + tokenizer). When the feature lattice
+        // doesn't enable both, we fall straight through to cpu-fallback
+        // (or no model).
+        // Both paths are only consulted under `feature = "cpu-fallback"`
+        // (HEF requires it for HostEmbeddings, cpu-fallback obviously);
+        // gate to silence unused-var warnings on `--features hailo` alone.
         #[cfg(feature = "cpu-fallback")]
-        let cpu_fallback = {
-            let safetensors = model_dir.join("model.safetensors");
-            let hef_path = model_dir.join("model.hef");
-            if !hef_path.exists() && safetensors.exists() {
-                Some(crate::cpu_embedder::CpuEmbedder::open(model_dir)?)
+        let hef_path = model_dir.join("model.hef");
+        #[cfg(feature = "cpu-fallback")]
+        let safetensors = model_dir.join("model.safetensors");
+
+        #[cfg(all(feature = "hailo", feature = "cpu-fallback"))]
+        let hef_embedder = {
+            if hef_path.exists() && safetensors.exists() {
+                if let Some(dev) = device_opt.as_ref() {
+                    Some(crate::hef_embedder::HefEmbedder::open(dev, model_dir)?)
+                } else {
+                    None
+                }
             } else {
                 None
             }
         };
 
-        // Dimension comes from the CPU fallback's BERT config when
-        // available, otherwise the MINI_LM constant. Future HEF path
-        // reads it from the network group's output shape.
-        #[cfg(feature = "cpu-fallback")]
+        // cpu-fallback: load only if HEF wasn't loaded (avoid duplicate
+        // 90 MB safetensors mmap when both could load).
+        #[cfg(all(feature = "hailo", feature = "cpu-fallback"))]
+        let cpu_fallback = if hef_embedder.is_some() {
+            None
+        } else if !hef_path.exists() && safetensors.exists() {
+            Some(crate::cpu_embedder::CpuEmbedder::open(model_dir)?)
+        } else {
+            None
+        };
+
+        #[cfg(all(not(feature = "hailo"), feature = "cpu-fallback"))]
+        let cpu_fallback = if !hef_path.exists() && safetensors.exists() {
+            Some(crate::cpu_embedder::CpuEmbedder::open(model_dir)?)
+        } else {
+            None
+        };
+
+        // Dimension priority: HEF output dim > cpu-fallback BERT config
+        // > MINI_LM_DIM constant. The HEF was compiled for hidden_size
+        // 384 in iter-156b; this gate makes any future HEF with a
+        // different hidden_size automatically picked up.
+        #[cfg(all(feature = "hailo", feature = "cpu-fallback"))]
+        let dimensions = hef_embedder
+            .as_ref()
+            .map(|h| h.output_dim())
+            .or_else(|| cpu_fallback.as_ref().map(|c| c.output_dim()))
+            .unwrap_or(crate::inference::MINI_LM_DIM);
+        #[cfg(all(not(feature = "hailo"), feature = "cpu-fallback"))]
         let dimensions = cpu_fallback
             .as_ref()
             .map(|c| c.output_dim())
@@ -168,6 +215,8 @@ impl HailoEmbedder {
             device: device_opt.map(Mutex::new),
             #[cfg(feature = "cpu-fallback")]
             cpu_fallback,
+            #[cfg(all(feature = "hailo", feature = "cpu-fallback"))]
+            hef_embedder,
         })
     }
 
@@ -220,11 +269,16 @@ impl HailoEmbedder {
     /// the ModelLoaded gate trips and `embed` starts dispatching to
     /// the NPU's vstream API.
     pub fn embed(&self, text: &str) -> Result<Vec<f32>> {
-        // Iter 137: dispatch order:
-        //   1. CPU fallback if loaded (real semantic vectors today)
-        //   2. NPU HEF inference (only path that exercises the device,
-        //      currently NoModelLoaded — pending HEF model surgery)
-        //   3. FeatureDisabled if neither feature is built in
+        // Iter 162 (ADR-176 P4): dispatch order:
+        //   1. NPU HEF (real NPU acceleration, ~73 FPS encoder)
+        //   2. CPU fallback (host CPU BERT-6, ~7 FPS / Pi worker)
+        //   3. NoModelLoaded — health probes still serve
+        //   4. FeatureDisabled if neither feature is built in
+        #[cfg(all(feature = "hailo", feature = "cpu-fallback"))]
+        if let Some(hef) = &self.hef_embedder {
+            return hef.embed(text);
+        }
+
         #[cfg(feature = "cpu-fallback")]
         if let Some(cpu) = &self.cpu_fallback {
             return cpu.embed(text);
@@ -233,12 +287,6 @@ impl HailoEmbedder {
         #[cfg(feature = "hailo")]
         {
             let _ = text;
-            // Hold the device lock briefly — preserves the contract
-            // that the real HEF-based inference path needs
-            // single-writer access to the vstream descriptors.
-            if let Some(dev) = &self.device {
-                let _guard = dev.lock().unwrap_or_else(|p| p.into_inner());
-            }
             return Err(HailoError::NoModelLoaded);
         }
 
@@ -278,9 +326,13 @@ impl HailoEmbedder {
     /// configured into the vdevice. No callers need to change — the
     /// signal flips automatically.
     pub fn has_model(&self) -> bool {
-        // Iter 133 path-C: CPU fallback counts as a loaded model.
-        // The cluster's `validate_fleet` flow correctly marks workers
-        // ready=true when CPU fallback is wired even with no HEF.
+        // Iter 162 (ADR-176 P4): HEF + cpu-fallback both count.
+        #[cfg(all(feature = "hailo", feature = "cpu-fallback"))]
+        {
+            if self.hef_embedder.is_some() {
+                return true;
+            }
+        }
         #[cfg(feature = "cpu-fallback")]
         {
             if self.cpu_fallback.is_some() {
