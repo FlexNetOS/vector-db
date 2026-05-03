@@ -10,6 +10,7 @@
 
 pub mod device;
 pub mod error;
+pub mod hef_verify;
 pub mod inference;
 pub mod tokenizer;
 
