@@ -221,10 +221,14 @@ authors = ["Ruvector Team"]
 repository = "https://github.com/FlexNetOS/ruvector"
 
 [workspace.dependencies]
-# Cognitum Seed / Cloud SDK (https://cognitum.one/developers)
-# Crates opt in by listing `cognitum-one.workspace = true` in their own Cargo.toml.
-# Default features enable rustls; add `mdns` / `stream` / `blocking` features per crate as needed.
-cognitum-one = { version = "0.2.1", default-features = false, features = ["rustls", "seed"] }
+# Cognitum Seed / Cloud SDK (https://cognitum.one/developers).
+# Vendored in-tree at `vendor/cognitum-one/` (v0.2.1, MIT, upstream
+# `cognitum-one/sdks` @ `a9e1c073`). See `vendor/cognitum-one/VENDORED.md`
+# for provenance and update procedure. Crates opt in by listing
+# `cognitum-one.workspace = true` in their own `Cargo.toml`. Default features
+# enable rustls + the `seed` (LAN appliance) surface; add `mdns` / `stream` /
+# `blocking` features per crate as needed.
+cognitum-one = { path = "vendor/cognitum-one", default-features = false, features = ["rustls", "seed"] }
 
 # Core functionality
 redb = "2.1"

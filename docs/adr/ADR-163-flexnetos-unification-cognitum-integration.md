@@ -78,17 +78,21 @@ Merge `ruvector` and `weftos` into a single Cargo workspace under a new repo `Fl
 
 ### Cognitum SDK installation (this PR)
 
-#### Rust (cognitum-one v0.2.1)
+#### Rust (cognitum-one v0.2.1, vendored in-tree)
 
-Added to `[workspace.dependencies]` in both `ruvector/Cargo.toml` and `weftos/Cargo.toml`:
+The SDK source has been **vendored** into both repos under `vendor/cognitum-one/` (MIT licensed; upstream `cognitum-one/sdks` @ `a9e1c073`, source tarball SHA-256 `0db3dccd…`). See `vendor/cognitum-one/VENDORED.md` for full provenance and the `scripts/vendor-cognitum-one.sh` helper for re-vendoring future versions.
+
+Added to `[workspace.dependencies]` in both `ruvector/Cargo.toml` and `weftos/Cargo.toml` as a path dependency:
 
 ```toml
-cognitum-one = { version = "0.2.1", default-features = false, features = ["rustls", "seed"] }
+cognitum-one = { path = "vendor/cognitum-one", default-features = false, features = ["rustls", "seed"] }
 ```
 
-Feature menu: `seed`, `mdns`, `stream`, `blocking`, `rustls`, `native-tls`. Crates opt in by listing `cognitum-one.workspace = true` in their own `Cargo.toml`. No crate currently consumes it — it is an opt-in workspace dep.
+Feature menu: `seed`, `mdns`, `stream`, `blocking`, `rustls`, `native-tls`. Crates opt in by listing `cognitum-one.workspace = true` in their own `Cargo.toml`. The vendored crate is **not** added to `[workspace.members]` — keeping it out of `cargo check --workspace` / `cargo clippy --workspace` runs preserves the host workspace's lint policy without rewriting upstream code.
 
-Source: `github.com/cognitum-one/sdks` · Docs: `docs.rs/cognitum-one`.
+Why vendor: (1) builds no longer require crates.io reachability, (2) the source is auditable in-tree, (3) we control the version bump cadence, (4) downstream consumers of the merged repo see a stable, self-contained workspace. Trade-off: re-vendoring on every upstream release is slightly more friction than a `cargo update`, mitigated by the helper script.
+
+Upstream: `github.com/cognitum-one/sdks` (path `sdks/rust`) · Docs: `docs.rs/cognitum-one`.
 
 #### Node (@cognitum-one/sdk v0.2.1)
 
