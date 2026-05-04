@@ -72,6 +72,22 @@ impl HostEmbeddings {
             });
         }
 
+        // Iter 213 — cap config.json at 64 KB. BERT-family configs are
+        // typically <1 KB; 64 KB is 64× legit headroom. Same threat
+        // model as iter-210/211/212 — operator-controlled path that
+        // could OOM the worker at boot if pointed at the wrong file.
+        const CONFIG_CAP: u64 = 64 * 1024;
+        if let Ok(meta) = std::fs::metadata(&config_path) {
+            if meta.len() > CONFIG_CAP {
+                return Err(HailoError::Tokenizer(format!(
+                    "config.json at {} is {} bytes, exceeds {} byte cap \
+                     (iter 213 — likely a misconfig pointing at the wrong file)",
+                    config_path.display(),
+                    meta.len(),
+                    CONFIG_CAP
+                )));
+            }
+        }
         let config_str = std::fs::read_to_string(&config_path).map_err(|e| {
             HailoError::Tokenizer(format!("read config.json: {}", e))
         })?;

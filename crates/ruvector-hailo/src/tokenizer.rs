@@ -73,7 +73,27 @@ impl WordPieceTokenizer {
     }
 
     /// Load from a `vocab.txt` on disk.
+    ///
+    /// Iter 213 — caps the vocab read at 16 MB before pulling it into
+    /// memory. The all-MiniLM-L6-v2 vocab.txt is ~232 KB; even XLM-R
+    /// tops out around 5 MB. 16 MB is ~70× legit headroom and prevents
+    /// a misconfig (operator pointing model_dir at /var/log/* or a
+    /// large arbitrary file) from OOMing the worker at boot. Parallels
+    /// iter-210/211/212's same-shape caps on operator-controlled
+    /// file paths.
     pub fn from_vocab_file(path: &Path) -> Result<Self, HailoError> {
+        const VOCAB_CAP: u64 = 16 * 1024 * 1024; // 16 MB
+        let meta = std::fs::metadata(path).map_err(|_| HailoError::BadModelDir {
+            path: path.display().to_string(),
+            what: "vocab.txt (stat failed)",
+        })?;
+        if meta.len() > VOCAB_CAP {
+            return Err(HailoError::BadModelDir {
+                path: path.display().to_string(),
+                what: "vocab.txt exceeds 16 MB cap (iter 213 — likely a \
+                       misconfig pointing at the wrong file)",
+            });
+        }
         let s = std::fs::read_to_string(path).map_err(|e| {
             HailoError::BadModelDir {
                 path: path.display().to_string(),
@@ -362,5 +382,50 @@ mod tests {
         assert_eq!(enc.input_ids[0], 101); // CLS
         assert_eq!(enc.input_ids[enc.actual_len - 1], 102); // SEP last real
         assert!(enc.input_ids.len() <= 4);
+    }
+
+    /// Iter 213 — from_vocab_file rejects > 16 MB vocab files.
+    #[test]
+    fn from_vocab_file_rejects_oversized() {
+        use std::io::Write as _;
+        let path = std::env::temp_dir().join(format!(
+            "iter213-oversized-vocab-{}.txt",
+            std::process::id()
+        ));
+        // 32 MB filler — well over the 16 MB cap.
+        let mut f = std::fs::File::create(&path).expect("create fixture");
+        let line = "token\n";
+        for _ in 0..((32 * 1024 * 1024) / line.len() + 1) {
+            f.write_all(line.as_bytes()).expect("write fixture");
+        }
+        f.sync_all().expect("sync");
+        drop(f);
+
+        match WordPieceTokenizer::from_vocab_file(&path) {
+            Ok(_) => panic!("oversized vocab must reject, but loaded"),
+            Err(e) => {
+                let msg = format!("{:?}", e);
+                assert!(
+                    msg.contains("16 MB cap") || msg.contains("iter 213"),
+                    "expected 16 MB cap rejection, got: {}",
+                    msg
+                );
+            }
+        }
+        let _ = std::fs::remove_file(&path);
+    }
+
+    /// Iter 213 — small vocab still loads correctly.
+    #[test]
+    fn from_vocab_file_accepts_small_vocab() {
+        let path = std::env::temp_dir().join(format!(
+            "iter213-small-vocab-{}.txt",
+            std::process::id()
+        ));
+        std::fs::write(&path, mini_vocab()).expect("write fixture");
+        let t = WordPieceTokenizer::from_vocab_file(&path)
+            .expect("small vocab must load");
+        assert!(t.vocab_size() > 0);
+        let _ = std::fs::remove_file(&path);
     }
 }

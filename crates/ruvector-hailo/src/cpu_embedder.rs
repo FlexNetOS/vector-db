@@ -145,6 +145,22 @@ impl CpuEmbedder {
 
         // BERT config drives the model topology. all-MiniLM-L6-v2
         // ships hidden_size=384, num_hidden_layers=6, num_heads=12.
+        //
+        // Iter 213 — cap at 64 KB (same as host_embeddings; legit BERT
+        // config is <1 KB). Operator-controlled path; misconfig
+        // protection against an accidental large-file pointer.
+        const CONFIG_CAP: u64 = 64 * 1024;
+        if let Ok(meta) = std::fs::metadata(&config_path) {
+            if meta.len() > CONFIG_CAP {
+                return Err(HailoError::Tokenizer(format!(
+                    "config.json at {} is {} bytes, exceeds {} byte cap \
+                     (iter 213 — likely a misconfig pointing at the wrong file)",
+                    config_path.display(),
+                    meta.len(),
+                    CONFIG_CAP
+                )));
+            }
+        }
         let config_str = std::fs::read_to_string(&config_path)
             .map_err(|e| HailoError::Tokenizer(format!("read config.json: {}", e)))?;
         let config: Config = serde_json::from_str(&config_str)
