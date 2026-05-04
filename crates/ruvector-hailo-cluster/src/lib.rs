@@ -866,6 +866,43 @@ impl HailoClusterEmbedder {
     }
 }
 
+/// Iter 218 — closes ADR-178 Gap B (HIGH) part 1. Implements
+/// `ruvector_core::embeddings::EmbeddingProvider` for
+/// `HailoClusterEmbedder`, the headline integration ADR-167 §8.4
+/// promised. The cluster doc-comment at lib.rs line 140 had been
+/// honestly admitting this gap ("Implements `EmbeddingProvider` once
+/// iteration 14 brings the path dep"); iter-218 finally lands it.
+///
+/// All three trait methods delegate to existing inherent methods.
+/// `embed` folds `ClusterError → RuvectorError::ModelInferenceError`
+/// (the iter-209 terminal-error short-circuit still fires inside
+/// `embed_one_blocking` before we hit this conversion). `name()`
+/// returns the static crate identifier since the cluster doesn't
+/// otherwise carry a single-name handle (it's a fleet of workers).
+///
+/// Effect: callers can now hold `Arc<dyn EmbeddingProvider>` and
+/// transparently swap a single-Pi `HailoEmbedder` for a fleet
+/// `HailoClusterEmbedder` without code changes — the contract
+/// ADR-167 §8.4 promised end-to-end.
+impl ruvector_core::embeddings::EmbeddingProvider for HailoClusterEmbedder {
+    fn embed(&self, text: &str) -> ruvector_core::Result<Vec<f32>> {
+        HailoClusterEmbedder::embed_one_blocking(self, text)
+            .map_err(|e| ruvector_core::RuvectorError::ModelInferenceError(e.to_string()))
+    }
+
+    fn dimensions(&self) -> usize {
+        HailoClusterEmbedder::dim(self)
+    }
+
+    fn name(&self) -> &str {
+        // The cluster is a fleet, not a single named device — the
+        // worker-level `device_id` lives on each WorkerEndpoint.
+        // Return a static identifier so callers can distinguish a
+        // cluster provider from a `HailoEmbedder` in logs.
+        "ruvector-hailo-cluster"
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

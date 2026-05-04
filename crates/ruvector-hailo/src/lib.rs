@@ -362,6 +362,34 @@ impl HailoEmbedder {
 unsafe impl Send for HailoEmbedder {}
 unsafe impl Sync for HailoEmbedder {}
 
+/// Iter 218 — closes ADR-178 Gap B (HIGH) part 1. Implements
+/// `ruvector_core::embeddings::EmbeddingProvider` for `HailoEmbedder`,
+/// the headline integration ADR-167 §2.5 promised but never delivered.
+///
+/// All three methods delegate to the existing inherent methods; the
+/// only translation is `HailoError → ruvector_core::RuvectorError`,
+/// folded into `ModelInferenceError(String)` for non-dim failures and
+/// `DimensionMismatch` for the (unreachable but well-typed) dim
+/// path.
+///
+/// Effect: `Arc<dyn EmbeddingProvider>` callers (the recommended
+/// ruvector-core consumer pattern) can now hold a `HailoEmbedder`
+/// without rewriting around the inherent-method API.
+impl ruvector_core::embeddings::EmbeddingProvider for HailoEmbedder {
+    fn embed(&self, text: &str) -> ruvector_core::Result<Vec<f32>> {
+        HailoEmbedder::embed(self, text)
+            .map_err(|e| ruvector_core::RuvectorError::ModelInferenceError(e.to_string()))
+    }
+
+    fn dimensions(&self) -> usize {
+        HailoEmbedder::dimensions(self)
+    }
+
+    fn name(&self) -> &str {
+        HailoEmbedder::name(self)
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -394,13 +422,14 @@ mod tests {
 
     #[test]
     fn embedding_provider_signature_parity() {
-        // Compile-time check that our API surface matches the
-        // `EmbeddingProvider` trait shape we'll be wiring into in
-        // iteration 3.
-        fn assert_signatures<T>()
-        where
-            T: Send + Sync,
-        {}
-        assert_signatures::<HailoEmbedder>();
+        // Iter 218 — closes ADR-178 Gap B part 1. Was a no-op (only
+        // `T: Send + Sync`). Now asserts the real
+        // `impl EmbeddingProvider for HailoEmbedder` block compiles
+        // — if the trait drifts and the impl breaks, this test fails
+        // at the bound check. Catches the same regression class
+        // ADR-178 flagged: a future trait-shape change to
+        // `EmbeddingProvider` that the hailo crate doesn't propagate.
+        fn assert_impl<T: ruvector_core::embeddings::EmbeddingProvider>() {}
+        assert_impl::<HailoEmbedder>();
     }
 }

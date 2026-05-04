@@ -33,6 +33,14 @@ cpu-fallback = ["candle-core", "candle-nn", "candle-transformers", "tokenizers",
 [dependencies]
 thiserror   = "2"
 hailort-sys = { path = "../hailort-sys" }
+# Iter 218 — closes ADR-178 Gap B (HIGH) part 1. Path dep on
+# ruvector-core lets us implement the
+# `ruvector_core::embeddings::EmbeddingProvider` trait against
+# `HailoEmbedder`, which was the headline integration claim from
+# ADR-167 §2.5 that never landed in the original "iter 14" plan.
+# `default-features = false` keeps reqwest / ort / hnsw out of the
+# Pi build — we only need the trait + error surface from this crate.
+ruvector-core = { path = "../ruvector-core", default-features = false }
 # Iter 174 — opt-in HEF sha256 pin via RUVECTOR_HEF_SHA256. Used only
 # under `feature = "hailo"` (the only path that loads HEFs); see
 # hef_pipeline.rs. Keep default-features off to inherit the same

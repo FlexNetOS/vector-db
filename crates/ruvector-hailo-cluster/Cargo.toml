@@ -65,6 +65,12 @@ tracing            = "0.1"
 tracing-subscriber = { version = "0.3", default-features = false, features = ["fmt", "env-filter", "ansi"] }
 sha2               = "0.10"
 ruvector-hailo     = { path = "../ruvector-hailo" }
+# Iter 218 — closes ADR-178 Gap B (HIGH) part 1. Path dep on
+# ruvector-core lets HailoClusterEmbedder implement
+# `EmbeddingProvider`, the headline integration ADR-167 §8.4 promised.
+# default-features=false keeps reqwest / ort / hnsw out — we only
+# need the trait + error surface.
+ruvector-core      = { path = "../ruvector-core", default-features = false }
 
 [[bin]]
 name = "ruvector-hailo-worker"
