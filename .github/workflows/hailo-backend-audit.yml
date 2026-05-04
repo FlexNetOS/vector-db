@@ -43,11 +43,19 @@ jobs:
         run: cargo install --locked cargo-audit
       - name: Run cargo audit
         working-directory: crates/ruvector-hailo-cluster
-        # `--deny warnings` makes any vuln advisory a hard CI fail. The
-        # cluster crate is the only one with a Cargo.lock under audit's
-        # default scope (hailort-sys/ruvector-hailo lock files are gated
-        # on the `hailo` feature which CI can't build without libhailort).
-        run: cargo audit --deny warnings
+        # `--deny warnings` makes any vuln advisory a hard CI fail. Iter
+        # 219 rejoined the hailo crates into the parent workspace, so
+        # cargo-audit now reads the workspace Cargo.lock (one level up).
+        # That lock has wider transitive scope than the per-crate locks
+        # had, surfacing three advisories that deny.toml had already
+        # ignored — but cargo-audit doesn't read deny.toml, so we mirror
+        # the ignore list here. Iter 224 added the --ignore flags
+        # (parallel to iter-177/iter-219's deny.toml ignores).
+        run: |
+          cargo audit --deny warnings \
+              --ignore RUSTSEC-2024-0436 `# paste — unmaintained, transitive via candle` \
+              --ignore RUSTSEC-2025-0134 `# rustls-pemfile — transitive via tonic-tls` \
+              --ignore RUSTSEC-2025-0141 `# bincode 1.x — workspace-wide pin via rkyv etc.`
 
   deny:
     name: cargo-deny (license + bans + sources)
