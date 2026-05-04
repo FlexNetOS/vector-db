@@ -138,8 +138,10 @@ echo
 echo "Verify on the target:"
 echo "    ssh root@${DEPLOY_HOST} 'for b in ${BINS[*]}; do /usr/local/bin/\$b --version; done'"
 echo
-echo "Then install the systemd service (if not already done):"
+echo "Then run the matching installer for whichever bridge(s) you ship"
+echo "(each is idempotent; pick the bridges you actually need):"
 echo "    ssh root@${DEPLOY_HOST}"
 echo "    cd /path/to/ruvector/crates/ruvector-hailo-cluster/deploy"
-echo "    sudo bash install-mmwave-bridge.sh /usr/local/bin/ruvector-mmwave-bridge   # mmwave"
+echo "    sudo bash install-mmwave-bridge.sh   /usr/local/bin/ruvector-mmwave-bridge"
 echo "    sudo bash install-ruview-csi-bridge.sh /usr/local/bin/ruview-csi-bridge"
+echo "    sudo bash install-ruvllm-bridge.sh   /usr/local/bin/ruvllm-bridge   # iter 215 — no systemd unit, parent-spawned"
