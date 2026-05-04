@@ -99,22 +99,57 @@ pub fn verify_detached(
 
 /// File-based wrapper around [`verify_detached`]: reads manifest, sig,
 /// and pubkey from disk and verifies. Use this from the discovery path.
+///
+/// Iter 211 — every input path is operator-controlled, so a misconfig
+/// (or attacker with write access to /etc/ruvector-hailo/) pointing
+/// any of these paths at /var/log/* or a binary blob would OOM the
+/// worker at boot. Cap each:
+///   - manifest at 1 MB (matches iter-210's FileDiscovery cap)
+///   - signature at 16 KB (ed25519 sig in base64 is ~88 bytes; 16 KB
+///     is 180× legit, leaving room for armored formats but bounded)
+///   - pubkey at 16 KB (same rationale; ed25519 pk in hex is 64 bytes)
+fn read_with_cap(path: &Path, cap: u64, label: &str) -> Result<Vec<u8>, ClusterError> {
+    let meta = std::fs::metadata(path).map_err(|e| ClusterError::Transport {
+        worker: "<manifest_sig>".into(),
+        reason: format!("stat {} ({}): {}", label, path.display(), e),
+    })?;
+    if meta.len() > cap {
+        return Err(ClusterError::Transport {
+            worker: "<manifest_sig>".into(),
+            reason: format!(
+                "{} {} is {} bytes, exceeds {} byte cap (iter 211 — \
+                 likely a misconfig pointed at the wrong file)",
+                label,
+                path.display(),
+                meta.len(),
+                cap
+            ),
+        });
+    }
+    std::fs::read(path).map_err(|e| ClusterError::Transport {
+        worker: "<manifest_sig>".into(),
+        reason: format!("read {} {}: {}", label, path.display(), e),
+    })
+}
+
 pub fn verify_files(
     manifest_path: &Path,
     sig_path: &Path,
     pubkey_path: &Path,
 ) -> Result<(), ClusterError> {
-    let manifest = std::fs::read(manifest_path).map_err(|e| ClusterError::Transport {
+    const MANIFEST_CAP: u64 = 1 << 20; // 1 MB — matches iter-210 FileDiscovery
+    const KEY_CAP: u64 = 16 * 1024; // 16 KB — armored ed25519 fits in <100 B
+
+    let manifest = read_with_cap(manifest_path, MANIFEST_CAP, "manifest")?;
+    let sig_bytes = read_with_cap(sig_path, KEY_CAP, "signature")?;
+    let sig = String::from_utf8(sig_bytes).map_err(|e| ClusterError::Transport {
         worker: "<manifest_sig>".into(),
-        reason: format!("read manifest {}: {}", manifest_path.display(), e),
+        reason: format!("signature {} not utf-8: {}", sig_path.display(), e),
     })?;
-    let sig = std::fs::read_to_string(sig_path).map_err(|e| ClusterError::Transport {
+    let pk_bytes = read_with_cap(pubkey_path, KEY_CAP, "pubkey")?;
+    let pk = String::from_utf8(pk_bytes).map_err(|e| ClusterError::Transport {
         worker: "<manifest_sig>".into(),
-        reason: format!("read signature {}: {}", sig_path.display(), e),
-    })?;
-    let pk = std::fs::read_to_string(pubkey_path).map_err(|e| ClusterError::Transport {
-        worker: "<manifest_sig>".into(),
-        reason: format!("read pubkey {}: {}", pubkey_path.display(), e),
+        reason: format!("pubkey {} not utf-8: {}", pubkey_path.display(), e),
     })?;
     verify_detached(&manifest, &sig, &pk)
 }
@@ -231,5 +266,76 @@ mod tests {
             }
             other => panic!("expected Transport, got {:?}", other),
         }
+    }
+
+    /// Iter 211 — sig path > 16 KB cap. Fixture writes a 64 KB blob to
+    /// the sig path; verify_files must reject before parsing.
+    #[test]
+    fn verify_files_rejects_oversized_signature() {
+        use std::io::Write as _;
+        let dir = std::env::temp_dir().join(format!(
+            "iter211-oversized-sig-{}",
+            std::process::id()
+        ));
+        std::fs::create_dir_all(&dir).expect("mkdir fixture");
+        let manifest = dir.join("workers.txt");
+        let sig = dir.join("workers.sig");
+        let pk = dir.join("workers.pub");
+        std::fs::write(&manifest, b"pi-a = 1.2.3.4:50051\n").unwrap();
+        // 64 KB of "0" — way over the 16 KB key cap.
+        let mut f = std::fs::File::create(&sig).unwrap();
+        for _ in 0..(64 * 1024) {
+            f.write_all(b"0").unwrap();
+        }
+        f.sync_all().unwrap();
+        std::fs::write(&pk, "deadbeef").unwrap(); // small pk
+
+        let err = verify_files(&manifest, &sig, &pk).expect_err("oversized sig must reject");
+        match err {
+            ClusterError::Transport { reason, .. } => {
+                assert!(
+                    reason.contains("signature") && reason.contains("iter 211"),
+                    "expected sig cap rejection, got: {:?}",
+                    reason
+                );
+            }
+            other => panic!("expected Transport, got {:?}", other),
+        }
+        let _ = std::fs::remove_dir_all(&dir);
+    }
+
+    /// Iter 211 — pubkey path > 16 KB cap. Symmetric with the sig
+    /// test; ensures both gates are wired.
+    #[test]
+    fn verify_files_rejects_oversized_pubkey() {
+        use std::io::Write as _;
+        let dir = std::env::temp_dir().join(format!(
+            "iter211-oversized-pk-{}",
+            std::process::id()
+        ));
+        std::fs::create_dir_all(&dir).expect("mkdir fixture");
+        let manifest = dir.join("workers.txt");
+        let sig = dir.join("workers.sig");
+        let pk = dir.join("workers.pub");
+        std::fs::write(&manifest, b"pi-a = 1.2.3.4:50051\n").unwrap();
+        std::fs::write(&sig, "deadbeef").unwrap(); // small sig
+        let mut f = std::fs::File::create(&pk).unwrap();
+        for _ in 0..(64 * 1024) {
+            f.write_all(b"0").unwrap();
+        }
+        f.sync_all().unwrap();
+
+        let err = verify_files(&manifest, &sig, &pk).expect_err("oversized pk must reject");
+        match err {
+            ClusterError::Transport { reason, .. } => {
+                assert!(
+                    reason.contains("pubkey") && reason.contains("iter 211"),
+                    "expected pk cap rejection, got: {:?}",
+                    reason
+                );
+            }
+            other => panic!("expected Transport, got {:?}", other),
+        }
+        let _ = std::fs::remove_dir_all(&dir);
     }
 }
