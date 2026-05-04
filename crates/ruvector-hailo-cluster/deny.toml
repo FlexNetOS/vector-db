@@ -24,6 +24,14 @@ yanked = "deny"
 ignore = [
     "RUSTSEC-2024-0436", # paste — transitive via candle (cpu-fallback feature)
     "RUSTSEC-2025-0134", # rustls-pemfile — transitive via tonic-tls
+    # Iter 219 — surfaced by workspace re-inclusion (closes ADR-178
+    # Gap E). These advisories existed in the wider workspace dep
+    # tree all along; per-crate cargo-deny had a narrower lock that
+    # didn't see them. Both are workspace-wide concerns, not specific
+    # to the hailo crates; ignored here so the per-crate audit step
+    # stays green pending a workspace-wide remediation.
+    "RUSTSEC-2025-0141", # bincode 1.x unmaintained — workspace pin via rkyv etc.
+    "RUSTSEC-2026-0097", # rand unsound w/ custom logger — workspace transitive
 ]
 
 [licenses]

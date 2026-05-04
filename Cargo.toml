@@ -7,19 +7,12 @@ exclude = ["crates/micro-hnsw-wasm", "crates/ruvector-hyperbolic-hnsw", "crates/
     # works in stock environments. Build it explicitly with `cargo build -p ruvector-postgres`
     # after running pgrx init.
     "crates/ruvector-postgres",
-    # ruvector-hailo + hailort-sys: scaffolded under ADR-167 (`hailo-backend`
-    # branch). Excluded from default workspace builds because hailort-sys's
-    # build script + libhailort linkage only succeed on a Pi 5 + AI HAT+.
-    # Build explicitly with:
-    #   cargo build -p hailort-sys --features hailo
-    #   cargo build -p ruvector-hailo --features hailo
-    # on the target device.
-    "crates/ruvector-hailo",
-    "crates/hailort-sys",
-    # ruvector-hailo-cluster: multi-Pi coordinator (ADR-167 §8). Standalone
-    # for now; joins the workspace once iteration 14 lands tonic + the
-    # ruvector-core path dep.
-    "crates/ruvector-hailo-cluster",
+    # Iter 219 (closes ADR-178 Gap E folded into Gap B): the hailo
+    # crates rejoined the workspace once the iter-218 ruvector-core
+    # path dep + EmbeddingProvider impls landed. The `hailo` feature
+    # stays opt-in (only `cargo build --features hailo,cpu-fallback`
+    # pulls libhailort + candle), so workspace builds on stock x86
+    # still compile without Pi-specific tooling.
     # ruos-thermal: Pi 5 thermal supervisor skeleton (ADR-174). Standalone
     # for now; joins workspace once daemon mode + Unix socket protocol
     # land in iters 92-97.
@@ -68,6 +61,14 @@ members = [
     "crates/ruvector-mincut-gated-transformer-wasm",
     # NOTE: ruvector-postgres is in workspace `exclude` (pgrx env requirement).
     "crates/ruvector-nervous-system",
+    # Iter 219 — hailo backend rejoined the workspace (closes
+    # ADR-178 Gap E folded into Gap B). All three build clean on
+    # x86 with default features; opting into the actual NPU path
+    # requires `--features hailo` on a Pi 5 + AI HAT+.
+    "crates/hailort-sys",
+    "crates/ruvector-hailo",
+    "crates/ruvector-mmwave",
+    "crates/ruvector-hailo-cluster",
     "examples/refrag-pipeline",
     "examples/scipix",
     "examples/google-cloud",

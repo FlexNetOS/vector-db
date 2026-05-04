@@ -16,8 +16,11 @@ default = []
 # `cargo check` on x86 hosts without HailoRT installed.
 hailo = []
 
-# Standalone (excluded from the parent workspace until iteration 4 lands).
-[workspace]
+# Iter 219 — rejoined the parent workspace. Closes ADR-178 Gap E
+# (folded into Gap B). The standalone-workspace declaration was the
+# blocker preventing `cargo build --workspace` from seeing this crate.
+# `--features hailo` stays opt-in, so x86 stock workspace builds
+# don't pull libhailort/bindgen.
 
 [build-dependencies]
 bindgen = "0.71"

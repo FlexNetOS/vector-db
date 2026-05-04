@@ -26,6 +26,11 @@ yanked = "deny"
 # upstream candle / tonic releases will pull these in eventually.
 ignore = [
     "RUSTSEC-2024-0436", # paste — unmaintained, no replacement, transitive via candle
+    # Iter 219 — workspace re-inclusion surfaced these (same as
+    # cluster's deny.toml; workspace-wide concerns ignored here so
+    # the per-crate audit stays green).
+    "RUSTSEC-2025-0141", # bincode 1.x unmaintained
+    "RUSTSEC-2026-0097", # rand unsound w/ custom logger
 ]
 
 [licenses]

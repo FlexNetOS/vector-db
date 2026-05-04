@@ -27,8 +27,12 @@ hailo = ["hailort-sys/hailo"]
 # present). Net: real semantic vectors today, NPU stays idle until HEF.
 cpu-fallback = ["candle-core", "candle-nn", "candle-transformers", "tokenizers", "serde_json"]
 
-# Standalone (excluded from parent workspace until iteration 11 lands).
-[workspace]
+# Iter 219 — rejoined the parent workspace. Closes ADR-178 Gap E
+# (folded into Gap B). The iter-218 ruvector-core path dep made
+# the standalone declaration both load-bearing AND inconsistent;
+# rejoining lets `cargo build --workspace` exercise this crate
+# without the hailo or cpu-fallback features pulling in any
+# Pi-only deps.
 
 [dependencies]
 thiserror   = "2"
