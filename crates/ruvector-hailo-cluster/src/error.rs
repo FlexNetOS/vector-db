@@ -1,5 +1,8 @@
-//! Cluster-side errors. Maps cleanly onto `ruvector_core::EmbeddingError`
-//! once iteration 14 brings the path dep.
+//! Cluster-side errors. iter-218 wired
+//! `impl EmbeddingProvider for HailoClusterEmbedder`, which folds
+//! `ClusterError → ruvector_core::RuvectorError::ModelInferenceError`
+//! at the trait boundary; the iter-209 `is_terminal()` helper drives
+//! the retry-loop short-circuit on deterministic gRPC statuses.
 
 use thiserror::Error;
 

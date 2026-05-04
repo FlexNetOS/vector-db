@@ -315,17 +315,19 @@ impl HailoEmbedder {
     }
 
     /// Iter 130: honest "is a model graph actually loaded?" gate.
-    /// Returns `true` only when `embed()` would do real NPU inference.
-    /// Today this is **always false** — HEF loading isn't wired in yet
-    /// (the Hailo Dataflow Compiler step that produces `model.hef` is a
-    /// vendor-tool blocker outside this repo). The worker's `health()`
-    /// uses this to set the `ready` flag so the cluster's
-    /// `validate_fleet` correctly identifies model-less workers as
-    /// not-ready instead of false-healthy.
+    /// Returns `true` only when `embed()` would do real semantic
+    /// inference (either NPU via HEF or host CPU via the cpu-fallback
+    /// candle path). The worker's `health()` uses this to set the
+    /// `ready` flag so the cluster's `validate_fleet` correctly
+    /// identifies model-less workers as not-ready instead of
+    /// false-healthy.
     ///
-    /// When HEF support lands, this becomes `true` once a graph is
-    /// configured into the vdevice. No callers need to change — the
-    /// signal flips automatically.
+    /// Iter 163 made this canonically `true` for the production NPU
+    /// path (cognitum-v0 + iter-156b HEF); iter-176 added the
+    /// cpu-fallback automatic failover. Iter 223 — corrected this
+    /// doc comment, which still claimed "always false" from the
+    /// iter-130-era (same stale-stratigraphy class iter-217 fixed
+    /// in ADR-167).
     pub fn has_model(&self) -> bool {
         // Iter 162 (ADR-176 P4): HEF + cpu-fallback both count.
         #[cfg(all(feature = "hailo", feature = "cpu-fallback"))]
