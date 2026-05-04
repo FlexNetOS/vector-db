@@ -154,6 +154,39 @@ impl RateLimiter {
     pub fn tracked_peers(&self) -> usize {
         self.buckets.len()
     }
+
+    /// Iter 200 — try to consume `n` request slots for `peer` in a
+    /// single test. Used by `embed_stream` so a batched RPC debits
+    /// the rate limit by the actual item count (otherwise a peer
+    /// that's allowed 1 RPS could still extract `max_batch_size`
+    /// embeds/sec via the streaming RPC, defeating the per-peer
+    /// throttle entirely under iter-199's 256-batch ceiling).
+    ///
+    /// Returns `Ok(())` if the whole batch fits within the bucket's
+    /// current capacity (and consumes those tokens), otherwise
+    /// `Err(RateLimitDenied)`. Treats `InsufficientCapacity` (batch
+    /// larger than the bucket burst can ever accommodate) as a
+    /// denial too — that's the correct semantic for a worker that
+    /// would otherwise perma-block the peer.
+    pub fn check_n(&self, peer: &str, n: u32) -> Result<(), RateLimitDenied> {
+        let n = match std::num::NonZeroU32::new(n) {
+            Some(n) => n,
+            None => return Ok(()), // n == 0: nothing to consume
+        };
+        let bucket = if let Some(b) = self.buckets.get(peer) {
+            Arc::clone(b.value())
+        } else {
+            let lim = Arc::new(GovRateLimiter::direct(self.quota));
+            self.buckets
+                .entry(peer.to_string())
+                .or_insert_with(|| Arc::clone(&lim));
+            lim
+        };
+        match bucket.check_n(n) {
+            Ok(Ok(_)) => Ok(()),
+            Ok(Err(_)) | Err(_) => Err(RateLimitDenied),
+        }
+    }
 }
 
 #[cfg(test)]

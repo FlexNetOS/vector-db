@@ -296,6 +296,13 @@ impl Embedding for WorkerService {
             &request,
             &request.get_ref().request_id,
         );
+        // Iter 200 — extract peer identity before consuming the
+        // Request via into_inner(); the rate-limit debit below needs
+        // it. `peer_identity<T>` is generic over the body type, so
+        // we call it on the typed request directly — extensions
+        // (peer addr, mTLS identity) are populated by tonic transport
+        // and survive into the handler.
+        let peer = ruvector_hailo_cluster::rate_limit::peer_identity(&request);
         let req = request.into_inner();
         let n = req.texts.len();
         let req_id_field: &str = if req_id_owned.is_empty() { "-" } else { &req_id_owned };
@@ -321,6 +328,29 @@ impl Embedding for WorkerService {
                  tune via RUVECTOR_MAX_BATCH_SIZE)",
                 n, self.max_batch_size
             )));
+        }
+        // Iter 200 — debit the per-peer rate limiter by the batch
+        // length (minus 1 already debited by the interceptor) so a
+        // peer at 1 RPS can't extract `max_batch_size` embeds/sec via
+        // a single streaming RPC. n=1 is a no-op (the interceptor
+        // already counted it). When the rate limiter is disabled
+        // (None), this branch is also a no-op.
+        if let Some(limiter) = self.rate_limiter.as_ref() {
+            if n > 1 {
+                let extra = (n - 1) as u32;
+                if limiter.check_n(&peer, extra).is_err() {
+                    self.rate_limit_denials.fetch_add(1, Ordering::Relaxed);
+                    warn!(
+                        peer = %peer,
+                        batch_size = n,
+                        "embed_stream batch denied by rate limiter (ADR-172 §3b iter 200)"
+                    );
+                    return Err(Status::resource_exhausted(format!(
+                        "rate limit exceeded for {} on batch of {} (ADR-172 §3b iter 200)",
+                        peer, n
+                    )));
+                }
+            }
         }
         info!("worker embed_stream");
 
