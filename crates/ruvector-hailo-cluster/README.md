@@ -104,6 +104,54 @@ echo "hello world" | ./target/release/ruvector-hailo-embed \
 [adr169]: ../../docs/adr/ADR-169-ruvector-hailo-cluster-cache-architecture.md
 [adr170]: ../../docs/adr/ADR-170-ruvector-hailo-cluster-tracing-correlation.md
 
+## Security & DoS hardening
+
+The worker ships with eight layered gates on the gRPC surface, all
+env-tunable from `/etc/ruvector-hailo.env`. Defaults are production-
+safe; floors are baked in so a misconfig can't lock out legitimate
+traffic. Each gate logs its active value at worker startup:
+
+| Iter | Env var | Default | Floor | What it bounds |
+|------|---------|---------|-------|----------------|
+| 180 | `RUVECTOR_MAX_REQUEST_BYTES` | 65536 | 4 KB | Per-RPC decode budget. ~63× tighter than tonic's ~4 MB transport default. |
+| 190 | `RUVECTOR_MAX_RESPONSE_BYTES` | 16384 | 4 KB | Per-RPC encode budget. Defense-in-depth on the response side. |
+| 181 | `RUVECTOR_MAX_CONCURRENT_STREAMS` | 256 | 8 | HTTP/2 SETTINGS_MAX_CONCURRENT_STREAMS — caps single-connection stream flooding. |
+| 182 | `RUVECTOR_REQUEST_TIMEOUT_SECS` | 30 | 2 | Per-RPC handler timeout — bounds slow-loris. |
+| 183 | `RUVECTOR_MAX_PENDING_RESETS` | 32 | 8 | CVE-2023-44487 rapid-reset cap. |
+| 184 | `RUVECTOR_HTTP2_KEEPALIVE_SECS` | 60 | 10 (0=off) | HTTP/2 ping interval — reclaims half-closed TCP state. |
+| 199 | `RUVECTOR_MAX_BATCH_SIZE` | 256 | 1 | `embed_stream` batch length — bounds per-RPC NPU work. |
+| 191 | `RUVECTOR_NPU_VSTREAM_TIMEOUT_MS` | 2000 | 100 | HailoRT FFI timeout — wedged-NPU recovery. |
+
+Plus three orthogonal hardening tracks:
+
+* **HEF integrity** (iter 174): `RUVECTOR_HEF_SHA256=<hex>` pins the
+  HEF at boot. Worker streams sha256 over `model.hef` and refuses to
+  start on mismatch. ~16 ms cost on Pi 5 NEON.
+* **Per-peer rate limit** (iter 104/200): `RUVECTOR_RATE_LIMIT_RPS`
+  + `RUVECTOR_RATE_LIMIT_BURST`. iter 200 made the limiter debit per
+  item on `embed_stream` so a 1 RPS peer can't extract
+  `max_batch_size` embeds/sec via batched RPCs.
+* **TLS + mTLS** (iter 99/100): `RUVECTOR_TLS_CERT` + `RUVECTOR_TLS_KEY`
+  for HTTPS, optional `RUVECTOR_TLS_CLIENT_CA` for mTLS. Client tools
+  (`embed`, `bench`, `stats`) carry symmetric `--tls-ca` /
+  `--tls-domain` / `--tls-client-cert` / `--tls-client-key` flags
+  (iter 187/188/189) under `--features tls`.
+
+Shutdown hardening (iter 185): the worker exits via
+`mem::forget` + `process::exit(0)` because every clean HailoRT
+teardown SEGV'd in the upstream library; the OS reaps fds + mmaps
+either way. Operators see `status=0/SUCCESS` instead of
+`status=11/SEGV`. `RUVECTOR_SHUTDOWN_FORCE_CLEAN=1` reserved for a
+future HailoRT release that fixes the upstream bug.
+
+systemd units (iter 205) cap `Restart=on-failure` at
+`StartLimitBurst=5` per `StartLimitIntervalSec=60` so a unit that
+fails every startup parks in `failed` state instead of cycling
+forever.
+
+See `deploy/ruvector-hailo.env.example` for the full operator-tunable
+set with rationale per knob.
+
 ## What it ships
 
 ### Library
