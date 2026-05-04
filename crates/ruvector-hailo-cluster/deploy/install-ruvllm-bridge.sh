@@ -8,7 +8,7 @@
 # hand-build the user, drop the binary, and write the env file
 # themselves.
 #
-# UNLIKE install-bridge.sh and install-ruview-csi-bridge.sh, this
+# UNLIKE install-mmwave-bridge.sh and install-ruview-csi-bridge.sh, this
 # installer does NOT drop a systemd unit. ruvllm-bridge is a
 # subprocess-style adapter that reads JSON from stdin, writes JSON to
 # stdout, and exits on EOF — it's spawned by the parent ruvllm

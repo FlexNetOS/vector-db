@@ -141,5 +141,5 @@ echo
 echo "Then install the systemd service (if not already done):"
 echo "    ssh root@${DEPLOY_HOST}"
 echo "    cd /path/to/ruvector/crates/ruvector-hailo-cluster/deploy"
-echo "    sudo bash install-bridge.sh /usr/local/bin/ruvector-mmwave-bridge   # mmwave"
+echo "    sudo bash install-mmwave-bridge.sh /usr/local/bin/ruvector-mmwave-bridge   # mmwave"
 echo "    sudo bash install-ruview-csi-bridge.sh /usr/local/bin/ruview-csi-bridge"

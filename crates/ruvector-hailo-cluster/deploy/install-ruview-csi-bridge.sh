@@ -3,7 +3,7 @@
 # CSI UDP frames (typically a Pi 5 on the same LAN as the ESP32 CSI
 # nodes, or any Linux host that can route to them).
 #
-# Companion to install-bridge.sh (mmwave) and install.sh (worker).
+# Companion to install-mmwave-bridge.sh (mmwave) and install.sh (worker).
 # Same idempotent shape as the iter-106 worker installer.
 #
 # Drops:

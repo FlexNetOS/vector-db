@@ -19,7 +19,7 @@
 #   system user: ruvector-bridge (no home, no shell)
 #
 # Usage:
-#   sudo bash install-bridge.sh /path/to/ruvector-mmwave-bridge
+#   sudo bash install-mmwave-bridge.sh /path/to/ruvector-mmwave-bridge
 
 set -euo pipefail
 

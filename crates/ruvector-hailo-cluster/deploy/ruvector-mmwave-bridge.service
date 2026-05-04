@@ -17,7 +17,7 @@ StartLimitIntervalSec=60
 [Service]
 Type=simple
 # Dedicated unprivileged system user analogous to the iter-106
-# ruvector-worker pattern. Created by install-bridge.sh.
+# ruvector-worker pattern. Created by install-mmwave-bridge.sh.
 User=ruvector-bridge
 Group=ruvector-bridge
 DynamicUser=no
@@ -60,7 +60,7 @@ MemoryMax=128M
 
 # Hardening — same shape as the iter-106 worker.service, minus the
 # Hailo-specific DeviceAllow. The bridge needs read access to the
-# radar's serial node; install-bridge.sh provisions a udev rule
+# radar's serial node; install-mmwave-bridge.sh provisions a udev rule
 # that grants the ruvector-bridge group rw on /dev/ttyUSB* + /dev/ttyACM*.
 NoNewPrivileges=yes
 CapabilityBoundingSet=
