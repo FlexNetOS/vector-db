@@ -149,6 +149,24 @@ systemd units (iter 205) cap `Restart=on-failure` at
 fails every startup parks in `failed` state instead of cycling
 forever.
 
+**Client-side tunables (iter 208).** The cluster client tools
+(`bench`, `embed`, `stats`, the three bridges) read two extra env
+vars at `GrpcTransport::new()` construction time. These are
+client-side, not worker-side, so they don't appear in the worker
+`.env`:
+
+| Env var | Default | Floor | What it bounds |
+|---|---|---|---|
+| `RUVECTOR_CLIENT_CONNECT_TIMEOUT_MS` | 5000 | 100 | TCP connect deadline |
+| `RUVECTOR_CLIENT_RPC_TIMEOUT_MS` | 10000 | 100 | Per-RPC client deadline |
+
+The 10s RPC default exists because iter-199's batch cap of 256 means
+a single legit `embed_stream` RPC can use ~3.6s of NPU time at b=256;
+the prior 2s default would have guaranteed `deadline_exceeded` on
+every large-batch RPC. The 10s cap stays well under iter-182's 30s
+server-side `request_timeout`, so a real wedged worker still
+surfaces to the client within the worker's own bound.
+
 See `deploy/ruvector-hailo.env.example` for the full operator-tunable
 set with rationale per knob.
 
