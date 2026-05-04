@@ -29,6 +29,32 @@ use std::path::Path;
 use tonic::transport::{Certificate, ClientTlsConfig, Identity, ServerTlsConfig};
 
 fn read_pem(path: &Path, what: &str) -> Result<Vec<u8>, ClusterError> {
+    // Iter 212 — cap PEM reads at 1 MB. A typical PEM is ~2-10 KB
+    // (single cert) or ~30 KB (full chain with intermediates); 1 MB
+    // is ~100× legit headroom and matches iter-210's manifest cap.
+    // A misconfig pointing the cert/key/CA path at /var/log/* or a
+    // binary blob would otherwise OOM the worker at boot before
+    // rustls ever sees the bytes. Same threat model as iter-210
+    // (operator-controlled paths) and iter-211 (signed-manifest
+    // sig/pubkey reads).
+    const PEM_CAP: u64 = 1 << 20; // 1 MB
+    let meta = std::fs::metadata(path).map_err(|e| ClusterError::Transport {
+        worker: "<tls>".into(),
+        reason: format!("stat {} pem at {}: {}", what, path.display(), e),
+    })?;
+    if meta.len() > PEM_CAP {
+        return Err(ClusterError::Transport {
+            worker: "<tls>".into(),
+            reason: format!(
+                "{} pem at {} is {} bytes, exceeds {} byte cap (iter 212 — \
+                 likely a misconfig pointed at the wrong file)",
+                what,
+                path.display(),
+                meta.len(),
+                PEM_CAP
+            ),
+        });
+    }
     std::fs::read(path).map_err(|e| ClusterError::Transport {
         worker: "<tls>".into(),
         reason: format!("read {} pem at {}: {}", what, path.display(), e),
@@ -199,5 +225,55 @@ mod tests {
     #[test]
     fn domain_strip_bare_host() {
         assert_eq!(domain_from_address("worker.local"), "worker.local");
+    }
+
+    /// Iter 212 — read_pem rejects > 1 MB files before reading them.
+    #[test]
+    fn read_pem_rejects_oversized_file() {
+        use std::io::Write as _;
+        let path = std::env::temp_dir().join(format!(
+            "iter212-oversized-pem-{}",
+            std::process::id()
+        ));
+        let mut f = std::fs::File::create(&path).expect("create fixture");
+        // 2 MB filler — pem-shaped armor noise so a future read would
+        // appear plausible if the cap weren't there.
+        let chunk = b"-----BEGIN CERTIFICATE-----\nA\n";
+        for _ in 0..((2 * 1024 * 1024) / chunk.len() + 1) {
+            f.write_all(chunk).expect("write fixture");
+        }
+        f.sync_all().expect("sync");
+        drop(f);
+
+        let err = read_pem(&path, "test").expect_err("oversized pem must reject");
+        match err {
+            ClusterError::Transport { reason, .. } => {
+                assert!(
+                    reason.contains("exceeds")
+                        && reason.contains("byte cap")
+                        && reason.contains("iter 212"),
+                    "expected size-cap rejection, got: {:?}",
+                    reason
+                );
+            }
+            other => panic!("expected ClusterError::Transport, got {:?}", other),
+        }
+        let _ = std::fs::remove_file(&path);
+    }
+
+    /// Iter 212 — read_pem still works for legit-size files.
+    #[test]
+    fn read_pem_accepts_small_file() {
+        let path = std::env::temp_dir().join(format!(
+            "iter212-small-pem-{}",
+            std::process::id()
+        ));
+        // ~30 byte fake PEM — well under 1 MB cap.
+        std::fs::write(&path, b"-----BEGIN CERTIFICATE-----\nx\n")
+            .expect("write fixture");
+        let bytes = read_pem(&path, "test").expect("small pem must succeed");
+        assert!(bytes.len() < 1024);
+        assert!(bytes.starts_with(b"-----BEGIN"));
+        let _ = std::fs::remove_file(&path);
     }
 }
