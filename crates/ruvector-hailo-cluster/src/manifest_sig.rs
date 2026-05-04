@@ -97,17 +97,10 @@ pub fn verify_detached(
     })
 }
 
-/// File-based wrapper around [`verify_detached`]: reads manifest, sig,
-/// and pubkey from disk and verifies. Use this from the discovery path.
-///
-/// Iter 211 — every input path is operator-controlled, so a misconfig
-/// (or attacker with write access to /etc/ruvector-hailo/) pointing
-/// any of these paths at /var/log/* or a binary blob would OOM the
-/// worker at boot. Cap each:
-///   - manifest at 1 MB (matches iter-210's FileDiscovery cap)
-///   - signature at 16 KB (ed25519 sig in base64 is ~88 bytes; 16 KB
-///     is 180× legit, leaving room for armored formats but bounded)
-///   - pubkey at 16 KB (same rationale; ed25519 pk in hex is 64 bytes)
+/// Iter 211 helper — stat-then-read with a hard size cap. Used by
+/// [`verify_files`] for all three operator-controlled paths
+/// (manifest, signature, pubkey). Returns `ClusterError::Transport`
+/// with a labeled reason on stat error, cap exceeded, or read error.
 fn read_with_cap(path: &Path, cap: u64, label: &str) -> Result<Vec<u8>, ClusterError> {
     let meta = std::fs::metadata(path).map_err(|e| ClusterError::Transport {
         worker: "<manifest_sig>".into(),
@@ -132,6 +125,18 @@ fn read_with_cap(path: &Path, cap: u64, label: &str) -> Result<Vec<u8>, ClusterE
     })
 }
 
+/// File-based wrapper around [`verify_detached`]: reads manifest, sig,
+/// and pubkey from disk and verifies. Use this from the discovery path.
+///
+/// Iter 211 — every input path is operator-controlled, so a misconfig
+/// (or attacker with write access to /etc/ruvector-hailo/) pointing
+/// any of these paths at /var/log/* or a binary blob would OOM the
+/// worker at boot. Each read is capped via the private
+/// `read_with_cap` helper:
+///   - manifest at 1 MB (matches iter-210's FileDiscovery cap)
+///   - signature at 16 KB (ed25519 sig in base64 is ~88 bytes; 16 KB
+///     is 180× legit, leaving room for armored formats but bounded)
+///   - pubkey at 16 KB (same rationale; ed25519 pk in hex is 64 bytes)
 pub fn verify_files(
     manifest_path: &Path,
     sig_path: &Path,
