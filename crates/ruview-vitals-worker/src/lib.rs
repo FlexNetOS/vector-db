@@ -11,26 +11,37 @@
 //!
 //! - [`frame`] — ADR-018 binary frame parser; keeps the I/Q payload
 //!   (the iter-123 telemetry bridge intentionally dropped it).
+//! - [`csi`] — antenna-folded [`CsiFrame`] + `from_adr018` boundary.
+//! - [`preprocessor`] — EMA static-component suppressor.
+//! - [`window`] — per-subcarrier sliding ring buffer.
 //! - [`types`] — `VitalEstimate`, `VitalReading`, `VitalStatus`. Mirrors
 //!   the upstream RuView shape so the optional `--features
 //!   ruview-integration` swap is mechanical.
 //! - [`error`] — crate-wide [`Error`] enum + [`Result`] alias.
 //! - [`config`] — environment-variable parser ([`Config::from_env`]).
 //!
-//! Tier 1 follow-ups (next iters): sliding window, EMA preprocessor,
-//! breathing / heart-rate extractors, brain POST shim, gRPC service.
+//! Tier 1 follow-ups (next iters): breathing / heart-rate extractors,
+//! brain POST shim, gRPC service, systemd unit.
 //!
 //! [ADR-018]: ../../../docs/adr/ADR-018-binary-csi-frame.md
 
 pub mod config;
+pub mod csi;
 pub mod error;
 pub mod frame;
+pub mod preprocessor;
 pub mod types;
+pub mod window;
 
 pub use config::Config;
+pub use csi::CsiFrame;
 pub use error::{Error, Result};
-pub use frame::{Adr018Frame, Adr018Header, CsiPayload, ADR018_HEADER_SIZE, CSI_MAGIC_V1, CSI_MAGIC_V6};
+pub use frame::{
+    Adr018Frame, Adr018Header, CsiPayload, ADR018_HEADER_SIZE, CSI_MAGIC_V1, CSI_MAGIC_V6,
+};
+pub use preprocessor::CsiVitalPreprocessor;
 pub use types::{NodeId, VitalEstimate, VitalReading, VitalStatus};
+pub use window::CsiSlidingWindow;
 
 /// Generated tonic stubs from `proto/vitals.proto`. Both client + server
 /// sides are emitted so the same crate can be linked from coordinator
