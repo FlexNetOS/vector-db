@@ -22,6 +22,7 @@ pub const READING_BROADCAST_CAPACITY: usize = 256;
 pub struct WorkerStats {
     pub packets_received: AtomicU64,
     pub packets_dropped: AtomicU64,
+    pub packets_relayed: AtomicU64,
     pub windows_processed: AtomicU64,
     pub readings_emitted: AtomicU64,
     pub brain_posts_ok: AtomicU64,
@@ -37,6 +38,7 @@ impl WorkerStats {
         WorkerStatsSnapshot {
             packets_received: self.packets_received.load(Ordering::Relaxed),
             packets_dropped: self.packets_dropped.load(Ordering::Relaxed),
+            packets_relayed: self.packets_relayed.load(Ordering::Relaxed),
             windows_processed: self.windows_processed.load(Ordering::Relaxed),
             readings_emitted: self.readings_emitted.load(Ordering::Relaxed),
             brain_posts_ok: self.brain_posts_ok.load(Ordering::Relaxed),
@@ -51,6 +53,7 @@ impl WorkerStats {
 pub struct WorkerStatsSnapshot {
     pub packets_received: u64,
     pub packets_dropped: u64,
+    pub packets_relayed: u64,
     pub windows_processed: u64,
     pub readings_emitted: u64,
     pub brain_posts_ok: u64,

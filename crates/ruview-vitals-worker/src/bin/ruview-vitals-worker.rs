@@ -77,6 +77,7 @@ async fn main() -> Result<()> {
                 tracing::info!(
                     packets_received = snap.packets_received,
                     packets_dropped = snap.packets_dropped,
+                    packets_relayed = snap.packets_relayed,
                     readings_emitted = snap.readings_emitted,
                     brain_posts_ok = snap.brain_posts_ok,
                     brain_posts_failed = snap.brain_posts_failed,
@@ -140,7 +141,9 @@ async fn main() -> Result<()> {
         // useful upstream at v0). `try_send` keeps this lock-free
         // under burst.
         if let Some(tx) = &relay_tx {
-            let _ = tx.try_send(datagram.to_vec());
+            if tx.try_send(datagram.to_vec()).is_ok() {
+                state.stats.packets_relayed.fetch_add(1, Ordering::Relaxed);
+            }
         }
 
         match Adr018Frame::parse(datagram) {
