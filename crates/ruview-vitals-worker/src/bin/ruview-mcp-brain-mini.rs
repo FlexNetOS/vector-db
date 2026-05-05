@@ -30,7 +30,7 @@ use std::sync::Arc;
 use std::time::{SystemTime, UNIX_EPOCH};
 
 use axum::{
-    extract::{Query, State},
+    extract::{DefaultBodyLimit, Query, State},
     http::StatusCode,
     response::IntoResponse,
     routing::get,
@@ -116,9 +116,19 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .map(PathBuf::from);
     let store = Arc::new(RwLock::new(Store::load(store_path)));
 
+    // 16 KiB body cap — a vital-sign memory is ~200 bytes; 16 KiB
+    // is generous headroom while bounding DoS via huge POST bodies.
+    // Override via RUVIEW_BRAIN_BODY_LIMIT_BYTES if a use case needs
+    // more.
+    let body_limit_bytes = std::env::var("RUVIEW_BRAIN_BODY_LIMIT_BYTES")
+        .ok()
+        .and_then(|s| s.parse::<usize>().ok())
+        .unwrap_or(16 * 1024);
+
     let app = Router::new()
         .route("/memories", get(list_memories).post(post_memory))
         .route("/health", get(health))
+        .layer(DefaultBodyLimit::max(body_limit_bytes))
         .with_state(store.clone());
 
     let listener = TcpListener::bind(&bind).await?;
@@ -139,6 +149,16 @@ async fn post_memory(
         let mut err = HashMap::new();
         err.insert("error".into(), "category and content must be non-empty".into());
         return Err((StatusCode::BAD_REQUEST, Json(err)));
+    }
+    // Per-field length cap — body limit guards total size; this
+    // prevents one absurd field from displacing the whole budget.
+    if body.category.len() > 256 || body.content.len() > 8 * 1024 {
+        let mut err = HashMap::new();
+        err.insert(
+            "error".into(),
+            "category > 256 B or content > 8 KiB rejected".into(),
+        );
+        return Err((StatusCode::PAYLOAD_TOO_LARGE, Json(err)));
     }
     let now = SystemTime::now()
         .duration_since(UNIX_EPOCH)
