@@ -36,6 +36,9 @@ WorkingDirectory=/var/lib/ruview-vitals
 #   RUVIEW_VITALS_BRAIN_INTERVAL_SECS (default 60)
 #   RUVIEW_VITALS_VERBOSE             (default false)
 #   RUVIEW_VITALS_LOG                 (default `info`)
+# ADR-183 Tier 3 (--features csi-embed builds only):
+#   RUVIEW_CSI_MODEL                  path to model.safetensors (enables 128-dim embedding POSTs)
+#   RUVIEW_CSI_LORA_ADAPTER           path to node-N.json per-room LoRA adapter (iter 18)
 EnvironmentFile=-/etc/ruview-vitals-worker.env
 
 ExecStart=/usr/local/bin/ruview-vitals-worker
@@ -60,6 +63,10 @@ NoNewPrivileges=yes
 CapabilityBoundingSet=
 AmbientCapabilities=
 ProtectSystem=strict
+# Allow SONA adapter saves (ADR-183 Tier 3). ProtectSystem=strict makes
+# the whole filesystem read-only; this punches a write hole for the one
+# directory where per-node LoRA adapter JSONs live.
+ReadWritePaths=/usr/local/share/ruvector
 ProtectHome=yes
 PrivateTmp=yes
 PrivateDevices=yes
