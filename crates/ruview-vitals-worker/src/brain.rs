@@ -208,17 +208,39 @@ pub async fn run_brain_loop(client: BrainClient, state: Arc<WorkerState>, interv
         let state_sub = Arc::clone(&state);
         tokio::spawn(async move {
             let mut rx = state_sub.subscribe();
+            let mut recv_count: u64 = 0;
             loop {
                 match rx.recv().await {
                     Ok(reading) => {
-                        if reading.status != crate::types::VitalStatus::Unavailable {
-                            if let Ok(mut guard) = sona_sub.lock() {
+                        recv_count += 1;
+                        if recv_count % 500 == 0 {
+                            tracing::info!(recv_count, "sona subscriber: readings received");
+                        }
+                        // Pass all readings including Unavailable (empty room → Class::Absent).
+                        // Class::from_vitals maps (hr=0, br=0) → Absent so SONA learns the
+                        // "no person present" embedding. The status filter was blocking all
+                        // pushes in empty-room deployment (ADR-183 iter 19 fix).
+                        match sona_sub.lock() {
+                            Ok(mut guard) => {
+                                let steps_before = guard.steps();
                                 guard.push(&reading);
+                                let steps_after = guard.steps();
+                                if steps_after > steps_before && steps_after % 10 == 0 {
+                                    tracing::info!(
+                                        steps = steps_after,
+                                        total = guard.total_samples(),
+                                        "sona: gradient step taken"
+                                    );
+                                }
+                            }
+                            Err(e) => {
+                                tracing::warn!(%e, "sona: mutex poisoned — subscriber stopping");
+                                break;
                             }
                         }
                     }
                     Err(tokio::sync::broadcast::error::RecvError::Lagged(n)) => {
-                        tracing::debug!(dropped = n, "sona: broadcast lagged; readings skipped");
+                        tracing::warn!(dropped = n, "sona: broadcast lagged; readings skipped");
                     }
                     Err(tokio::sync::broadcast::error::RecvError::Closed) => break,
                 }

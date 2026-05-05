@@ -61,6 +61,11 @@ else
   echo "    (existing /etc/ruview-vitals-worker.env preserved)"
 fi
 
+echo "==> ensure LoRA adapter dir /usr/local/share/ruvector (group-writable for SONA saves)"
+install -d -o root -g "$GROUP_NAME" -m 0775 /usr/local/share/ruvector
+# Fix permissions on any pre-existing adapter JSON files so the worker can overwrite them.
+find /usr/local/share/ruvector -name 'node-*.json' -exec chgrp "$GROUP_NAME" {} \; -exec chmod g+w {} \; 2>/dev/null || true
+
 echo "==> install systemd unit"
 install -o root -g root -m 0644 \
   "$DEPLOY_DIR/ruview-vitals-worker.service" \
