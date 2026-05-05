@@ -69,6 +69,11 @@ members = [
     "crates/ruvector-hailo",
     "crates/ruvector-mmwave",
     "crates/ruvector-hailo-cluster",
+    # ADR-183 Tier 1 — per-Pi WiFi-CSI vital-signs worker. Owns the
+    # ADR-018 frame parser, sliding window, vitals DSP, gRPC :50054
+    # service, and brain POST shim. Path-dep on RuView is opt-in via
+    # `--features ruview-integration` (default off).
+    "crates/ruview-vitals-worker",
     "examples/refrag-pipeline",
     "examples/scipix",
     "examples/google-cloud",

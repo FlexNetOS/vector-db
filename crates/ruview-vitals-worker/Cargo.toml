@@ -1,0 +1,72 @@
+[package]
+name        = "ruview-vitals-worker"
+version     = "0.1.0"
+edition     = "2021"
+description = "Per-Pi WiFi-CSI vital-signs worker for the cognitum cluster (ADR-183 Tier 1)"
+license     = "MIT OR Apache-2.0"
+repository  = "https://github.com/ruvnet/ruvector"
+keywords    = ["wifi", "csi", "vital-signs", "edge-ai", "cognitum"]
+categories  = ["network-programming", "embedded", "science"]
+publish     = false
+
+[features]
+default = []
+# Optional path-dep on the upstream RuView vitals extractors. Default
+# off so the workspace builds without RuView checked out (ADR-183 Open
+# Question 1). When on, the worker swaps the in-crate fallback for the
+# upstream `wifi-densepose-vitals` implementation. Once upstream
+# publishes to crates.io, swap to a pinned crate dep.
+ruview-integration = ["dep:wifi-densepose-vitals"]
+# `tls` enables rustls-backed TLS on the gRPC service. Tailscale
+# already encrypts the wire; opt-in for defense-in-depth or non-
+# Tailscale deployments.
+tls = ["tonic/tls"]
+
+[dependencies]
+thiserror          = "2"
+tonic              = { version = "0.12", default-features = false, features = ["codegen", "prost", "channel", "server"] }
+prost              = "0.13"
+tokio              = { version = "1", default-features = false, features = ["rt-multi-thread", "macros", "net", "time", "signal", "sync"] }
+tokio-stream       = { version = "0.1", default-features = false, features = ["net"] }
+async-stream       = "0.3"
+futures-core       = "0.3"
+serde              = { version = "1", features = ["derive"] }
+serde_json         = "1"
+tracing            = "0.1"
+tracing-subscriber = { version = "0.3", default-features = false, features = ["fmt", "env-filter", "ansi"] }
+reqwest            = { version = "0.12", default-features = false, features = ["json", "rustls-tls"] }
+
+# Path-dep behind --features ruview-integration. See ADR-183.
+[dependencies.wifi-densepose-vitals]
+path             = "../../../RuView/rust-port/wifi-densepose-rs/crates/wifi-densepose-vitals"
+optional         = true
+default-features = false
+
+[build-dependencies]
+tonic-build         = { version = "0.12", default-features = false, features = ["prost"] }
+protoc-bin-vendored = "3"
+
+[dev-dependencies]
+tokio = { version = "1", features = ["full", "test-util"] }
+
+[[bin]]
+name = "ruview-vitals-worker"
+path = "src/bin/ruview-vitals-worker.rs"
+
+[lints.rust]
+# `deny` (not `forbid`) so `build.rs` can opt in for the one
+# `env::set_var(PROTOC, …)` line. Library + bin code stays
+# unsafe-free; the override is reviewed at the call site.
+unsafe_code = "deny"
+
+[lints.clippy]
+all = "warn"
+pedantic = "warn"
+module_name_repetitions = "allow"
+must_use_candidate = "allow"
+missing_errors_doc = "allow"
+missing_panics_doc = "allow"
+cast_precision_loss = "allow"
+cast_lossless = "allow"
+cast_possible_truncation = "allow"
+cast_sign_loss = "allow"
