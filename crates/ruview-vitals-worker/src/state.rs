@@ -130,6 +130,7 @@ mod tests {
             brain_post_interval: std::time::Duration::from_secs(60),
             node_name: "test-host".to_string(),
             verbose: false,
+            relay_targets: Vec::new(),
         }
     }
 

@@ -36,6 +36,7 @@ async fn main() -> Result<()> {
         grpc = %state.config.grpc_listen,
         brain = %state.config.brain_url,
         window_frames = state.config.window_frames,
+        relay_targets = state.config.relay_targets.len(),
         "ruview-vitals-worker starting"
     );
 
@@ -86,6 +87,35 @@ async fn main() -> Result<()> {
         });
     }
 
+    // UDP relay fan-out (ADR-183 Tier 2 iter 9). When configured,
+    // each received datagram is forwarded unchanged to one or more
+    // targets — typically `cognitum-v0:5005` from worker Pis so the
+    // fusion master sees CSI from every room.
+    let relay_tx = if state.config.relay_targets.is_empty() {
+        None
+    } else {
+        let (tx, mut rx) = tokio::sync::mpsc::channel::<Vec<u8>>(2048);
+        let targets = state.config.relay_targets.clone();
+        tokio::spawn(async move {
+            let socket = match UdpSocket::bind("0.0.0.0:0").await {
+                Ok(s) => s,
+                Err(e) => {
+                    tracing::error!(error = %e, "relay socket bind failed");
+                    return;
+                }
+            };
+            tracing::info!(targets = ?targets, "UDP relay fan-out up");
+            while let Some(buf) = rx.recv().await {
+                for t in &targets {
+                    if let Err(e) = socket.send_to(&buf, t).await {
+                        tracing::warn!(error = %e, target = %t, "relay send failed");
+                    }
+                }
+            }
+        });
+        Some(tx)
+    };
+
     // UDP ingest hot loop.
     let socket = UdpSocket::bind(state.config.udp_listen).await?;
     tracing::info!(addr = %socket.local_addr()?, "UDP listener up");
@@ -104,6 +134,15 @@ async fn main() -> Result<()> {
         state.stats.packets_received.fetch_add(1, Ordering::Relaxed);
 
         let datagram = &buf[..len];
+
+        // Relay first — any parse decision is independent of fan-out
+        // (the v6 feature-state frames we drop locally are still
+        // useful upstream at v0). `try_send` keeps this lock-free
+        // under burst.
+        if let Some(tx) = &relay_tx {
+            let _ = tx.try_send(datagram.to_vec());
+        }
+
         match Adr018Frame::parse(datagram) {
             Some(frame) => {
                 if verbose {

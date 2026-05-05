@@ -42,6 +42,11 @@ pub struct Config {
     pub node_name: String,
     /// True when verbose per-frame `tracing::debug!` is desired.
     pub verbose: bool,
+    /// Optional comma-separated UDP fan-out targets — every received
+    /// ADR-018 datagram is forwarded unchanged to each address. Used
+    /// by ADR-183 Tier 2 to route per-room CSI from worker Pis to
+    /// the cognitum-v0 fusion master (`100.77.59.83:5005`).
+    pub relay_targets: Vec<SocketAddr>,
 }
 
 impl Config {
@@ -76,6 +81,7 @@ impl Config {
             .ok()
             .map(|v| matches!(v.as_str(), "1" | "true" | "yes" | "on"))
             .unwrap_or(false);
+        let relay_targets = parse_addr_list("RUVIEW_VITALS_RELAY_TARGETS")?;
 
         if window_frames < 8 {
             return Err(Error::Config(
@@ -95,8 +101,31 @@ impl Config {
             brain_post_interval,
             node_name,
             verbose,
+            relay_targets,
         })
     }
+}
+
+/// Parse a comma-separated list of `SocketAddr` from an env var.
+/// Returns an empty vec when the var is unset or empty. Bad entries
+/// surface as [`Error::Address`] with the offending element preserved
+/// so the operator can grep `journalctl` and find the typo.
+fn parse_addr_list(key: &str) -> Result<Vec<SocketAddr>> {
+    let raw = match std::env::var(key) {
+        Ok(s) if !s.trim().is_empty() => s,
+        _ => return Ok(Vec::new()),
+    };
+    raw.split(',')
+        .map(str::trim)
+        .filter(|s| !s.is_empty())
+        .map(|s| {
+            s.parse::<SocketAddr>()
+                .map_err(|source| Error::Address {
+                    addr: s.to_string(),
+                    source,
+                })
+        })
+        .collect()
 }
 
 fn parse_addr(key: &str, default: &str) -> Result<SocketAddr> {
