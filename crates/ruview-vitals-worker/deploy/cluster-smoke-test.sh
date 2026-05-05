@@ -96,6 +96,41 @@ check_relay() {
   fi
 }
 
+check_ruvllm_h10() {
+  local host="$1" label="$2" http_port="$3" grpc_port="$4"
+  # HTTP health
+  local tok_per_sec
+  tok_per_sec=$(ssh -o ConnectTimeout=8 -o BatchMode=yes "$host" \
+    "curl -sf http://127.0.0.1:$http_port/health 2>/dev/null | python3 -c 'import sys,json; d=json.load(sys.stdin); print(d.get(\"tok_per_sec\", 0))' 2>/dev/null || echo 0" 2>&1 || echo 0)
+  tok_per_sec="${tok_per_sec//[^0-9.]/}"
+  local hailo_ok
+  hailo_ok=$(ssh -o ConnectTimeout=8 -o BatchMode=yes "$host" \
+    "curl -sf http://127.0.0.1:$http_port/health 2>/dev/null | python3 -c 'import sys,json; d=json.load(sys.stdin); print(d.get(\"hailo_ok\", False))' 2>/dev/null || echo False" 2>&1 || echo False)
+  if [[ "${hailo_ok:-False}" == "True" ]]; then
+    pass "ruview-ruvllm-h10 hailo_ok=True on $label"
+  else
+    fail "ruview-ruvllm-h10 hailo_ok not True on $label"
+  fi
+  # gRPC port open — check from ruvultra via Tailscale (bound to TS IP, not loopback)
+  local ts_ip="${host#root@}"   # strip "root@" to get raw IP
+  local open
+  open=$(timeout 3 bash -c "echo > /dev/tcp/${ts_ip}/${grpc_port}" 2>&1 && echo open || echo closed)
+  if [[ "$open" == "open" ]]; then
+    pass "ruview-ruvllm-h10 gRPC :$grpc_port open on $label"
+  else
+    fail "ruview-ruvllm-h10 gRPC :$grpc_port not open on $label"
+  fi
+  # /dev/hailo0
+  local dev
+  dev=$(ssh -o ConnectTimeout=8 -o BatchMode=yes "$host" \
+    "test -e /dev/hailo0 && echo ok || echo missing" 2>&1 || echo missing)
+  if [[ "${dev:-missing}" == "ok" ]]; then
+    pass "/dev/hailo0 present on $label"
+  else
+    fail "/dev/hailo0 missing on $label"
+  fi
+}
+
 check_brain_http() {
   local status
   status=$(ssh -o ConnectTimeout=8 -o BatchMode=yes "$V0_HOST" \
@@ -135,6 +170,11 @@ for entry in "${WORKERS[@]}"; do
   check_sona_steps "$host" "$label" 100
   check_relay "$host" "$label"
 done
+
+echo ""
+echo "-- ADR-184 Hailo-10H LLM service (cognitum-cluster-3) --"
+check_service "root@100.73.75.53" "ruview-ruvllm-h10"
+check_ruvllm_h10 "root@100.73.75.53" "cognitum-cluster-3" "8880" "50058"
 
 echo ""
 echo "=== Result: $PASS passed, $FAIL failed ==="

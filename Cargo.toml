@@ -76,6 +76,8 @@ members = [
     "crates/ruview-vitals-worker",
     # ADR-183: gRPC client SDK for cluster-wide vitals aggregation (Tier 1/2 fusion).
     "crates/ruview-cluster-sdk",
+    # ADR-184: ruvllm LLM serving on cognitum-cluster-3 Hailo-10H (AI HAT+ 2).
+    "crates/ruview-ruvllm-h10",
     "examples/refrag-pipeline",
     "examples/scipix",
     "examples/google-cloud",
