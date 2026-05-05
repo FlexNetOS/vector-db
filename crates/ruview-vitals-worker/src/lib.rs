@@ -14,31 +14,43 @@
 //! - [`csi`] — antenna-folded [`CsiFrame`] + `from_adr018` boundary.
 //! - [`preprocessor`] — EMA static-component suppressor.
 //! - [`window`] — per-subcarrier sliding ring buffer.
+//! - [`biquad`] — RBJ-cookbook 2nd-order bandpass filter.
+//! - [`breathing`] — bandpass + zero-crossing respiratory rate.
+//! - [`heartrate`] — bandpass + autocorrelation cardiac rate.
+//! - [`pipeline`] — orchestrator that wires the above into a
+//!   per-frame `step(Adr018Frame) -> Option<PipelineStep>` loop.
 //! - [`types`] — `VitalEstimate`, `VitalReading`, `VitalStatus`. Mirrors
 //!   the upstream RuView shape so the optional `--features
 //!   ruview-integration` swap is mechanical.
 //! - [`error`] — crate-wide [`Error`] enum + [`Result`] alias.
 //! - [`config`] — environment-variable parser ([`Config::from_env`]).
 //!
-//! Tier 1 follow-ups (next iters): breathing / heart-rate extractors,
-//! brain POST shim, gRPC service, systemd unit.
+//! Tier 1 follow-ups (next iters): brain POST shim, gRPC `:50054`
+//! service, systemd unit + idempotent install script.
 //!
 //! [ADR-018]: ../../../docs/adr/ADR-018-binary-csi-frame.md
 
+pub mod biquad;
+pub mod breathing;
 pub mod config;
 pub mod csi;
 pub mod error;
 pub mod frame;
+pub mod heartrate;
+pub mod pipeline;
 pub mod preprocessor;
 pub mod types;
 pub mod window;
 
+pub use breathing::BreathingExtractor;
 pub use config::Config;
 pub use csi::CsiFrame;
 pub use error::{Error, Result};
 pub use frame::{
     Adr018Frame, Adr018Header, CsiPayload, ADR018_HEADER_SIZE, CSI_MAGIC_V1, CSI_MAGIC_V6,
 };
+pub use heartrate::HeartRateExtractor;
+pub use pipeline::{PipelineStep, VitalsPipeline};
 pub use preprocessor::CsiVitalPreprocessor;
 pub use types::{NodeId, VitalEstimate, VitalReading, VitalStatus};
 pub use window::CsiSlidingWindow;
