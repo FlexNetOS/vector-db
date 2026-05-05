@@ -173,7 +173,7 @@ pub async fn run_brain_loop(client: BrainClient, state: Arc<WorkerState>, interv
     // ADR-183 iter 19: SONA online LoRA adapter (preferred when lora_path is set).
     // Falls back to static CsiEmbedderCpu when only model_path is set (no LoRA).
     #[cfg(feature = "csi-embed")]
-    let sona: Option<std::sync::Mutex<crate::sona::SonaAdapter>> = {
+    let sona: Option<Arc<std::sync::Mutex<crate::sona::SonaAdapter>>> = {
         match (
             state.config.csi_model_path.as_deref(),
             state.config.csi_lora_path.as_deref(),
@@ -186,7 +186,7 @@ pub async fn run_brain_loop(client: BrainClient, state: Arc<WorkerState>, interv
                             lora  = %lp.display(),
                             "SONA online LoRA adapter loaded (ADR-183 iter 19)"
                         );
-                        Some(std::sync::Mutex::new(s))
+                        Some(Arc::new(std::sync::Mutex::new(s)))
                     }
                     Err(e) => {
                         tracing::warn!(error = %e, "SONA load failed — falling back to static embedder");
@@ -198,31 +198,54 @@ pub async fn run_brain_loop(client: BrainClient, state: Arc<WorkerState>, interv
         }
     };
 
-    // Static embedder: used when model_path is set but no LoRA (or SONA failed).
+    // ADR-183 iter 19 fix: subscribe to ALL broadcast readings so SONA gets
+    // every reading (~900/min), not just one per 60 s brain tick.
+    // The subscriber task owns an Arc clone of the SONA mutex; the brain tick
+    // below only calls embed(), which takes &self.
     #[cfg(feature = "csi-embed")]
-    let csi_embedder: Option<ruvector_hailo::CsiEmbedderCpu> = {
-        #[cfg(feature = "csi-embed")]
-        if sona.is_some() {
-            None // SONA takes over when both paths are set
-        } else {
-            match state.config.csi_model_path.as_deref() {
-                Some(mp) => {
-                    match ruvector_hailo::CsiEmbedderCpu::open_with_lora(mp, None) {
-                        Ok(e) => {
-                            tracing::info!(path = %mp.display(), "CSI embedder loaded (ADR-183 Tier 3)");
-                            Some(e)
-                        }
-                        Err(e) => {
-                            tracing::warn!(error = %e, path = %mp.display(), "CSI embedder load failed");
-                            None
+    if let Some(ref sona_arc) = sona {
+        let sona_sub = Arc::clone(sona_arc);
+        let state_sub = Arc::clone(&state);
+        tokio::spawn(async move {
+            let mut rx = state_sub.subscribe();
+            loop {
+                match rx.recv().await {
+                    Ok(reading) => {
+                        if reading.status != crate::types::VitalStatus::Unavailable {
+                            if let Ok(mut guard) = sona_sub.lock() {
+                                guard.push(&reading);
+                            }
                         }
                     }
+                    Err(tokio::sync::broadcast::error::RecvError::Lagged(n)) => {
+                        tracing::debug!(dropped = n, "sona: broadcast lagged; readings skipped");
+                    }
+                    Err(tokio::sync::broadcast::error::RecvError::Closed) => break,
                 }
-                None => None,
             }
+        });
+    }
+
+    // Static embedder: used when model_path is set but no LoRA (or SONA failed).
+    #[cfg(feature = "csi-embed")]
+    let csi_embedder: Option<ruvector_hailo::CsiEmbedderCpu> = if sona.is_some() {
+        None // SONA takes over when both paths are set
+    } else {
+        match state.config.csi_model_path.as_deref() {
+            Some(mp) => {
+                match ruvector_hailo::CsiEmbedderCpu::open_with_lora(mp, None) {
+                    Ok(e) => {
+                        tracing::info!(path = %mp.display(), "CSI embedder loaded (ADR-183 Tier 3)");
+                        Some(e)
+                    }
+                    Err(e) => {
+                        tracing::warn!(error = %e, path = %mp.display(), "CSI embedder load failed");
+                        None
+                    }
+                }
+            }
+            None => None,
         }
-        #[cfg(not(feature = "csi-embed"))]
-        None
     };
 
     let mut tick = tokio::time::interval(interval);
@@ -259,15 +282,13 @@ pub async fn run_brain_loop(client: BrainClient, state: Arc<WorkerState>, interv
             }
 
             // ADR-183 Tier 3 iter 19: SONA online adaptation + CSI embedding POST.
-            // SONA drives per-room LoRA adaptation from live vitals, then
-            // posts the adapted 128-dim embedding to the brain.
+            // push() is driven by the subscriber task (all readings, ~900/min).
+            // Here we only call embed() to get the current adapted embedding.
             #[cfg(feature = "csi-embed")]
             if let Some(ref sona_mutex) = sona {
                 if reading.status != crate::types::VitalStatus::Unavailable {
                     let embedding = {
-                        // push() and embed() in a short lock scope
-                        let mut sona = sona_mutex.lock().unwrap();
-                        sona.push(reading);
+                        let sona = sona_mutex.lock().unwrap();
                         let features = reading_to_csi_features(reading);
                         sona.embed(&features)
                     };
