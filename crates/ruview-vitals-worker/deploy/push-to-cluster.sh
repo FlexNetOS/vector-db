@@ -64,16 +64,25 @@ ssh "root@$HOST" "
   cd $REMOTE_DIR
   chmod +x ruview-vitals-worker install-ruview-vitals-worker.sh
   bash install-ruview-vitals-worker.sh $REMOTE_DIR/ruview-vitals-worker
-  cat > /etc/ruview-vitals-worker.env <<EOF
+  # Only write env if it does not already exist — preserve RUVIEW_CSI_MODEL,
+  # RUVIEW_CSI_LORA_ADAPTER, RELAY_TARGETS, and other node-specific overrides
+  # set by operators. On first install the example file is laid down by
+  # install-ruview-vitals-worker.sh; subsequent deploys only update it if
+  # the file is genuinely absent.
+  if [[ ! -f /etc/ruview-vitals-worker.env ]]; then
+    cat > /etc/ruview-vitals-worker.env <<EOF
 RUVIEW_VITALS_UDP_LISTEN=0.0.0.0:5005
-RUVIEW_VITALS_GRPC_LISTEN=0.0.0.0:50054
+RUVIEW_VITALS_GRPC_LISTEN=0.0.0.0:50055
 RUVIEW_VITALS_BRAIN_URL=$BRAIN_URL
-RUVIEW_VITALS_BRAIN_INTERVAL_SECS=30
+RUVIEW_VITALS_BRAIN_INTERVAL_SECS=60
 RUVIEW_VITALS_NODE_NAME=$NODE_NAME
 RUVIEW_VITALS_WINDOW_FRAMES=50
-RUVIEW_VITALS_VERBOSE=0
-RUVIEW_VITALS_LOG=info,ruview_vitals_worker::brain=info
+RUVIEW_VITALS_LOG=info
 EOF
+    echo 'wrote default env (first install)'
+  else
+    echo 'existing /etc/ruview-vitals-worker.env preserved'
+  fi
   systemctl restart ruview-vitals-worker.service
   sleep 2
   systemctl is-active ruview-vitals-worker.service
