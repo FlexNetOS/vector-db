@@ -157,3 +157,7 @@ crates/ruvector-hailo/Cargo.lock
 crates/ruvector-hailo-cluster/Cargo.lock
 crates/hailort-sys/Cargo.lock
 crates/ruvector-mmwave/Cargo.lock
+
+# Python virtual environments (hailo toolchain)
+venv-hailo/
+venv-hailo-dfc/
