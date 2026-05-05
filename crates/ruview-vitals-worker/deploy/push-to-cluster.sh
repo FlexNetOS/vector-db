@@ -35,7 +35,10 @@ fi
 
 HOST="$1"
 NODE_NAME="${2:-$HOST}"
-BRAIN_URL="${BRAIN_URL:-http://192.168.1.123:9876}"
+BRAIN_URL="${BRAIN_URL:-http://cognitum-v0:9876}"
+# IP of the cognitum-v0 fusion master (Tailscale). Workers relay raw ADR-018
+# UDP frames here so the pointcloud fusion pipeline sees all rooms.
+RELAY_TARGET="${RELAY_TARGET:-100.77.59.83:5005}"
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "$SCRIPT_DIR/../../.." && pwd)"
@@ -78,6 +81,7 @@ RUVIEW_VITALS_BRAIN_INTERVAL_SECS=60
 RUVIEW_VITALS_NODE_NAME=$NODE_NAME
 RUVIEW_VITALS_WINDOW_FRAMES=50
 RUVIEW_VITALS_LOG=info
+RUVIEW_VITALS_RELAY_TARGETS=$RELAY_TARGET
 EOF
     echo 'wrote default env (first install)'
   else
