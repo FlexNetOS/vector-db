@@ -4,7 +4,7 @@ use std::time::Duration;
 
 use tonic::transport::Channel;
 
-use crate::error::{Error, Result};
+use crate::error::Result;
 use crate::proto::{
     vitals_client::VitalsClient as TonicClient, GetLatestRequest, HealthRequest, HealthResponse,
     StatsRequest, StatsResponse, StreamVitalsRequest, VitalReading,
