@@ -31,17 +31,21 @@
 //! [ADR-018]: ../../../docs/adr/ADR-018-binary-csi-frame.md
 
 pub mod biquad;
+pub mod brain;
 pub mod breathing;
 pub mod config;
 pub mod csi;
 pub mod error;
 pub mod frame;
+pub mod grpc;
 pub mod heartrate;
 pub mod pipeline;
 pub mod preprocessor;
+pub mod state;
 pub mod types;
 pub mod window;
 
+pub use brain::{BrainClient, MemoryPost};
 pub use breathing::BreathingExtractor;
 pub use config::Config;
 pub use csi::CsiFrame;
@@ -49,9 +53,11 @@ pub use error::{Error, Result};
 pub use frame::{
     Adr018Frame, Adr018Header, CsiPayload, ADR018_HEADER_SIZE, CSI_MAGIC_V1, CSI_MAGIC_V6,
 };
+pub use grpc::VitalsService;
 pub use heartrate::HeartRateExtractor;
 pub use pipeline::{PipelineStep, VitalsPipeline};
 pub use preprocessor::CsiVitalPreprocessor;
+pub use state::{WorkerState, WorkerStats, WorkerStatsSnapshot};
 pub use types::{NodeId, VitalEstimate, VitalReading, VitalStatus};
 pub use window::CsiSlidingWindow;
 
