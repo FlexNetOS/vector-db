@@ -6,7 +6,11 @@ exclude = ["crates/micro-hnsw-wasm", "crates/ruvector-hyperbolic-hnsw", "crates/
     # versions. Keep it out of default workspace builds so `cargo build --workspace`
     # works in stock environments. Build it explicitly with `cargo build -p ruvector-postgres`
     # after running pgrx init.
-    "crates/ruvector-postgres"]
+    "crates/ruvector-postgres",
+    # Vendored cognitum-one SDK source. Excluded from the workspace so it
+    # keeps its own (upstream) lint surface and `cargo {check,clippy} --workspace`
+    # never touches it. See `vendor/cognitum-one/VENDORED.md`.
+    "vendor/cognitum-one"]
 members = [
     "crates/ruvector-acorn",
     "crates/ruvector-acorn-wasm",

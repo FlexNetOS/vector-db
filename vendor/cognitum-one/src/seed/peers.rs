@@ -9,7 +9,7 @@
 //! Phase 1 surface; mutable internals live behind `&mut self` methods
 //! on `PeerSet` that are called from `SeedInner` under a `Mutex`.
 
-use std::time::{Duration, Instant};
+use std::time::{Duration, Instant, SystemTime, UNIX_EPOCH};
 
 use url::Url;
 
@@ -260,7 +260,13 @@ impl PeerSet {
         if candidates.is_empty() {
             return self.pick();
         }
-        let seed = Instant::now().elapsed().subsec_nanos() as usize;
+        // FlexNetOS deviation: upstream used `Instant::now().elapsed()` which is
+        // ~Duration::ZERO and made this function deterministic on `candidates[0]`.
+        // SystemTime since UNIX_EPOCH gives a non-zero subsec component every call.
+        let seed = SystemTime::now()
+            .duration_since(UNIX_EPOCH)
+            .map(|d| d.subsec_nanos())
+            .unwrap_or(0) as usize;
         let idx = seed % candidates.len();
         candidates[idx]
     }

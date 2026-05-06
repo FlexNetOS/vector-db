@@ -14,8 +14,10 @@
 //! gets encoded into the existing `message: String` payloads.
 
 use reqwest::StatusCode;
+use reqwest::header::HeaderMap;
 
 use crate::error::Error as BaseError;
+use crate::seed::retry::parse_retry_after;
 
 /// Reason slot for an `Auth` failure. Matches ADR-0004 §"AuthReason"
 /// spelling (wire form `snake_case`).
@@ -62,7 +64,25 @@ pub fn seed_error_message(status: StatusCode, body: &str) -> String {
 /// Map the non-success response to a base [`Error`].
 ///
 /// `endpoint_path` is surfaced in `NotFound` / "not implemented" messages.
+///
+/// Convenience wrapper that calls [`from_response_with_headers`] with an
+/// empty header map. Kept as the simple form for callers (and tests) that
+/// don't have a `HeaderMap` in scope; on a 429 it falls back to a
+/// `retry_after_ms = 1000` hint.
 pub fn from_response(status: StatusCode, body: &str, endpoint_path: &str) -> BaseError {
+    from_response_with_headers(status, &HeaderMap::new(), body, endpoint_path)
+}
+
+/// Map the non-success response to a base [`Error`] using the response
+/// headers + body to honour the `Retry-After` hint on 429 (FlexNetOS
+/// deviation: upstream hardcoded `retry_after_ms = 1000`, ignoring both
+/// the `Retry-After` header and any body hint).
+pub fn from_response_with_headers(
+    status: StatusCode,
+    headers: &HeaderMap,
+    body: &str,
+    endpoint_path: &str,
+) -> BaseError {
     let msg = seed_error_message(status, body);
     let lower = msg.to_ascii_lowercase();
 
@@ -84,9 +104,15 @@ pub fn from_response(status: StatusCode, body: &str, endpoint_path: &str) -> Bas
         }
         400 | 405 | 422 => BaseError::Validation(msg),
         404 => BaseError::NotFound(format!("{endpoint_path} (seed): {msg}")),
-        429 => BaseError::RateLimit {
-            retry_after_ms: 1000,
-        },
+        429 => {
+            // FlexNetOS deviation: parse `Retry-After` header / body hint
+            // (ADR-0005 §"429 handling"), falling back to 1000ms only when
+            // no hint is present. Upstream hardcoded 1000ms unconditionally.
+            let retry_after_ms = parse_retry_after(headers, body)
+                .map(|d| d.as_millis() as u64)
+                .unwrap_or(1000);
+            BaseError::RateLimit { retry_after_ms }
+        }
         501 => BaseError::Validation(format!("not_implemented: {endpoint_path}: {msg}")),
         503 => BaseError::Api {
             code: 503,

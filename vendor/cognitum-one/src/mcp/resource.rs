@@ -74,7 +74,9 @@ impl<'a> McpResource<'a> {
         let resp: JsonRpcResponse = self.client.post("/mcpSse", &rpc).await?;
         if let Some(err) = resp.error {
             return Err(Error::Api {
-                code: err.code as u16,
+                // FlexNetOS deviation: clamp i64 -> u16 like `transport.rs::From<McpError>`;
+                // bare `as u16` wraps negative JSON-RPC error codes (e.g. -32601 -> 32935).
+                code: err.code.unsigned_abs().min(u16::MAX as u64) as u16,
                 message: err.message,
             });
         }
@@ -107,7 +109,8 @@ impl<'a> McpResource<'a> {
         let resp: JsonRpcResponse = self.client.post("/mcpSse", &rpc).await?;
         if let Some(err) = resp.error {
             return Err(Error::Api {
-                code: err.code as u16,
+                // FlexNetOS deviation: see `call_tool` above for rationale.
+                code: err.code.unsigned_abs().min(u16::MAX as u64) as u16,
                 message: err.message,
             });
         }

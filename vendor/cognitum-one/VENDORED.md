@@ -26,7 +26,32 @@ time.
    the host workspace.
 4. `.cargo_vcs_info.json` was renamed to `UPSTREAM_VCS_INFO.json` so it remains
    discoverable but does not look like a build-tool file.
-5. No source code was modified.
+
+## In-tree deviations from upstream v0.2.1
+
+The original vendoring was **byte-for-byte from the crates.io tarball**.
+The list below tracks every subsequent edit applied in-tree, with the rationale.
+Each deviation is also annotated in the source with a `FlexNetOS deviation:`
+comment so re-vendoring catches drift. When upstream ships a fix, the matching
+deviation should be removed (see "Updating the vendored copy" below).
+
+| File | Symbol | Bug | Fix | Upstream status |
+|---|---|---|---|---|
+| `src/seed/peers.rs` | `PeerSet::pick_random` | `Instant::now().elapsed()` returns ~`Duration::ZERO` so `seed % candidates.len()` was always `0` — the function was deterministic on `candidates[0]`. | Switched seed source to `SystemTime::now().duration_since(UNIX_EPOCH).subsec_nanos()`. | Not yet filed upstream. |
+| `src/mcp/resource.rs` | `McpResource::call_tool`, `McpResource::initialize` | `err.code as u16` wraps negative JSON-RPC error codes (e.g. `-32601` -> `32935`), losing the spec-defined sign. | Changed to `err.code.unsigned_abs().min(u16::MAX as u64) as u16` — same idiom already in use at `src/mcp/transport.rs::From<McpError>`. | Not yet filed upstream. |
+| `src/seed/error.rs` | `from_response` | On HTTP 429 the function hardcoded `retry_after_ms = 1000`, ignoring the `Retry-After` header and any body hint. | Added `from_response_with_headers(status, headers, body, path)` which parses via `seed::retry::parse_retry_after`, falling back to 1000ms only when no hint is present. The original `from_response` is preserved as a header-less wrapper for backward compatibility (notably the in-crate tests). All call sites in `src/seed/client.rs` were updated to pass the response headers. | Not yet filed upstream. |
+
+Verification commands (run from `vendor/cognitum-one/`):
+
+```bash
+cargo check --no-default-features --features "rustls,seed"
+cargo test  --no-default-features --features "rustls,seed" --lib seed::error
+cargo test  --no-default-features --features "rustls,seed" --lib seed::peers
+```
+
+The pre-existing `client::tests::invalid_pem_is_surfaced_as_validation_error`
+upstream-test failure is unrelated to the FlexNetOS deviations and is reproducible
+on a clean v0.2.1 checkout.
 
 ## How the workspace consumes this crate
 
