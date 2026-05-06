@@ -1,16 +1,23 @@
 # Understand-Anything generates intermediate per-agent artifacts here while the
-# plugin assembles the final knowledge graph. Those intermediates are not
-# meant to be committed.
-intermediate/
-diff-overlay.json
+# plugin assembles the final knowledge graph. Those intermediates (and any
+# future scratch the upstream tool decides to write) are not meant to be
+# committed. We use an ignore-everything pattern with an explicit allow-list
+# so new scratch files default to ignored, mirroring `.gitnexus/.gitignore`.
+*
 
-# The dashboard's local file-content endpoint cache.
-file-content.cache.json
-
-# Allow the canonical artifacts:
+# Allow this file itself + the curated/canonical artifacts:
+#   .gitignore              — this file
+#   README.md               — directory documentation
 #   knowledge-graph.json    — the assembled multi-agent graph
 #   onboarding.md           — /understand-onboard output
 #   tours/                  — /understand-dashboard guided tours
+!.gitignore
+!README.md
 !knowledge-graph.json
 !onboarding.md
+# Both `!tours/` and `!tours/**` are required: `!tours/` un-ignores the
+# directory entry so git descends into it; `!tours/**` un-ignores every file
+# *inside* it (otherwise the leading `*` rule still matches their filenames
+# at the deeper level and silently drops them).
 !tours/
+!tours/**

@@ -52,10 +52,14 @@ recommended path for Claude Code users.
 
 | Path | Contents | Status |
 |---|---|---|
-| `.understand-anything/knowledge-graph.json` | Per-repo knowledge graph | **Gitignored.** Regenerable. |
-| `.understand-anything/intermediate/` | Per-agent scratch (cleaned post-run) | **Gitignored.** Transient. |
+| `.understand-anything/knowledge-graph.json` | Per-repo knowledge graph | **Tracked.** The canonical artifact — re-`/understand` only when source has materially shifted. |
+| `.understand-anything/onboarding.md`, `tours/` | `/understand-onboard` + dashboard tours output | **Tracked.** Curated, hand-edited later. |
+| `.understand-anything/intermediate/`, `diff-overlay.json`, `file-content.cache.json` | Per-agent scratch / dashboard cache | **Gitignored.** Transient. |
 
-Output stays inside this repo; it does NOT pollute upstream's directory.
+Selective tracking is enforced by `.understand-anything/.gitignore`
+(ignore-everything pattern with explicit `!knowledge-graph.json`,
+`!onboarding.md`, `!tours/` allow-listings). Output stays inside this
+repo; it does NOT pollute upstream's directory.
 
 ## Versioning
 
