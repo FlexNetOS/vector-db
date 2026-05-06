@@ -8,7 +8,8 @@
 # implements the same install flow as the upstream INSTALL.md files for each
 # agent runtime, choosing whichever runtimes are present on this machine.
 #
-# Idempotent: safe to re-run. Re-runs `git pull` on the existing clone.
+# Idempotent: safe to re-run. Re-runs `git fetch` then fast-forwards (or
+# resets, on a force-push) the existing clone.
 # Cross-platform: supports Linux, macOS. PowerShell users should follow the
 # upstream Windows instructions in .codex/INSTALL.md.
 
@@ -75,13 +76,21 @@ PRIMARY_DIR="${PRIMARY_RUNTIME#*:}"
 mkdir -p "$(dirname "$PRIMARY_DIR")"
 
 if [[ -d "$PRIMARY_DIR/.git" ]]; then
-  log "updating existing clone at $PRIMARY_DIR (fast-forward only)"
+  log "updating existing clone at $PRIMARY_DIR"
   git -C "$PRIMARY_DIR" fetch --quiet origin "$UA_BRANCH"
-  # Use merge --ff-only so local modifications to the upstream tool are
-  # never silently destroyed. If the user has diverged, abort with a
-  # clear error so they can decide what to do.
-  if ! git -C "$PRIMARY_DIR" merge --ff-only --quiet "origin/$UA_BRANCH" 2>/dev/null; then
-    fail "$PRIMARY_DIR has local changes that conflict with origin/$UA_BRANCH; resolve manually or remove the directory and re-run"
+  # Treat the clone as an opaque upstream artifact: a clean working tree
+  # should always converge to origin/$UA_BRANCH (including across upstream
+  # force-pushes). A dirty working tree means the user is hand-editing the
+  # upstream tool, which we refuse to overwrite silently.
+  if ! git -C "$PRIMARY_DIR" diff --quiet HEAD; then
+    fail "$PRIMARY_DIR has uncommitted local edits; commit/stash them, or remove the directory and re-run"
+  fi
+  # Working tree is clean. Try fast-forward first (cheap, common case);
+  # fall back to a hard reset on rebased/force-pushed upstream so the
+  # script remains idempotent and the real git error is visible.
+  if ! git -C "$PRIMARY_DIR" merge --ff-only --quiet "origin/$UA_BRANCH"; then
+    warn "fast-forward failed (upstream likely rebased); resetting to origin/$UA_BRANCH"
+    git -C "$PRIMARY_DIR" reset --quiet --hard "origin/$UA_BRANCH"
   fi
 else
   log "cloning Understand-Anything to $PRIMARY_DIR"
