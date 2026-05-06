@@ -36,11 +36,18 @@
 #   https://pypi.org/project/mempalace/
 #   https://mempalaceofficial.com/
 # The domain `mempalace.tech` is a known impostor. Do NOT install from
-# any other source. We pass `--index-url https://pypi.org/simple/`
-# explicitly to defeat any rogue `PIP_INDEX_URL`, `~/.pip/pip.conf`, or
-# `pip.ini` that would otherwise resolve `mempalace` from a malicious
-# mirror. Override only with `MEMPALACE_INDEX_URL` if you have a
-# verified internal PyPI proxy.
+# any other source. To defeat dependency-confusion attacks via rogue pip
+# configuration, the install commands below:
+#   1. pin `--index-url` to https://pypi.org/simple/ (the *primary* index)
+#   2. clear `PIP_EXTRA_INDEX_URL` for the install subprocess so pip will
+#      not consult any *extra* index that might out-rank the primary
+#   3. point `PIP_CONFIG_FILE` at /dev/null so any `extra-index-url`
+#      entries in `~/.config/pip/pip.conf`, `~/.pip/pip.conf`, or
+#      `pip.ini` are ignored for the install subprocess
+# Without (2) and (3), an attacker who can publish a higher-versioned
+# `mempalace` to a configured extra index wins pip's version resolution
+# and the `--index-url` pin alone does NOT prevent that. Override
+# `MEMPALACE_INDEX_URL` only if you have a verified internal PyPI proxy.
 
 set -euo pipefail
 
@@ -84,18 +91,28 @@ cd "$REPO_ROOT"
 # packaging for end-user Python tools), otherwise fall back to
 # `pip install --user`. We avoid system-wide installs to stay sudo-free.
 #
-# Both paths pin `--index-url` to the official PyPI so a rogue
-# `PIP_INDEX_URL` env var or `pip.conf` cannot silently redirect to a
-# malicious mirror that ships a poisoned `mempalace` package.
+# Both paths invoke the install subprocess with:
+#   PIP_EXTRA_INDEX_URL=''  → strip any inherited extra-index env var
+#   PIP_CONFIG_FILE=/dev/null → ignore any pip.conf / pip.ini extra-index-url
+#   --index-url "$MEMPALACE_INDEX_URL" → pin the primary index
+# Together these close the dependency-confusion window: pip will resolve
+# `mempalace` (and its transitive deps) only from the pinned primary
+# index for this single install, regardless of how the calling shell or
+# host pip configuration is set up. The pipx path also tunnels these
+# settings into pipx's internal pip subprocess via `--pip-args`.
 if command -v pipx >/dev/null 2>&1; then
   log "installing ${MEMPALACE_PIP_SPEC} via pipx (isolated venv) from ${MEMPALACE_INDEX_URL}"
+  PIP_EXTRA_INDEX_URL='' \
+  PIP_CONFIG_FILE=/dev/null \
   pipx install --force \
-    --pip-args="--index-url=${MEMPALACE_INDEX_URL}" \
+    --pip-args="--index-url=${MEMPALACE_INDEX_URL} --no-config" \
     "${MEMPALACE_PIP_SPEC}" || fail "pipx install failed"
 else
   log "installing ${MEMPALACE_PIP_SPEC} via pip --user (pipx not found) from ${MEMPALACE_INDEX_URL}"
   log "  — install pipx for cleaner CLI isolation: pip install --user pipx"
-  python3 -m pip install --user --upgrade \
+  PIP_EXTRA_INDEX_URL='' \
+  PIP_CONFIG_FILE=/dev/null \
+  python3 -m pip install --user --upgrade --no-config \
     --index-url "${MEMPALACE_INDEX_URL}" \
     "${MEMPALACE_PIP_SPEC}" || \
     fail "pip install failed — see https://github.com/MemPalace/mempalace#installation"
