@@ -66,7 +66,12 @@ fi
 # We invoke setup unconditionally (not gated on a specific CLI being
 # present) because it auto-detects and skips missing editors.
 log "registering MCP server for any installed agent runtime"
-npx -y "gitnexus@${GITNEXUS_VERSION}" setup || warn "gitnexus setup returned non-zero — MCP may need manual config; see .gitnexus/README.md"
+npx -y "gitnexus@${GITNEXUS_VERSION}" setup || warn "gitnexus setup returned non-zero — MCP may need manual config; see https://github.com/abhigyanpatwari/GitNexus#mcp-setup"
+
+# GitNexus 1.x always installs 6 helper SKILLs at .claude/skills/gitnexus/
+# (verified in dist/cli/ai-context.js). They're auto-generated, repo-local,
+# and useful at runtime — but not something we want tracked. The
+# corresponding .gitignore entry lives in the repo's top-level .gitignore.
 
 # ── Done ─────────────────────────────────────────────────────────────
 log "GitNexus install complete."

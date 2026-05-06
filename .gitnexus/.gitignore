@@ -4,8 +4,9 @@
 # fingerprints), (b) regenerable in seconds via `scripts/install-gitnexus.sh`,
 # and (c) potentially large (graph DB grows with codebase size).
 #
-# We DO commit this .gitignore + the README so the directory has a
-# stable existence in the repo and contributors know what lives here.
+# We commit only this .gitignore so the directory has a stable existence
+# in the repo. See scripts/install-gitnexus.sh for what lives here and
+# the upstream README at https://github.com/abhigyanpatwari/GitNexus for
+# format details.
 *
 !.gitignore
-!README.md
