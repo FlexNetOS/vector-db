@@ -8,8 +8,8 @@
 # implements the same install flow as the upstream INSTALL.md files for each
 # agent runtime, choosing whichever runtimes are present on this machine.
 #
-# Idempotent: safe to re-run. Re-runs `git fetch` then fast-forwards (or
-# resets, on a force-push) the existing clone.
+# Idempotent: safe to re-run. Re-runs `git fetch` and fast-forwards the
+# existing clone; refuses to silently overwrite local edits/commits.
 # Cross-platform: supports Linux, macOS. PowerShell users should follow the
 # upstream Windows instructions in .codex/INSTALL.md.
 
@@ -78,19 +78,20 @@ mkdir -p "$(dirname "$PRIMARY_DIR")"
 if [[ -d "$PRIMARY_DIR/.git" ]]; then
   log "updating existing clone at $PRIMARY_DIR"
   git -C "$PRIMARY_DIR" fetch --quiet origin "$UA_BRANCH"
-  # Treat the clone as an opaque upstream artifact: a clean working tree
-  # should always converge to origin/$UA_BRANCH (including across upstream
-  # force-pushes). A dirty working tree means the user is hand-editing the
-  # upstream tool, which we refuse to overwrite silently.
-  if ! git -C "$PRIMARY_DIR" diff --quiet HEAD; then
-    fail "$PRIMARY_DIR has uncommitted local edits; commit/stash them, or remove the directory and re-run"
+  # Refuse to touch the directory if working tree, index, or untracked
+  # files are dirty. `git status --porcelain` is the comprehensive check;
+  # `git diff --quiet HEAD` alone misses staged-only and untracked
+  # changes, so it is not safe before a `reset --hard`.
+  if [[ -n "$(git -C "$PRIMARY_DIR" status --porcelain)" ]]; then
+    fail "$PRIMARY_DIR has uncommitted edits, staged changes, or untracked files; commit/stash/clean them, or remove the directory and re-run"
   fi
-  # Working tree is clean. Try fast-forward first (cheap, common case);
-  # fall back to a hard reset on rebased/force-pushed upstream so the
-  # script remains idempotent and the real git error is visible.
+  # Try fast-forward. If this fails, the user has local commits that
+  # diverged from origin/$UA_BRANCH (or upstream rebased). Either way we
+  # refuse to `reset --hard` because that would silently destroy local
+  # commits the user may want to keep. The user can remove the directory
+  # and re-run for a clean upstream sync.
   if ! git -C "$PRIMARY_DIR" merge --ff-only --quiet "origin/$UA_BRANCH"; then
-    warn "fast-forward failed (upstream likely rebased); resetting to origin/$UA_BRANCH"
-    git -C "$PRIMARY_DIR" reset --quiet --hard "origin/$UA_BRANCH"
+    fail "$PRIMARY_DIR cannot fast-forward to origin/$UA_BRANCH (local commits diverged or upstream rebased); resolve manually or remove the directory and re-run"
   fi
 else
   log "cloning Understand-Anything to $PRIMARY_DIR"
