@@ -41,21 +41,26 @@ if [[ -n "${RUSTC_WRAPPER:-}" ]] && ! command -v "${RUSTC_WRAPPER}" >/dev/null 2
     unset RUSTC_WRAPPER
 fi
 
-# Capture stderr so that when validate fails the operator (or the
-# self-learning loop's identify node) can read why. Stdout stays the
-# pure JSON contract; the audit lives at $stderr_log and is referenced
-# from the JSON output.
-stderr_log="${ROOT}/.attractor/runs/validate.stderr"
-mkdir -p "$(dirname "$stderr_log")"
+# Capture cargo's stdout+stderr to a sidecar build log so the operator
+# (and the self-learning loop's identify node) can diagnose failures.
+# This script's own stdout stays the pure JSON contract.
+build_log="${ROOT}/.attractor/runs/validate.stderr"
+mkdir -p "$(dirname "$build_log")"
+
+# JSON-escape the build_log path before embedding in the contract so a
+# repo root containing \ or " doesn't corrupt the JSONL audit record
+# the runner parses. Mirrors the escape in distill.sh.
+escaped_log="${build_log//\\/\\\\}"
+escaped_log="${escaped_log//\"/\\\"}"
 
 # Cheapest meaningful signal. Heavier validation (nextest, integration
 # tests, brain-server smoke) is wired in once Phase 6's GitHub Actions
 # self-learning workflow lands.
 if RUST_MIN_STACK=16777216 cargo check --workspace --exclude ruvector-postgres \
-    >"$stderr_log" 2>&1; then
-    printf '{"validated":true,"check":"cargo check --workspace --exclude ruvector-postgres","stderr_log":"%s"}\n' "$stderr_log"
+    >"$build_log" 2>&1; then
+    printf '{"validated":true,"check":"cargo check --workspace --exclude ruvector-postgres","stderr_log":"%s"}\n' "$escaped_log"
     exit 0
 fi
 
-printf '{"validated":false,"check":"cargo check --workspace --exclude ruvector-postgres","stderr_log":"%s","hint":"see stderr_log for cargo check diagnostics"}\n' "$stderr_log"
+printf '{"validated":false,"check":"cargo check --workspace --exclude ruvector-postgres","stderr_log":"%s","hint":"see stderr_log for cargo check diagnostics"}\n' "$escaped_log"
 exit 1

@@ -122,9 +122,9 @@ cmd_dry_run() {
         i=$((i + 1))
         local script="$NODES_DIR/${node}.sh"
         if [ -x "$script" ]; then
-            printf "  ${BOLD}%d. %s${NC}  -> %s\n" "$i" "$node" "$script"
+            printf "  ${BOLD}%d. %s${NC}  -> %s\n" "$i" "$node" "$script" >&2
         else
-            printf "  ${BOLD}%d. %s${NC}  -> ${DIM}(stub: %s missing or non-exec)${NC}\n" "$i" "$node" "$script"
+            printf "  ${BOLD}%d. %s${NC}  -> ${DIM}(stub: %s missing or non-exec)${NC}\n" "$i" "$node" "$script" >&2
         fi
     done
     ok "5 nodes scheduled"
@@ -191,17 +191,20 @@ cmd_run() {
             status="skipped"
             : > "$out_file"
         elif [ -x "$script" ]; then
-            # Run the node, mirror stdout to the run artifact via tee
-            # so the audit log keeps every JSON contract verbatim and
-            # the operator still sees output on the terminal.
-            if "$script" 2>&1 | tee "$out_file" >&2; then
-                rc=${PIPESTATUS[0]:-0}
-                if [ "$rc" -eq 0 ]; then
-                    ok "$node passed"
-                else
-                    status="fail"
-                    err "$node failed (rc=$rc)"
-                fi
+            # Run the node. Capture *only stdout* (the JSON contract) to
+            # $out_file via tee, while mirroring it to the operator's
+            # stderr. The node's own stderr flows directly through to
+            # the terminal and is NOT written to $out_file. Splitting
+            # the streams (rather than `2>&1 | tee`) guarantees the LAST
+            # non-empty line of $out_file is the node's JSON contract,
+            # even if a future node emits late stderr diagnostics.
+            if "$script" | tee "$out_file" >&2; then
+                # `set -o pipefail` (line 35) means we only enter this
+                # branch when every stage exits 0; PIPESTATUS[0] is
+                # therefore always 0 here. The branch below handles
+                # failures (and recovers PIPESTATUS to distinguish a
+                # node failure from the rare case of tee failing).
+                ok "$node passed"
             else
                 rc=${PIPESTATUS[0]:-1}
                 status="fail"

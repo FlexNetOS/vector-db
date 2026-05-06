@@ -1,2 +1,3 @@
 # Pipeline run artifacts (generated, audit-only).
-runs/*.jsonl
+# Covers JSONL audit, validate.stderr sidecar, and per-run stdout dirs.
+runs/
