@@ -221,14 +221,18 @@ cmd_run() {
                 ok "$node passed"
             else
                 # Two failure modes land here:
-                #   * node script exited non-zero  -> PIPESTATUS[0] != 0
-                #   * node passed but tee failed   -> PIPESTATUS[0] == 0,
-                #     PIPESTATUS[1] != 0 (e.g. disk full)
-                # The audit record below uses status="fail" in either
-                # case, so the postmortem is honest even when rc==0.
-                rc=${PIPESTATUS[0]:-1}
+                #   * node script exited non-zero  -> pipe_rc[0] != 0
+                #   * node passed but tee failed   -> pipe_rc[0] == 0,
+                #     pipe_rc[1] != 0 (e.g. disk full)
+                # PIPESTATUS resets after every simple command (including
+                # the `rc=...` assignment itself), so snapshot it into a
+                # local array *first* and read both indices from there.
+                # Otherwise PIPESTATUS[1] would always resolve to the
+                # default of 1, masking tee's actual exit code.
+                local pipe_rc=("${PIPESTATUS[@]}")
+                rc=${pipe_rc[0]:-1}
                 if [ "$rc" -eq 0 ]; then
-                    rc=${PIPESTATUS[1]:-1}
+                    rc=${pipe_rc[1]:-1}
                     err "$node passed but tee failed (rc=$rc)"
                 else
                     err "$node failed (rc=$rc)"
