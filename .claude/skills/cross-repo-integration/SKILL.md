@@ -99,13 +99,13 @@ weaver mcp list 2>&1 | grep -E '(pi-brain|ruvector)'
 Both `/v1/memories` (POST) and `/v1/memories/search` require an
 `Authorization: Bearer $BRAIN_API_KEY` header (extractor:
 `AuthenticatedContributor` in `crates/mcp-brain-server/src/auth.rs`).
-Missing or malformed header → 401. The API key must be ≥ 16 chars; for a
+Missing or malformed header → 401. The API key must be ≥ 8 chars (`MIN_API_KEY_LEN` in `crates/mcp-brain-server/src/auth.rs:53`); for a
 local dev run, export your own value (e.g. `export BRAIN_API_KEY=dev-$(openssl
 rand -hex 16)`) and re-launch the server with `BRAIN_SYSTEM_KEY=$BRAIN_API_KEY`
 so the constant-time check accepts it.
 
 ```bash
-export BRAIN_API_KEY=...   # at least 16 chars; never commit this
+export BRAIN_API_KEY=...   # at least 8 chars; never commit this
 
 # share
 curl -X POST http://localhost:8080/v1/memories \
@@ -168,7 +168,7 @@ subcommand exists.
 | Symptom | Likely cause | Fix |
 |---|---|---|
 | `weaver mcp list` shows no `pi-brain` | MCP not registered | Register in the agent runtime's MCP config; see `~/.codex/mcp.json` or `.cursor-mcp.json` |
-| `curl /v1/memories` or `brain_search` returns 401 | Missing/short `Authorization: Bearer ...` header | Set `BRAIN_API_KEY` (≥ 16 chars); for `pi.ruv.io`, retrieve via `gcloud secrets versions access latest --secret=BRAIN_API_KEY`. For local dev, also set `BRAIN_SYSTEM_KEY` to the same value when launching `mcp-brain-server` so the constant-time check accepts it |
+| `curl /v1/memories` or `brain_search` returns 401 | Missing/short `Authorization: Bearer ...` header | Set `BRAIN_API_KEY` (≥ 8 chars per `MIN_API_KEY_LEN`); for `pi.ruv.io`, retrieve via `gcloud secrets versions access latest --secret=BRAIN_API_KEY`. For local dev, also set `BRAIN_SYSTEM_KEY` to the **same value and same byte length** as `BRAIN_API_KEY` when launching `mcp-brain-server` — `subtle::ConstantTimeEq::ct_eq` short-circuits on length mismatch and would otherwise leak length via timing |
 | `curl http://localhost:7333` connection refused | Port mismatch | Brain server defaults to **8080**, not 7333. Either `curl :8080` or relaunch with `PORT=7333 cargo run -p mcp-brain-server` |
 | AgentDB HNSW query stack-overflows in CI | Missing `RUST_MIN_STACK=16777216` | Run cargo from the repo root so `.cargo/config.toml` is honored |
 | weftos wasm bundle exceeds 300KB after adding ruvector dep | dep not gated under `native` feature | Make the dep `optional = true`, gate it behind `native`, add a wasm shim |
