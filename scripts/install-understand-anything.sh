@@ -17,13 +17,17 @@ set -euo pipefail
 UA_REPO="https://github.com/Lum1104/Understand-Anything.git"
 UA_BRANCH="${UA_BRANCH:-main}"
 
-# Skills exposed by the plugin (kept in sync with upstream INSTALL.md).
+# Skills exposed by the plugin. Kept in sync with the upstream
+# `understand-anything-plugin/skills/` directory; verify by running
+# `ls $PRIMARY_DIR/understand-anything-plugin/skills/` after install.
 UA_SKILLS=(
   understand
   understand-chat
   understand-dashboard
   understand-diff
+  understand-domain
   understand-explain
+  understand-knowledge
   understand-onboard
 )
 
@@ -71,9 +75,14 @@ PRIMARY_DIR="${PRIMARY_RUNTIME#*:}"
 mkdir -p "$(dirname "$PRIMARY_DIR")"
 
 if [[ -d "$PRIMARY_DIR/.git" ]]; then
-  log "updating existing clone at $PRIMARY_DIR"
+  log "updating existing clone at $PRIMARY_DIR (fast-forward only)"
   git -C "$PRIMARY_DIR" fetch --quiet origin "$UA_BRANCH"
-  git -C "$PRIMARY_DIR" reset --quiet --hard "origin/$UA_BRANCH"
+  # Use merge --ff-only so local modifications to the upstream tool are
+  # never silently destroyed. If the user has diverged, abort with a
+  # clear error so they can decide what to do.
+  if ! git -C "$PRIMARY_DIR" merge --ff-only --quiet "origin/$UA_BRANCH" 2>/dev/null; then
+    fail "$PRIMARY_DIR has local changes that conflict with origin/$UA_BRANCH; resolve manually or remove the directory and re-run"
+  fi
 else
   log "cloning Understand-Anything to $PRIMARY_DIR"
   git clone --quiet --branch "$UA_BRANCH" "$UA_REPO" "$PRIMARY_DIR"
