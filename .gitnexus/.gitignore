@@ -1,0 +1,11 @@
+# GitNexus stores its LadybugDB graph database, embedding cache, and
+# per-repo registry in this directory. None of it belongs in git — it's
+# (a) machine-specific (paths, embedding model versions, hardware
+# fingerprints), (b) regenerable in seconds via `scripts/install-gitnexus.sh`,
+# and (c) potentially large (graph DB grows with codebase size).
+#
+# We DO commit this .gitignore + the README so the directory has a
+# stable existence in the repo and contributors know what lives here.
+*
+!.gitignore
+!README.md
