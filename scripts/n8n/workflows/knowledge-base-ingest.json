@@ -1,0 +1,108 @@
+{
+  "name": "Knowledge Base — Ingest",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "kb-ingest",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "wh-single",
+      "name": "Webhook (single doc)",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [240, 200],
+      "webhookId": "kb-ingest"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "kb-ingest/batch",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "wh-batch",
+      "name": "Webhook (batch)",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [240, 420],
+      "webhookId": "kb-ingest-batch"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Normalise both single-doc and batch payloads into a flat list of docs.\nconst items = [];\nfor (const item of $input.all()) {\n  const body = item.json.body || item.json;\n  const namespace = body.namespace || 'ruvector-docs';\n  if (Array.isArray(body.docs)) {\n    for (const d of body.docs) items.push({ json: { ...d, namespace } });\n  } else if (body.content) {\n    items.push({ json: { ...body, namespace } });\n  }\n}\nreturn items;\n"
+      },
+      "id": "fn-flatten",
+      "name": "Flatten payload",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [480, 320]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{$env.RUVECTOR_BASE_URL || 'http://ruvector:8080'}}/v1/memories",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "content-type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "json",
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ content: $json.content, category: $json.category || 'documentation', namespace: $json.namespace, tags: $json.tags || [], metadata: $json.metadata || {} }) }}",
+        "options": {
+          "response": {
+            "response": {
+              "fullResponse": false,
+              "responseFormat": "json"
+            }
+          }
+        }
+      },
+      "id": "http-store",
+      "name": "RuVector — POST /v1/memories",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [720, 320]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Aggregate the per-chunk RuVector responses into a single summary.\nconst items = $input.all();\nlet stored = 0, dedup = 0, errors = 0;\nconst ids = [];\nfor (const it of items) {\n  const r = it.json;\n  if (r && r.id) {\n    ids.push(r.id);\n    if (r.deduplicated) dedup++; else stored++;\n  } else {\n    errors++;\n  }\n}\nreturn [{ json: { stored, deduplicated: dedup, errors, ingested: stored + dedup, ids } }];\n"
+      },
+      "id": "fn-summary",
+      "name": "Summarise",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [960, 320]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{$json}}"
+      },
+      "id": "respond",
+      "name": "Respond",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [1200, 320]
+    }
+  ],
+  "connections": {
+    "Webhook (single doc)": { "main": [[{ "node": "Flatten payload", "type": "main", "index": 0 }]] },
+    "Webhook (batch)":      { "main": [[{ "node": "Flatten payload", "type": "main", "index": 0 }]] },
+    "Flatten payload":      { "main": [[{ "node": "RuVector — POST /v1/memories", "type": "main", "index": 0 }]] },
+    "RuVector — POST /v1/memories": { "main": [[{ "node": "Summarise", "type": "main", "index": 0 }]] },
+    "Summarise":            { "main": [[{ "node": "Respond", "type": "main", "index": 0 }]] }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "tags": [
+    { "name": "knowledge-base" },
+    { "name": "ruvector" },
+    { "name": "audit-pipeline" }
+  ]
+}
