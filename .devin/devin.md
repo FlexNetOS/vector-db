@@ -120,3 +120,32 @@ cargo check --workspace --exclude ruvector-postgres
 
 If `cargo check` stack-overflows, you are not running cargo from a directory
 where `.cargo/config.toml` is visible.
+
+## Codebase intelligence — Understand-Anything
+
+This repo is wired into [Understand-Anything](https://github.com/Lum1104/Understand-Anything),
+a multi-agent code-intelligence plugin. To install it for the agent runtime
+on this machine (Claude Code, Codex, Gemini CLI, OpenCode, Pi Agent), run:
+
+```bash
+./scripts/install-understand-anything.sh
+```
+
+The script clones the upstream tool to `~/.codex/understand-anything` (or the
+runtime-specific path), wires `~/.agents/skills/understand*` symlinks, and is
+idempotent.
+
+Once installed, run any of the following from inside this repo:
+
+| Command | Purpose | Output |
+|---|---|---|
+| `/understand` | Full multi-agent analysis (Claude Code style) | `.understand-anything/knowledge-graph.json` |
+| `/understand-onboard` | Generate an onboarding tour | `.understand-anything/onboarding.md` |
+| `/understand-knowledge` | Build/refresh the knowledge graph only | `.understand-anything/knowledge-graph.json` |
+| `/understand-domain` | Domain-focused deep dive | merged into the graph |
+| `/understand-diff` | Change-impact analysis on the working tree | `.understand-anything/diff-overlay.json` |
+| `/understand-dashboard` | Launch the interactive dashboard | local web UI |
+
+`.understand-anything/.gitignore` excludes the agent intermediate files
+(`intermediate/`, `diff-overlay.json`) but keeps `knowledge-graph.json`,
+`onboarding.md`, and `tours/` so they can be committed and shared.

@@ -1,0 +1,16 @@
+# Understand-Anything generates intermediate per-agent artifacts here while the
+# plugin assembles the final knowledge graph. Those intermediates are not
+# meant to be committed.
+intermediate/
+diff-overlay.json
+
+# The dashboard's local file-content endpoint cache.
+file-content.cache.json
+
+# Allow the canonical artifacts:
+#   knowledge-graph.json    — the assembled multi-agent graph
+#   onboarding.md           — /understand-onboard output
+#   tours/                  — /understand-dashboard guided tours
+!knowledge-graph.json
+!onboarding.md
+!tours/
