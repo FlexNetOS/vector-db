@@ -111,8 +111,8 @@ check_ruvllm_h10() {
   else
     fail "ruview-ruvllm-h10 hailo_ok not True on $label"
   fi
-  # gRPC port open — check from ruvultra via Tailscale (bound to TS IP, not loopback)
-  local ts_ip="${host#root@}"   # strip "root@" to get raw IP
+  # gRPC port open — check from ruvultra via Tailscale (works for root@ or genesis@ prefix)
+  local ts_ip="${host##*@}"   # strip everything up to and including @
   local open
   open=$(timeout 3 bash -c "echo > /dev/tcp/${ts_ip}/${grpc_port}" 2>&1 && echo open || echo closed)
   if [[ "$open" == "open" ]]; then
