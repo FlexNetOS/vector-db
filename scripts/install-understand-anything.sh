@@ -79,9 +79,9 @@ if [[ -d "$PRIMARY_DIR/.git" ]]; then
   log "updating existing clone at $PRIMARY_DIR"
   git -C "$PRIMARY_DIR" fetch --quiet origin "$UA_BRANCH"
   # Refuse to touch the directory if working tree, index, or untracked
-  # files are dirty. `git status --porcelain` is the comprehensive check;
-  # `git diff --quiet HEAD` alone misses staged-only and untracked
-  # changes, so it is not safe before a `reset --hard`.
+  # files are non-empty. `git status --porcelain` is the comprehensive
+  # dirty check; `git diff --quiet HEAD` alone would miss staged-only
+  # changes and untracked files, which is why we don't use it here.
   if [[ -n "$(git -C "$PRIMARY_DIR" status --porcelain)" ]]; then
     fail "$PRIMARY_DIR has uncommitted edits, staged changes, or untracked files; commit/stash/clean them, or remove the directory and re-run"
   fi
