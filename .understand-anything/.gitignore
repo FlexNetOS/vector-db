@@ -15,4 +15,9 @@
 !README.md
 !knowledge-graph.json
 !onboarding.md
+# Both `!tours/` and `!tours/**` are required: `!tours/` un-ignores the
+# directory entry so git descends into it; `!tours/**` un-ignores every file
+# *inside* it (otherwise the leading `*` rule still matches their filenames
+# at the deeper level and silently drops them).
 !tours/
+!tours/**
