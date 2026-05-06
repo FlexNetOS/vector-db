@@ -10,9 +10,11 @@
 # `sona`) + a SHAKE-256 witness anchor recorded by
 # `crates/prime-radiant/src/execution/gate.rs`.
 #
-# Stub: writes a single record into .attractor/runs/<stamp>.distill.jsonl
-# so the run history is auditable even before the real distillation
-# pipeline is wired.
+# Stub: writes a single JSONL record per invocation. Output dir is
+# $ATTRACTOR_RUN_DIR when set by the runner (so the record colocates
+# with that iteration's other artifacts) and falls back to the shared
+# .attractor/runs/ when invoked standalone via `attractor.sh node
+# distill`. Either way the audit trail is preserved.
 
 set -euo pipefail
 

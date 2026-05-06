@@ -99,6 +99,12 @@ hive-mind-prompt-*.txt
 # Intelligence data files (generated, not tracked)
 .claude/intelligence/data/*.json
 
+# GitNexus 1.x always installs 6 helper SKILLs at .claude/skills/gitnexus/
+# when `gitnexus analyze` runs (verified in dist/cli/ai-context.js). They
+# are auto-generated, repo-local, and useful at runtime, but not curated
+# content — keep them untracked.
+.claude/skills/gitnexus/
+
 # RuVector intelligence data
 .ruvector/
 .claude/statusline.sh
