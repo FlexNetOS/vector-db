@@ -148,3 +148,12 @@ agentdb.rvf
 agentdb.rvf.lock
 .kalshi
 bench_data/
+
+# MemPalace defensive guard. The bootstrap script (scripts/install-mempalace.sh)
+# deliberately does NOT run `mempalace init` against the repo root because per
+# upstream issue MemPalace/mempalace#185, `init <dir>` writes these two files
+# into <dir>. If a contributor runs `mempalace init .` in the repo root
+# anyway, these patterns keep the checkout clean. The palace database itself
+# lives at ~/.mempalace/ (per-user, NOT committed).
+/entities.json
+/mempalace.yaml

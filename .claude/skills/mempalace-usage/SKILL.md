@@ -50,11 +50,17 @@ scripts/install-mempalace.sh
 
 This is idempotent. It:
 1. Verifies Python 3.9+ is on PATH.
-2. `pipx install mempalace` (preferred) or `pip install --user mempalace`,
-   with `--index-url https://pypi.org/simple/` pinned in both paths so
-   a rogue `PIP_INDEX_URL` / `pip.conf` cannot redirect to a poisoned
-   mirror. Override with `MEMPALACE_INDEX_URL=...` only for verified
-   internal proxies.
+2. `pipx install mempalace` (preferred) or `pip install --user mempalace`.
+   To close the dependency-confusion window, the install subprocess in
+   both paths runs with:
+   - `--index-url https://pypi.org/simple/` (pin the primary index)
+   - `PIP_EXTRA_INDEX_URL=''` (strip any inherited extra-index env var)
+   - `PIP_CONFIG_FILE=/dev/null` + `--no-config` (ignore `pip.conf` /
+     `pip.ini` `extra-index-url` entries for this install)
+   `--index-url` *alone* would not be enough — it only overrides the
+   primary index and pip will still consult any configured extra index.
+   Override with `MEMPALACE_INDEX_URL=...` only if you have a verified
+   internal proxy.
 3. Surfaces the Claude Code plugin install command if `claude` is on PATH.
 
 **The bootstrap does NOT call `mempalace init`.** Per upstream issue
@@ -178,5 +184,8 @@ MemPalace ships under MIT. Upstream:
 - Docs:   https://mempalaceofficial.com/
 
 **Do NOT install from `mempalace.tech`** — that's a known impostor
-domain that distributes malware. The bootstrap script enforces this by
-pinning the PyPI source.
+domain that distributes malware. The bootstrap script's install
+subprocess pins `--index-url https://pypi.org/simple/`, clears
+`PIP_EXTRA_INDEX_URL`, and ignores `pip.conf` / `pip.ini` so that no
+ambient pip configuration can redirect resolution to a malicious
+mirror.
