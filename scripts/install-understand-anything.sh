@@ -8,7 +8,8 @@
 # implements the same install flow as the upstream INSTALL.md files for each
 # agent runtime, choosing whichever runtimes are present on this machine.
 #
-# Idempotent: safe to re-run. Re-runs `git pull` on the existing clone.
+# Idempotent: safe to re-run. Re-runs `git fetch` and fast-forwards the
+# existing clone; refuses to silently overwrite local edits/commits.
 # Cross-platform: supports Linux, macOS. PowerShell users should follow the
 # upstream Windows instructions in .codex/INSTALL.md.
 
@@ -75,13 +76,22 @@ PRIMARY_DIR="${PRIMARY_RUNTIME#*:}"
 mkdir -p "$(dirname "$PRIMARY_DIR")"
 
 if [[ -d "$PRIMARY_DIR/.git" ]]; then
-  log "updating existing clone at $PRIMARY_DIR (fast-forward only)"
+  log "updating existing clone at $PRIMARY_DIR"
   git -C "$PRIMARY_DIR" fetch --quiet origin "$UA_BRANCH"
-  # Use merge --ff-only so local modifications to the upstream tool are
-  # never silently destroyed. If the user has diverged, abort with a
-  # clear error so they can decide what to do.
-  if ! git -C "$PRIMARY_DIR" merge --ff-only --quiet "origin/$UA_BRANCH" 2>/dev/null; then
-    fail "$PRIMARY_DIR has local changes that conflict with origin/$UA_BRANCH; resolve manually or remove the directory and re-run"
+  # Refuse to touch the directory if working tree, index, or untracked
+  # files are non-empty. `git status --porcelain` is the comprehensive
+  # dirty check; `git diff --quiet HEAD` alone would miss staged-only
+  # changes and untracked files, which is why we don't use it here.
+  if [[ -n "$(git -C "$PRIMARY_DIR" status --porcelain)" ]]; then
+    fail "$PRIMARY_DIR has uncommitted edits, staged changes, or untracked files; commit/stash/clean them, or remove the directory and re-run"
+  fi
+  # Try fast-forward. If this fails, the user has local commits that
+  # diverged from origin/$UA_BRANCH (or upstream rebased). Either way we
+  # refuse to `reset --hard` because that would silently destroy local
+  # commits the user may want to keep. The user can remove the directory
+  # and re-run for a clean upstream sync.
+  if ! git -C "$PRIMARY_DIR" merge --ff-only --quiet "origin/$UA_BRANCH"; then
+    fail "$PRIMARY_DIR cannot fast-forward to origin/$UA_BRANCH (local commits diverged or upstream rebased); resolve manually or remove the directory and re-run"
   fi
 else
   log "cloning Understand-Anything to $PRIMARY_DIR"
