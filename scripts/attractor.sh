@@ -10,7 +10,7 @@
 # Usage:
 #   scripts/attractor.sh validate          # parse the DOT, report node order
 #   scripts/attractor.sh dry-run           # print what each node would do
-#   scripts/attractor.sh run [--once]      # execute one (or N) iterations
+#   scripts/attractor.sh run                # execute one iteration end-to-end
 #   scripts/attractor.sh node <identify|implement|validate|optimize|distill>
 #                                          # invoke a single node directly
 #                                          # (this is what the DOT's `command`
@@ -22,7 +22,10 @@
 #   1   user-error (bad args, missing DOT)
 #   2   validate node failed (recorded as fail trajectory; optimize skipped,
 #       distill still runs so ReasoningBank learns from the failure)
-#   3   identify, implement, optimize or distill failed (fail-fast)
+#   3   identify or implement failed (fail-fast: trajectory is broken before
+#       it can be evaluated, so distill is skipped to avoid corrupting the
+#       bank); OR optimize / distill failed (the trajectory ran end-to-end
+#       but a post-validate stage errored; distill captures whatever it can)
 #
 # This script is intentionally dependency-light: it does not require
 # graphviz unless `validate --strict` is requested. Node scripts may
@@ -153,12 +156,19 @@ cmd_node() {
     exec "$script"
 }
 
-# JSON-string-escape stdin → stdout. Handles \, ", and control chars per
-# RFC 8259. Used to embed each node's stdout (which is its JSON contract)
-# inside the JSONL audit record without breaking the parser.
+# JSON-string-escape stdin → stdout. The python3 path handles every
+# control character per RFC 8259 (json.dumps); the awk fallback covers
+# the cases that actually show up in node contracts (\, ", \t, \r,
+# embedded newlines) but NOT the rarer C0 controls like \b or \f.
+# Practical impact: nil — node scripts emit JSON, not raw form-feeds.
+#
+# CRITICAL: pass `$0` as a printf *argument*, never as the format
+# string. If a node emits `%s` or `%d`, putting it into the format
+# string would crash awk ("not enough arguments") and `set -euo
+# pipefail` would propagate the failure up, killing the run.
 json_escape() {
     python3 -c 'import json,sys;sys.stdout.write(json.dumps(sys.stdin.read()))' 2>/dev/null \
-        || awk 'BEGIN{printf "\""} {gsub(/\\/,"\\\\");gsub(/"/,"\\\"");gsub(/\t/,"\\t");gsub(/\r/,"\\r");printf (NR>1?"\\n":"")$0} END{printf "\""}'
+        || awk 'BEGIN{printf "\""} {gsub(/\\/,"\\\\");gsub(/"/,"\\\"");gsub(/\t/,"\\t");gsub(/\r/,"\\r");printf "%s", (NR>1?"\\n":"")$0} END{printf "\""}'
 }
 
 cmd_run() {
@@ -198,17 +208,32 @@ cmd_run() {
             # the streams (rather than `2>&1 | tee`) guarantees the LAST
             # non-empty line of $out_file is the node's JSON contract,
             # even if a future node emits late stderr diagnostics.
-            if "$script" | tee "$out_file" >&2; then
-                # `set -o pipefail` (line 35) means we only enter this
+            #
+            # Export ATTRACTOR_RUN_DIR so node scripts can drop sidecar
+            # logs (e.g. validate.stderr) into the per-run stdout dir,
+            # avoiding overwrites when two pipeline runs overlap.
+            if ATTRACTOR_RUN_DIR="$stdout_dir" "$script" | tee "$out_file" >&2; then
+                # `set -o pipefail` (set at the top of this file) means we only enter this
                 # branch when every stage exits 0; PIPESTATUS[0] is
                 # therefore always 0 here. The branch below handles
                 # failures (and recovers PIPESTATUS to distinguish a
                 # node failure from the rare case of tee failing).
                 ok "$node passed"
             else
+                # Two failure modes land here:
+                #   * node script exited non-zero  -> PIPESTATUS[0] != 0
+                #   * node passed but tee failed   -> PIPESTATUS[0] == 0,
+                #     PIPESTATUS[1] != 0 (e.g. disk full)
+                # The audit record below uses status="fail" in either
+                # case, so the postmortem is honest even when rc==0.
                 rc=${PIPESTATUS[0]:-1}
+                if [ "$rc" -eq 0 ]; then
+                    rc=${PIPESTATUS[1]:-1}
+                    err "$node passed but tee failed (rc=$rc)"
+                else
+                    err "$node failed (rc=$rc)"
+                fi
                 status="fail"
-                err "$node failed (rc=$rc)"
             fi
         else
             warn "no node script at $script -- recording as 'stub'"

@@ -44,7 +44,13 @@ fi
 # Capture cargo's stdout+stderr to a sidecar build log so the operator
 # (and the self-learning loop's identify node) can diagnose failures.
 # This script's own stdout stays the pure JSON contract.
-build_log="${ROOT}/.attractor/runs/validate.stderr"
+#
+# When invoked by `scripts/attractor.sh run`, the runner exports
+# ATTRACTOR_RUN_DIR pointing at the per-run stdout dir, which gives
+# every concurrent or back-to-back pipeline run its own isolated
+# build_log. When invoked standalone (`scripts/attractor.sh node
+# validate`), we fall back to the fixed runs/ path.
+build_log="${ATTRACTOR_RUN_DIR:-${ROOT}/.attractor/runs}/validate.stderr"
 mkdir -p "$(dirname "$build_log")"
 
 # JSON-escape the build_log path before embedding in the contract so a
