@@ -17,11 +17,17 @@
 set -euo pipefail
 
 readonly ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
-readonly RUNS_DIR="$ROOT/.attractor/runs"
-mkdir -p "$RUNS_DIR"
+
+# When invoked by `scripts/attractor.sh run`, ATTRACTOR_RUN_DIR points at
+# the per-run stdout dir; landing the distill record there keeps every
+# artifact for that iteration co-located. Standalone invocation
+# (`scripts/attractor.sh node distill`) falls back to the shared runs/
+# dir so the audit trail is still preserved.
+readonly OUT_DIR="${ATTRACTOR_RUN_DIR:-$ROOT/.attractor/runs}"
+mkdir -p "$OUT_DIR"
 
 stamp="$(date -u +%Y%m%dT%H%M%SZ)"
-out="$RUNS_DIR/${stamp}.distill.jsonl"
+out="$OUT_DIR/${stamp}.distill.jsonl"
 printf '{"distilled":true,"stub":true,"stamp":"%s"}\n' "$stamp" > "$out"
 
 # JSON-escape the output path. If $ROOT contains a quote or backslash
