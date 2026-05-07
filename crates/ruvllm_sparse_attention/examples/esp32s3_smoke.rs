@@ -73,26 +73,38 @@ pub fn run_smoke() -> Result<(), &'static str> {
     let v = Tensor3::zeros(seq, heads, dim);
 
     let out = attn.forward(&q, &k, &v).map_err(|_| "forward failed")?;
-    if !is_all_finite(&out.data) { return Err("forward produced non-finite output"); }
+    if !is_all_finite(&out.data) {
+        return Err("forward produced non-finite output");
+    }
 
     // 2. FastGRNN-gated forward.
     let gate = FastGrnnGate::new(dim, 16);
-    let gated = attn.forward_gated_with_fastgrnn(&q, &k, &v, &gate, 8)
+    let gated = attn
+        .forward_gated_with_fastgrnn(&q, &k, &v, &gate, 8)
         .map_err(|_| "gated forward failed")?;
-    if !is_all_finite(&gated.data) { return Err("gated forward produced non-finite output"); }
+    if !is_all_finite(&gated.data) {
+        return Err("gated forward produced non-finite output");
+    }
 
     // 3. Single decode step against an FP16 KV cache (when fp16 enabled).
     #[cfg(feature = "fp16")]
     {
         use ruvllm_sparse_attention::KvCacheF16;
-        let mut cache = KvCacheF16::new(/*cap*/ 256, /*kv_heads*/ heads,
-                                        /*dim*/ dim, /*block_size*/ 8);
+        let mut cache = KvCacheF16::new(
+            /*cap*/ 256, /*kv_heads*/ heads, /*dim*/ dim, /*block_size*/ 8,
+        );
         let one_k = Tensor3::zeros(1, heads, dim);
         let one_v = Tensor3::zeros(1, heads, dim);
-        cache.try_append(&one_k, &one_v).map_err(|_| "kv append failed")?;
+        cache
+            .try_append(&one_k, &one_v)
+            .map_err(|_| "kv append failed")?;
         let q_step = Tensor3::zeros(1, heads, dim);
-        let step = cache.decode_step_f16(&attn, &q_step).map_err(|_| "decode_step_f16 failed")?;
-        if !is_all_finite(&step.data) { return Err("decode_step produced non-finite output"); }
+        let step = cache
+            .decode_step_f16(&attn, &q_step)
+            .map_err(|_| "decode_step_f16 failed")?;
+        if !is_all_finite(&step.data) {
+            return Err("decode_step produced non-finite output");
+        }
     }
 
     Ok(())
@@ -124,10 +136,14 @@ fn main() {
 #[allow(dead_code)]
 fn run_on_target() -> ! {
     let _ = run_smoke();
-    loop { core::hint::spin_loop(); }
+    loop {
+        core::hint::spin_loop();
+    }
 }
 
 // Keep `Vec` import live in the bare-metal config (used inside run_smoke).
 #[cfg(target_os = "none")]
 #[allow(dead_code)]
-fn _keep_vec_import_alive() -> Vec<u8> { Vec::new() }
+fn _keep_vec_import_alive() -> Vec<u8> {
+    Vec::new()
+}

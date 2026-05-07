@@ -42,8 +42,8 @@ fn main() {
     };
     let attn = SubquadraticSparseAttention::new(cfg.clone()).unwrap();
     let heads = 4;
-    let dim   = 32;
-    let gate  = FastGrnnGate::new(dim, 16);
+    let dim = 32;
+    let gate = FastGrnnGate::new(dim, 16);
     // Tight gating budget — at seq ≥ 1024, log_stride ≈ 10+ candidates
     // per position, so gate_top_k=8 demonstrates the linear regime.
     let gate_top_k = 8;
@@ -64,27 +64,39 @@ fn main() {
 
         // Warm-up to amortize page faults / cache fill.
         let _ = attn.forward(&q, &k, &v).unwrap();
-        let _ = attn.forward_gated_with_fastgrnn(&q, &k, &v, &gate, gate_top_k).unwrap();
+        let _ = attn
+            .forward_gated_with_fastgrnn(&q, &k, &v, &gate, gate_top_k)
+            .unwrap();
 
         let t0 = Instant::now();
         let _ = attn.forward(&q, &k, &v).unwrap();
         let ungated_ms = t0.elapsed().as_secs_f64() * 1000.0;
 
         let t0 = Instant::now();
-        let _ = attn.forward_gated_with_fastgrnn(&q, &k, &v, &gate, gate_top_k).unwrap();
+        let _ = attn
+            .forward_gated_with_fastgrnn(&q, &k, &v, &gate, gate_top_k)
+            .unwrap();
         let gated_ms = t0.elapsed().as_secs_f64() * 1000.0;
 
         let per_n_un = ungated_ms / seq as f64;
-        let per_n_g  = gated_ms / seq as f64;
+        let per_n_g = gated_ms / seq as f64;
 
         println!(
             "{:>6} | {:>8.2} | {:>8.2} | {:>10.4} | {:>10.4} | {:>5.2}x",
-            seq, ungated_ms, gated_ms, per_n_un, per_n_g, ungated_ms / gated_ms
+            seq,
+            ungated_ms,
+            gated_ms,
+            per_n_un,
+            per_n_g,
+            ungated_ms / gated_ms
         );
     }
 
     println!();
     println!("Near-linear: gated/N stays roughly flat across sequence lengths");
-    println!("(gate_top_k = {} is constant in seq), while ungated/N grows", gate_top_k);
+    println!(
+        "(gate_top_k = {} is constant in seq), while ungated/N grows",
+        gate_top_k
+    );
     println!("logarithmically with the log-stride candidate scheme.");
 }

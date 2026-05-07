@@ -10735,10 +10735,11 @@ dependencies = [
 
 [[package]]
 name = "ruvllm_sparse_attention"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "criterion 0.5.1",
  "half",
+ "libm",
  "rand 0.8.5",
  "rayon",
 ]

@@ -20,14 +20,14 @@
 //! to the caller (this crate is stateless w.r.t. session-level
 //! anomaly baselines — it just produces salience).
 
+#[cfg(not(feature = "std"))]
+use crate::no_std_math::F32Ext as _;
 use crate::tensor::Tensor3;
 use alloc::format;
 use alloc::string::String;
 use alloc::vec;
 use alloc::vec::Vec;
 use core::cmp::Ordering;
-#[cfg(not(feature = "std"))]
-use crate::no_std_math::F32Ext as _;
 
 /// Default gate hidden width — small enough that FastGRNN forward is
 /// negligible compared to attention, large enough for useful temporal
@@ -65,18 +65,18 @@ impl FastGrnnGate {
             (r / u32::MAX as f32 - 0.5) * 2.0 * scale * 0.1
         };
         let n_in_h = input_dim * hidden_dim;
-        let n_h_h  = hidden_dim * hidden_dim;
+        let n_h_h = hidden_dim * hidden_dim;
         Self {
             input_dim,
             hidden_dim,
-            w_gate:    (0..n_in_h).map(|i| seed_w(i)).collect(),
-            u_gate:    (0..n_h_h ).map(|i| seed_w(i + 1000)).collect(),
-            w_update:  (0..n_in_h).map(|i| seed_w(i + 2000)).collect(),
-            u_update:  (0..n_h_h ).map(|i| seed_w(i + 3000)).collect(),
-            bias_gate:   vec![0.0; hidden_dim],
+            w_gate: (0..n_in_h).map(|i| seed_w(i)).collect(),
+            u_gate: (0..n_h_h).map(|i| seed_w(i + 1000)).collect(),
+            w_update: (0..n_in_h).map(|i| seed_w(i + 2000)).collect(),
+            u_update: (0..n_h_h).map(|i| seed_w(i + 3000)).collect(),
+            bias_gate: vec![0.0; hidden_dim],
             bias_update: vec![0.0; hidden_dim],
             zeta: 1.0,
-            nu:   0.0,
+            nu: 0.0,
         }
     }
 
@@ -87,24 +87,46 @@ impl FastGrnnGate {
     pub fn from_weights(
         input_dim: usize,
         hidden_dim: usize,
-        w_gate: Vec<f32>, u_gate: Vec<f32>,
-        w_update: Vec<f32>, u_update: Vec<f32>,
-        bias_gate: Vec<f32>, bias_update: Vec<f32>,
-        zeta: f32, nu: f32,
+        w_gate: Vec<f32>,
+        u_gate: Vec<f32>,
+        w_update: Vec<f32>,
+        u_update: Vec<f32>,
+        bias_gate: Vec<f32>,
+        bias_update: Vec<f32>,
+        zeta: f32,
+        nu: f32,
     ) -> Result<Self, String> {
         let n_in_h = input_dim * hidden_dim;
-        let n_h_h  = hidden_dim * hidden_dim;
-        if w_gate.len()   != n_in_h { return Err(format!("w_gate len {} != {}", w_gate.len(), n_in_h)); }
-        if u_gate.len()   != n_h_h  { return Err(format!("u_gate len {} != {}", u_gate.len(), n_h_h)); }
-        if w_update.len() != n_in_h { return Err(format!("w_update len {} != {}", w_update.len(), n_in_h)); }
-        if u_update.len() != n_h_h  { return Err(format!("u_update len {} != {}", u_update.len(), n_h_h)); }
-        if bias_gate.len() != hidden_dim   { return Err("bias_gate len != hidden_dim".into()); }
-        if bias_update.len() != hidden_dim { return Err("bias_update len != hidden_dim".into()); }
+        let n_h_h = hidden_dim * hidden_dim;
+        if w_gate.len() != n_in_h {
+            return Err(format!("w_gate len {} != {}", w_gate.len(), n_in_h));
+        }
+        if u_gate.len() != n_h_h {
+            return Err(format!("u_gate len {} != {}", u_gate.len(), n_h_h));
+        }
+        if w_update.len() != n_in_h {
+            return Err(format!("w_update len {} != {}", w_update.len(), n_in_h));
+        }
+        if u_update.len() != n_h_h {
+            return Err(format!("u_update len {} != {}", u_update.len(), n_h_h));
+        }
+        if bias_gate.len() != hidden_dim {
+            return Err("bias_gate len != hidden_dim".into());
+        }
+        if bias_update.len() != hidden_dim {
+            return Err("bias_update len != hidden_dim".into());
+        }
         Ok(Self {
-            input_dim, hidden_dim,
-            w_gate, u_gate, w_update, u_update,
-            bias_gate, bias_update,
-            zeta, nu,
+            input_dim,
+            hidden_dim,
+            w_gate,
+            u_gate,
+            w_update,
+            u_update,
+            bias_gate,
+            bias_update,
+            zeta,
+            nu,
         })
     }
 
@@ -136,7 +158,9 @@ impl FastGrnnGate {
             let mut pooled = vec![0.0f32; k.dim];
             for h in 0..k.heads {
                 let row = k.row(i, h);
-                for d in 0..k.dim { pooled[d] += row[d] * inv_h; }
+                for d in 0..k.dim {
+                    pooled[d] += row[d] * inv_h;
+                }
             }
             tokens.push(pooled);
         }
@@ -161,7 +185,9 @@ impl FastGrnnGate {
     /// the current token).
     pub fn keep_mask_quantile(salience: &[f32], quantile: f32) -> Vec<bool> {
         let n = salience.len();
-        if n == 0 { return Vec::new(); }
+        if n == 0 {
+            return Vec::new();
+        }
         let q = quantile.clamp(0.0, 1.0);
         let mut sorted: Vec<f32> = salience.iter().copied().collect();
         // partial_cmp can return None for NaN — sort treating NaN as smallest.
@@ -177,14 +203,23 @@ impl FastGrnnGate {
     pub fn keep_mask_top_k(salience: &[f32], k: usize) -> Vec<bool> {
         let n = salience.len();
         let mut keep = vec![false; n];
-        if k == 0 { return keep; }
-        if k >= n { keep.iter_mut().for_each(|b| *b = true); return keep; }
+        if k == 0 {
+            return keep;
+        }
+        if k >= n {
+            keep.iter_mut().for_each(|b| *b = true);
+            return keep;
+        }
         let mut idx: Vec<usize> = (0..n).collect();
         idx.sort_by(|&a, &b| {
-            salience[b].partial_cmp(&salience[a]).unwrap_or(Ordering::Equal)
+            salience[b]
+                .partial_cmp(&salience[a])
+                .unwrap_or(Ordering::Equal)
                 .then(a.cmp(&b))
         });
-        for &i in idx.iter().take(k) { keep[i] = true; }
+        for &i in idx.iter().take(k) {
+            keep[i] = true;
+        }
         keep
     }
 
@@ -192,10 +227,10 @@ impl FastGrnnGate {
 
     fn step(&self, x: &[f32], h: &[f32]) -> Vec<f32> {
         let d = self.hidden_dim;
-        let mut gate   = vec![0.0f32; d];
+        let mut gate = vec![0.0f32; d];
         let mut update = vec![0.0f32; d];
-        matmul_add(&self.w_gate,   x, &mut gate,   self.input_dim);
-        matmul_add(&self.u_gate,   h, &mut gate,   self.hidden_dim);
+        matmul_add(&self.w_gate, x, &mut gate, self.input_dim);
+        matmul_add(&self.u_gate, h, &mut gate, self.hidden_dim);
         matmul_add(&self.w_update, x, &mut update, self.input_dim);
         matmul_add(&self.u_update, h, &mut update, self.hidden_dim);
         let mut h_new = vec![0.0f32; d];
@@ -223,7 +258,9 @@ fn matmul_add(weights: &[f32], input: &[f32], result: &mut [f32], cols: usize) {
 }
 
 #[inline]
-fn sigmoid(x: f32) -> f32 { 1.0 / (1.0 + (-x).exp()) }
+fn sigmoid(x: f32) -> f32 {
+    1.0 / (1.0 + (-x).exp())
+}
 
 #[inline]
 fn l2_norm(v: &[f32]) -> f32 {
@@ -248,9 +285,7 @@ mod tests {
     #[test]
     fn test_gate_score_sequence_deterministic() {
         let g = FastGrnnGate::new(4, 8);
-        let tokens: Vec<Vec<f32>> = (0..16)
-            .map(|t| vec![t as f32 * 0.05; 4])
-            .collect();
+        let tokens: Vec<Vec<f32>> = (0..16).map(|t| vec![t as f32 * 0.05; 4]).collect();
         let a = g.score_sequence(&tokens);
         let b = g.score_sequence(&tokens);
         assert_eq!(a, b);
@@ -264,7 +299,11 @@ mod tests {
         let g = FastGrnnGate::new(4, 8);
         let tokens = vec![vec![0.0f32; 4]; 32];
         let s = g.score_sequence(&tokens);
-        assert!(s.iter().all(|&v| v < 0.1), "zero input should keep salience near zero, got {:?}", s);
+        assert!(
+            s.iter().all(|&v| v < 0.1),
+            "zero input should keep salience near zero, got {:?}",
+            s
+        );
     }
 
     #[test]
@@ -292,29 +331,40 @@ mod tests {
     #[test]
     fn test_keep_mask_top_k_edges() {
         let salience = vec![0.1, 0.2, 0.3];
-        assert!(FastGrnnGate::keep_mask_top_k(&salience, 0).iter().all(|&b| !b));
-        assert!(FastGrnnGate::keep_mask_top_k(&salience, 99).iter().all(|&b| b));
+        assert!(FastGrnnGate::keep_mask_top_k(&salience, 0)
+            .iter()
+            .all(|&b| !b));
+        assert!(FastGrnnGate::keep_mask_top_k(&salience, 99)
+            .iter()
+            .all(|&b| b));
     }
 
     #[test]
     fn test_from_weights_validates_shapes() {
         let r = FastGrnnGate::from_weights(
-            4, 8,
-            vec![0.0; 32],   // 4*8 ok
-            vec![0.0; 64],   // 8*8 ok
+            4,
+            8,
+            vec![0.0; 32], // 4*8 ok
+            vec![0.0; 64], // 8*8 ok
             vec![0.0; 32],
             vec![0.0; 64],
             vec![0.0; 8],
             vec![0.0; 8],
-            1.0, 0.0,
+            1.0,
+            0.0,
         );
         assert!(r.is_ok());
         let bad = FastGrnnGate::from_weights(
-            4, 8,
-            vec![0.0; 7],    // wrong
-            vec![0.0; 64], vec![0.0; 32], vec![0.0; 64],
-            vec![0.0; 8], vec![0.0; 8],
-            1.0, 0.0,
+            4,
+            8,
+            vec![0.0; 7], // wrong
+            vec![0.0; 64],
+            vec![0.0; 32],
+            vec![0.0; 64],
+            vec![0.0; 8],
+            vec![0.0; 8],
+            1.0,
+            0.0,
         );
         assert!(bad.is_err());
     }
@@ -323,7 +373,7 @@ mod tests {
     fn test_step_with_hidden_advances_state() {
         let g = FastGrnnGate::new(4, 8);
         let h0 = vec![0.0; 8];
-        let x  = vec![0.5; 4];
+        let x = vec![0.5; 4];
         let (h1, _) = g.step_with_hidden(&x, &h0);
         let (h2, _) = g.step_with_hidden(&x, &h1);
         // h1 should differ from h0; h2 from h1.

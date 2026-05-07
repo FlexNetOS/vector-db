@@ -20,10 +20,22 @@ pub mod no_std_math {
         fn powi(self, n: i32) -> Self;
     }
     impl F32Ext for f32 {
-        #[inline] fn exp(self) -> Self { libm::expf(self) }
-        #[inline] fn sqrt(self) -> Self { libm::sqrtf(self) }
-        #[inline] fn tanh(self) -> Self { libm::tanhf(self) }
-        #[inline] fn powi(self, n: i32) -> Self { libm::powf(self, n as f32) }
+        #[inline]
+        fn exp(self) -> Self {
+            libm::expf(self)
+        }
+        #[inline]
+        fn sqrt(self) -> Self {
+            libm::sqrtf(self)
+        }
+        #[inline]
+        fn tanh(self) -> Self {
+            libm::tanhf(self)
+        }
+        #[inline]
+        fn powi(self, n: i32) -> Self {
+            libm::powf(self, n as f32)
+        }
     }
 }
 
@@ -32,12 +44,12 @@ pub mod fastgrnn_gate;
 pub mod model;
 pub mod tensor;
 
+#[cfg(feature = "fp16")]
+pub use attention::KvCacheF16;
 pub use attention::{
     dense_attention, AttentionBackend, AttentionError, IncrementalLandmarks, KvCache,
     SparseAttentionConfig, SubquadraticSparseAttention,
 };
-#[cfg(feature = "fp16")]
-pub use attention::KvCacheF16;
 pub use fastgrnn_gate::{FastGrnnGate, DEFAULT_HIDDEN_DIM as FASTGRNN_DEFAULT_HIDDEN_DIM};
 pub use model::{RuvLlmSparseBlock, RuvLlmSparseBlockConfig};
 pub use tensor::Tensor3;
