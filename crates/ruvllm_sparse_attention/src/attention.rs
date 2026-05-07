@@ -1,6 +1,15 @@
 use crate::tensor::Tensor3;
+use alloc::collections::BTreeSet;
+use alloc::format;
+use alloc::string::{String, ToString};
+use alloc::vec;
+use alloc::vec::Vec;
+use core::cmp::Ordering;
+use core::fmt::{Display, Formatter};
+#[cfg(feature = "std")]
 use std::error::Error;
-use std::fmt::{Display, Formatter};
+#[cfg(not(feature = "std"))]
+use crate::no_std_math::F32Ext as _;
 
 #[derive(Debug, Clone)]
 pub enum AttentionError {
@@ -13,7 +22,7 @@ pub enum AttentionError {
 }
 
 impl Display for AttentionError {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+    fn fmt(&self, f: &mut Formatter<'_>) -> core::fmt::Result {
         match self {
             AttentionError::ShapeMismatch { q, k, v } => write!(
                 f,
@@ -25,6 +34,7 @@ impl Display for AttentionError {
     }
 }
 
+#[cfg(feature = "std")]
 impl Error for AttentionError {}
 
 pub trait AttentionBackend {
@@ -338,7 +348,7 @@ impl SubquadraticSparseAttention {
         // Pre-compute "is in local window of i" predicate as a closure;
         // window membership is symmetric for non-causal so depends on i.
         // global membership is independent of i.
-        let global_set: std::collections::HashSet<usize> =
+        let global_set: BTreeSet<usize> =
             self.config.global_tokens.iter().copied().collect();
         let in_window = |i: usize, j: usize| -> bool {
             let lo = i.saturating_sub(self.config.window);
@@ -922,7 +932,7 @@ impl KvCache {
             .min_by(|&a, &b| {
                 attention_scores[a]
                     .partial_cmp(&attention_scores[b])
-                    .unwrap_or(std::cmp::Ordering::Equal)
+                    .unwrap_or(Ordering::Equal)
             });
 
         let victim = match victim {
@@ -2598,7 +2608,7 @@ mod tests {
         let mut filtered_total = 0usize;
         let mut seen = vec![0usize; seq];
         let mut tokc = Vec::<usize>::new();
-        let global_set: std::collections::HashSet<usize> =
+        let global_set: BTreeSet<usize> =
             cfg.global_tokens.iter().copied().collect();
         for i in 0..seq {
             let stamp = i + 1;

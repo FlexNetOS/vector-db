@@ -21,6 +21,13 @@
 //! anomaly baselines — it just produces salience).
 
 use crate::tensor::Tensor3;
+use alloc::format;
+use alloc::string::String;
+use alloc::vec;
+use alloc::vec::Vec;
+use core::cmp::Ordering;
+#[cfg(not(feature = "std"))]
+use crate::no_std_math::F32Ext as _;
 
 /// Default gate hidden width — small enough that FastGRNN forward is
 /// negligible compared to attention, large enough for useful temporal
@@ -158,7 +165,7 @@ impl FastGrnnGate {
         let q = quantile.clamp(0.0, 1.0);
         let mut sorted: Vec<f32> = salience.iter().copied().collect();
         // partial_cmp can return None for NaN — sort treating NaN as smallest.
-        sorted.sort_by(|a, b| a.partial_cmp(b).unwrap_or(std::cmp::Ordering::Equal));
+        sorted.sort_by(|a, b| a.partial_cmp(b).unwrap_or(Ordering::Equal));
         let idx = ((n as f32) * q) as usize;
         let threshold = sorted[idx.min(n - 1)];
         salience.iter().map(|&s| s >= threshold).collect()
@@ -174,7 +181,7 @@ impl FastGrnnGate {
         if k >= n { keep.iter_mut().for_each(|b| *b = true); return keep; }
         let mut idx: Vec<usize> = (0..n).collect();
         idx.sort_by(|&a, &b| {
-            salience[b].partial_cmp(&salience[a]).unwrap_or(std::cmp::Ordering::Equal)
+            salience[b].partial_cmp(&salience[a]).unwrap_or(Ordering::Equal)
                 .then(a.cmp(&b))
         });
         for &i in idx.iter().take(k) { keep[i] = true; }
