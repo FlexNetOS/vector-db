@@ -22,12 +22,50 @@ cd "${REPO_ROOT}"
 
 log() { printf '\033[1;34m[devin-setup]\033[0m %s\n' "$*"; }
 
+install_github_cli() {
+  if command -v gh >/dev/null 2>&1; then
+    return
+  fi
+
+  if sudo apt-get install -y gh; then
+    return
+  fi
+
+  log "Installing GitHub CLI from cli.github.com apt repository"
+  sudo mkdir -p /etc/apt/keyrings
+  curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | \
+    sudo dd of=/etc/apt/keyrings/githubcli-archive-keyring.gpg >/dev/null
+  sudo chmod go+r /etc/apt/keyrings/githubcli-archive-keyring.gpg
+  echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | \
+    sudo tee /etc/apt/sources.list.d/github-cli.list >/dev/null
+  sudo apt-get update
+  sudo apt-get install -y gh
+}
+
 # 1. System dependencies. `libfontconfig1-dev` is required by the fontconfig
 #    crate transitively pulled in by ruvector-cnn / plotters; CI installs it at
-#    `.github/workflows/ci.yml:39`.
-log "Installing system dependencies (libfontconfig1-dev)"
+#    `.github/workflows/ci.yml:39`. `gh` is required by the release/publish
+#    scripts and PR workflows that create or inspect pull requests.
+log "Installing system dependencies (libfontconfig1-dev, gh)"
 sudo apt-get update
 sudo apt-get install -y libfontconfig1-dev
+install_github_cli
+
+# Keep a fresh Devin checkout pointed at the fork/base repo and the upstream
+# PR source. Idempotent: preserves the conventional remote names while fixing
+# empty or stale clones. Authentication is intentionally not forced here;
+# contributors can run `gh auth login` or set `GH_TOKEN` when they need to push.
+log "Configuring git remotes"
+git remote add origin https://github.com/FlexNetOS/ruvector.git 2>/dev/null || \
+  git remote set-url origin https://github.com/FlexNetOS/ruvector.git
+git remote add upstream https://github.com/ruvnet/RuVector.git 2>/dev/null || \
+  git remote set-url upstream https://github.com/ruvnet/RuVector.git
+
+if gh auth status >/dev/null 2>&1; then
+  log "GitHub CLI authenticated"
+else
+  log "GitHub CLI installed but not authenticated; run 'gh auth login' or set GH_TOKEN before pushing/creating PRs"
+fi
 
 # 2. Rust toolchain. The workspace declares `rust-version = "1.77"` as a
 #    minimum (edition 2021); CI uses stable. Add rustfmt and clippy components.

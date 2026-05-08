@@ -5,7 +5,11 @@ build, test, lint, and format the ruvector workspace correctly. The CI
 workflow at `.github/workflows/ci.yml` is the source of truth; the commands
 below mirror it.
 
-Bootstrap a fresh environment with [`./setup.sh`](./setup.sh).
+Bootstrap a fresh environment with [`./setup.sh`](./setup.sh). The setup
+script installs GitHub CLI (`gh`), configures `origin` as
+`https://github.com/FlexNetOS/ruvector.git`, configures `upstream` as
+`https://github.com/ruvnet/RuVector.git`, and then leaves authentication to
+`gh auth login` or `GH_TOKEN` so CI/Devin secrets stay explicit.
 
 ## Workspace shape
 

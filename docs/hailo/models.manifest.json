@@ -1,0 +1,46 @@
+{
+  "schema_version": 1,
+  "models": [
+    {
+      "id": "all-minilm-l6-v2-cpu-fallback",
+      "description": "Host CPU fallback artifacts for sentence-transformers/all-MiniLM-L6-v2 used by ruvector-hailo when a HEF is unavailable.",
+      "license": "Apache-2.0",
+      "default_install_dir": "/var/lib/ruvector-hailo/models/all-minilm-l6-v2",
+      "artifacts": [
+        {
+          "file": "model.safetensors",
+          "url": "https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2/resolve/main/model.safetensors",
+          "sha256": "53aa51172d142c89d9012cce15ae4d6cc0ca6895895114379cacb4fab128d9db",
+          "size": "90.9MB"
+        },
+        {
+          "file": "tokenizer.json",
+          "url": "https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2/resolve/main/tokenizer.json",
+          "sha256": "be50c3628f2bf5bb5e3a7f17b1f74611b2561a3a27eeab05e5aa30f411572037",
+          "size": "466KB"
+        },
+        {
+          "file": "config.json",
+          "url": "https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2/resolve/main/config.json",
+          "sha256": "953f9c0d463486b10a6871cc2fd59f223b2c70184f49815e7efbcab5d8908b41",
+          "size": "612B"
+        }
+      ]
+    },
+    {
+      "id": "all-minilm-l6-v2-hailo8-encoder-hef",
+      "description": "Compiled Hailo-8 encoder HEF distributed as a GitHub Release asset, not committed to the repository.",
+      "license": "Apache-2.0 model weights; Hailo HEF generated artifact subject to Hailo toolchain terms",
+      "default_install_dir": "/var/lib/ruvector-hailo/models/all-minilm-l6-v2",
+      "artifacts": [
+        {
+          "file": "model.hef",
+          "release_tag": "hailo-encoder-v0.1.0-iter156b",
+          "url": "https://github.com/FlexNetOS/ruvector/releases/download/hailo-encoder-v0.1.0-iter156b/encoder.hef",
+          "sha256": "cdbc892765d3099f74723ee6c28ab3f0daade2358827823ba08d2969b07ebd40",
+          "size": "release-asset"
+        }
+      ]
+    }
+  ]
+}

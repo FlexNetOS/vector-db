@@ -157,3 +157,38 @@ bench_data/
 # lives at ~/.mempalace/ (per-user, NOT committed).
 /entities.json
 /mempalace.yaml
+
+
+# Generated firmware, HEF, and model artifacts. Keep source/manifests in git;
+# publish build outputs through GitHub Releases, GHCR, or Actions artifacts.
+*.bin
+*.elf
+*.uf2
+*.hex
+*.hef
+*.safetensors
+*.onnx
+*.onnx.data
+*.pt
+*.pth
+*.ckpt
+dist/
+artifacts/
+
+# Hailo Dataflow Compiler droppings — `hailo` CLI writes these into
+# whatever cwd it's invoked from, even with --output-dir set. Always
+# transient so any tree they land in should ignore them.
+acceleras.log
+hailo_sdk.client.log
+
+# Iter 228 — per-crate Cargo.lock files for the hailo workspace members
+# (post iter-219 workspace rejoin). The parent workspace's Cargo.lock
+# is canonical; cargo regenerates these locally as a side effect of
+# `cargo fmt --manifest-path` etc., but they should never be committed.
+crates/ruvector-hailo/Cargo.lock
+crates/ruvector-hailo-cluster/Cargo.lock
+crates/hailort-sys/Cargo.lock
+crates/ruvector-mmwave/Cargo.lock
+crates/ruos-thermal/Cargo.lock
+examples/esp32-mmwave-sensor/Cargo.lock
+vendor/cognitum-one/Cargo.lock
