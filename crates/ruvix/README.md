@@ -567,8 +567,8 @@ crates/ruvix/
 
 - **[RuVector](https://github.com/FlexNetOS/ruvector)**: The self-learning vector database that RuVix powers
 - **[RVF](../rvf/)**: Cognitive container format for self-booting vector files
-- **[AgentDB](https://github.com/ruvnet/agentdb)**: Long-term memory for AI agents
-- **[Claude-Flow](https://github.com/ruvnet/claude-flow)**: Multi-agent orchestration for Claude Code
+- **[AgentDB](https://github.com/FlexNetOS/agentdb)**: Long-term memory for AI agents
+- **[Claude-Flow](https://github.com/FlexNetOS/claude-flow)**: Multi-agent orchestration for Claude Code
 
 ---
 

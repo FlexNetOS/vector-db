@@ -325,6 +325,6 @@ Training data follows the same license as RuvLTRA (MIT/Apache-2.0).
 
 ## References
 
-- Claude Flow Documentation: https://github.com/ruvnet/claude-flow
+- Claude Flow Documentation: https://github.com/FlexNetOS/claude-flow
 - RuvLTRA Architecture: `../crates/ruvllm/README.md`
 - SONA Learning: `../crates/sona/README.md`

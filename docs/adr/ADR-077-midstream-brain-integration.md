@@ -25,7 +25,7 @@ Despite this sophistication, several capability gaps remain:
 
 6. **No high-performance brain-to-brain transport**. Federation currently uses HTTP/1.1 REST via reqwest. A future multi-brain mesh needs multiplexed, 0-RTT transport for real-time knowledge synchronization.
 
-The [midstream platform](https://github.com/ruvnet/midstream) provides six crates that address each gap precisely.
+The [midstream platform](https://github.com/FlexNetOS/midstream) provides six crates that address each gap precisely.
 
 ## 2. Decision
 

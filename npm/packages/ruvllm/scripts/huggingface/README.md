@@ -527,7 +527,7 @@ Apache 2.0 - Free for commercial and personal use.
 ## 🔗 Links
 
 - [GitHub Repository](https://github.com/FlexNetOS/ruvector)
-- [Claude Flow](https://github.com/ruvnet/claude-flow)
+- [Claude Flow](https://github.com/FlexNetOS/claude-flow)
 - [Documentation](https://github.com/FlexNetOS/ruvector/tree/main/docs)
 - [Training Code](https://github.com/FlexNetOS/ruvector/tree/main/crates/ruvllm/src/training)
 - [NPM Package](https://www.npmjs.com/package/@ruvector/ruvllm)

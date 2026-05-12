@@ -54,4 +54,4 @@ cargo run --release -p ruvector-decompiler --example run_on_cli -- \
   $(npm root -g)/@anthropic-ai/claude-code/cli.js --output-dir ./decompiled
 ```
 
-Or download: [github.com/ruvnet/rudevolution/releases/tag/v0.1.0-claude-code-v2.1.91](https://github.com/ruvnet/rudevolution/releases/tag/v0.1.0-claude-code-v2.1.91)
+Or download: [github.com/FlexNetOS/rudevolution/releases/tag/v0.1.0-claude-code-v2.1.91](https://github.com/FlexNetOS/rudevolution/releases/tag/v0.1.0-claude-code-v2.1.91)

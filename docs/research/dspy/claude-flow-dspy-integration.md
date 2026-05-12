@@ -824,7 +824,7 @@ main().catch(console.error);
 - **Comprehensive Research:** See `docs/research/dspy-ts-comprehensive-research.md`
 - **Quick Start:** See `docs/research/dspy-ts-quick-start-guide.md`
 - **Ax Documentation:** https://axllm.dev/
-- **Claude-Flow Docs:** https://github.com/ruvnet/claude-flow
+- **Claude-Flow Docs:** https://github.com/FlexNetOS/claude-flow
 
 ---
 

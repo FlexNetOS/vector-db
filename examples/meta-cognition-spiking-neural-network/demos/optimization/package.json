@@ -20,7 +20,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/ruvnet/vibecast.git",
+    "url": "https://github.com/FlexNetOS/vibecast.git",
     "directory": "demos/optimization"
   },
   "engines": {

@@ -5,7 +5,7 @@
 [![Crates.io](https://img.shields.io/crates/v/exo-core.svg)](https://crates.io/crates/exo-core)
 [![Documentation](https://docs.rs/exo-core/badge.svg)](https://docs.rs/exo-core)
 [![License](https://img.shields.io/badge/license-MIT%2FApache--2.0-blue.svg)](LICENSE)
-[![GitHub](https://img.shields.io/badge/GitHub-ruvnet%2Fruvector-blue?logo=github)](https://github.com/FlexNetOS/ruvector)
+[![GitHub](https://img.shields.io/badge/GitHub-FlexNetOS%2Fruvector-blue?logo=github)](https://github.com/FlexNetOS/ruvector)
 [![Website](https://img.shields.io/badge/Website-ruv.io-purple)](https://ruv.io)
 
 **A research platform exploring the computational foundations of consciousness, memory, and cognition**

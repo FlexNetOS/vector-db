@@ -428,7 +428,7 @@ This example demonstrates patterns applicable to:
 ## 🔗 Related Resources
 
 ### Documentation
-- [DSPy.ts GitHub](https://github.com/ruvnet/dspy.ts)
+- [DSPy.ts GitHub](https://github.com/FlexNetOS/dspy.ts)
 - [DSPy Complete Guide](./dspy-complete-example-guide.md)
 - [Examples README](./README.md)
 - [AgenticSynth README](../README.md)

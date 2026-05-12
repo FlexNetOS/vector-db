@@ -621,7 +621,7 @@ Dataset generation is highly optimized:
 
 ## References
 
-- **Claude Flow**: https://github.com/ruvnet/claude-flow
+- **Claude Flow**: https://github.com/FlexNetOS/claude-flow
 - **RuvLTRA Architecture**: `../../README.md`
 - **SONA Learning**: `../../../sona/README.md`
 - **Dataset Format**: `../../../../docs/claude_dataset_format.md`

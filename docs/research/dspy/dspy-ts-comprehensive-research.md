@@ -2311,7 +2311,7 @@ The combination of Claude-Flow orchestration with DSPy.ts optimization offers a 
 ### 9.1 Official Documentation
 
 - **Ax Framework:** https://axllm.dev/
-- **DSPy.ts (ruvnet):** https://github.com/ruvnet/dspy.ts
+- **DSPy.ts (ruvnet):** https://github.com/FlexNetOS/dspy.ts
 - **DSPy Python (Stanford):** https://dspy.ai/
 - **TS-DSPy:** https://www.npmjs.com/package/@ts-dspy/core
 
@@ -2324,7 +2324,7 @@ The combination of Claude-Flow orchestration with DSPy.ts optimization offers a 
 ### 9.3 Key GitHub Repositories
 
 - Ax: https://github.com/ax-llm/ax (2.8k+ stars)
-- DSPy.ts: https://github.com/ruvnet/dspy.ts (162 stars)
+- DSPy.ts: https://github.com/FlexNetOS/dspy.ts (162 stars)
 - Stanford DSPy: https://github.com/stanfordnlp/dspy (20k+ stars)
 
 ### 9.4 Community Resources

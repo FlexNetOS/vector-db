@@ -4017,7 +4017,7 @@ function App() {
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <a
-                      href="https://github.com/ruvnet/ruvector"
+                      href="https://github.com/FlexNetOS/ruvector"
                       target="_blank"
                       rel="noopener noreferrer"
                       className="block bg-gray-800/50 rounded-xl p-6 border border-gray-700 hover:border-primary/50 transition-colors group"
@@ -4029,7 +4029,7 @@ function App() {
                         <div>
                           <h5 className="font-semibold text-white group-hover:text-primary transition-colors">GitHub Repository</h5>
                           <p className="text-sm text-gray-400">View source code, report issues, and contribute</p>
-                          <p className="text-xs text-primary mt-1">github.com/ruvnet/ruvector</p>
+                          <p className="text-xs text-primary mt-1">github.com/FlexNetOS/ruvector</p>
                         </div>
                       </div>
                     </a>

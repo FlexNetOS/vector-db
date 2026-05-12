@@ -638,7 +638,7 @@ Contributions are welcome! Please submit examples that demonstrate:
 ## Resources
 
 - [agentic-synth Documentation](https://github.com/FlexNetOS/ruvector/tree/main/packages/agentic-synth)
-- [claude-flow Documentation](https://github.com/ruvnet/claude-flow)
+- [claude-flow Documentation](https://github.com/FlexNetOS/claude-flow)
 - [AgenticDB Documentation](https://github.com/FlexNetOS/ruvector)
 - [Flow-Nexus Platform](https://flow-nexus.ruv.io)
 

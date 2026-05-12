@@ -57,7 +57,7 @@ npx ruvector decompile @anthropic-ai/claude-code
 
 That's it. One command → 878 modules, 100% valid JavaScript, cryptographic witness chain.
 
-📥 **[Download pre-built Claude Code decompilation →](https://github.com/ruvnet/rudevolution/releases/tag/v0.1.0-claude-code-v2.0.62)**
+📥 **[Download pre-built Claude Code decompilation →](https://github.com/FlexNetOS/rudevolution/releases/tag/v0.1.0-claude-code-v2.0.62)**
 
 ```bash
 # Or decompile anything
@@ -84,11 +84,11 @@ Every major Claude Code version, decompiled and downloadable:
 
 | Version | Bundle | Declarations | Key Discoveries | Download |
 |---------|--------|:------------:|-----------------|:--------:|
-| **v2.1.91** | 13.2 MB | 34,759 | 🤖 Agent Teams, 🌙 Auto Dream Mode, 🔮 opus-4-6/sonnet-4-6 models, 🔐 Amber codenames, 🧰 Advisor Tool, 📡 MCP Streamable HTTP | [**Latest →**](https://github.com/ruvnet/rudevolution/releases/tag/v0.1.0-claude-code-v2.1.91) |
-| v2.0.62 | 11.0 MB | 27,477 | 498 env vars, Plan V2, plugin marketplace, remote sessions | [Download](https://github.com/ruvnet/rudevolution/releases/tag/v0.1.0-claude-code-v2.0.62) |
-| v2.0.77 | 10.5 MB | 20,395 | Skills, 39 slash commands, custom agents, multi-provider auth | [Download](https://github.com/ruvnet/rudevolution/releases/tag/v0.1.0-claude-code-v2.0.77) |
-| v1.0.128 | 8.9 MB | 16,593 | Agent tool, WebFetch, hooks system, context compaction | [Download](https://github.com/ruvnet/rudevolution/releases/tag/v0.1.0-claude-code-v1.0.128) |
-| v0.2.126 | 6.9 MB | 13,869 | Core architecture, tools, MCP client, permissions | [Download](https://github.com/ruvnet/rudevolution/releases/tag/v0.1.0-claude-code-v0.2.126) |
+| **v2.1.91** | 13.2 MB | 34,759 | 🤖 Agent Teams, 🌙 Auto Dream Mode, 🔮 opus-4-6/sonnet-4-6 models, 🔐 Amber codenames, 🧰 Advisor Tool, 📡 MCP Streamable HTTP | [**Latest →**](https://github.com/FlexNetOS/rudevolution/releases/tag/v0.1.0-claude-code-v2.1.91) |
+| v2.0.62 | 11.0 MB | 27,477 | 498 env vars, Plan V2, plugin marketplace, remote sessions | [Download](https://github.com/FlexNetOS/rudevolution/releases/tag/v0.1.0-claude-code-v2.0.62) |
+| v2.0.77 | 10.5 MB | 20,395 | Skills, 39 slash commands, custom agents, multi-provider auth | [Download](https://github.com/FlexNetOS/rudevolution/releases/tag/v0.1.0-claude-code-v2.0.77) |
+| v1.0.128 | 8.9 MB | 16,593 | Agent tool, WebFetch, hooks system, context compaction | [Download](https://github.com/FlexNetOS/rudevolution/releases/tag/v0.1.0-claude-code-v1.0.128) |
+| v0.2.126 | 6.9 MB | 13,869 | Core architecture, tools, MCP client, permissions | [Download](https://github.com/FlexNetOS/rudevolution/releases/tag/v0.1.0-claude-code-v0.2.126) |
 
 ### 🏃 It Runs. It's Modifiable.
 
@@ -96,7 +96,7 @@ The decompiled output isn't just readable — **it's a fully functional drop-in 
 
 ```bash
 # Download the decompiled Claude Code
-curl -LO https://github.com/ruvnet/rudevolution/releases/download/v0.1.0-claude-code-v2.0.62/claude-code-v2.0.62-decompiled.js
+curl -LO https://github.com/FlexNetOS/rudevolution/releases/download/v0.1.0-claude-code-v2.0.62/claude-code-v2.0.62-decompiled.js
 
 # Run it — identical behavior to the original
 node claude-code-v2.0.62-decompiled.js --version

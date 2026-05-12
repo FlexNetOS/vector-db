@@ -221,4 +221,4 @@ Wire WASM booster with decompiled tool schemas:
 - [ADR-135: MinCut Decompiler](./ADR-135-mincut-decompiler-with-witness-chains.md)
 - [Research: Extension Points](../research/claude-code-rvsource/13-extension-points.md)
 - [Research: Core Module Analysis](../research/claude-code-rvsource/15-core-module-analysis.md)
-- [ruDevolution releases](https://github.com/ruvnet/rudevolution/releases)
+- [ruDevolution releases](https://github.com/FlexNetOS/rudevolution/releases)

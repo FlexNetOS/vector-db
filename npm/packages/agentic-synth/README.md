@@ -730,7 +730,7 @@ npx tsx examples/agentic-jujutsu/test-suite.ts
 
 **Features:** Git-like version control, multi-agent coordination, ReasoningBank intelligence, cryptographic security
 
-**NPM Package:** `agentic-jujutsu` - [GitHub](https://github.com/ruvnet/agentic-jujutsu) | [NPM](https://www.npmjs.com/package/agentic-jujutsu)
+**NPM Package:** `agentic-jujutsu` - [GitHub](https://github.com/FlexNetOS/agentic-jujutsu) | [NPM](https://www.npmjs.com/package/agentic-jujutsu)
 
 **[📖 Full Documentation](./examples/agentic-jujutsu/README.md)**
 
@@ -812,7 +812,7 @@ for await (const event of synth.generateStream({ type: 'events', count: 10000 })
 
 **Links:**
 - 📦 [NPM Package](https://www.npmjs.com/package/midstreamer)
-- 🐙 [GitHub Repository](https://github.com/ruvnet/midstreamer)
+- 🐙 [GitHub Repository](https://github.com/FlexNetOS/midstreamer)
 
 ---
 
@@ -840,7 +840,7 @@ await robotics.schedule({
 
 **Links:**
 - 📦 [NPM Package](https://www.npmjs.com/package/agentic-robotics)
-- 🐙 [GitHub Repository](https://github.com/ruvnet/agentic-robotics)
+- 🐙 [GitHub Repository](https://github.com/FlexNetOS/agentic-robotics)
 
 ---
 
@@ -871,7 +871,7 @@ await generator.rollbackToVersion(previousCommit);
 
 **Links:**
 - 📦 [NPM Package](https://www.npmjs.com/package/agentic-jujutsu)
-- 🐙 [GitHub Repository](https://github.com/ruvnet/agentic-jujutsu)
+- 🐙 [GitHub Repository](https://github.com/FlexNetOS/agentic-jujutsu)
 - 📖 [Integration Examples](./examples/agentic-jujutsu/README.md)
 
 ---
@@ -890,7 +890,7 @@ const optimizedModule = await optimizer.compile(generator, trainingExamples);
 
 **Links:**
 - 📦 [NPM Package](https://www.npmjs.com/package/dspy.ts)
-- 🐙 [GitHub Repository](https://github.com/ruvnet/dspy.ts)
+- 🐙 [GitHub Repository](https://github.com/FlexNetOS/dspy.ts)
 - 📖 [Integration Guide](./examples/docs/DSPY_INTEGRATION_SUMMARY.md)
 - 🎯 [Complete Example](./examples/dspy-complete-example.ts)
 
@@ -1275,12 +1275,12 @@ Built with amazing open-source technologies:
 ### **AI & ML**
 - 🧠 [Google Gemini](https://ai.google.dev/) - Fast, cost-effective generative AI
 - 🤖 [OpenRouter](https://openrouter.ai/) - Multi-model AI routing
-- 🦜 [DSPy.ts](https://github.com/ruvnet/dspy.ts) - Prompt optimization framework
+- 🦜 [DSPy.ts](https://github.com/FlexNetOS/dspy.ts) - Prompt optimization framework
 - 🧬 [LangChain](https://www.langchain.com/) - AI application framework
 
 ### **Databases & Storage**
 - 🎯 [Ruvector](https://github.com/FlexNetOS/ruvector) - High-performance vector database
-- 💾 [AgenticDB](https://github.com/ruvnet/agenticdb) - Agentic database layer
+- 💾 [AgenticDB](https://github.com/FlexNetOS/agenticdb) - Agentic database layer
 
 ### **Developer Tools**
 - 📘 [TypeScript](https://www.typescriptlang.org/) - Type-safe development
@@ -1290,7 +1290,7 @@ Built with amazing open-source technologies:
 
 ### **Version Control**
 - 🔄 [Jujutsu](https://github.com/martinvonz/jj) - Next-gen version control
-- 🔐 [Agentic-Jujutsu](https://github.com/ruvnet/agentic-jujutsu) - Quantum-resistant VCS
+- 🔐 [Agentic-Jujutsu](https://github.com/FlexNetOS/agentic-jujutsu) - Quantum-resistant VCS
 
 ---
 
@@ -1309,10 +1309,10 @@ Built with amazing open-source technologies:
 
 ### **Related Projects**
 - 🎯 [Ruvector](https://github.com/FlexNetOS/ruvector) - Vector database
-- 🦜 [DSPy.ts](https://github.com/ruvnet/dspy.ts) - Prompt optimization
-- 🔄 [Agentic-Jujutsu](https://github.com/ruvnet/agentic-jujutsu) - Version control
-- 🤖 [Agentic-Robotics](https://github.com/ruvnet/agentic-robotics) - Workflow automation
-- 🌊 [Midstreamer](https://github.com/ruvnet/midstreamer) - Real-time streaming
+- 🦜 [DSPy.ts](https://github.com/FlexNetOS/dspy.ts) - Prompt optimization
+- 🔄 [Agentic-Jujutsu](https://github.com/FlexNetOS/agentic-jujutsu) - Version control
+- 🤖 [Agentic-Robotics](https://github.com/FlexNetOS/agentic-robotics) - Workflow automation
+- 🌊 [Midstreamer](https://github.com/FlexNetOS/midstreamer) - Real-time streaming
 
 ### **Community**
 - 💬 [Discussions](https://github.com/FlexNetOS/ruvector/discussions)
