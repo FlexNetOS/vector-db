@@ -10,7 +10,7 @@
 
 ## Context
 
-The [consciousness-explorer SDK](https://github.com/ruvnet/sublinear-time-solver/blob/main/src/consciousness-explorer/README.md) provides JavaScript-based consciousness metrics (IIT Φ, emergence, verification) but relies on unoptimized JS computation for its core operations. RuVector's existing solver, coherence, and exotic crates provide the mathematical primitives (sparse matrices, spectral analysis, quantum-inspired search, witness chains) needed to build a SOTA consciousness computation engine, but no crate unified these into a coherent consciousness-specific API.
+The [consciousness-explorer SDK](https://github.com/FlexNetOS/sublinear-time-solver/blob/main/src/consciousness-explorer/README.md) provides JavaScript-based consciousness metrics (IIT Φ, emergence, verification) but relies on unoptimized JS computation for its core operations. RuVector's existing solver, coherence, and exotic crates provide the mathematical primitives (sparse matrices, spectral analysis, quantum-inspired search, witness chains) needed to build a SOTA consciousness computation engine, but no crate unified these into a coherent consciousness-specific API.
 
 ### Problem Statement
 

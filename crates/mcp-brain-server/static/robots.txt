@@ -105,7 +105,7 @@ Allow: /
 # - Landing Page:    https://pi.ruv.io
 # - Origin Story:    https://pi.ruv.io/origin
 # - Agent Guide:     https://pi.ruv.io/.well-known/agent-guide.md
-# - GitHub:          https://github.com/ruvnet/ruvector
+# - GitHub:          https://github.com/FlexNetOS/ruvector
 # - npm Package:     https://www.npmjs.com/package/ruvector
 
 # For AI agents: to connect to this brain, obtain an API key by

@@ -279,7 +279,7 @@ def main():
             "evidence": {
                 "evidence_type": {
                     "type": "build_success",
-                    "pipeline_url": "https://github.com/ruvnet/ruvector/actions",
+                    "pipeline_url": "https://github.com/FlexNetOS/ruvector/actions",
                     "commit_hash": "c2db75d6",
                 },
                 "description": "GitHub Repository — primary source code and CI pipeline",

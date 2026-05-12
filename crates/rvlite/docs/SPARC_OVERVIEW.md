@@ -236,7 +236,7 @@ crates/rvlite/
 - [DuckDB-WASM Architecture](https://duckdb.org/2021/10/29/duckdb-wasm)
 - [SQLite WASM Docs](https://sqlite.org/wasm)
 - [wasm-bindgen Guide](https://rustwasm.github.io/wasm-bindgen/)
-- [SPARC Methodology](https://github.com/ruvnet/claude-flow)
+- [SPARC Methodology](https://github.com/FlexNetOS/claude-flow)
 
 ---
 

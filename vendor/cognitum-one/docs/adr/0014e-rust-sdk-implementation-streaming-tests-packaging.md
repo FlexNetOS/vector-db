@@ -358,7 +358,7 @@ description = "Official Cognitum SDK for Rust (cloud + seed)"
 license = "MIT"
 keywords = ["cognitum", "ai", "seed", "sdk", "ota"]   # crates.io limit = 5
 categories = ["api-bindings", "web-programming::http-client"]
-repository = "https://github.com/ruvnet/cognitum"
+repository = "https://github.com/FlexNetOS/cognitum"
 homepage = "https://cognitum.one"
 documentation = "https://docs.rs/cognitum-rs"
 readme = "README.md"

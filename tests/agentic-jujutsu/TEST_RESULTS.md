@@ -363,7 +363,7 @@ The agentic-jujutsu test suite demonstrates comprehensive validation of all core
 ## Contact & Support
 
 For issues or questions:
-- GitHub: https://github.com/ruvnet/agentic-flow/issues
+- GitHub: https://github.com/FlexNetOS/agentic-flow/issues
 - Documentation: `.claude/skills/agentic-jujutsu/SKILL.md`
 - NPM: https://npmjs.com/package/agentic-jujutsu
 

@@ -457,7 +457,7 @@ console.log('Learned Demos:', optimized.__demos);
 - [Complete Example](../dspy-complete-example.ts)
 - [Comprehensive Guide](./dspy-complete-example-guide.md)
 - [Examples Index](./README.md)
-- [DSPy.ts GitHub](https://github.com/ruvnet/dspy.ts)
+- [DSPy.ts GitHub](https://github.com/FlexNetOS/dspy.ts)
 - [AgenticSynth README](../README.md)
 
 ## 💬 Support

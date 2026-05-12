@@ -365,7 +365,7 @@ MIT - Same as dspy.ts and agentic-synth
 
 ## References
 
-- [dspy.ts Documentation](https://github.com/ruvnet/dspy.ts)
+- [dspy.ts Documentation](https://github.com/FlexNetOS/dspy.ts)
 - [DSPy Paper](https://arxiv.org/abs/2310.03714)
 - [MIPROv2 Paper](https://arxiv.org/abs/2406.11695)
 

@@ -176,7 +176,7 @@ jj.finalizeTrajectory(0.9, 'Embeddings updated successfully');
 For complete API documentation and guides:
 - **Skill Documentation**: `.claude/skills/agentic-jujutsu/SKILL.md`
 - **NPM Package**: https://npmjs.com/package/agentic-jujutsu
-- **GitHub**: https://github.com/ruvnet/agentic-flow/tree/main/packages/agentic-jujutsu
+- **GitHub**: https://github.com/FlexNetOS/agentic-flow/tree/main/packages/agentic-jujutsu
 
 ## Version
 

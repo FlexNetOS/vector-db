@@ -24,7 +24,7 @@ edition = "2021"
 rust-version = "1.77"
 license = "MIT OR Apache-2.0"
 authors = ["RuVector Contributors"]
-repository = "https://github.com/ruvnet/rvm"
+repository = "https://github.com/FlexNetOS/rvm"
 description = "RVM: Coherence-native microhypervisor for edge computing and multi-agent systems"
 
 [workspace.dependencies]

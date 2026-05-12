@@ -689,7 +689,7 @@ bit-parallel-search = { version = "0.1", optional = true }
 #   (b) Wait for sublinear to update to 0.33
 # Option (a):
 # [patch.crates-io]
-# sublinear = { git = "https://github.com/ruvnet/sublinear-time-solver", branch = "nalgebra-0.33" }
+# sublinear = { git = "https://github.com/FlexNetOS/sublinear-time-solver", branch = "nalgebra-0.33" }
 ```
 
 ### 6.2 ruvector-math/Cargo.toml

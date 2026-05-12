@@ -472,8 +472,8 @@ npx agentic-jujutsu@latest cache clear
 
 ## Support
 
-- **Issues**: https://github.com/ruvnet/agentic-jujutsu/issues
-- **Documentation**: https://github.com/ruvnet/agentic-jujutsu
+- **Issues**: https://github.com/FlexNetOS/agentic-jujutsu/issues
+- **Documentation**: https://github.com/FlexNetOS/agentic-jujutsu
 - **Examples**: This directory
 
 ---

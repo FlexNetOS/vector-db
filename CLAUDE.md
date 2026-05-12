@@ -240,5 +240,5 @@ curl -H "Authorization: Bearer $KEY" "https://pi.ruv.io/v1/memories/list?limit=1
 
 ## Support
 
-- Documentation: https://github.com/ruvnet/claude-flow
-- Issues: https://github.com/ruvnet/claude-flow/issues
+- Documentation: https://github.com/FlexNetOS/claude-flow
+- Issues: https://github.com/FlexNetOS/claude-flow/issues

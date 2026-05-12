@@ -411,7 +411,7 @@ BaseModule → BootstrapFewShot → Optimized Module v1
 
 ## 📖 References
 
-- **dspy.ts Documentation**: https://github.com/ruvnet/dspy.ts
+- **dspy.ts Documentation**: https://github.com/FlexNetOS/dspy.ts
 - **DSPy Paper**: https://arxiv.org/abs/2310.03714
 - **MIPROv2 Paper**: https://arxiv.org/abs/2406.11695
 - **agentic-synth**: https://github.com/FlexNetOS/ruvector

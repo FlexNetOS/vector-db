@@ -307,9 +307,9 @@ npm install flow-nexus@latest
 
 ### Documentation
 - [Ax Framework Documentation](https://axllm.dev/)
-- [DSPy.ts GitHub](https://github.com/ruvnet/dspy.ts)
+- [DSPy.ts GitHub](https://github.com/FlexNetOS/dspy.ts)
 - [Stanford DSPy](https://dspy.ai/)
-- [Claude-Flow Documentation](https://github.com/ruvnet/claude-flow)
+- [Claude-Flow Documentation](https://github.com/FlexNetOS/claude-flow)
 
 ### Community
 - Ax Discord: Community support

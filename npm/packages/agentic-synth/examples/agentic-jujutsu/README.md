@@ -676,7 +676,7 @@ class CollaborativeDataWorkflow {
 
 ## 🔗 Related Resources
 
-- [Agentic-Jujutsu Repository](https://github.com/ruvnet/agentic-jujutsu)
+- [Agentic-Jujutsu Repository](https://github.com/FlexNetOS/agentic-jujutsu)
 - [Agentic-Synth Documentation](../../README.md)
 - [Jujutsu VCS Documentation](https://github.com/martinvonz/jj)
 - [ReasoningBank Paper](https://arxiv.org/abs/example)

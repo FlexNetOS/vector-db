@@ -6,7 +6,7 @@
  * - Basic trading operations with HNSW vector indexing
  * - Performance comparison with native Rust bindings
  *
- * @see https://github.com/ruvnet/neural-trader
+ * @see https://github.com/FlexNetOS/neural-trader
  * @see https://github.com/FlexNetOS/ruvector
  */
 

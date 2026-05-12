@@ -429,9 +429,9 @@ RuVector powers two major AI orchestration platforms:
 
 | Platform | Purpose | Install | Downloads |
 |----------|---------|---------|-----------|
-| [**ruFlo**](https://github.com/ruvnet/claude-flow) | Enterprise multi-agent orchestration for Claude Code | `npx ruvflo@latest` | [![npm downloads](https://img.shields.io/npm/dt/claude-flow.svg)](https://www.npmjs.com/package/claude-flow) |
-| [**Agentic-Flow**](https://github.com/ruvnet/agentic-flow) | Run AI agents on any cloud with any model — Claude, GPT, Gemini, or local | `npx agentic-flow@latest` | [![npm downloads](https://img.shields.io/npm/dt/agentic-flow.svg)](https://www.npmjs.com/package/agentic-flow) |
-| [**AgentDB**](https://github.com/ruvnet/agentdb) | Give AI agents long-term memory that gets smarter over time | `npm install agentdb@alpha` | [![npm downloads](https://img.shields.io/npm/dt/agentdb.svg)](https://www.npmjs.com/package/agentdb) |
+| [**ruFlo**](https://github.com/FlexNetOS/claude-flow) | Enterprise multi-agent orchestration for Claude Code | `npx ruvflo@latest` | [![npm downloads](https://img.shields.io/npm/dt/claude-flow.svg)](https://www.npmjs.com/package/claude-flow) |
+| [**Agentic-Flow**](https://github.com/FlexNetOS/agentic-flow) | Run AI agents on any cloud with any model — Claude, GPT, Gemini, or local | `npx agentic-flow@latest` | [![npm downloads](https://img.shields.io/npm/dt/agentic-flow.svg)](https://www.npmjs.com/package/agentic-flow) |
+| [**AgentDB**](https://github.com/FlexNetOS/agentdb) | Give AI agents long-term memory that gets smarter over time | `npm install agentdb@alpha` | [![npm downloads](https://img.shields.io/npm/dt/agentdb.svg)](https://www.npmjs.com/package/agentdb) |
 
 <details>
 <summary><strong>Claude-Flow v3</strong> — Turn Claude Code into a collaborative AI team</summary>
@@ -1192,8 +1192,8 @@ Think of it like your computer's memory hierarchy—frequently accessed data liv
 | Use Case | What RuVector Does | Example |
 |----------|-------------------|---------|
 | **RAG Pipelines** | Local vector search + local LLM — zero cloud costs, search improves from every query | [examples/ruvLLM](./examples/ruvLLM) |
-| **AI Agent Memory** | GNN-backed HNSW memory that agents share and learn from across sessions | [Agentic-Flow](https://github.com/ruvnet/agentic-flow) |
-| **Agent Routing** | Semantic router with SONA self-learning picks the right agent in <1ms | [Claude-Flow](https://github.com/ruvnet/claude-flow) |
+| **AI Agent Memory** | GNN-backed HNSW memory that agents share and learn from across sessions | [Agentic-Flow](https://github.com/FlexNetOS/agentic-flow) |
+| **Agent Routing** | Semantic router with SONA self-learning picks the right agent in <1ms | [Claude-Flow](https://github.com/FlexNetOS/claude-flow) |
 | **Self-Learning Chatbots** | ReasoningBank + EWC++ — learns from conversations without forgetting previous ones | [examples/meta-cognition](./examples/meta-cognition-spiking-neural-network) |
 
 ```javascript
@@ -1345,7 +1345,7 @@ SELECT * FROM documents ORDER BY embedding <-> query_vector LIMIT 10;
 | **Version Control for AI** | Agentic Jujutsu — branch, merge, and diff AI model states | [examples/agentic-jujutsu](./examples/agentic-jujutsu) |
 | **Self-Learning Pipelines** | DAG workflows that learn optimal execution paths over time | [crates/ruvector-dag](./crates/ruvector-dag) |
 | **Web Scraping → Embeddings** | Apify integration — scrape, embed, and index in one pipeline | [examples/apify](./examples/apify) |
-| **Synthetic Data** | Agentic synthesis and generation for training data | [Agentic-Flow](https://github.com/ruvnet/agentic-flow) |
+| **Synthetic Data** | Agentic synthesis and generation for training data | [Agentic-Flow](https://github.com/FlexNetOS/agentic-flow) |
 
 </details>
 
@@ -4443,7 +4443,7 @@ console.log(`Similarity: ${cosineSimilarity(vecA, vecB)}`);  // 1.0
 | `@ruvector/exotic-wasm` | <150KB | NAO, Morphogenetic, Time Crystal |
 | `@ruvector/nervous-system-wasm` | <100KB | BTSP, HDC (10K-bit), WTA, Global Workspace |
 | `@ruvector/attention-unified-wasm` | <200KB | 18+ attention mechanisms, unified API |
-| `@ruvnet/ruvector-verified-wasm` | <80KB | Formal proof verification in browser/edge |
+| `@FlexNetOS/ruvector-verified-wasm` | <80KB | Formal proof verification in browser/edge |
 
 **Common Patterns:**
 

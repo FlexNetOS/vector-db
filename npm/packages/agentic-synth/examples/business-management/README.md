@@ -653,9 +653,9 @@ const synth = createSynth({
 ## Support
 
 For issues, questions, or contributions:
-- GitHub Issues: https://github.com/ruvnet/agentic-synth/issues
-- Documentation: https://github.com/ruvnet/agentic-synth/docs
-- Examples: https://github.com/ruvnet/agentic-synth/examples
+- GitHub Issues: https://github.com/FlexNetOS/agentic-synth/issues
+- Documentation: https://github.com/FlexNetOS/agentic-synth/docs
+- Examples: https://github.com/FlexNetOS/agentic-synth/examples
 
 ## License
 
