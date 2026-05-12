@@ -3,17 +3,9 @@ use crate::attention::{
 };
 use crate::tensor::Tensor3;
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Default)]
 pub struct RuvLlmSparseBlockConfig {
     pub attention: SparseAttentionConfig,
-}
-
-impl Default for RuvLlmSparseBlockConfig {
-    fn default() -> Self {
-        Self {
-            attention: SparseAttentionConfig::default(),
-        }
-    }
 }
 
 #[derive(Clone, Debug)]

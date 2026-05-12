@@ -284,8 +284,8 @@ impl AttentionBackend for SubquadraticSparseAttention {
                         let score = dot(q_row, k.row(j, h)) * scale;
                         if score > running_max {
                             let corr = (running_max - score).exp();
-                            for d in 0..dim {
-                                acc[d] *= corr;
+                            for a in acc.iter_mut().take(dim) {
+                                *a *= corr;
                             }
                             denom *= corr;
                             running_max = score;
@@ -302,8 +302,8 @@ impl AttentionBackend for SubquadraticSparseAttention {
                             let score = dot(q_row, lm.keys.row(b, h)) * scale;
                             if score > running_max {
                                 let corr = (running_max - score).exp();
-                                for d in 0..dim {
-                                    acc[d] *= corr;
+                                for a in acc.iter_mut().take(dim) {
+                                    *a *= corr;
                                 }
                                 denom *= corr;
                                 running_max = score;
@@ -897,7 +897,7 @@ impl SubquadraticSparseAttention {
         if cache.len == 0 {
             return Ok(Tensor3::zeros(1, q.heads, q.dim));
         }
-        if cache.keys.heads == 0 || q.heads % cache.keys.heads != 0 {
+        if cache.keys.heads == 0 || !q.heads.is_multiple_of(cache.keys.heads) {
             return Err(AttentionError::InvalidConfig(format!(
                 "q_heads={} must be divisible by kv_heads={}",
                 q.heads, cache.keys.heads
@@ -955,8 +955,8 @@ impl SubquadraticSparseAttention {
                 let score = dot(q_row, cache.keys.row(j, kv_h)) * scale;
                 if score > running_max {
                     let corr = (running_max - score).exp();
-                    for d in 0..dim {
-                        acc[d] *= corr;
+                    for a in acc.iter_mut().take(dim) {
+                        *a *= corr;
                     }
                     denom *= corr;
                     running_max = score;
@@ -974,8 +974,8 @@ impl SubquadraticSparseAttention {
                 let score = dot(q_row, cache.landmarks.keys.row(b, kv_h)) * scale;
                 if score > running_max {
                     let corr = (running_max - score).exp();
-                    for d in 0..dim {
-                        acc[d] *= corr;
+                    for a in acc.iter_mut().take(dim) {
+                        *a *= corr;
                     }
                     denom *= corr;
                     running_max = score;
@@ -1029,7 +1029,7 @@ impl SubquadraticSparseAttention {
                 new_k.seq, new_v.seq
             )));
         }
-        if cache.keys.heads == 0 || q.heads % cache.keys.heads != 0 {
+        if cache.keys.heads == 0 || !q.heads.is_multiple_of(cache.keys.heads) {
             return Err(AttentionError::InvalidConfig(format!(
                 "q_heads={} must be divisible by kv_heads={}",
                 q.heads, cache.keys.heads
@@ -1093,7 +1093,7 @@ fn validate_gqa(q: &Tensor3, k: &Tensor3, v: &Tensor3) -> Result<(), AttentionEr
             q.dim, k.dim
         )));
     }
-    if k.heads == 0 || q.heads % k.heads != 0 {
+    if k.heads == 0 || !q.heads.is_multiple_of(k.heads) {
         return Err(AttentionError::InvalidConfig(format!(
             "q_heads={} must be divisible by kv_heads={}",
             q.heads, k.heads
@@ -1279,8 +1279,8 @@ impl SubquadraticSparseAttention {
                         let score = dot(q_row, k.row(j, kv_h)) * scale;
                         if score > running_max {
                             let corr = (running_max - score).exp();
-                            for d in 0..dim {
-                                acc[d] *= corr;
+                            for a in acc.iter_mut().take(dim) {
+                                *a *= corr;
                             }
                             denom *= corr;
                             running_max = score;
@@ -1297,8 +1297,8 @@ impl SubquadraticSparseAttention {
                             let score = dot(q_row, lm.keys.row(b, kv_h)) * scale;
                             if score > running_max {
                                 let corr = (running_max - score).exp();
-                                for d in 0..dim {
-                                    acc[d] *= corr;
+                                for a in acc.iter_mut().take(dim) {
+                                    *a *= corr;
                                 }
                                 denom *= corr;
                                 running_max = score;
@@ -1389,21 +1389,13 @@ impl SubquadraticSparseAttention {
             } else {
                 kv_start.saturating_sub(window)
             };
-            let q_hi = if causal {
-                (kv_end - 1 + window + 1).min(seq) // exclusive upper bound on q
-            } else {
-                (kv_end - 1 + window + 1).min(seq)
-            };
+            let q_hi = (kv_end - 1 + window + 1).min(seq);
 
             for h in 0..q_heads {
                 let kv_h = h / group_size;
                 for qi in q_lo..q_hi {
                     // Window intersection of query qi with this tile:
-                    let win_lo = if causal {
-                        qi.saturating_sub(window).max(kv_start)
-                    } else {
-                        qi.saturating_sub(window).max(kv_start)
-                    };
+                    let win_lo = qi.saturating_sub(window).max(kv_start);
                     let win_hi = if causal {
                         qi.min(kv_end.saturating_sub(1))
                     } else {
@@ -1470,8 +1462,8 @@ impl SubquadraticSparseAttention {
                         (qi + window).min(seq - 1)
                     };
                     let mark_stamp = stamp_base; // same stamp
-                    for j in win_lo..=win_hi {
-                        seen_tokens[j] = mark_stamp;
+                    for slot in seen_tokens.iter_mut().take(win_hi + 1).skip(win_lo) {
+                        *slot = mark_stamp;
                     }
                 }
 
