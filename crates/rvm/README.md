@@ -4,7 +4,7 @@
 [![no_std](https://img.shields.io/badge/no__std-compatible-green.svg)](https://doc.rust-lang.org/reference/names/preludes.html)
 [![License](https://img.shields.io/badge/License-MIT%20OR%20Apache--2.0-blue.svg)](LICENSE)
 [![ADR](https://img.shields.io/badge/ADRs-132--141-purple.svg)](../../docs/adr/)
-[![EPIC](https://img.shields.io/badge/EPIC-ruvnet%2FRuVector%23328-brightgreen.svg)](https://github.com/FlexNetOS/ruvector/issues/328)
+[![EPIC](https://img.shields.io/badge/EPIC-FlexNetOS%2FRuVector%23328-brightgreen.svg)](https://github.com/FlexNetOS/ruvector/issues/328)
 
 ### **Agents don't fit in VMs. They need something that understands how they think.**
 

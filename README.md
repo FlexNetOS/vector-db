@@ -4443,7 +4443,7 @@ console.log(`Similarity: ${cosineSimilarity(vecA, vecB)}`);  // 1.0
 | `@ruvector/exotic-wasm` | <150KB | NAO, Morphogenetic, Time Crystal |
 | `@ruvector/nervous-system-wasm` | <100KB | BTSP, HDC (10K-bit), WTA, Global Workspace |
 | `@ruvector/attention-unified-wasm` | <200KB | 18+ attention mechanisms, unified API |
-| `@FlexNetOS/ruvector-verified-wasm` | <80KB | Formal proof verification in browser/edge |
+| `@ruvnet/ruvector-verified-wasm` | <80KB | Formal proof verification in browser/edge |
 
 **Common Patterns:**
 

@@ -3,7 +3,7 @@
 [![Crates.io](https://img.shields.io/crates/v/ruvector-mincut.svg)](https://crates.io/crates/ruvector-mincut)
 [![Documentation](https://docs.rs/ruvector-mincut/badge.svg)](https://docs.rs/ruvector-mincut)
 [![License](https://img.shields.io/crates/l/ruvector-mincut.svg)](LICENSE)
-[![GitHub](https://img.shields.io/badge/GitHub-ruvnet%2Fruvector-blue?logo=github)](https://github.com/FlexNetOS/ruvector)
+[![GitHub](https://img.shields.io/badge/GitHub-FlexNetOS%2Fruvector-blue?logo=github)](https://github.com/FlexNetOS/ruvector)
 [![ruv.io](https://img.shields.io/badge/ruv.io-AI%20Infrastructure-orange)](https://ruv.io)
 
 **Continuous structural integrity as a first-class signal for systems that must not drift.**

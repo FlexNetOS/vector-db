@@ -2,7 +2,7 @@
 
 **Find the weakest link in any network — instantly, even as it changes.**
 
-[![GitHub](https://img.shields.io/badge/GitHub-ruvnet%2Fruvector-blue?logo=github)](https://github.com/FlexNetOS/ruvector)
+[![GitHub](https://img.shields.io/badge/GitHub-FlexNetOS%2Fruvector-blue?logo=github)](https://github.com/FlexNetOS/ruvector)
 [![ruv.io](https://img.shields.io/badge/ruv.io-AI%20Infrastructure-orange)](https://ruv.io)
 
 ---
