@@ -184,9 +184,9 @@ traces from each bug are all available for upload — say the word.
 
 ## Reference
 
-- ruvector branch (full code): https://github.com/ruvnet/RuVector/tree/hailo-backend
+- ruvector branch (full code): https://github.com/FlexNetOS/ruvector/tree/hailo-backend
 - ADR with all the iteration history:
-  https://github.com/ruvnet/RuVector/blob/hailo-backend/docs/adr/ADR-167-ruvector-hailo-npu-embedding-backend.md
+  https://github.com/FlexNetOS/ruvector/blob/hailo-backend/docs/adr/ADR-167-ruvector-hailo-npu-embedding-backend.md
 - The two helpers driving the repro:
   - `crates/ruvector-hailo-cluster/deploy/export-minilm-encoder-onnx.py`
   - `crates/ruvector-hailo-cluster/deploy/compile-encoder-hef.py`

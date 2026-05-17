@@ -387,4 +387,4 @@ MIT License - see [LICENSE](../../LICENSE) for details.
 
 ---
 
-Built with ❤️ by the [Ruvector Team](https://github.com/ruvnet)
+Built with ❤️ by the [Ruvector Team](https://github.com/FlexNetOS)
