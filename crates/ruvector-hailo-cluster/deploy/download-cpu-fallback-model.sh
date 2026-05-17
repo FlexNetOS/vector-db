@@ -28,9 +28,6 @@
 
 set -euo pipefail
 
-# Artifact metadata is also tracked in docs/hailo/models.manifest.json so
-# large models/HEFs are referenced by URL + checksum instead of committed.
-
 MODEL_DIR="${1:-/var/lib/ruvector-hailo/model}"
 HF_BASE="https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2/resolve/main"
 

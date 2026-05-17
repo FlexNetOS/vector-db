@@ -126,19 +126,12 @@ jobs:
             target/${{ matrix.rust_target }}/release/ruvllm-esp32 \
             ruvllm-esp32-${{ matrix.target }}.bin
 
-      - name: generate checksum
-        working-directory: examples/ruvLLM/esp32-flash
-        run: sha256sum ruvllm-esp32-${{ matrix.target }}.bin > ruvllm-esp32-${{ matrix.target }}.bin.sha256
-
-      - name: upload temporary firmware artifact
+      - name: upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: ruvllm-esp32-${{ matrix.target }}
-          path: |
-            examples/ruvLLM/esp32-flash/ruvllm-esp32-${{ matrix.target }}.bin
-            examples/ruvLLM/esp32-flash/ruvllm-esp32-${{ matrix.target }}.bin.sha256
+          path: examples/ruvLLM/esp32-flash/ruvllm-esp32-${{ matrix.target }}.bin
           if-no-files-found: error
-          retention-days: 14
 
   release:
     name: attach to release
@@ -155,18 +148,10 @@ jobs:
       - name: list assets
         run: ls -lah dist/
 
-      - name: build combined checksums
-        run: |
-          cd dist
-          cat ruvllm-esp32-*.bin.sha256 > SHA256SUMS
-
       - name: upload to release
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ github.event.inputs.release_tag || github.ref_name }}
-          files: |
-            dist/ruvllm-esp32-*.bin
-            dist/ruvllm-esp32-*.bin.sha256
-            dist/SHA256SUMS
+          files: dist/ruvllm-esp32-*.bin
           fail_on_unmatched_files: true
           generate_release_notes: false

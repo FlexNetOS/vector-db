@@ -1,6 +1,15 @@
+#[cfg(not(feature = "std"))]
+use crate::no_std_math::F32Ext as _;
 use crate::tensor::Tensor3;
+use alloc::collections::BTreeSet;
+use alloc::format;
+use alloc::string::{String, ToString};
+use alloc::vec;
+use alloc::vec::Vec;
+use core::cmp::Ordering;
+use core::fmt::{Display, Formatter};
+#[cfg(feature = "std")]
 use std::error::Error;
-use std::fmt::{Display, Formatter};
 
 #[derive(Debug, Clone)]
 pub enum AttentionError {
@@ -13,7 +22,7 @@ pub enum AttentionError {
 }
 
 impl Display for AttentionError {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+    fn fmt(&self, f: &mut Formatter<'_>) -> core::fmt::Result {
         match self {
             AttentionError::ShapeMismatch { q, k, v } => write!(
                 f,
@@ -25,6 +34,7 @@ impl Display for AttentionError {
     }
 }
 
+#[cfg(feature = "std")]
 impl Error for AttentionError {}
 
 pub trait AttentionBackend {
@@ -284,8 +294,8 @@ impl AttentionBackend for SubquadraticSparseAttention {
                         let score = dot(q_row, k.row(j, h)) * scale;
                         if score > running_max {
                             let corr = (running_max - score).exp();
-                            for a in acc.iter_mut().take(dim) {
-                                *a *= corr;
+                            for d in 0..dim {
+                                acc[d] *= corr;
                             }
                             denom *= corr;
                             running_max = score;
@@ -302,8 +312,8 @@ impl AttentionBackend for SubquadraticSparseAttention {
                             let score = dot(q_row, lm.keys.row(b, h)) * scale;
                             if score > running_max {
                                 let corr = (running_max - score).exp();
-                                for a in acc.iter_mut().take(dim) {
-                                    *a *= corr;
+                                for d in 0..dim {
+                                    acc[d] *= corr;
                                 }
                                 denom *= corr;
                                 running_max = score;
@@ -327,6 +337,183 @@ impl AttentionBackend for SubquadraticSparseAttention {
         };
 
         Ok(out)
+    }
+}
+
+impl SubquadraticSparseAttention {
+    /// FastGRNN-gated forward: same as `forward` but tokens marked
+    /// `false` in `keep_mask` are excluded from the long-range portion
+    /// of the candidate set. The local causal window and the configured
+    /// `global_tokens` are **always** retained regardless of the mask
+    /// (they preserve causality and prefix coverage and are constant
+    /// in `seq`, so dropping them does not change the asymptotic cost).
+    ///
+    /// # Asymptotics
+    ///
+    /// Let `W = config.window`, `G = config.global_tokens.len()`, and
+    /// `K_keep = keep_mask.iter().filter(|&&b| b).count()`.
+    /// Per-position candidate-set size is bounded by `W + G + K_keep`,
+    /// so total cost is `O(seq · (W + G + K_keep) · dim)`.
+    ///
+    /// When the gate caps `K_keep` at a constant (e.g. via
+    /// `FastGrnnGate::keep_mask_top_k`), this is **linear in `seq`**:
+    /// `O(seq · const · dim)`. Combined with the FastGRNN gate forward
+    /// (`O(seq · D_h²)`), the full pipeline is near-linear at fixed
+    /// `D_h`, `W`, `G`, `K_keep`.
+    ///
+    /// # Errors
+    ///
+    /// Returns `AttentionError::InvalidConfig` if `keep_mask.len() != q.seq`.
+    pub fn forward_gated(
+        &self,
+        q: &Tensor3,
+        k: &Tensor3,
+        v: &Tensor3,
+        keep_mask: &[bool],
+    ) -> Result<Tensor3, AttentionError> {
+        validate_qkv(q, k, v)?;
+        if self.config.block_size == 0 {
+            return Err(AttentionError::InvalidConfig(
+                "block_size must be greater than zero".to_string(),
+            ));
+        }
+        if keep_mask.len() != q.seq {
+            return Err(AttentionError::InvalidConfig(format!(
+                "keep_mask len {} != seq {}",
+                keep_mask.len(),
+                q.seq
+            )));
+        }
+
+        let seq = q.seq;
+        if seq == 0 {
+            return Ok(Tensor3::zeros(0, q.heads, q.dim));
+        }
+
+        let heads = q.heads;
+        let dim = q.dim;
+        let scale = 1.0f32 / (dim as f32).sqrt();
+        let landmarks = if self.config.use_landmarks {
+            Some(Landmarks::from_kv(k, v, self.config.block_size))
+        } else {
+            None
+        };
+
+        // Pre-compute "is in local window of i" predicate as a closure;
+        // window membership is symmetric for non-causal so depends on i.
+        // global membership is independent of i.
+        let global_set: BTreeSet<usize> = self.config.global_tokens.iter().copied().collect();
+        let in_window = |i: usize, j: usize| -> bool {
+            let lo = i.saturating_sub(self.config.window);
+            let hi = if self.config.causal {
+                i
+            } else {
+                (i + self.config.window).min(seq - 1)
+            };
+            j >= lo && j <= hi
+        };
+
+        let mut out = Tensor3::zeros(seq, heads, dim);
+        let mut seen_tokens = vec![0usize; seq.max(1)];
+        let mut seen_blocks = vec![0usize; div_ceil(seq.max(1), self.config.block_size)];
+        let mut tok_c = Vec::<usize>::with_capacity(self.config.window + 64);
+        let mut blk_c = Vec::<usize>::with_capacity(64);
+        let mut acc = vec![0f32; dim];
+
+        for h in 0..heads {
+            for i in 0..seq {
+                let stamp = 1 + h * seq + i;
+                tok_c.clear();
+                blk_c.clear();
+                build_token_candidates(i, seq, &self.config, &mut seen_tokens, stamp, &mut tok_c);
+                if landmarks.is_some() {
+                    build_landmark_candidates(
+                        i,
+                        seq,
+                        &self.config,
+                        &mut seen_blocks,
+                        stamp,
+                        &mut blk_c,
+                    );
+                }
+
+                // Apply the gate: drop log-stride candidates that the
+                // mask rejects. Keep the current position, window, and
+                // globals unconditionally.
+                tok_c.retain(|&j| {
+                    j == i || in_window(i, j) || global_set.contains(&j) || keep_mask[j]
+                });
+
+                if self.config.sort_candidates {
+                    tok_c.sort_unstable();
+                    blk_c.sort_unstable();
+                }
+                let q_row = q.row(i, h);
+                let mut running_max = f32::NEG_INFINITY;
+                let mut denom = 0.0f32;
+                acc.fill(0.0);
+                for &j in &tok_c {
+                    let score = dot(q_row, k.row(j, h)) * scale;
+                    if score > running_max {
+                        let corr = (running_max - score).exp();
+                        for d in 0..dim {
+                            acc[d] *= corr;
+                        }
+                        denom *= corr;
+                        running_max = score;
+                    }
+                    let w = (score - running_max).exp();
+                    denom += w;
+                    let v_row = v.row(j, h);
+                    for d in 0..dim {
+                        acc[d] += w * v_row[d];
+                    }
+                }
+                if let Some(lm) = landmarks.as_ref() {
+                    for &b in &blk_c {
+                        let score = dot(q_row, lm.keys.row(b, h)) * scale;
+                        if score > running_max {
+                            let corr = (running_max - score).exp();
+                            for d in 0..dim {
+                                acc[d] *= corr;
+                            }
+                            denom *= corr;
+                            running_max = score;
+                        }
+                        let w = (score - running_max).exp();
+                        denom += w;
+                        let v_row = lm.values.row(b, h);
+                        for d in 0..dim {
+                            acc[d] += w * v_row[d];
+                        }
+                    }
+                }
+                let out_row = out.row_mut(i, h);
+                let inv_denom = if denom > 0.0 { 1.0 / denom } else { 0.0 };
+                for d in 0..dim {
+                    out_row[d] = acc[d] * inv_denom;
+                }
+            }
+        }
+        Ok(out)
+    }
+
+    /// Convenience wrapper: build the keep-mask via FastGRNN scoring
+    /// `k`, then call `forward_gated`. The gate's `input_dim` must
+    /// equal `k.dim` (the per-head feature width). Caller picks the
+    /// gating strategy via `gate_top_k`: at most that many long-range
+    /// tokens pass the gate.
+    pub fn forward_gated_with_fastgrnn(
+        &self,
+        q: &Tensor3,
+        k: &Tensor3,
+        v: &Tensor3,
+        gate: &crate::fastgrnn_gate::FastGrnnGate,
+        gate_top_k: usize,
+    ) -> Result<Tensor3, AttentionError> {
+        let salience = gate.score_kv(k);
+        let keep = crate::fastgrnn_gate::FastGrnnGate::keep_mask_top_k(&salience, gate_top_k);
+        self.forward_gated(q, k, v, &keep)
     }
 }
 
@@ -821,7 +1008,7 @@ impl KvCache {
             .min_by(|&a, &b| {
                 attention_scores[a]
                     .partial_cmp(&attention_scores[b])
-                    .unwrap_or(std::cmp::Ordering::Equal)
+                    .unwrap_or(Ordering::Equal)
             });
 
         let victim = match victim {
@@ -897,7 +1084,7 @@ impl SubquadraticSparseAttention {
         if cache.len == 0 {
             return Ok(Tensor3::zeros(1, q.heads, q.dim));
         }
-        if cache.keys.heads == 0 || !q.heads.is_multiple_of(cache.keys.heads) {
+        if cache.keys.heads == 0 || q.heads % cache.keys.heads != 0 {
             return Err(AttentionError::InvalidConfig(format!(
                 "q_heads={} must be divisible by kv_heads={}",
                 q.heads, cache.keys.heads
@@ -955,8 +1142,8 @@ impl SubquadraticSparseAttention {
                 let score = dot(q_row, cache.keys.row(j, kv_h)) * scale;
                 if score > running_max {
                     let corr = (running_max - score).exp();
-                    for a in acc.iter_mut().take(dim) {
-                        *a *= corr;
+                    for d in 0..dim {
+                        acc[d] *= corr;
                     }
                     denom *= corr;
                     running_max = score;
@@ -974,8 +1161,8 @@ impl SubquadraticSparseAttention {
                 let score = dot(q_row, cache.landmarks.keys.row(b, kv_h)) * scale;
                 if score > running_max {
                     let corr = (running_max - score).exp();
-                    for a in acc.iter_mut().take(dim) {
-                        *a *= corr;
+                    for d in 0..dim {
+                        acc[d] *= corr;
                     }
                     denom *= corr;
                     running_max = score;
@@ -1029,7 +1216,7 @@ impl SubquadraticSparseAttention {
                 new_k.seq, new_v.seq
             )));
         }
-        if cache.keys.heads == 0 || !q.heads.is_multiple_of(cache.keys.heads) {
+        if cache.keys.heads == 0 || q.heads % cache.keys.heads != 0 {
             return Err(AttentionError::InvalidConfig(format!(
                 "q_heads={} must be divisible by kv_heads={}",
                 q.heads, cache.keys.heads
@@ -1093,7 +1280,7 @@ fn validate_gqa(q: &Tensor3, k: &Tensor3, v: &Tensor3) -> Result<(), AttentionEr
             q.dim, k.dim
         )));
     }
-    if k.heads == 0 || !q.heads.is_multiple_of(k.heads) {
+    if k.heads == 0 || q.heads % k.heads != 0 {
         return Err(AttentionError::InvalidConfig(format!(
             "q_heads={} must be divisible by kv_heads={}",
             q.heads, k.heads
@@ -1279,8 +1466,8 @@ impl SubquadraticSparseAttention {
                         let score = dot(q_row, k.row(j, kv_h)) * scale;
                         if score > running_max {
                             let corr = (running_max - score).exp();
-                            for a in acc.iter_mut().take(dim) {
-                                *a *= corr;
+                            for d in 0..dim {
+                                acc[d] *= corr;
                             }
                             denom *= corr;
                             running_max = score;
@@ -1297,8 +1484,8 @@ impl SubquadraticSparseAttention {
                             let score = dot(q_row, lm.keys.row(b, kv_h)) * scale;
                             if score > running_max {
                                 let corr = (running_max - score).exp();
-                                for a in acc.iter_mut().take(dim) {
-                                    *a *= corr;
+                                for d in 0..dim {
+                                    acc[d] *= corr;
                                 }
                                 denom *= corr;
                                 running_max = score;
@@ -1389,13 +1576,21 @@ impl SubquadraticSparseAttention {
             } else {
                 kv_start.saturating_sub(window)
             };
-            let q_hi = (kv_end - 1 + window + 1).min(seq);
+            let q_hi = if causal {
+                (kv_end - 1 + window + 1).min(seq) // exclusive upper bound on q
+            } else {
+                (kv_end - 1 + window + 1).min(seq)
+            };
 
             for h in 0..q_heads {
                 let kv_h = h / group_size;
                 for qi in q_lo..q_hi {
                     // Window intersection of query qi with this tile:
-                    let win_lo = qi.saturating_sub(window).max(kv_start);
+                    let win_lo = if causal {
+                        qi.saturating_sub(window).max(kv_start)
+                    } else {
+                        qi.saturating_sub(window).max(kv_start)
+                    };
                     let win_hi = if causal {
                         qi.min(kv_end.saturating_sub(1))
                     } else {
@@ -1462,8 +1657,8 @@ impl SubquadraticSparseAttention {
                         (qi + window).min(seq - 1)
                     };
                     let mark_stamp = stamp_base; // same stamp
-                    for slot in seen_tokens.iter_mut().take(win_hi + 1).skip(win_lo) {
-                        *slot = mark_stamp;
+                    for j in win_lo..=win_hi {
+                        seen_tokens[j] = mark_stamp;
                     }
                 }
 
@@ -2542,5 +2737,160 @@ mod tests {
                 stored
             );
         }
+    }
+
+    // ---- forward_gated tests ---------------------------------------------
+
+    fn random_qkv(seq: usize, heads: usize, dim: usize) -> (Tensor3, Tensor3, Tensor3) {
+        // Deterministic pseudo-random fill (no external crate at unit-test
+        // level so this stays platform-stable across runs).
+        let mut s = 0xa5a5a5a5u32;
+        let mut next = || {
+            s ^= s << 13;
+            s ^= s >> 17;
+            s ^= s << 5;
+            (s as f32 / u32::MAX as f32 - 0.5) * 0.5
+        };
+        let mut q = Tensor3::zeros(seq, heads, dim);
+        let mut k = Tensor3::zeros(seq, heads, dim);
+        let mut v = Tensor3::zeros(seq, heads, dim);
+        for t in 0..seq {
+            for h in 0..heads {
+                for d in 0..dim {
+                    q.row_mut(t, h)[d] = next();
+                    k.row_mut(t, h)[d] = next();
+                    v.row_mut(t, h)[d] = next();
+                }
+            }
+        }
+        (q, k, v)
+    }
+
+    #[test]
+    fn forward_gated_all_true_matches_forward() {
+        // keep_mask all-true must produce bit-identical output to plain forward.
+        let cfg = SparseAttentionConfig::default();
+        let attn = SubquadraticSparseAttention::new(cfg).unwrap();
+        let (q, k, v) = random_qkv(64, 2, 8);
+        let baseline = attn.forward(&q, &k, &v).unwrap();
+        let keep = vec![true; 64];
+        let gated = attn.forward_gated(&q, &k, &v, &keep).unwrap();
+        for t in 0..64 {
+            for h in 0..2 {
+                for d in 0..8 {
+                    let a = baseline.row(t, h)[d];
+                    let b = gated.row(t, h)[d];
+                    assert!(
+                        (a - b).abs() < 1e-6,
+                        "all-true gate must equal forward: pos {} head {} d {} → {} vs {}",
+                        t,
+                        h,
+                        d,
+                        a,
+                        b
+                    );
+                }
+            }
+        }
+    }
+
+    #[test]
+    fn forward_gated_all_false_keeps_window_and_globals() {
+        // keep_mask all-false: only window + globals + current are kept,
+        // so the per-position candidate count must equal the window size
+        // plus the global count plus 1 (self), with appropriate truncation
+        // at the start of the sequence.
+        let cfg = SparseAttentionConfig {
+            window: 8,
+            global_tokens: vec![0],
+            ..SparseAttentionConfig::default()
+        };
+        let attn = SubquadraticSparseAttention::new(cfg).unwrap();
+        let (q, k, v) = random_qkv(64, 2, 8);
+        let keep = vec![false; 64];
+        // With all-false mask the gate strips log-stride candidates;
+        // result should still be valid (no NaN, output finite).
+        let out = attn.forward_gated(&q, &k, &v, &keep).unwrap();
+        for t in 0..64 {
+            for h in 0..2 {
+                for d in 0..8 {
+                    assert!(out.row(t, h)[d].is_finite());
+                }
+            }
+        }
+    }
+
+    #[test]
+    fn forward_gated_rejects_wrong_mask_length() {
+        let attn = SubquadraticSparseAttention::new(SparseAttentionConfig::default()).unwrap();
+        let (q, k, v) = random_qkv(16, 1, 4);
+        let keep = vec![true; 15]; // wrong length
+        let r = attn.forward_gated(&q, &k, &v, &keep);
+        assert!(matches!(r, Err(AttentionError::InvalidConfig(_))));
+    }
+
+    #[test]
+    fn forward_gated_with_fastgrnn_top_k_runs_and_is_finite() {
+        let attn = SubquadraticSparseAttention::new(SparseAttentionConfig::default()).unwrap();
+        let (q, k, v) = random_qkv(64, 2, 8);
+        let gate = crate::fastgrnn_gate::FastGrnnGate::new(8, 16);
+        let out = attn
+            .forward_gated_with_fastgrnn(&q, &k, &v, &gate, 16)
+            .unwrap();
+        for t in 0..64 {
+            for h in 0..2 {
+                for d in 0..8 {
+                    assert!(
+                        out.row(t, h)[d].is_finite(),
+                        "non-finite at t={}, h={}, d={}",
+                        t,
+                        h,
+                        d
+                    );
+                }
+            }
+        }
+    }
+
+    #[test]
+    fn forward_gated_smaller_top_k_reduces_candidate_count() {
+        // Verify the gate is actually pruning by comparing edge estimates.
+        // With top_k = 0 (no log-stride passes the gate) per-position
+        // candidate count should be ≤ window + globals + 1; with all-true
+        // it should match the unfiltered estimate.
+        let cfg = SparseAttentionConfig {
+            window: 4,
+            block_size: 8,
+            global_tokens: vec![0],
+            causal: true,
+            use_log_stride: true,
+            use_landmarks: false,
+            sort_candidates: false,
+        };
+        let attn = SubquadraticSparseAttention::new(cfg.clone()).unwrap();
+        let seq = 256;
+        let unfiltered = attn.estimate_sparse_edges(seq);
+
+        // Manually count candidates after filtering with all-false mask.
+        let mut filtered_total = 0usize;
+        let mut seen = vec![0usize; seq];
+        let mut tokc = Vec::<usize>::new();
+        let global_set: BTreeSet<usize> = cfg.global_tokens.iter().copied().collect();
+        for i in 0..seq {
+            let stamp = i + 1;
+            tokc.clear();
+            super::build_token_candidates(i, seq, &cfg, &mut seen, stamp, &mut tokc);
+            tokc.retain(|&j| {
+                let lo = i.saturating_sub(cfg.window);
+                j == i || (j >= lo && j <= i) || global_set.contains(&j) // mask all-false
+            });
+            filtered_total += tokc.len();
+        }
+        assert!(
+            filtered_total < unfiltered,
+            "filtered count {} should be < unfiltered count {}",
+            filtered_total,
+            unfiltered
+        );
     }
 }

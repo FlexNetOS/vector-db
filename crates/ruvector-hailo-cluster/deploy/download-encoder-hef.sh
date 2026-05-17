@@ -27,14 +27,11 @@
 
 set -euo pipefail
 
-# Artifact metadata is also tracked in docs/hailo/models.manifest.json so
-# large models/HEFs are referenced by URL + checksum instead of committed.
-
 MODEL_DIR="${1:-/var/lib/ruvector-hailo/models/all-minilm-l6-v2}"
 RELEASE_TAG="hailo-encoder-v0.1.0-iter156b"
 HEF_NAME="encoder.hef"
 HEF_SHA256="cdbc892765d3099f74723ee6c28ab3f0daade2358827823ba08d2969b07ebd40"
-HEF_URL="https://github.com/FlexNetOS/ruvector/releases/download/${RELEASE_TAG}/${HEF_NAME}"
+HEF_URL="https://github.com/ruvnet/ruvector/releases/download/${RELEASE_TAG}/${HEF_NAME}"
 
 if ! command -v curl >/dev/null 2>&1; then
   echo "curl not found — install with apt/yum/pacman" >&2

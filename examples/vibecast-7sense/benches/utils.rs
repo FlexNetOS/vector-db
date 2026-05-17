@@ -587,7 +587,7 @@ where
 /// Measure average execution time over multiple iterations
 pub fn measure_average<F>(iterations: usize, mut f: F) -> PerformanceStats
 where
-    F: FnMut() -> (),
+    F: FnMut(),
 {
     let latencies: Vec<Duration> = (0..iterations)
         .map(|_| {

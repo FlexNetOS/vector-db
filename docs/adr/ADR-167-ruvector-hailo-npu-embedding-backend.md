@@ -635,3 +635,4 @@ semantic embeddings.
 - iter 16: fill `HailoEmbedder::embed` (encode → push input vstream → pull output vstream → mean_pool → l2_normalize)
 
 Then the loop's "fully implemented and validated" milestone is met end-to-end.
+

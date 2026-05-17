@@ -20,7 +20,7 @@ Each ESP32 chip runs **one tiny-agent role** drawn from the ruvllm/ruvector prim
 
 Chips federate over UART / SPI / ESP-NOW using `FederationMessage` (`MAX_FEDERATION_SIZE = 8`).
 
-> **Honest scope.** This example does **not** implement transformer inference at MCU SRAM scale. Real model inference on ESP32 is ADR-090's PSRAM path (ESP32-P4, 8 MB). The "INT8 transformer in 4 KB" framing in the previous README was the gap reported in [issue #409](https://github.com/ruvnet/ruvector/issues/409) and is removed here. What this example *does* ship is the federation-ready primitive layer: HNSW kNN, RAG retrieval, semantic memory, anomaly detection, MicroLoRA rank-1/2 adaptation, and the federation message bus — all `no_std` and all individually exercised on real hardware.
+> **Honest scope.** This example does **not** implement transformer inference at MCU SRAM scale. Real model inference on ESP32 is ADR-090's PSRAM path (ESP32-P4, 8 MB). The "INT8 transformer in 4 KB" framing in the previous README was the gap reported in [issue #409](https://github.com/FlexNetOS/ruvector/issues/409) and is removed here. What this example *does* ship is the federation-ready primitive layer: HNSW kNN, RAG retrieval, semantic memory, anomaly detection, MicroLoRA rank-1/2 adaptation, and the federation message bus — all `no_std` and all individually exercised on real hardware.
 
 ## Why a tiny agent per chip
 

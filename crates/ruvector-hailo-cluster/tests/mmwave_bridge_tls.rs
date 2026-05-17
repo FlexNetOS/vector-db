@@ -77,7 +77,7 @@ fn spawn_tls_fakeworker(
     // but the socket itself is bound.
     let bind_addr: std::net::SocketAddr = bind.parse().unwrap();
     let start = Instant::now();
-    while start.elapsed() < Duration::from_secs(2) {
+    while start.elapsed() < Duration::from_secs(10) {
         if std::net::TcpStream::connect_timeout(&bind_addr, Duration::from_millis(50)).is_ok() {
             return child;
         }

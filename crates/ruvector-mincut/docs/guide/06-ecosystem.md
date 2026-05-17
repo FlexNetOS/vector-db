@@ -713,7 +713,7 @@ graph LR
 ### Official Links
 
 - **Website**: [ruv.io](https://ruv.io)
-- **GitHub Organization**: [github.com/ruvnet](https://github.com/ruvnet)
+- **GitHub Organization**: [github.com/FlexNetOS](https://github.com/FlexNetOS)
 - **Main Repository**: [github.com/FlexNetOS/ruvector](https://github.com/FlexNetOS/ruvector)
 
 ### Crates.io Pages

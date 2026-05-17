@@ -158,23 +158,6 @@ bench_data/
 /entities.json
 /mempalace.yaml
 
-
-# Generated firmware, HEF, and model artifacts. Keep source/manifests in git;
-# publish build outputs through GitHub Releases, GHCR, or Actions artifacts.
-*.bin
-*.elf
-*.uf2
-*.hex
-*.hef
-*.safetensors
-*.onnx
-*.onnx.data
-*.pt
-*.pth
-*.ckpt
-dist/
-artifacts/
-
 # Hailo Dataflow Compiler droppings — `hailo` CLI writes these into
 # whatever cwd it's invoked from, even with --output-dir set. Always
 # transient so any tree they land in should ignore them.
@@ -189,6 +172,3 @@ crates/ruvector-hailo/Cargo.lock
 crates/ruvector-hailo-cluster/Cargo.lock
 crates/hailort-sys/Cargo.lock
 crates/ruvector-mmwave/Cargo.lock
-crates/ruos-thermal/Cargo.lock
-examples/esp32-mmwave-sensor/Cargo.lock
-vendor/cognitum-one/Cargo.lock
