@@ -1,0 +1,181 @@
+{
+  "updatedAt": "2026-05-13T17:31:29.530Z",
+  "missions": [
+    {
+      "id": "session:56ce495f-4408-4b19-9c05-8ce61ab8e2e0:none",
+      "source": "session",
+      "name": "none",
+      "objective": "Session mission",
+      "createdAt": "2026-05-12T18:42:46.893Z",
+      "updatedAt": "2026-05-12T19:36:58.642Z",
+      "status": "done",
+      "workerCount": 9,
+      "taskCounts": {
+        "total": 9,
+        "pending": 0,
+        "blocked": 0,
+        "inProgress": 0,
+        "completed": 9,
+        "failed": 0
+      },
+      "agents": [
+        {
+          "name": "understand-anything:project-scanner:a197ac8",
+          "role": "understand-anything:project-scanner",
+          "ownership": "a197ac864b4108f64",
+          "status": "done",
+          "currentStep": null,
+          "latestUpdate": "completed",
+          "completedSummary": null,
+          "updatedAt": "2026-05-12T19:36:58.642Z"
+        },
+        {
+          "name": "understand-anything:file-analyzer:a6bab48",
+          "role": "understand-anything:file-analyzer",
+          "ownership": "a6bab4857dd5717ca",
+          "status": "done",
+          "currentStep": null,
+          "latestUpdate": "completed",
+          "completedSummary": null,
+          "updatedAt": "2026-05-12T18:49:51.205Z"
+        },
+        {
+          "name": "understand-anything:file-analyzer:a82ba1d",
+          "role": "understand-anything:file-analyzer",
+          "ownership": "a82ba1dd0cfd85a9a",
+          "status": "done",
+          "currentStep": null,
+          "latestUpdate": "completed",
+          "completedSummary": null,
+          "updatedAt": "2026-05-12T18:54:48.103Z"
+        },
+        {
+          "name": "understand-anything:file-analyzer:af23d78",
+          "role": "understand-anything:file-analyzer",
+          "ownership": "af23d784104dc9786",
+          "status": "done",
+          "currentStep": null,
+          "latestUpdate": "completed",
+          "completedSummary": null,
+          "updatedAt": "2026-05-12T19:00:21.255Z"
+        },
+        {
+          "name": "understand-anything:file-analyzer:a20f61d",
+          "role": "understand-anything:file-analyzer",
+          "ownership": "a20f61d60cd4b5850",
+          "status": "done",
+          "currentStep": null,
+          "latestUpdate": "completed",
+          "completedSummary": null,
+          "updatedAt": "2026-05-12T19:06:06.443Z"
+        },
+        {
+          "name": "understand-anything:file-analyzer:a05cf3c",
+          "role": "understand-anything:file-analyzer",
+          "ownership": "a05cf3c2636f5e746",
+          "status": "done",
+          "currentStep": null,
+          "latestUpdate": "completed",
+          "completedSummary": null,
+          "updatedAt": "2026-05-12T19:09:30.489Z"
+        },
+        {
+          "name": "understand-anything:assemble-reviewer:a38d787",
+          "role": "understand-anything:assemble-reviewer",
+          "ownership": "a38d7878b9d81c294",
+          "status": "done",
+          "currentStep": null,
+          "latestUpdate": "completed",
+          "completedSummary": null,
+          "updatedAt": "2026-05-12T19:11:44.086Z"
+        },
+        {
+          "name": "understand-anything:architecture-analyzer:a92a7ee",
+          "role": "understand-anything:architecture-analyzer",
+          "ownership": "a92a7ee294f806908",
+          "status": "done",
+          "currentStep": null,
+          "latestUpdate": "completed",
+          "completedSummary": null,
+          "updatedAt": "2026-05-12T19:13:59.421Z"
+        },
+        {
+          "name": "understand-anything:tour-builder:a9ed66e",
+          "role": "understand-anything:tour-builder",
+          "ownership": "a9ed66e77f0fdbc8d",
+          "status": "done",
+          "currentStep": null,
+          "latestUpdate": "completed",
+          "completedSummary": null,
+          "updatedAt": "2026-05-12T19:16:32.294Z"
+        }
+      ],
+      "timeline": [
+        {
+          "id": "session-start:a92a7ee294f806908:2026-05-12T19:12:08.192Z",
+          "at": "2026-05-12T19:12:08.192Z",
+          "kind": "update",
+          "agent": "understand-anything:architecture-analyzer:a92a7ee",
+          "detail": "started understand-anything:architecture-analyzer:a92a7ee",
+          "sourceKey": "session-start:a92a7ee294f806908"
+        },
+        {
+          "id": "session-stop:a92a7ee294f806908:2026-05-12T19:13:59.421Z",
+          "at": "2026-05-12T19:13:59.421Z",
+          "kind": "completion",
+          "agent": "understand-anything:architecture-analyzer:a92a7ee",
+          "detail": "completed",
+          "sourceKey": "session-stop:a92a7ee294f806908"
+        },
+        {
+          "id": "session-start:a9ed66e77f0fdbc8d:2026-05-12T19:14:19.278Z",
+          "at": "2026-05-12T19:14:19.278Z",
+          "kind": "update",
+          "agent": "understand-anything:tour-builder:a9ed66e",
+          "detail": "started understand-anything:tour-builder:a9ed66e",
+          "sourceKey": "session-start:a9ed66e77f0fdbc8d"
+        },
+        {
+          "id": "session-stop:a9ed66e77f0fdbc8d:2026-05-12T19:16:32.294Z",
+          "at": "2026-05-12T19:16:32.294Z",
+          "kind": "completion",
+          "agent": "understand-anything:tour-builder:a9ed66e",
+          "detail": "completed",
+          "sourceKey": "session-stop:a9ed66e77f0fdbc8d"
+        },
+        {
+          "id": "session-stop:a8950d8eadcdbeb10:2026-05-12T19:17:59.537Z",
+          "at": "2026-05-12T19:17:59.537Z",
+          "kind": "completion",
+          "agent": "understand-anything:project-scanner:a197ac8",
+          "detail": "completed",
+          "sourceKey": "session-stop:a8950d8eadcdbeb10"
+        },
+        {
+          "id": "session-stop:ae2edc1d7a5237f97:2026-05-12T19:20:53.932Z",
+          "at": "2026-05-12T19:20:53.932Z",
+          "kind": "completion",
+          "agent": "understand-anything:project-scanner:a197ac8",
+          "detail": "completed",
+          "sourceKey": "session-stop:ae2edc1d7a5237f97"
+        },
+        {
+          "id": "session-stop:a86ed7c8f64624b52:2026-05-12T19:30:31.968Z",
+          "at": "2026-05-12T19:30:31.968Z",
+          "kind": "completion",
+          "agent": "understand-anything:project-scanner:a197ac8",
+          "detail": "completed",
+          "sourceKey": "session-stop:a86ed7c8f64624b52"
+        },
+        {
+          "id": "session-stop:acdd663674a5fdb5b:2026-05-12T19:36:58.642Z",
+          "at": "2026-05-12T19:36:58.642Z",
+          "kind": "completion",
+          "agent": "understand-anything:project-scanner:a197ac8",
+          "detail": "completed",
+          "sourceKey": "session-stop:acdd663674a5fdb5b"
+        }
+      ]
+    }
+  ]
+}
