@@ -16,6 +16,20 @@
       },
       "autoStart": false
     },
+    "agentic-flow": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "agentic-flow",
+        "mcp",
+        "start"
+      ],
+      "env": {
+        "AGENTDB_ENABLED": "true",
+        "AGENTDB_PATH": ".agentdb/reasoningbank.db"
+      },
+      "autoStart": false
+    },
     "cognitum": {
       "type": "sse",
       "url": "https://cognitum.one/mcpSse",

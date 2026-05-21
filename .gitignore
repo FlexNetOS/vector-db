@@ -70,6 +70,7 @@ claude-flow.config.json
 .swarm/
 .hive-mind/
 .claude-flow/
+.agentdb/
 
 # OMC runtime state — ignore by default, but keep curated learned skills.
 .omc/*
