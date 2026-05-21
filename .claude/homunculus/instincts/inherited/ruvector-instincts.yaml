@@ -1,0 +1,432 @@
+# Instincts generated from https://github.com/FlexNetOS/ruvector
+# Generated: 2026-05-21T03:19:15.903Z
+# Version: 2.0
+# NOTE: This file supplements (does not replace) any existing curated instincts.
+# High-confidence manually curated instincts should be preserved alongside these.
+
+---
+id: ruvector-commit-conventional
+trigger: "when writing a commit message"
+confidence: 0.85
+domain: git
+source: repo-analysis
+source_repo: https://github.com/FlexNetOS/ruvector
+---
+
+# Ruvector Commit Conventional
+
+## Action
+
+Use conventional commit format with prefixes: chore, fix, style, ci
+
+## Evidence
+
+- 8 commits analyzed
+- Detected conventional commit pattern
+- Examples: fix(ruvector-router-core): #430 HNSW insert beam + distance-based pruning + storage rebuild, chore(release): @ruvector/router 0.1.30 → 0.1.31
+
+---
+id: ruvector-commit-length
+trigger: "when writing a commit message"
+confidence: 0.6
+domain: git
+source: repo-analysis
+source_repo: https://github.com/FlexNetOS/ruvector
+---
+
+# Ruvector Commit Length
+
+## Action
+
+Write moderate-length commit messages (~59 characters)
+
+## Evidence
+
+- Average commit message length: 59 chars
+- Based on 8 commits
+
+---
+id: ruvector-naming-files
+trigger: "when creating a new file"
+confidence: 0.8
+domain: code-style
+source: repo-analysis
+source_repo: https://github.com/FlexNetOS/ruvector
+---
+
+# Ruvector Naming Files
+
+## Action
+
+Use camelCase naming convention
+
+## Evidence
+
+- Analyzed file naming patterns in repository
+- Dominant pattern: camelCase
+
+---
+id: ruvector-import-relative
+trigger: "when importing modules"
+confidence: 0.75
+domain: code-style
+source: repo-analysis
+source_repo: https://github.com/FlexNetOS/ruvector
+---
+
+# Ruvector Import Relative
+
+## Action
+
+Use relative imports for project files
+
+## Evidence
+
+- Import analysis shows relative import pattern
+- Example: import { x } from '../lib/x'
+
+---
+id: ruvector-export-style
+trigger: "when exporting from a module"
+confidence: 0.7
+domain: code-style
+source: repo-analysis
+source_repo: https://github.com/FlexNetOS/ruvector
+---
+
+# Ruvector Export Style
+
+## Action
+
+Prefer named exports
+
+## Evidence
+
+- Export pattern analysis
+- Dominant style: named
+
+---
+id: ruvector-test-separate
+trigger: "when writing tests"
+confidence: 0.8
+domain: testing
+source: repo-analysis
+source_repo: https://github.com/FlexNetOS/ruvector
+---
+
+# Ruvector Test Separate
+
+## Action
+
+Place tests in the tests/ or __tests__/ directory, mirroring src structure
+
+## Evidence
+
+- Separate test directory pattern detected
+- Tests live in dedicated test folders
+
+---
+id: ruvector-workflow-npm-package-version-bump-and-release
+trigger: "when doing npm package version bump and release"
+confidence: 0.6
+domain: workflow
+source: repo-analysis
+source_repo: https://github.com/FlexNetOS/ruvector
+---
+
+# Ruvector Workflow Npm Package Version Bump And Release
+
+## Action
+
+Follow the npm-package-version-bump-and-release workflow:
+1. Update version numbers in all relevant npm package.json files (meta and platform-specific).
+2. Commit the version bump.
+3. Publish to npm (handled by CI after tag is cut).
+
+## Evidence
+
+- Workflow detected from commit patterns
+- Frequency: ~2x per month
+- Files: npm/packages/router/package.json, npm/packages/router-darwin-arm64/package.json, npm/packages/router-darwin-x64/package.json
+
+---
+id: ruvector-workflow-sync-readme-and-package-json-to-published-npm
+trigger: "when doing sync readme and package json to published npm"
+confidence: 0.6
+domain: workflow
+source: repo-analysis
+source_repo: https://github.com/FlexNetOS/ruvector
+---
+
+# Ruvector Workflow Sync Readme And Package Json To Published Npm
+
+## Action
+
+Follow the sync-readme-and-package-json-to-published-npm workflow:
+1. Verify the published npm package contents.
+2. Update README.md and package.json in the corresponding npm package directory.
+3. Commit the changes to git.
+
+## Evidence
+
+- Workflow detected from commit patterns
+- Frequency: ~2x per month
+- Files: npm/packages/*/README.md, npm/packages/*/package.json
+
+---
+id: ruvector-workflow-ci-guard-and-supply-chain-hardening
+trigger: "when doing ci guard and supply chain hardening"
+confidence: 0.6
+domain: workflow
+source: repo-analysis
+source_repo: https://github.com/FlexNetOS/ruvector
+---
+
+# Ruvector Workflow Ci Guard And Supply Chain Hardening
+
+## Action
+
+Follow the ci-guard-and-supply-chain-hardening workflow:
+1. Add or update GitHub Actions workflow files for CI checks.
+2. Update dependency policy files (e.g., deny.toml).
+3. Update lockfiles and package manifests as needed.
+4. Commit all CI and policy changes.
+
+## Evidence
+
+- Workflow detected from commit patterns
+- Frequency: ~2x per month
+- Files: .github/workflows/*.yml, .github/dependabot.yml, deny.toml
+
+---
+id: ruvector-instinct-naming-files
+trigger: "When creating or renaming a source file"
+confidence: 0.9
+domain: code-style
+source: repo-analysis
+source_repo: FlexNetOS/ruvector
+---
+
+# Ruvector Instinct Naming Files
+
+## Action
+
+Use camelCase for file names
+
+## Evidence
+
+- Pattern in codeStyle.namingConventions.files
+
+---
+id: ruvector-instinct-naming-functions
+trigger: "When defining a function"
+confidence: 0.9
+domain: code-style
+source: repo-analysis
+source_repo: FlexNetOS/ruvector
+---
+
+# Ruvector Instinct Naming Functions
+
+## Action
+
+Use camelCase for function names
+
+## Evidence
+
+- Pattern in codeStyle.namingConventions.functions
+
+---
+id: ruvector-instinct-naming-classes
+trigger: "When defining a class or struct"
+confidence: 0.9
+domain: code-style
+source: repo-analysis
+source_repo: FlexNetOS/ruvector
+---
+
+# Ruvector Instinct Naming Classes
+
+## Action
+
+Use PascalCase for class/struct names
+
+## Evidence
+
+- Pattern in codeStyle.namingConventions.classes
+
+---
+id: ruvector-instinct-naming-constants
+trigger: "When defining a constant"
+confidence: 0.9
+domain: code-style
+source: repo-analysis
+source_repo: FlexNetOS/ruvector
+---
+
+# Ruvector Instinct Naming Constants
+
+## Action
+
+Use SCREAMING_SNAKE_CASE for constant names
+
+## Evidence
+
+- Pattern in codeStyle.namingConventions.constants
+
+---
+id: ruvector-instinct-import-style
+trigger: "When importing modules in Rust code"
+confidence: 0.8
+domain: code-style
+source: repo-analysis
+source_repo: FlexNetOS/ruvector
+---
+
+# Ruvector Instinct Import Style
+
+## Action
+
+Use relative imports
+
+## Evidence
+
+- Pattern in codeStyle.importStyle
+
+---
+id: ruvector-instinct-export-style
+trigger: "When exporting modules or functions"
+confidence: 0.8
+domain: code-style
+source: repo-analysis
+source_repo: FlexNetOS/ruvector
+---
+
+# Ruvector Instinct Export Style
+
+## Action
+
+Use named exports
+
+## Evidence
+
+- Pattern in codeStyle.exportStyle
+
+---
+id: ruvector-instinct-test-location
+trigger: "When adding or updating tests"
+confidence: 0.8
+domain: testing
+source: repo-analysis
+source_repo: FlexNetOS/ruvector
+---
+
+# Ruvector Instinct Test Location
+
+## Action
+
+Place tests in a separate directory from source code
+
+## Evidence
+
+- Pattern in architecture.folderStructure.testLocation
+
+---
+id: ruvector-instinct-commit-format
+trigger: "When writing a commit message"
+confidence: 0.9
+domain: git
+source: repo-analysis
+source_repo: FlexNetOS/ruvector
+---
+
+# Ruvector Instinct Commit Format
+
+## Action
+
+Use Conventional Commits format with prefixes: chore, fix, style, ci
+
+## Evidence
+
+- Pattern in commits.prefixes
+- Seen in commit: fix(ruvector-router-core): #430 HNSW insert beam + distance-based pruning + storage rebuild
+
+---
+id: ruvector-instinct-commit-length
+trigger: "When writing a commit message"
+confidence: 0.7
+domain: git
+source: repo-analysis
+source_repo: FlexNetOS/ruvector
+---
+
+# Ruvector Instinct Commit Length
+
+## Action
+
+Keep commit messages concise (average ~59 characters)
+
+## Evidence
+
+- Pattern in commits.averageLength
+
+---
+id: ruvector-instinct-npm-version-bump
+trigger: "When a new feature or fix needs to be released to npm consumers"
+confidence: 0.95
+domain: workflow
+source: repo-analysis
+source_repo: FlexNetOS/ruvector
+---
+
+# Ruvector Instinct Npm Version Bump
+
+## Action
+
+Update version numbers in all relevant npm package.json files, commit the bump, and publish via CI
+
+## Evidence
+
+- Workflow: npm-package-version-bump-and-release
+- Seen in commit: chore(release): @ruvector/router 0.1.30 → 0.1.31
+
+---
+id: ruvector-instinct-sync-npm-published
+trigger: "When a package is published to npm but the updated files were not committed to git"
+confidence: 0.9
+domain: workflow
+source: repo-analysis
+source_repo: FlexNetOS/ruvector
+---
+
+# Ruvector Instinct Sync Npm Published
+
+## Action
+
+Update README.md and package.json in the corresponding npm package directory to match the published version and commit
+
+## Evidence
+
+- Workflow: sync-readme-and-package-json-to-published-npm
+- Seen in commit: chore(diskann): sync README + package.json to published 0.1.1
+
+---
+id: ruvector-instinct-ci-guard
+trigger: "When new supply chain security layers or regression guards are added or existing ones are updated"
+confidence: 0.9
+domain: workflow
+source: repo-analysis
+source_repo: FlexNetOS/ruvector
+---
+
+# Ruvector Instinct Ci Guard
+
+## Action
+
+Add or update CI workflow files, dependency policy files, lockfiles, and commit all changes
+
+## Evidence
+
+- Workflow: ci-guard-and-supply-chain-hardening
+- Seen in commit: ci(security): add 5-layer supply-chain CI + clear 3 npm criticals
+
