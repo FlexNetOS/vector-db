@@ -8,18 +8,7 @@
 
 import { readFileSync, existsSync, mkdirSync } from "node:fs";
 import { join } from "node:path";
-import { createRequire } from "node:module";
-
-// agentdb is nested in @claude-flow/cli/node_modules — resolve via that path
-const require = createRequire(import.meta.url);
-const agentdbPath = require.resolve("agentdb", {
-  paths: [
-    join(process.cwd(), "node_modules", "@claude-flow", "cli"),
-    join(process.cwd(), "node_modules", "@claude-flow", "memory"),
-    join(process.cwd(), "node_modules"),
-  ],
-});
-const { AgentDB } = await import(agentdbPath);
+import { AgentDB } from "agentdb";
 
 const REPO_ROOT = process.cwd();
 const MANIFEST = join(REPO_ROOT, ".claude", "memory", "funneled", "manifest.json");
@@ -103,6 +92,13 @@ async function main() {
       failures.push({ key: m.key, error: String(e).slice(0, 300) });
     }
   }
+
+  // Rebuild the in-memory vector index from the freshly persisted embeddings
+  // so semantic search works in this process and after restarts. The RVF
+  // backend doesn't auto-load embeddings from SQLite on initialize.
+  console.log("Rebuilding vector index from persisted embeddings…");
+  const built = await memory.rebuildIndex();
+  console.log(`  rebuildIndex: ${built} vectors indexed`);
 
   await db.close();
 
