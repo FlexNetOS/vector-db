@@ -421,7 +421,10 @@ fn builder_emits_has_manifest_flag() {
     );
 
     let rt = AgiContainerHeader::from_bytes(&header.to_bytes()).unwrap();
-    assert!(rt.has_manifest(), "AGI_HAS_MANIFEST must survive header round-trip");
+    assert!(
+        rt.has_manifest(),
+        "AGI_HAS_MANIFEST must survive header round-trip"
+    );
 
     let parsed = ParsedAgiManifest::parse(&payload).unwrap();
     assert!(
@@ -444,7 +447,10 @@ fn signed_builder_emits_has_manifest_flag() {
         .build_and_sign(SIGNING_KEY)
         .unwrap();
 
-    assert!(header.has_manifest(), "signed containers must also set AGI_HAS_MANIFEST");
+    assert!(
+        header.has_manifest(),
+        "signed containers must also set AGI_HAS_MANIFEST"
+    );
     assert!(header.is_signed(), "sanity: signed flag still set");
 }
 
