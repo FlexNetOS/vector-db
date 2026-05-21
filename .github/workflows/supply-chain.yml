@@ -75,7 +75,7 @@ jobs:
           # `LicenseRef-bad-see-license-in-…`. Allow-list the package + per-
           # platform binary variants by name so the unparseable LicenseRef
           # doesn't gate PRs.
-          allow-dependencies-licenses: '@anthropic-ai/claude-code, @anthropic-ai/claude-code-darwin-arm64, @anthropic-ai/claude-code-darwin-x64, @anthropic-ai/claude-code-linux-arm64, @anthropic-ai/claude-code-linux-arm64-musl, @anthropic-ai/claude-code-linux-x64, @anthropic-ai/claude-code-linux-x64-musl, @anthropic-ai/claude-code-win32-arm64, @anthropic-ai/claude-code-win32-x64'
+          allow-dependencies-licenses: 'pkg:npm/%40anthropic-ai/claude-code, pkg:npm/%40anthropic-ai/claude-code-darwin-arm64, pkg:npm/%40anthropic-ai/claude-code-darwin-x64, pkg:npm/%40anthropic-ai/claude-code-linux-arm64, pkg:npm/%40anthropic-ai/claude-code-linux-arm64-musl, pkg:npm/%40anthropic-ai/claude-code-linux-x64, pkg:npm/%40anthropic-ai/claude-code-linux-x64-musl, pkg:npm/%40anthropic-ai/claude-code-win32-arm64, pkg:npm/%40anthropic-ai/claude-code-win32-x64'
           comment-summary-in-pr: on-failure
 
   # ─────────────────────────────────────────────────────────────────
