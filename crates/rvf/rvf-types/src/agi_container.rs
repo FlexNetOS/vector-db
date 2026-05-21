@@ -47,6 +47,11 @@ pub const AGI_HAS_TOOLS: u16 = 1 << 10;
 pub const AGI_HAS_COHERENCE_GATES: u16 = 1 << 11;
 /// Container includes cross-domain transfer learning data.
 pub const AGI_HAS_DOMAIN_EXPANSION: u16 = 1 << 12;
+/// Container includes the AGI manifest (META segment).
+/// Set only by `AgiContainerBuilder::build()`. Absence in `header.flags`
+/// does not imply absence of a valid manifest TLV payload — use
+/// `ParsedAgiManifest::parse()` to verify TLV content directly.
+pub const AGI_HAS_MANIFEST: u16 = 1 << 13;
 
 // --- TLV tags for the manifest payload ---
 
@@ -409,6 +414,13 @@ impl AgiContainerHeader {
         self.flags & AGI_HAS_DOMAIN_EXPANSION != 0
     }
 
+    /// Check if the container declares an AGI manifest in its header flags.
+    /// Set by `AgiContainerBuilder::build()` when `manifest_present` is true,
+    /// so parsers can verify manifest presence from header flags alone.
+    pub const fn has_manifest(&self) -> bool {
+        self.flags & AGI_HAS_MANIFEST != 0
+    }
+
     /// Serialize header to a 64-byte array.
     pub fn to_bytes(&self) -> [u8; AGI_HEADER_SIZE] {
         let mut buf = [0u8; AGI_HEADER_SIZE];
@@ -561,6 +573,9 @@ impl ContainerSegments {
         }
         if self.domain_expansion_present {
             flags |= AGI_HAS_DOMAIN_EXPANSION;
+        }
+        if self.manifest_present {
+            flags |= AGI_HAS_MANIFEST;
         }
         flags
     }
