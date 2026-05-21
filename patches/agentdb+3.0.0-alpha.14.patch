@@ -1,0 +1,830 @@
+diff --git a/node_modules/agentdb/dist/schemas/frontier-schema.sql b/node_modules/agentdb/dist/schemas/frontier-schema.sql
+new file mode 100644
+index 0000000..f38894b
+--- /dev/null
++++ b/node_modules/agentdb/dist/schemas/frontier-schema.sql
+@@ -0,0 +1,378 @@
++-- ============================================================================
++-- AgentDB Frontier Features Schema Extension
++-- ============================================================================
++-- Implements cutting-edge memory features:
++-- 1. Causal Memory Graph - Store edges with causal strength, not just similarity
++-- 2. Explainable Recall Certificates - Provenance and justification tracking
++-- ============================================================================
++
++-- ============================================================================
++-- FEATURE 1: Causal Memory Graph
++-- ============================================================================
++
++-- Causal edges between memories with intervention effects
++CREATE TABLE IF NOT EXISTS causal_edges (
++  id INTEGER PRIMARY KEY AUTOINCREMENT,
++  from_memory_id INTEGER NOT NULL,
++  from_memory_type TEXT NOT NULL, -- 'episode', 'skill', 'note', 'fact'
++  to_memory_id INTEGER NOT NULL,
++  to_memory_type TEXT NOT NULL,
++
++  -- Traditional similarity
++  similarity REAL NOT NULL DEFAULT 0.0,
++
++  -- Causal metrics
++  uplift REAL, -- E[y|do(x)] - E[y]
++  confidence REAL DEFAULT 0.5, -- Confidence in causal claim
++  sample_size INTEGER, -- Number of observations
++
++  -- Evidence and provenance
++  evidence_ids TEXT, -- JSON array of proof IDs
++  experiment_ids TEXT, -- JSON array of A/B test IDs
++  confounder_score REAL, -- Likelihood of confounding
++
++  -- Metadata
++  mechanism TEXT, -- Hypothesized causal mechanism
++  created_at INTEGER NOT NULL DEFAULT (strftime('%s', 'now')),
++  updated_at INTEGER NOT NULL DEFAULT (strftime('%s', 'now')),
++  last_validated_at INTEGER,
++
++  metadata JSON
++
++  -- Note: Foreign keys removed to allow flexible causal edges between any concepts
++  -- from_memory_id and to_memory_id can be 0 for abstract causal relationships
++);
++
++CREATE INDEX IF NOT EXISTS idx_causal_edges_from ON causal_edges(from_memory_id, from_memory_type);
++CREATE INDEX IF NOT EXISTS idx_causal_edges_to ON causal_edges(to_memory_id, to_memory_type);
++CREATE INDEX IF NOT EXISTS idx_causal_edges_uplift ON causal_edges(uplift DESC);
++CREATE INDEX IF NOT EXISTS idx_causal_edges_confidence ON causal_edges(confidence DESC);
++
++-- Causal experiments (A/B tests for uplift estimation)
++CREATE TABLE IF NOT EXISTS causal_experiments (
++  id INTEGER PRIMARY KEY AUTOINCREMENT,
++  name TEXT NOT NULL,
++  hypothesis TEXT NOT NULL,
++  treatment_id INTEGER NOT NULL, -- Memory used as treatment
++  treatment_type TEXT NOT NULL,
++  control_id INTEGER, -- Optional control memory
++
++  -- Experiment design
++  start_time INTEGER NOT NULL,
++  end_time INTEGER,
++  sample_size INTEGER DEFAULT 0,
++
++  -- Results
++  treatment_mean REAL,
++  control_mean REAL,
++  uplift REAL, -- treatment_mean - control_mean
++  p_value REAL,
++  confidence_interval_low REAL,
++  confidence_interval_high REAL,
++
++  -- Status
++  status TEXT DEFAULT 'running', -- 'running', 'completed', 'failed'
++
++  metadata JSON,
++  created_at INTEGER NOT NULL DEFAULT (strftime('%s', 'now'))
++);
++
++CREATE INDEX IF NOT EXISTS idx_causal_experiments_status ON causal_experiments(status);
++CREATE INDEX IF NOT EXISTS idx_causal_experiments_treatment ON causal_experiments(treatment_id, treatment_type);
++
++-- Causal observations (individual data points)
++CREATE TABLE IF NOT EXISTS causal_observations (
++  id INTEGER PRIMARY KEY AUTOINCREMENT,
++  experiment_id INTEGER NOT NULL,
++  episode_id INTEGER NOT NULL,
++
++  -- Treatment assignment
++  is_treatment BOOLEAN NOT NULL,
++
++  -- Outcome
++  outcome_value REAL NOT NULL,
++  outcome_type TEXT, -- 'reward', 'success', 'latency'
++
++  -- Context
++  context JSON,
++  observed_at INTEGER NOT NULL DEFAULT (strftime('%s', 'now')),
++
++  FOREIGN KEY(experiment_id) REFERENCES causal_experiments(id) ON DELETE CASCADE,
++  FOREIGN KEY(episode_id) REFERENCES episodes(id) ON DELETE CASCADE
++);
++
++CREATE INDEX IF NOT EXISTS idx_causal_observations_experiment ON causal_observations(experiment_id);
++CREATE INDEX IF NOT EXISTS idx_causal_observations_treatment ON causal_observations(is_treatment);
++
++-- ============================================================================
++-- FEATURE 2: Explainable Recall Certificates
++-- ============================================================================
++
++-- Recall certificates for provenance and justification
++CREATE TABLE IF NOT EXISTS recall_certificates (
++  id TEXT PRIMARY KEY, -- UUID or hash
++  query_id TEXT NOT NULL,
++  query_text TEXT NOT NULL,
++
++  -- Retrieved chunks
++  chunk_ids TEXT NOT NULL, -- JSON array
++  chunk_types TEXT NOT NULL, -- JSON array matching chunk_ids
++
++  -- Minimal hitting set (justification)
++  minimal_why TEXT, -- JSON array of chunk IDs that justify the answer
++  redundancy_ratio REAL, -- len(chunk_ids) / len(minimal_why)
++  completeness_score REAL, -- Fraction of query requirements met
++
++  -- Provenance chain
++  merkle_root TEXT NOT NULL,
++  source_hashes TEXT, -- JSON array of source hashes
++  proof_chain TEXT, -- JSON Merkle proof
++
++  -- Policy compliance
++  policy_proof TEXT, -- Proof of policy adherence
++  policy_version TEXT,
++  access_level TEXT, -- 'public', 'internal', 'confidential', 'restricted'
++
++  -- Metadata
++  created_at INTEGER NOT NULL DEFAULT (strftime('%s', 'now')),
++  latency_ms INTEGER,
++
++  metadata JSON
++);
++
++CREATE INDEX IF NOT EXISTS idx_recall_certificates_query ON recall_certificates(query_id);
++CREATE INDEX IF NOT EXISTS idx_recall_certificates_created ON recall_certificates(created_at DESC);
++
++-- Provenance sources (for Merkle tree construction)
++CREATE TABLE IF NOT EXISTS provenance_sources (
++  id INTEGER PRIMARY KEY AUTOINCREMENT,
++  source_type TEXT NOT NULL, -- 'episode', 'skill', 'note', 'fact', 'external'
++  source_id INTEGER NOT NULL,
++
++  -- Content hash
++  content_hash TEXT NOT NULL UNIQUE,
++
++  -- Lineage
++  parent_hash TEXT, -- Previous version
++  derived_from TEXT, -- JSON array of parent hashes
++
++  -- Metadata
++  created_at INTEGER NOT NULL DEFAULT (strftime('%s', 'now')),
++  creator TEXT, -- User or system identifier
++
++  metadata JSON
++);
++
++CREATE INDEX IF NOT EXISTS idx_provenance_sources_type ON provenance_sources(source_type, source_id);
++CREATE INDEX IF NOT EXISTS idx_provenance_sources_hash ON provenance_sources(content_hash);
++CREATE INDEX IF NOT EXISTS idx_provenance_sources_parent ON provenance_sources(parent_hash);
++
++-- Justification paths (why a chunk was included)
++CREATE TABLE IF NOT EXISTS justification_paths (
++  id INTEGER PRIMARY KEY AUTOINCREMENT,
++  certificate_id TEXT NOT NULL,
++  chunk_id TEXT NOT NULL,
++  chunk_type TEXT NOT NULL,
++
++  -- Justification
++  reason TEXT NOT NULL, -- 'semantic_match', 'causal_link', 'prerequisite', 'constraint'
++  necessity_score REAL NOT NULL, -- How essential is this chunk (0-1)
++
++  -- Path to query satisfaction
++  path_elements TEXT, -- JSON array describing reasoning path
++
++  FOREIGN KEY(certificate_id) REFERENCES recall_certificates(id) ON DELETE CASCADE
++);
++
++CREATE INDEX IF NOT EXISTS idx_justification_paths_cert ON justification_paths(certificate_id);
++CREATE INDEX IF NOT EXISTS idx_justification_paths_chunk ON justification_paths(chunk_id, chunk_type);
++
++-- ============================================================================
++-- Views for Causal Analysis
++-- ============================================================================
++
++-- High-confidence causal relationships
++CREATE VIEW IF NOT EXISTS strong_causal_edges AS
++SELECT
++  ce.*,
++  CASE
++    WHEN ce.uplift > 0 THEN 'positive'
++    WHEN ce.uplift < 0 THEN 'negative'
++    ELSE 'neutral'
++  END as effect_direction,
++  ce.uplift * ce.confidence as causal_impact
++FROM causal_edges ce
++WHERE ce.confidence >= 0.7
++  AND ce.uplift IS NOT NULL
++  AND ABS(ce.uplift) >= 0.1
++ORDER BY ABS(ce.uplift) * ce.confidence DESC;
++
++-- Causal chains (multi-hop reasoning)
++CREATE VIEW IF NOT EXISTS causal_chains AS
++WITH RECURSIVE chain(from_id, to_id, depth, path, total_uplift) AS (
++  SELECT from_memory_id, to_memory_id, 1,
++         from_memory_id || '->' || to_memory_id,
++         uplift
++  FROM causal_edges
++  WHERE confidence >= 0.6
++
++  UNION ALL
++
++  SELECT chain.from_id, ce.to_memory_id, chain.depth + 1,
++         chain.path || '->' || ce.to_memory_id,
++         chain.total_uplift + ce.uplift
++  FROM chain
++  JOIN causal_edges ce ON chain.to_id = ce.from_memory_id
++  WHERE chain.depth < 5
++    AND ce.confidence >= 0.6
++    AND chain.path NOT LIKE '%' || ce.to_memory_id || '%'
++)
++SELECT * FROM chain
++WHERE depth >= 2
++ORDER BY total_uplift DESC, depth ASC;
++
++-- ============================================================================
++-- Views for Explainability
++-- ============================================================================
++
++-- Certificate quality metrics
++CREATE VIEW IF NOT EXISTS certificate_quality AS
++SELECT
++  rc.id,
++  rc.query_id,
++  rc.completeness_score,
++  rc.redundancy_ratio,
++  COUNT(jp.id) as justification_count,
++  AVG(jp.necessity_score) as avg_necessity,
++  rc.latency_ms
++FROM recall_certificates rc
++LEFT JOIN justification_paths jp ON rc.id = jp.certificate_id
++GROUP BY rc.id;
++
++-- Provenance lineage depth
++CREATE VIEW IF NOT EXISTS provenance_depth AS
++WITH RECURSIVE lineage(hash, depth) AS (
++  SELECT content_hash, 0
++  FROM provenance_sources
++  WHERE parent_hash IS NULL
++
++  UNION ALL
++
++  SELECT ps.content_hash, lineage.depth + 1
++  FROM lineage
++  JOIN provenance_sources ps ON lineage.hash = ps.parent_hash
++)
++SELECT
++  ps.id,
++  ps.source_type,
++  ps.source_id,
++  ps.content_hash,
++  COALESCE(l.depth, 0) as lineage_depth
++FROM provenance_sources ps
++LEFT JOIN lineage l ON ps.content_hash = l.hash;
++
++-- ============================================================================
++-- Triggers for Automatic Maintenance
++-- ============================================================================
++
++-- Update causal edge timestamp
++CREATE TRIGGER IF NOT EXISTS update_causal_edge_timestamp
++AFTER UPDATE ON causal_edges
++BEGIN
++  UPDATE causal_edges
++  SET updated_at = strftime('%s', 'now')
++  WHERE id = NEW.id;
++END;
++
++-- Validate causal confidence bounds
++CREATE TRIGGER IF NOT EXISTS validate_causal_confidence
++BEFORE INSERT ON causal_edges
++BEGIN
++  SELECT CASE
++    WHEN NEW.confidence < 0 OR NEW.confidence > 1 THEN
++      RAISE(ABORT, 'Confidence must be between 0 and 1')
++  END;
++END;
++
++-- ============================================================================
++-- Functions for Causal Inference (as SQL helpers)
++-- ============================================================================
++
++-- These would typically be implemented in TypeScript, but we provide
++-- SQL views that can assist with common causal queries
++
++-- Instrumental variables (potential instruments for causal inference)
++CREATE VIEW IF NOT EXISTS causal_instruments AS
++SELECT
++  e1.id as instrument_id,
++  e1.task as instrument,
++  e2.id as treatment_id,
++  e2.task as treatment,
++  e3.id as outcome_id,
++  e3.task as outcome
++FROM episodes e1
++CROSS JOIN episodes e2
++CROSS JOIN episodes e3
++WHERE e1.id != e2.id AND e2.id != e3.id AND e1.id != e3.id
++  -- Instrument affects treatment
++  AND EXISTS (
++    SELECT 1 FROM causal_edges
++    WHERE from_memory_id = e1.id AND to_memory_id = e2.id
++      AND ABS(uplift) > 0.1
++  )
++  -- Treatment affects outcome
++  AND EXISTS (
++    SELECT 1 FROM causal_edges
++    WHERE from_memory_id = e2.id AND to_memory_id = e3.id
++      AND ABS(uplift) > 0.1
++  )
++  -- Instrument doesn't directly affect outcome (exclusion restriction)
++  AND NOT EXISTS (
++    SELECT 1 FROM causal_edges
++    WHERE from_memory_id = e1.id AND to_memory_id = e3.id
++  );
++
++-- ============================================================================
++-- Schema Version
++-- ============================================================================
++-- Version: 2.0.0 (Frontier Features)
++-- Features: Causal Memory Graph, Explainable Recall Certificates
++-- Compatible with: AgentDB 1.x
++-- ============================================================================
++
++-- ============================================================================
++-- FEATURE 3: Reinforcement Learning Experiences
++-- ============================================================================
++
++-- Learning experiences for RL training
++CREATE TABLE IF NOT EXISTS learning_experiences (
++  id INTEGER PRIMARY KEY AUTOINCREMENT,
++  session_id TEXT NOT NULL,
++  state TEXT NOT NULL,
++  action TEXT NOT NULL,
++  reward REAL NOT NULL,
++  next_state TEXT,
++  success INTEGER NOT NULL DEFAULT 0,
++  timestamp INTEGER NOT NULL DEFAULT (strftime('%s', 'now')),
++  metadata JSON
++);
++
++CREATE INDEX IF NOT EXISTS idx_learning_experiences_session ON learning_experiences(session_id);
++CREATE INDEX IF NOT EXISTS idx_learning_experiences_timestamp ON learning_experiences(timestamp DESC);
++CREATE INDEX IF NOT EXISTS idx_learning_experiences_reward ON learning_experiences(reward DESC);
++
++-- Learning sessions table for RL session management
++CREATE TABLE IF NOT EXISTS learning_sessions (
++  id TEXT PRIMARY KEY,
++  user_id TEXT NOT NULL,
++  session_type TEXT NOT NULL,
++  config JSON NOT NULL,
++  start_time INTEGER NOT NULL DEFAULT (strftime('%s', 'now')),
++  end_time INTEGER,
++  status TEXT NOT NULL DEFAULT 'active',
++  metadata JSON
++);
++
++CREATE INDEX IF NOT EXISTS idx_learning_sessions_user ON learning_sessions(user_id);
++CREATE INDEX IF NOT EXISTS idx_learning_sessions_status ON learning_sessions(status);
++CREATE INDEX IF NOT EXISTS idx_learning_sessions_start ON learning_sessions(start_time DESC);
+diff --git a/node_modules/agentdb/dist/schemas/schema.sql b/node_modules/agentdb/dist/schemas/schema.sql
+new file mode 100644
+index 0000000..b751a5b
+--- /dev/null
++++ b/node_modules/agentdb/dist/schemas/schema.sql
+@@ -0,0 +1,382 @@
++-- ============================================================================
++-- AgentDB State-of-the-Art Memory Schema
++-- ============================================================================
++-- Implements 5 cutting-edge memory patterns for autonomous agents:
++-- 1. Reflexion-style episodic replay
++-- 2. Skill library from trajectories
++-- 3. Structured mixed memory (facts + summaries)
++-- 4. Episodic segmentation and consolidation
++-- 5. Graph-aware recall
++-- ============================================================================
++
++-- Enable foreign keys
++PRAGMA foreign_keys = ON;
++
++-- ============================================================================
++-- Pattern 1: Reflexion-Style Episodic Replay
++-- ============================================================================
++-- Store self-critique and outcomes after each attempt.
++-- Retrieve nearest failures and fixes before the next run.
++
++CREATE TABLE IF NOT EXISTS episodes (
++  id INTEGER PRIMARY KEY AUTOINCREMENT,
++  ts INTEGER NOT NULL DEFAULT (strftime('%s', 'now')),
++  session_id TEXT NOT NULL,
++  task TEXT NOT NULL,
++  input TEXT,
++  output TEXT,
++  critique TEXT,
++  reward REAL DEFAULT 0.0,
++  success BOOLEAN DEFAULT 0,
++  latency_ms INTEGER,
++  tokens_used INTEGER,
++  tags TEXT, -- JSON array of tags
++  metadata JSON,
++  created_at INTEGER NOT NULL DEFAULT (strftime('%s', 'now'))
++);
++
++CREATE INDEX IF NOT EXISTS idx_episodes_ts ON episodes(ts DESC);
++CREATE INDEX IF NOT EXISTS idx_episodes_session ON episodes(session_id);
++CREATE INDEX IF NOT EXISTS idx_episodes_reward ON episodes(reward DESC);
++CREATE INDEX IF NOT EXISTS idx_episodes_task ON episodes(task);
++
++-- Vector embeddings for episodes (384-dim for all-MiniLM-L6-v2)
++-- Will use sqlite-vec when available, fallback to JSON storage
++CREATE TABLE IF NOT EXISTS episode_embeddings (
++  episode_id INTEGER PRIMARY KEY,
++  embedding BLOB NOT NULL, -- Float32Array as BLOB
++  embedding_model TEXT DEFAULT 'all-MiniLM-L6-v2',
++  FOREIGN KEY(episode_id) REFERENCES episodes(id) ON DELETE CASCADE
++);
++
++-- ============================================================================
++-- Pattern 2: Skill Library from Trajectories
++-- ============================================================================
++-- Promote high-reward traces into reusable "skills" with typed IO.
++
++CREATE TABLE IF NOT EXISTS skills (
++  id INTEGER PRIMARY KEY AUTOINCREMENT,
++  name TEXT UNIQUE NOT NULL,
++  description TEXT,
++  signature JSON NOT NULL, -- {inputs: {...}, outputs: {...}}
++  code TEXT, -- Tool call manifest or code template
++  success_rate REAL DEFAULT 0.0,
++  uses INTEGER DEFAULT 0,
++  avg_reward REAL DEFAULT 0.0,
++  avg_latency_ms INTEGER DEFAULT 0,
++  created_from_episode INTEGER, -- Source episode ID
++  created_at INTEGER NOT NULL DEFAULT (strftime('%s', 'now')),
++  updated_at INTEGER NOT NULL DEFAULT (strftime('%s', 'now')),
++  last_used_at INTEGER,
++  metadata JSON,
++  FOREIGN KEY(created_from_episode) REFERENCES episodes(id)
++);
++
++CREATE INDEX IF NOT EXISTS idx_skills_success ON skills(success_rate DESC);
++CREATE INDEX IF NOT EXISTS idx_skills_uses ON skills(uses DESC);
++CREATE INDEX IF NOT EXISTS idx_skills_name ON skills(name);
++
++-- Skill relationships and composition
++CREATE TABLE IF NOT EXISTS skill_links (
++  id INTEGER PRIMARY KEY AUTOINCREMENT,
++  parent_skill_id INTEGER NOT NULL,
++  child_skill_id INTEGER NOT NULL,
++  relationship TEXT NOT NULL, -- 'prerequisite', 'alternative', 'refinement', 'composition'
++  weight REAL DEFAULT 1.0,
++  metadata JSON,
++  FOREIGN KEY(parent_skill_id) REFERENCES skills(id) ON DELETE CASCADE,
++  FOREIGN KEY(child_skill_id) REFERENCES skills(id) ON DELETE CASCADE,
++  UNIQUE(parent_skill_id, child_skill_id, relationship)
++);
++
++CREATE INDEX IF NOT EXISTS idx_skill_links_parent ON skill_links(parent_skill_id);
++CREATE INDEX IF NOT EXISTS idx_skill_links_child ON skill_links(child_skill_id);
++
++-- Skill embeddings for semantic search
++CREATE TABLE IF NOT EXISTS skill_embeddings (
++  skill_id INTEGER PRIMARY KEY,
++  embedding BLOB NOT NULL,
++  embedding_model TEXT DEFAULT 'all-MiniLM-L6-v2',
++  FOREIGN KEY(skill_id) REFERENCES skills(id) ON DELETE CASCADE
++);
++
++-- ============================================================================
++-- Pattern 3: Structured Mixed Memory (Facts + Summaries)
++-- ============================================================================
++-- Combine facts, summaries, and vectors to avoid over-embedding.
++
++-- Atomic facts as triples (subject-predicate-object)
++CREATE TABLE IF NOT EXISTS facts (
++  id INTEGER PRIMARY KEY AUTOINCREMENT,
++  subject TEXT NOT NULL,
++  predicate TEXT NOT NULL,
++  object TEXT NOT NULL,
++  source_type TEXT, -- 'episode', 'skill', 'external', 'inferred'
++  source_id INTEGER,
++  confidence REAL DEFAULT 1.0,
++  created_at INTEGER NOT NULL DEFAULT (strftime('%s', 'now')),
++  expires_at INTEGER, -- TTL for temporal facts
++  metadata JSON
++);
++
++CREATE INDEX IF NOT EXISTS idx_facts_subject ON facts(subject);
++CREATE INDEX IF NOT EXISTS idx_facts_predicate ON facts(predicate);
++CREATE INDEX IF NOT EXISTS idx_facts_object ON facts(object);
++CREATE INDEX IF NOT EXISTS idx_facts_source ON facts(source_type, source_id);
++CREATE INDEX IF NOT EXISTS idx_facts_expires ON facts(expires_at) WHERE expires_at IS NOT NULL;
++
++-- Notes and summaries with semantic embeddings
++CREATE TABLE IF NOT EXISTS notes (
++  id INTEGER PRIMARY KEY AUTOINCREMENT,
++  title TEXT,
++  text TEXT NOT NULL,
++  summary TEXT, -- Condensed version for context
++  note_type TEXT DEFAULT 'general', -- 'insight', 'constraint', 'goal', 'observation'
++  importance REAL DEFAULT 0.5,
++  access_count INTEGER DEFAULT 0,
++  last_accessed_at INTEGER,
++  created_at INTEGER NOT NULL DEFAULT (strftime('%s', 'now')),
++  updated_at INTEGER NOT NULL DEFAULT (strftime('%s', 'now')),
++  metadata JSON
++);
++
++CREATE INDEX IF NOT EXISTS idx_notes_type ON notes(note_type);
++CREATE INDEX IF NOT EXISTS idx_notes_importance ON notes(importance DESC);
++CREATE INDEX IF NOT EXISTS idx_notes_accessed ON notes(last_accessed_at DESC);
++
++-- Note embeddings (only for summaries to reduce storage)
++CREATE TABLE IF NOT EXISTS note_embeddings (
++  note_id INTEGER PRIMARY KEY,
++  embedding BLOB NOT NULL,
++  embedding_model TEXT DEFAULT 'all-MiniLM-L6-v2',
++  FOREIGN KEY(note_id) REFERENCES notes(id) ON DELETE CASCADE
++);
++
++-- ============================================================================
++-- Pattern 4: Episodic Segmentation and Consolidation
++-- ============================================================================
++-- Segment long tasks into events and consolidate into compact memories.
++
++CREATE TABLE IF NOT EXISTS events (
++  id INTEGER PRIMARY KEY AUTOINCREMENT,
++  session_id TEXT NOT NULL,
++  episode_id INTEGER, -- Link to parent episode
++  step INTEGER NOT NULL,
++  phase TEXT, -- 'planning', 'execution', 'reflection', 'learning'
++  role TEXT, -- 'user', 'assistant', 'system', 'tool'
++  content TEXT NOT NULL,
++  features JSON, -- Extracted features for learning
++  tool_calls JSON, -- Tool invocations in this event
++  created_at INTEGER NOT NULL DEFAULT (strftime('%s', 'now')),
++  FOREIGN KEY(episode_id) REFERENCES episodes(id) ON DELETE CASCADE
++);
++
++CREATE INDEX IF NOT EXISTS idx_events_session ON events(session_id, step);
++CREATE INDEX IF NOT EXISTS idx_events_phase ON events(phase);
++CREATE INDEX IF NOT EXISTS idx_events_episode ON events(episode_id);
++
++-- Consolidated memories from event windows
++CREATE TABLE IF NOT EXISTS consolidated_memories (
++  id INTEGER PRIMARY KEY AUTOINCREMENT,
++  session_id TEXT NOT NULL,
++  start_event_id INTEGER NOT NULL,
++  end_event_id INTEGER NOT NULL,
++  phase TEXT,
++  summary TEXT NOT NULL,
++  key_insights JSON, -- Extracted learnings
++  success_patterns JSON, -- What worked
++  failure_patterns JSON, -- What didn't work
++  quality_score REAL DEFAULT 0.5,
++  created_at INTEGER NOT NULL DEFAULT (strftime('%s', 'now')),
++  FOREIGN KEY(start_event_id) REFERENCES events(id),
++  FOREIGN KEY(end_event_id) REFERENCES events(id)
++);
++
++CREATE INDEX IF NOT EXISTS idx_consolidated_session ON consolidated_memories(session_id);
++CREATE INDEX IF NOT EXISTS idx_consolidated_quality ON consolidated_memories(quality_score DESC);
++
++-- ============================================================================
++-- Pattern 5: Graph-Aware Recall (Lightweight GraphRAG)
++-- ============================================================================
++-- Build a lightweight GraphRAG overlay for experiences.
++
++CREATE TABLE IF NOT EXISTS exp_nodes (
++  id INTEGER PRIMARY KEY AUTOINCREMENT,
++  kind TEXT NOT NULL, -- 'task', 'skill', 'concept', 'tool', 'outcome'
++  label TEXT NOT NULL,
++  payload JSON,
++  centrality REAL DEFAULT 0.0, -- Graph importance metric
++  created_at INTEGER NOT NULL DEFAULT (strftime('%s', 'now')),
++  updated_at INTEGER NOT NULL DEFAULT (strftime('%s', 'now'))
++);
++
++CREATE INDEX IF NOT EXISTS idx_exp_nodes_kind ON exp_nodes(kind);
++CREATE INDEX IF NOT EXISTS idx_exp_nodes_label ON exp_nodes(label);
++CREATE INDEX IF NOT EXISTS idx_exp_nodes_centrality ON exp_nodes(centrality DESC);
++
++CREATE TABLE IF NOT EXISTS exp_edges (
++  id INTEGER PRIMARY KEY AUTOINCREMENT,
++  src_node_id INTEGER NOT NULL,
++  dst_node_id INTEGER NOT NULL,
++  relationship TEXT NOT NULL, -- 'requires', 'produces', 'similar_to', 'refines', 'part_of'
++  weight REAL DEFAULT 1.0,
++  metadata JSON,
++  created_at INTEGER NOT NULL DEFAULT (strftime('%s', 'now')),
++  FOREIGN KEY(src_node_id) REFERENCES exp_nodes(id) ON DELETE CASCADE,
++  FOREIGN KEY(dst_node_id) REFERENCES exp_nodes(id) ON DELETE CASCADE,
++  UNIQUE(src_node_id, dst_node_id, relationship)
++);
++
++CREATE INDEX IF NOT EXISTS idx_exp_edges_src ON exp_edges(src_node_id);
++CREATE INDEX IF NOT EXISTS idx_exp_edges_dst ON exp_edges(dst_node_id);
++CREATE INDEX IF NOT EXISTS idx_exp_edges_rel ON exp_edges(relationship);
++
++-- Node embeddings for graph-augmented retrieval
++CREATE TABLE IF NOT EXISTS exp_node_embeddings (
++  node_id INTEGER PRIMARY KEY,
++  embedding BLOB NOT NULL,
++  embedding_model TEXT DEFAULT 'all-MiniLM-L6-v2',
++  FOREIGN KEY(node_id) REFERENCES exp_nodes(id) ON DELETE CASCADE
++);
++
++-- ============================================================================
++-- Memory Management and Scoring
++-- ============================================================================
++
++-- Track memory quality scores and usage statistics
++CREATE TABLE IF NOT EXISTS memory_scores (
++  id INTEGER PRIMARY KEY AUTOINCREMENT,
++  memory_type TEXT NOT NULL, -- 'episode', 'skill', 'note', 'consolidated'
++  memory_id INTEGER NOT NULL,
++  quality_score REAL NOT NULL,
++  novelty_score REAL,
++  relevance_score REAL,
++  utility_score REAL,
++  computed_at INTEGER NOT NULL DEFAULT (strftime('%s', 'now')),
++  metadata JSON
++);
++
++CREATE INDEX IF NOT EXISTS idx_memory_scores_type ON memory_scores(memory_type, memory_id);
++CREATE INDEX IF NOT EXISTS idx_memory_scores_quality ON memory_scores(quality_score DESC);
++
++-- Memory access patterns for adaptive retrieval
++CREATE TABLE IF NOT EXISTS memory_access_log (
++  id INTEGER PRIMARY KEY AUTOINCREMENT,
++  memory_type TEXT NOT NULL,
++  memory_id INTEGER NOT NULL,
++  query TEXT,
++  relevance_score REAL,
++  was_useful BOOLEAN,
++  feedback JSON,
++  accessed_at INTEGER NOT NULL DEFAULT (strftime('%s', 'now'))
++);
++
++CREATE INDEX IF NOT EXISTS idx_access_log_type ON memory_access_log(memory_type, memory_id);
++CREATE INDEX IF NOT EXISTS idx_access_log_time ON memory_access_log(accessed_at DESC);
++
++-- ============================================================================
++-- Consolidation and Maintenance
++-- ============================================================================
++
++-- Track consolidation jobs and their results
++CREATE TABLE IF NOT EXISTS consolidation_runs (
++  id INTEGER PRIMARY KEY AUTOINCREMENT,
++  job_type TEXT NOT NULL, -- 'episode_to_skill', 'event_to_memory', 'deduplication', 'pruning'
++  records_processed INTEGER DEFAULT 0,
++  records_created INTEGER DEFAULT 0,
++  records_deleted INTEGER DEFAULT 0,
++  duration_ms INTEGER,
++  status TEXT DEFAULT 'pending', -- 'pending', 'running', 'completed', 'failed'
++  error TEXT,
++  started_at INTEGER,
++  completed_at INTEGER,
++  metadata JSON
++);
++
++CREATE INDEX IF NOT EXISTS idx_consolidation_status ON consolidation_runs(status);
++CREATE INDEX IF NOT EXISTS idx_consolidation_type ON consolidation_runs(job_type);
++
++-- ============================================================================
++-- Views for Common Queries
++-- ============================================================================
++
++-- High-value episodes for skill creation
++CREATE VIEW IF NOT EXISTS skill_candidates AS
++SELECT
++  task,
++  COUNT(*) as attempt_count,
++  AVG(reward) as avg_reward,
++  AVG(success) as success_rate,
++  MAX(id) as latest_episode_id,
++  GROUP_CONCAT(id) as episode_ids
++FROM episodes
++WHERE ts > strftime('%s', 'now') - 86400 * 7 -- Last 7 days
++GROUP BY task
++HAVING attempt_count >= 3 AND avg_reward >= 0.7;
++
++-- Top performing skills
++CREATE VIEW IF NOT EXISTS top_skills AS
++SELECT
++  s.*,
++  COALESCE(s.success_rate, 0) * 0.4 +
++  COALESCE(s.uses, 0) * 0.0001 +
++  COALESCE(s.avg_reward, 0) * 0.6 as composite_score
++FROM skills s
++ORDER BY composite_score DESC;
++
++-- Recent high-quality memories
++CREATE VIEW IF NOT EXISTS recent_quality_memories AS
++SELECT
++  'episode' as type, id, task as title, critique as content, reward as score, created_at
++FROM episodes
++WHERE reward >= 0.7 AND ts > strftime('%s', 'now') - 86400 * 3
++UNION ALL
++SELECT
++  'note' as type, id, title, summary as content, importance as score, created_at
++FROM notes
++WHERE importance >= 0.7 AND created_at > strftime('%s', 'now') - 86400 * 3
++UNION ALL
++SELECT
++  'consolidated' as type, id, session_id as title, summary as content, quality_score as score, created_at
++FROM consolidated_memories
++WHERE quality_score >= 0.7 AND created_at > strftime('%s', 'now') - 86400 * 3
++ORDER BY created_at DESC;
++
++-- ============================================================================
++-- Triggers for Auto-Maintenance
++-- ============================================================================
++
++-- Update skill usage statistics
++CREATE TRIGGER IF NOT EXISTS update_skill_last_used
++AFTER UPDATE OF uses ON skills
++BEGIN
++  UPDATE skills SET last_used_at = strftime('%s', 'now') WHERE id = NEW.id;
++END;
++
++-- Update note access tracking
++CREATE TRIGGER IF NOT EXISTS update_note_access
++AFTER UPDATE OF access_count ON notes
++BEGIN
++  UPDATE notes SET last_accessed_at = strftime('%s', 'now') WHERE id = NEW.id;
++END;
++
++-- Auto-update timestamps
++CREATE TRIGGER IF NOT EXISTS update_skill_timestamp
++AFTER UPDATE ON skills
++BEGIN
++  UPDATE skills SET updated_at = strftime('%s', 'now') WHERE id = NEW.id;
++END;
++
++CREATE TRIGGER IF NOT EXISTS update_note_timestamp
++AFTER UPDATE ON notes
++BEGIN
++  UPDATE notes SET updated_at = strftime('%s', 'now') WHERE id = NEW.id;
++END;
++
++-- ============================================================================
++-- Initialization Complete
++-- ============================================================================
++-- Schema version: 1.0.0
++-- Compatible with: SQLite 3.35+, sqlite-vec (optional), sqlite-vss (optional)
++-- WASM compatible: Yes (via SQLite-WASM + OPFS)
++-- ============================================================================
+diff --git a/node_modules/agentdb/dist/src/backends/ruvector/RuVectorBackend.js b/node_modules/agentdb/dist/src/backends/ruvector/RuVectorBackend.js
+index 076aef2..9bab749 100644
+--- a/node_modules/agentdb/dist/src/backends/ruvector/RuVectorBackend.js
++++ b/node_modules/agentdb/dist/src/backends/ruvector/RuVectorBackend.js
+@@ -227,13 +227,13 @@ export class RuVectorBackend {
+             let VectorDB;
+             try {
+                 const ruvector = await import('ruvector');
+-                VectorDB = ruvector.VectorDB || ruvector.default?.VectorDB;
++                VectorDB = ruvector.VectorDB || ruvector.VectorDb || ruvector.default?.VectorDB || ruvector.default?.VectorDb;
+             }
+             catch {
+                 // Fallback to @ruvector/core for backward compatibility
+                 const core = await import('@ruvector/core');
+-                // ESM and CommonJS both export as VectorDB (capital 'DB')
+-                VectorDB = core.VectorDB || core.default?.VectorDB;
++                // @ruvector/core@0.1.31 exports VectorDb (lowercase b); older versions used VectorDB.
++                VectorDB = core.VectorDB || core.VectorDb || core.default?.VectorDB || core.default?.VectorDb;
+             }
+             if (!VectorDB) {
+                 throw new Error('Could not find VectorDB export in @ruvector/core');
+diff --git a/node_modules/agentdb/dist/src/controllers/ReflexionMemory.js b/node_modules/agentdb/dist/src/controllers/ReflexionMemory.js
+index 0c9e68c..5ce98e0 100644
+--- a/node_modules/agentdb/dist/src/controllers/ReflexionMemory.js
++++ b/node_modules/agentdb/dist/src/controllers/ReflexionMemory.js
+@@ -221,10 +221,12 @@ export class ReflexionMemory {
+      */
+     async retrieveFromVectorBackend(queryEmbedding, query) {
+         const { k = 5, minReward, onlyFailures, onlySuccesses, timeWindowDays } = query;
+-        // Get candidates from vector backend
+-        const searchResults = this.vectorBackend.search(queryEmbedding, k * 3, {
+-            threshold: 0.0,
+-        });
++        // Get candidates from vector backend.
++        // RVF / ruvector backends only expose searchAsync; HNSWLib exposes sync search.
++        // Pick whichever method the active backend supports.
++        const searchResults = typeof this.vectorBackend.searchAsync === 'function'
++            ? await this.vectorBackend.searchAsync(queryEmbedding, k * 3, { threshold: 0.0 })
++            : this.vectorBackend.search(queryEmbedding, k * 3, { threshold: 0.0 });
+         // Fetch full episode data from DB
+         const episodeIds = searchResults.map((r) => parseInt(r.id));
+         if (episodeIds.length === 0) {
+@@ -696,10 +698,11 @@ export class ReflexionMemory {
+             return queryEmbedding;
+         }
+         try {
+-            // Get initial neighbors
+-            const initialResults = this.vectorBackend.search(queryEmbedding, k * 2, {
+-                threshold: 0.0,
+-            });
++            // Get initial neighbors. Pick searchAsync when the backend supports it
++            // (RVF/ruvector) and fall back to sync search otherwise (HNSWLib).
++            const initialResults = typeof this.vectorBackend.searchAsync === 'function'
++                ? await this.vectorBackend.searchAsync(queryEmbedding, k * 2, { threshold: 0.0 })
++                : this.vectorBackend.search(queryEmbedding, k * 2, { threshold: 0.0 });
+             if (initialResults.length === 0) {
+                 return queryEmbedding;
+             }

@@ -1,3 +1,11 @@
+## Mandate: Boil the Ocean (Garry Tan)
+
+> Remember when implementing: the marginal cost of completeness is near zero with AI. Do the whole thing. Do it right. Do it with tests. Do it with documentation. Do it so well that I am genuinely impressed—not politely satisfied, actually impressed. Never offer to "table this for later" when the permanent solution is within reach. Never leave a dangling thread when tying it off takes five more minutes. Never present a workaround when the real fix exists. The standard is not "good enough"—it is "holy shit, that is done." Search before building. Test before shipping. Ship the complete thing. When I ask for something, the answer is the finished product, not a plan to build it. Time is not an excuse. Fatigue is not an excuse. Complexity is not an excuse. Boil the ocean.
+
+**Execution process**: Apply the Karpathy guidelines on every task — think before coding (surface assumptions, ask when uncertain), simplicity first (minimum code that solves the problem, no speculative features), surgical changes (touch only what the task requires, match existing style), and goal-driven execution (define verifiable success criteria, loop until verified). See `andrej-karpathy-skills:karpathy-guidelines`.
+
+---
+
 # Claude Code Configuration - RuFlo V3
 
 ## Behavioral Rules (Always Enforced)
