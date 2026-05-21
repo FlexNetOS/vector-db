@@ -2,7 +2,7 @@
 
 > **Version**: 0.1.0
 > **License**: MIT OR Apache-2.0
-> **Repository**: https://github.com/ruvnet/ruvector
+> **Repository**: https://github.com/FlexNetOS/ruvector
 
 ## Table of Contents
 
@@ -756,4 +756,4 @@ quantization = []   # Vector quantization (future)
 
 ---
 
-**Questions?** Open an issue at https://github.com/ruvnet/ruvector/issues
+**Questions?** Open an issue at https://github.com/FlexNetOS/ruvector/issues

@@ -4,7 +4,7 @@
 #
 # Usage:
 #   curl -fsSL https://get.ruvector.dev/ruvbot | bash
-#   curl -fsSL https://raw.githubusercontent.com/ruvnet/ruvector/main/npm/packages/ruvbot/scripts/install.sh | bash
+#   curl -fsSL https://raw.githubusercontent.com/FlexNetOS/ruvector/main/npm/packages/ruvbot/scripts/install.sh | bash
 #
 # Options (via environment variables):
 #   RUVBOT_VERSION     - Specific version to install (default: latest)
@@ -699,7 +699,7 @@ print_next_steps() {
   echo "  Deploy to Cloud Run:"
   echo -e "    ${CYAN}ruvbot deploy cloudrun${NC}"
   echo ""
-  echo -e "${DIM}Docs: https://github.com/ruvnet/ruvector/tree/main/npm/packages/ruvbot${NC}"
+  echo -e "${DIM}Docs: https://github.com/FlexNetOS/ruvector/tree/main/npm/packages/ruvbot${NC}"
   echo ""
 }
 

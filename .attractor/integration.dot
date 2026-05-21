@@ -1,0 +1,112 @@
+// FlexNetOS/ruvector self-learning pipeline (Attractor NLSpec, DOT)
+//
+// Brain side of the cross-repo loop. ruvector is the memory / reasoning
+// substrate; weftos is the runtime that consumes it. This pipeline runs
+// end-to-end with no human in the loop — every node is fully automatable.
+//
+// Reference: https://github.com/strongdm/attractor/blob/main/attractor-spec.md
+//
+// Render to SVG locally:    dot -Tsvg .attractor/integration.dot -o pipeline.svg
+// Validate without running: scripts/attractor.sh validate
+// Dry-run topology:         scripts/attractor.sh dry-run
+// Execute one iteration:    scripts/attractor.sh run
+
+digraph ruvector_self_learning {
+    label = "ruvector self-learning loop"
+    goal = "Recall a relevant pattern, attempt the change, validate it, optimize, then distill the trajectory back into ReasoningBank."
+    rankdir = "LR"
+    default_max_retries = 1
+    retry_target = "identify"
+    fallback_retry_target = "exit"
+
+    // ---- Entry ----------------------------------------------------------
+    start [shape="mdiamond", label="start"]
+
+    // ---- 1. Identify ----------------------------------------------------
+    // Search ReasoningBank + AgentDB for a low-confidence pattern that
+    // matches the current development goal, plus any active drift signals
+    // surfaced by sona/prime-radiant.
+    identify [
+        shape    = "box",
+        type     = "codergen",
+        label    = "identify",
+        prompt   = "Goal: $goal\nQuery ReasoningBank for patterns with confidence < 0.6 in the active namespace. Return the most relevant pattern_id, its prior verdict, and the open drift signal it relates to (if any). If no pattern is below threshold, fall through to exit with verdict=skipped.",
+        max_retries = 1,
+        goal_gate = false
+    ]
+
+    // ---- 2. Implement ---------------------------------------------------
+    // Apply a candidate change. In ruvector this is typically a code edit
+    // in a sona / prime-radiant / ruvector-cnn crate, or a tuning sweep
+    // delta on sona-tuning. The codergen handler invokes a coding agent.
+    implement [
+        shape    = "box",
+        type     = "codergen",
+        label    = "implement",
+        prompt   = "Apply the candidate change for pattern_id from $identify.pattern_id. Stay inside the ruvector workspace. Do NOT touch crates/ruvector-postgres (excluded from workspace builds). Do NOT bump hnsw_rs from crates.io (patched in-tree at patches/hnsw_rs/). Do NOT introduce new top-level deps without an ADR.",
+        max_retries = 2
+    ]
+
+    // ---- 3. Validate ----------------------------------------------------
+    // Run the canonical workspace check + nextest, plus the witness chain
+    // gate from prime-radiant. SHAKE-256 audit log entry is mandatory.
+    validate [
+        shape   = "parallelogram",
+        type    = "tool",
+        label   = "validate",
+        command = "scripts/attractor.sh node validate",
+        goal_gate = true,
+        max_retries = 0
+    ]
+
+    // ---- 4. Optimize ----------------------------------------------------
+    // Hand the verdict to sona-tuning for a small Bayesian / PSO sweep
+    // that improves the post-hoc score without regressing the gate.
+    optimize [
+        shape    = "box",
+        type     = "codergen",
+        label    = "optimize",
+        prompt   = "Take the validate-step output and propose a tuning delta (sona-tuning bayes/PSO) that strictly improves post-hoc score without regressing the witness chain. If optimization would require a code edit, abort and route back to identify so the next iteration can pick that up cleanly.",
+        max_retries = 1
+    ]
+
+    // ---- 5. Distill -----------------------------------------------------
+    // Commit the trajectory (pass or fail — failures train the bank too)
+    // back to ReasoningBank. Always anchor the witness chain entry.
+    distill [
+        shape   = "parallelogram",
+        type    = "tool",
+        label   = "distill",
+        command = "scripts/attractor.sh node distill",
+        goal_gate = true,
+        max_retries = 0
+    ]
+
+    // ---- 6. Branch on verdict -------------------------------------------
+    decide [
+        shape = "diamond",
+        type  = "conditional",
+        label = "verdict?"
+    ]
+
+    // ---- Exit ----------------------------------------------------------
+    exit [shape="msquare", label="exit"]
+
+    // ---- Edges ----------------------------------------------------------
+    start     -> identify
+    identify  -> implement   [label = "pattern selected"]
+    identify  -> exit        [label = "no candidates",        condition = "$identify.verdict == 'skipped'"]
+    implement -> validate
+    validate  -> optimize    [label = "gate green"]
+    // CONTRACT: a red validate gate STILL distills, but with verdict=fail.
+    // The trajectory is recorded so ReasoningBank learns from failures
+    // (see distill.sh "failures train the bank too"). What's skipped is
+    // OPTIMIZE — there is nothing to optimize when validate failed. The
+    // runner enforces this by setting skip_optimize when validate fails,
+    // not by breaking the loop.
+    validate  -> distill     [label = "gate red",             condition = "$validate.exit_code != 0"]
+    optimize  -> distill
+    distill   -> decide
+    decide    -> identify    [label = "score improved",       condition = "$distill.verdict == 'pass'"]
+    decide    -> exit        [label = "regression / max iters"]
+}

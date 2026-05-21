@@ -705,12 +705,12 @@ npm run report -- --test-id "worldcup-2026-final" --format pdf
 
 ### External Resources
 - **GCP Cloud Run**: https://cloud.google.com/run/docs
-- **Claude-Flow**: https://github.com/ruvnet/claude-flow
+- **Claude-Flow**: https://github.com/FlexNetOS/claude-flow
 - **K6 Load Testing**: https://k6.io/docs
 - **OpenTelemetry**: https://opentelemetry.io/docs
 
 ### Support Channels
-- **GitHub Issues**: https://github.com/ruvnet/ruvector/issues
+- **GitHub Issues**: https://github.com/FlexNetOS/ruvector/issues
 - **Email**: ops@ruvector.io
 - **Slack**: #ruvector-ops
 

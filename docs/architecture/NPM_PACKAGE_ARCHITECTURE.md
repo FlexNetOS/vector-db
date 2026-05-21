@@ -300,12 +300,12 @@ This document outlines a modular npm package architecture for Ruvector, a high-p
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/ruvnet/ruvector.git",
+    "url": "https://github.com/FlexNetOS/ruvector.git",
     "directory": "npm/ruvector"
   },
-  "homepage": "https://github.com/ruvnet/ruvector#readme",
+  "homepage": "https://github.com/FlexNetOS/ruvector#readme",
   "bugs": {
-    "url": "https://github.com/ruvnet/ruvector/issues"
+    "url": "https://github.com/FlexNetOS/ruvector/issues"
   },
   "engines": {
     "node": ">=18.0.0"
@@ -570,7 +570,7 @@ export async function loadAny() {
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/ruvnet/ruvector.git",
+    "url": "https://github.com/FlexNetOS/ruvector.git",
     "directory": "npm/core-linux-x64"
   },
   "engines": {
@@ -606,7 +606,7 @@ export async function loadAny() {
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/ruvnet/ruvector.git",
+    "url": "https://github.com/FlexNetOS/ruvector.git",
     "directory": "npm/wasm"
   },
   "engines": {
@@ -743,7 +743,7 @@ export const Collection = (...args) => initWasm().then(w => new w.Collection(...
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/ruvnet/ruvector.git",
+    "url": "https://github.com/FlexNetOS/ruvector.git",
     "directory": "npm/cli"
   },
   "engines": {

@@ -412,7 +412,7 @@ $ find dist -name "*.d.ts" -o -name "*.d.cts"
 **Name**: `@ruvector/agentic-synth`
 **Version**: `0.1.0`
 **License**: MIT
-**Repository**: https://github.com/ruvnet/ruvector
+**Repository**: https://github.com/FlexNetOS/ruvector
 **Package**: https://www.npmjs.com/package/@ruvector/agentic-synth
 
 ### Published Files
@@ -524,7 +524,7 @@ Package will be considered successfully published when:
 
 ## 🔗 Quick Links
 
-- **GitHub Repository**: https://github.com/ruvnet/ruvector
+- **GitHub Repository**: https://github.com/FlexNetOS/ruvector
 - **Package Directory**: `/packages/agentic-synth`
 - **Documentation**: `packages/agentic-synth/docs/`
 - **Examples**: `packages/agentic-synth/examples/`
@@ -569,7 +569,7 @@ The package is **production-ready** and can be published to npm with **high conf
 
 ## 📞 Support
 
-**Issues**: https://github.com/ruvnet/ruvector/issues
+**Issues**: https://github.com/FlexNetOS/ruvector/issues
 **Email**: security@ruv.io (security issues)
 **Author**: [@ruvnet](https://github.com/ruvnet)
 

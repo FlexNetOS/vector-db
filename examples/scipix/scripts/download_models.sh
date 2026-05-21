@@ -13,7 +13,7 @@ echo ""
 
 # Configuration
 MODELS_DIR="models"
-GITHUB_REPO="ruvnet/ruvector"
+GITHUB_REPO="FlexNetOS/ruvector"
 RELEASE_TAG="scipix-models-v1.0.0"
 
 # Model configurations

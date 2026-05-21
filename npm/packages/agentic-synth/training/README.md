@@ -489,5 +489,5 @@ Contributions welcome! Please see [CONTRIBUTING.md](../CONTRIBUTING.md).
 
 ## Support
 
-- Issues: https://github.com/ruvnet/ruvector/issues
-- Documentation: https://github.com/ruvnet/ruvector/tree/main/packages/agentic-synth
+- Issues: https://github.com/FlexNetOS/ruvector/issues
+- Documentation: https://github.com/FlexNetOS/ruvector/tree/main/packages/agentic-synth

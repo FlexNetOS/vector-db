@@ -19,7 +19,7 @@
   "license": "MIT OR Apache-2.0",
   "repository": {
     "type": "git",
-    "url": "https://github.com/ruvnet/ruvector.git",
+    "url": "https://github.com/FlexNetOS/ruvector.git",
     "directory": "npm/packages/ruvllm-win32-x64-msvc"
   },
   "engines": {

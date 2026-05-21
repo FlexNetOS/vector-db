@@ -32,7 +32,7 @@ Most AI systems stop learning the moment they leave training. When a user gives 
 | **WASM Support** | Runs the full learning engine in browsers at near-native speed | On-device personalization with zero server costs |
 | **Node.js Bindings** | Native N-API bindings -- no child processes or HTTP calls | Drop into any JavaScript backend with one `npm install` |
 
-> Part of the [RuVector](https://github.com/ruvnet/ruvector) ecosystem -- the self-learning vector database with graph intelligence.
+> Part of the [RuVector](https://github.com/FlexNetOS/ruvector) ecosystem -- the self-learning vector database with graph intelligence.
 
 ---
 
@@ -81,7 +81,7 @@ pnpm add @ruvector/sona
 
 ```bash
 # Clone and build WASM package
-git clone https://github.com/ruvnet/ruvector.git
+git clone https://github.com/FlexNetOS/ruvector.git
 cd ruvector/crates/sona
 wasm-pack build --target web --features wasm
 
@@ -1483,7 +1483,7 @@ at your option.
 
 ## Contributing
 
-Contributions welcome! Please see our [Contributing Guide](https://github.com/ruvnet/ruvector/blob/main/CONTRIBUTING.md).
+Contributions welcome! Please see our [Contributing Guide](https://github.com/FlexNetOS/ruvector/blob/main/CONTRIBUTING.md).
 
 ## Acknowledgments
 
@@ -1495,7 +1495,7 @@ Contributions welcome! Please see our [Contributing Guide](https://github.com/ru
 
 <div align="center">
 
-**[Documentation](https://docs.rs/ruvector-sona)** | **[GitHub](https://github.com/ruvnet/ruvector)** | **[npm](https://www.npmjs.com/package/@ruvector/sona)** | **[crates.io](https://crates.io/crates/ruvector-sona)**
+**[Documentation](https://docs.rs/ruvector-sona)** | **[GitHub](https://github.com/FlexNetOS/ruvector)** | **[npm](https://www.npmjs.com/package/@ruvector/sona)** | **[crates.io](https://crates.io/crates/ruvector-sona)**
 
 Made with 🦀 Rust by the RuVector Team
 

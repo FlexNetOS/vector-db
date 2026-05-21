@@ -1533,7 +1533,7 @@ class QualityGateEnforcer {
 ## References
 
 - [Perch 2.0: The Bittern Lesson for Bioacoustics](https://arxiv.org/abs/2508.04665)
-- [RuVector: A Database that Autonomously Learns](https://github.com/ruvnet/ruvector)
+- [RuVector: A Database that Autonomously Learns](https://github.com/FlexNetOS/ruvector)
 - [HNSW: Hierarchical Navigable Small World Graphs](https://arxiv.org/abs/1603.09320)
 - [Product Quantization for Nearest Neighbor Search](https://ieeexplore.ieee.org/document/5432202)
 - [Poincare Embeddings for Learning Hierarchical Representations](https://arxiv.org/abs/1705.08039)

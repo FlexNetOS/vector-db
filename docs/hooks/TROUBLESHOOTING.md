@@ -717,7 +717,7 @@ echo "Diagnostic saved to ruvector-diagnostic.txt"
 ### Report Issues
 
 1. Create diagnostic report (above)
-2. Open issue: https://github.com/ruvnet/ruvector/issues
+2. Open issue: https://github.com/FlexNetOS/ruvector/issues
 3. Include:
    - Diagnostic report
    - Steps to reproduce

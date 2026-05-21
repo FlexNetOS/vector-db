@@ -61,21 +61,37 @@ type ListedTool = {
 	annotations?: { title?: string };
 };
 
+const MCP_CONNECT_TIMEOUT_MS = 15_000;
+
 async function listServerTools(
 	server: McpServerConfig,
 	opts: { signal?: AbortSignal } = {}
 ): Promise<ListedTool[]> {
 	const url = new URL(server.url);
 	const client = new Client({ name: "chat-ui-mcp", version: "0.1.0" });
+
+	// Create a timeout-aware signal that aborts after MCP_CONNECT_TIMEOUT_MS
+	const timeoutController = new AbortController();
+	const timeoutId = setTimeout(() => timeoutController.abort(), MCP_CONNECT_TIMEOUT_MS);
+	// If the caller provides a signal, link it so external abort also cancels
+	if (opts.signal) {
+		if (opts.signal.aborted) {
+			timeoutController.abort(opts.signal.reason);
+		} else {
+			opts.signal.addEventListener("abort", () => timeoutController.abort(), { once: true });
+		}
+	}
+	const combinedSignal = timeoutController.signal;
+
 	try {
 		try {
 			const transport = new StreamableHTTPClientTransport(url, {
-				requestInit: { headers: server.headers, signal: opts.signal },
+				requestInit: { headers: server.headers, signal: combinedSignal },
 			});
 			await client.connect(transport);
 		} catch {
 			const transport = new SSEClientTransport(url, {
-				requestInit: { headers: server.headers, signal: opts.signal },
+				requestInit: { headers: server.headers, signal: combinedSignal },
 			});
 			await client.connect(transport);
 		}
@@ -95,6 +111,7 @@ async function listServerTools(
 		} catch {}
 		return tools;
 	} finally {
+		clearTimeout(timeoutId);
 		try {
 			await client.close?.();
 		} catch {
@@ -182,7 +199,10 @@ export async function getOpenAiToolsForMcp(
 				};
 			}
 		} else {
-			// ignore failure for this server
+			logger.warn(
+				{ server: server.name, url: server.url, reason: String(r.reason) },
+				"[mcp] failed to list tools from server (timeout or connection error)"
+			);
 			continue;
 		}
 	}

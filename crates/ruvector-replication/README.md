@@ -11,7 +11,7 @@
 ruvector-replication = "0.1.1"
 ```
 
-When your vector database runs on more than one node, you need a way to keep data in sync without losing writes or slowing down queries. ruvector-replication handles that: it replicates vectors across nodes, resolves conflicts automatically, and lets you trade off consistency versus speed per-write. It plugs into the [RuVector](https://github.com/ruvnet/ruvector) ecosystem alongside Raft consensus and auto-sharding.
+When your vector database runs on more than one node, you need a way to keep data in sync without losing writes or slowing down queries. ruvector-replication handles that: it replicates vectors across nodes, resolves conflicts automatically, and lets you trade off consistency versus speed per-write. It plugs into the [RuVector](https://github.com/FlexNetOS/ruvector) ecosystem alongside Raft consensus and auto-sharding.
 
 | | Single-node vector DB | ruvector-replication |
 |---|---|---|
@@ -207,7 +207,7 @@ impl Replicator {
 
 - **[Main README](../../README.md)** - Complete project overview
 - **[API Documentation](https://docs.rs/ruvector-replication)** - Full API reference
-- **[GitHub Repository](https://github.com/ruvnet/ruvector)** - Source code
+- **[GitHub Repository](https://github.com/FlexNetOS/ruvector)** - Source code
 
 ## License
 
@@ -217,10 +217,10 @@ impl Replicator {
 
 <div align="center">
 
-**Part of [Ruvector](https://github.com/ruvnet/ruvector) - Built by [rUv](https://ruv.io)**
+**Part of [Ruvector](https://github.com/FlexNetOS/ruvector) - Built by [rUv](https://ruv.io)**
 
-[![Star on GitHub](https://img.shields.io/github/stars/ruvnet/ruvector?style=social)](https://github.com/ruvnet/ruvector)
+[![Star on GitHub](https://img.shields.io/github/stars/FlexNetOS/ruvector?style=social)](https://github.com/FlexNetOS/ruvector)
 
-[Documentation](https://docs.rs/ruvector-replication) | [Crates.io](https://crates.io/crates/ruvector-replication) | [GitHub](https://github.com/ruvnet/ruvector)
+[Documentation](https://docs.rs/ruvector-replication) | [Crates.io](https://crates.io/crates/ruvector-replication) | [GitHub](https://github.com/FlexNetOS/ruvector)
 
 </div>

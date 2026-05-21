@@ -236,4 +236,4 @@ all_papers.extend(med_papers);
 - **bioRxiv**: https://www.biorxiv.org/
 - **medRxiv**: https://www.medrxiv.org/
 - **API Docs**: https://api.biorxiv.org/
-- **RuVector**: https://github.com/ruvnet/ruvector
+- **RuVector**: https://github.com/FlexNetOS/ruvector

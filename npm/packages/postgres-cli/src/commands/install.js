@@ -52,7 +52,7 @@ const os = __importStar(require("os"));
 const chalk_1 = __importDefault(require("chalk"));
 const ora_1 = __importDefault(require("ora"));
 // Constants
-const DOCKER_IMAGE = 'ruvnet/ruvector-postgres';
+const DOCKER_IMAGE = 'flexnetos/ruvector-postgres';
 const DOCKER_IMAGE_VERSION = '0.2.5';
 const RUVECTOR_CRATE_VERSION = '0.2.5';
 const PGRX_VERSION = '0.12.6';
@@ -355,7 +355,7 @@ class InstallCommands {
             const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'ruvector-'));
             spinner.text = 'Cloning ruvector repository...';
             // Clone the actual repository (pgrx needs .control file and proper structure)
-            (0, child_process_1.execSync)(`git clone --depth 1 https://github.com/ruvnet/ruvector.git ${tmpDir}/ruvector`, {
+            (0, child_process_1.execSync)(`git clone --depth 1 https://github.com/FlexNetOS/ruvector.git ${tmpDir}/ruvector`, {
                 stdio: 'pipe',
             });
             const projectDir = path.join(tmpDir, 'ruvector', 'crates', 'ruvector-postgres');
@@ -576,7 +576,7 @@ class InstallCommands {
             pullSpinner.succeed(`Found local image ${DOCKER_IMAGE}:${version}`);
         }
         catch {
-            // Try pulling from Docker Hub (ruvnet/ruvector-postgres)
+            // Try pulling from Docker Hub (flexnetos/ruvector-postgres)
             pullSpinner.text = `Pulling ${DOCKER_IMAGE}:${version} from Docker Hub...`;
             try {
                 (0, child_process_1.execSync)(`docker pull ${DOCKER_IMAGE}:${version}`, { stdio: 'pipe' });
@@ -585,7 +585,7 @@ class InstallCommands {
             catch {
                 pullSpinner.fail('Image not found locally or on Docker Hub');
                 console.log(chalk_1.default.yellow('\n📦 To build the image locally, run:'));
-                console.log(chalk_1.default.gray('   git clone https://github.com/ruvnet/ruvector.git'));
+                console.log(chalk_1.default.gray('   git clone https://github.com/FlexNetOS/ruvector.git'));
                 console.log(chalk_1.default.gray('   cd ruvector'));
                 console.log(chalk_1.default.gray(`   docker build -f crates/ruvector-postgres/docker/Dockerfile -t ${DOCKER_IMAGE}:${version} .`));
                 console.log(chalk_1.default.yellow('\n   Then run this install command again.'));

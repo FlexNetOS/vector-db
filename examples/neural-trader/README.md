@@ -527,8 +527,8 @@ Add to your `claude_desktop_config.json`:
 
 ## Resources
 
-- [Neural Trader GitHub](https://github.com/ruvnet/neural-trader)
-- [RuVector GitHub](https://github.com/ruvnet/ruvector)
+- [Neural Trader GitHub](https://github.com/FlexNetOS/neural-trader)
+- [RuVector GitHub](https://github.com/FlexNetOS/ruvector)
 - [NPM Packages](https://www.npmjs.com/search?q=%40neural-trader)
 
 ## License

@@ -278,7 +278,10 @@ impl AgiContainerBuilder {
             None => [0u8; 8],
         };
 
-        let flags = self.segments.to_flags() | self.extra_flags;
+        // Mark manifest as present for validation.
+        let mut segments = self.segments;
+        segments.manifest_present = true;
+        let flags = segments.to_flags() | self.extra_flags;
 
         let created_ns = SystemTime::now()
             .duration_since(UNIX_EPOCH)
@@ -299,10 +302,6 @@ impl AgiContainerBuilder {
         let mut payload = Vec::with_capacity(AGI_HEADER_SIZE + sections.len());
         payload.extend_from_slice(&header.to_bytes());
         payload.extend_from_slice(&sections);
-
-        // Mark manifest as present for validation.
-        let mut segs = self.segments.clone();
-        segs.manifest_present = true;
 
         Ok((payload, header))
     }

@@ -62,12 +62,25 @@ examples/apify/*/storage/
 
 # Claude Flow generated files
 .claude/settings.local.json
-.mcp.json
+# Note: .mcp.json IS committed (project-level MCP config including Cognitum SSE).
+# Per-developer overrides go in .mcp.local.json instead.
+.mcp.local.json
 mcp.json
 claude-flow.config.json
 .swarm/
 .hive-mind/
 .claude-flow/
+
+# OMC runtime state — ignore by default, but keep curated learned skills.
+.omc/*
+!.omc/skills/
+.omc/skills/*
+!.omc/skills/*.md
+
+# .understand-anything has its own nested .gitignore with an allow-list of
+# durable artifacts (fingerprints, knowledge graphs, meta). Don't duplicate it
+# here — let the nested file own that directory's policy.
+
 memory/
 coordination/
 memory/claude-flow-data.json
@@ -96,6 +109,12 @@ hive-mind-prompt-*.txt
 
 # Intelligence data files (generated, not tracked)
 .claude/intelligence/data/*.json
+
+# GitNexus 1.x always installs 6 helper SKILLs at .claude/skills/gitnexus/
+# when `gitnexus analyze` runs (verified in dist/cli/ai-context.js). They
+# are auto-generated, repo-local, and useful at runtime, but not curated
+# content — keep them untracked.
+.claude/skills/gitnexus/
 
 # RuVector intelligence data
 .ruvector/
@@ -140,6 +159,15 @@ agentdb.rvf
 agentdb.rvf.lock
 .kalshi
 bench_data/
+
+# MemPalace defensive guard. The bootstrap script (scripts/install-mempalace.sh)
+# deliberately does NOT run `mempalace init` against the repo root because per
+# upstream issue MemPalace/mempalace#185, `init <dir>` writes these two files
+# into <dir>. If a contributor runs `mempalace init .` in the repo root
+# anyway, these patterns keep the checkout clean. The palace database itself
+# lives at ~/.mempalace/ (per-user, NOT committed).
+/entities.json
+/mempalace.yaml
 
 # Hailo Dataflow Compiler droppings — `hailo` CLI writes these into
 # whatever cwd it's invoked from, even with --output-dir set. Always

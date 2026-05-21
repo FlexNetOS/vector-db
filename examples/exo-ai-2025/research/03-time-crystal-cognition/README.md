@@ -285,7 +285,7 @@ See [RESEARCH.md](RESEARCH.md) for comprehensive bibliography including:
   author={Research Team},
   year={2025},
   note={Breakthrough hypothesis and computational validation},
-  url={https://github.com/ruvnet/ruvector}
+  url={https://github.com/FlexNetOS/ruvector}
 }
 ```
 

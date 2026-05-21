@@ -2,7 +2,7 @@
 
 [![Crates.io](https://img.shields.io/crates/v/ruvector-verified-wasm.svg)](https://crates.io/crates/ruvector-verified-wasm)
 [![npm](https://img.shields.io/npm/v/ruvector-verified-wasm.svg)](https://www.npmjs.com/package/ruvector-verified-wasm)
-[![License](https://img.shields.io/crates/l/ruvector-verified-wasm.svg)](https://github.com/ruvnet/ruvector)
+[![License](https://img.shields.io/crates/l/ruvector-verified-wasm.svg)](https://github.com/FlexNetOS/ruvector)
 
 WebAssembly bindings for [ruvector-verified](https://crates.io/crates/ruvector-verified) — proof-carrying vector operations in the browser. Verify vector dimensions, build typed HNSW indices, and create 82-byte proof attestations entirely client-side with sub-microsecond overhead.
 

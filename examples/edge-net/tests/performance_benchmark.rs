@@ -74,7 +74,7 @@ impl BenchmarkStats {
 /// Run a benchmark with warmup and return statistics
 fn run_benchmark<F>(name: &str, iterations: usize, warmup: usize, mut f: F) -> BenchmarkStats
 where
-    F: FnMut() -> ()
+    F: FnMut()
 {
     // Warmup phase
     for _ in 0..warmup {

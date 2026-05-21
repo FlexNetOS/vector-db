@@ -18,8 +18,8 @@ version = "0.1.0"
 edition = "2021"
 rust-version = "1.75"
 license = "MIT OR Apache-2.0"
-repository = "https://github.com/ruvnet/ruvector"
-homepage = "https://github.com/ruvnet/ruvector/tree/main/examples/vibecast-7sense"
+repository = "https://github.com/FlexNetOS/ruvector"
+homepage = "https://github.com/FlexNetOS/ruvector/tree/main/examples/vibecast-7sense"
 authors = ["7sense Team", "rUv"]
 
 [workspace.dependencies]

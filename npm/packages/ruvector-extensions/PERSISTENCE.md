@@ -301,6 +301,6 @@ MIT - Same as ruvector-extensions
 ## Support
 
 For issues or questions:
-- GitHub Issues: https://github.com/ruvnet/ruvector/issues
+- GitHub Issues: https://github.com/FlexNetOS/ruvector/issues
 - Documentation: README.md
 - Examples: /src/examples/persistence-example.ts

@@ -560,7 +560,7 @@ sevensense:
 ## References
 
 1. Perch 2.0 Paper: "The Bittern Lesson for Bioacoustics" (arXiv:2508.04665)
-2. RuVector Documentation: https://github.com/ruvnet/ruvector
+2. RuVector Documentation: https://github.com/FlexNetOS/ruvector
 3. HNSW Paper: "Efficient and Robust Approximate Nearest Neighbor Search"
 4. RAB Pattern: Retrieval-Augmented Bioacoustics methodology
 5. AVN Deep Learning Study: "A deep learning approach for the analysis of birdsong" (eLife 2025)

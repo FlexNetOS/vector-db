@@ -1,0 +1,2477 @@
+{
+  "version": "1.0.0",
+  "gitCommitHash": "9054c2cc6793ff11175460694a6479be3ac5b0af",
+  "generatedAt": "2026-05-13T13:25:02.698Z",
+  "slice": "6b",
+  "scope": "crates/rvAgent",
+  "files": {
+    "crates/rvAgent/.ruv/agents/rvagent-coder.md": {
+      "filePath": "crates/rvAgent/.ruv/agents/rvagent-coder.md",
+      "contentHash": "c502dee58a64efad43c1e60f280f23bfd1bc03f8416ea36d9f34dd6917426a38",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 145,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/.ruv/agents/rvagent-queen.md": {
+      "filePath": "crates/rvAgent/.ruv/agents/rvagent-queen.md",
+      "contentHash": "c720a4d539913118bb2f4d2f7d1b151f462f4ec91389406e5c0716eccebad33a",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 145,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/.ruv/agents/rvagent-security.md": {
+      "filePath": "crates/rvAgent/.ruv/agents/rvagent-security.md",
+      "contentHash": "8c48219a7cd22b6f604a076fbd5b22a0bc36fe09abda3246f28a092bd0e6c64a",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 162,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/.ruv/agents/rvagent-tester.md": {
+      "filePath": "crates/rvAgent/.ruv/agents/rvagent-tester.md",
+      "contentHash": "998fa912d0187b90f0332a8b947375f7af8312861b0ab67e5fe211149627c081",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 179,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/.ruv/config.json": {
+      "filePath": "crates/rvAgent/.ruv/config.json",
+      "contentHash": "2af87ce874f35fc2c408e91ebd3e62834f17071102bbbd6bbe4b17528926dc5e",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 60,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/.ruv/helpers/load-manifest.sh": {
+      "filePath": "crates/rvAgent/.ruv/helpers/load-manifest.sh",
+      "contentHash": "613a14fc3111fb22399ebaaee87199e96dd7290a09646b2aac75b0991afb4fa4",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 162,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/.ruv/helpers/rvagent-hooks.sh": {
+      "filePath": "crates/rvAgent/.ruv/helpers/rvagent-hooks.sh",
+      "contentHash": "bef2a10f3dabd9084b2df14e393b45d07ca6b047767501d630a4b38e80efac16",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 181,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/.ruv/manifest.rvf.json": {
+      "filePath": "crates/rvAgent/.ruv/manifest.rvf.json",
+      "contentHash": "4813f3aece9b6f5cdceec0c6f8f94041a9653778ed8e927a5899e411b5f6bf61",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 126,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/A7_OPTIMIZATION_REPORT.md": {
+      "filePath": "crates/rvAgent/A7_OPTIMIZATION_REPORT.md",
+      "contentHash": "b6d16e55fcbd86f6ded103334ca2875d7c651fadd24d8f6b062c2eaca03a3291",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 164,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/examples/demo_coder_agent.sh": {
+      "filePath": "crates/rvAgent/examples/demo_coder_agent.sh",
+      "contentHash": "730b97bc880e73fd973ab5b94811920755a56f05dfc88e170b125155c7934213",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 74,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/examples/demo_security_agent.sh": {
+      "filePath": "crates/rvAgent/examples/demo_security_agent.sh",
+      "contentHash": "edb0e933fc0b8ded7cf0d4087df351f8834104e0cfdd4480e57e97b7fdf42b97",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 70,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/examples/demo_tester_agent.sh": {
+      "filePath": "crates/rvAgent/examples/demo_tester_agent.sh",
+      "contentHash": "0d4137fcb8d97bbaf3a39af8f5f7353897d73ccb679855497b1c88eac26aab0f",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 77,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/examples/swarm/hierarchical_swarm.sh": {
+      "filePath": "crates/rvAgent/examples/swarm/hierarchical_swarm.sh",
+      "contentHash": "3d396282074b273001f1eb6c74e58fe86c256eb5a1cd11e70b2356a660a1793e",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 124,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/examples/swarm/mesh_swarm.sh": {
+      "filePath": "crates/rvAgent/examples/swarm/mesh_swarm.sh",
+      "contentHash": "aace7bfaf90268d394dbd17d0dc93a172d65627578ff8bc0e856dd5e4266f6d9",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 117,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/examples/swarm/pipeline_swarm.sh": {
+      "filePath": "crates/rvAgent/examples/swarm/pipeline_swarm.sh",
+      "contentHash": "f79cb5769aa837f02b0f4c18e38b70326dd72092807750a989aa954198c16708",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 138,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/README.md": {
+      "filePath": "crates/rvAgent/README.md",
+      "contentHash": "b0c9b2b9a7cd9e365acaceb8771bf9115aad122cc409b3ba89476f1a333153a8",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 591,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-a2a/benches/budget_ledger.rs": {
+      "filePath": "crates/rvAgent/rvagent-a2a/benches/budget_ledger.rs",
+      "contentHash": "44dffcd38f78eee6510a37fe915c6d2060da7b0aa5f96bf41e7b76cf3e00c03e",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 102,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-a2a/benches/task_context.rs": {
+      "filePath": "crates/rvAgent/rvagent-a2a/benches/task_context.rs",
+      "contentHash": "12bb3d5423dc25341c9d9b409c8d55081dc01a0d91155232e73c2f768d17da28",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 58,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-a2a/Cargo.toml": {
+      "filePath": "crates/rvAgent/rvagent-a2a/Cargo.toml",
+      "contentHash": "be0f0ac0c78a3139ac4a604d6fd2f9fd75b8392a20b0312d9a90166bd6236a49",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 76,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-a2a/src/artifact_types.rs": {
+      "filePath": "crates/rvAgent/rvagent-a2a/src/artifact_types.rs",
+      "contentHash": "81f42bb6da9672281611b3d0d83400ec0fe60e5a7a3d7095adae96bd6b7cac67",
+      "functions": [],
+      "classes": [],
+      "imports": [
+        "crates/rvAgent/rvagent-a2a/src/error.rs",
+        "crates/rvAgent/rvagent-a2a/src/types.rs"
+      ],
+      "exports": [],
+      "totalLines": 369,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-a2a/src/budget.rs": {
+      "filePath": "crates/rvAgent/rvagent-a2a/src/budget.rs",
+      "contentHash": "29b34864ccdd381279fb054bb535313b31f4ff605abb2b2146c9c93e5dc1fa6a",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 485,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-a2a/src/client.rs": {
+      "filePath": "crates/rvAgent/rvagent-a2a/src/client.rs",
+      "contentHash": "3dfee241e2b964843fa9cc07ae01491bf057e848c4f9073bbbfd7790bde37bf9",
+      "functions": [],
+      "classes": [],
+      "imports": [
+        "crates/rvAgent/rvagent-a2a/src/error.rs",
+        "crates/rvAgent/rvagent-a2a/src/server/json_rpc.rs",
+        "crates/rvAgent/rvagent-a2a/src/types.rs"
+      ],
+      "exports": [],
+      "totalLines": 465,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-a2a/src/config.rs": {
+      "filePath": "crates/rvAgent/rvagent-a2a/src/config.rs",
+      "contentHash": "efcd9a8425e97526797a3f029fff57922fef2c79ca1e09a041e6c0c9cd9004b9",
+      "functions": [],
+      "classes": [],
+      "imports": [
+        "crates/rvAgent/rvagent-a2a/src/budget.rs",
+        "crates/rvAgent/rvagent-a2a/src/policy.rs",
+        "crates/rvAgent/rvagent-a2a/src/recursion_guard.rs"
+      ],
+      "exports": [],
+      "totalLines": 265,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-a2a/src/context.rs": {
+      "filePath": "crates/rvAgent/rvagent-a2a/src/context.rs",
+      "contentHash": "7f439db83d5f88f409cac99ae7237760cc24255cde4de5f911bf32cf638bdf0a",
+      "functions": [],
+      "classes": [],
+      "imports": [
+        "crates/rvAgent/rvagent-a2a/src/identity.rs"
+      ],
+      "exports": [],
+      "totalLines": 217,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-a2a/src/error.rs": {
+      "filePath": "crates/rvAgent/rvagent-a2a/src/error.rs",
+      "contentHash": "0cfcad3fc2b9b0487292bc759d9ea8fe7af310e46dcc2c9117080976212063e3",
+      "functions": [],
+      "classes": [],
+      "imports": [
+        "crates/rvAgent/rvagent-a2a/src/budget.rs",
+        "crates/rvAgent/rvagent-a2a/src/policy.rs"
+      ],
+      "exports": [],
+      "totalLines": 126,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-a2a/src/executor.rs": {
+      "filePath": "crates/rvAgent/rvagent-a2a/src/executor.rs",
+      "contentHash": "913034e49e541bf02b43c038236342dc0a48a0f38bb561c932bb9e3693ed30a5",
+      "functions": [],
+      "classes": [],
+      "imports": [
+        "crates/rvAgent/rvagent-a2a/src/client.rs",
+        "crates/rvAgent/rvagent-a2a/src/context.rs",
+        "crates/rvAgent/rvagent-a2a/src/types.rs"
+      ],
+      "exports": [],
+      "totalLines": 213,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-a2a/src/identity.rs": {
+      "filePath": "crates/rvAgent/rvagent-a2a/src/identity.rs",
+      "contentHash": "6e3441bd52214def816910a868c44c953eef3027d2a6aff9da4090b925a1956b",
+      "functions": [],
+      "classes": [],
+      "imports": [
+        "crates/rvAgent/rvagent-a2a/src/types.rs"
+      ],
+      "exports": [],
+      "totalLines": 280,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-a2a/src/lib.rs": {
+      "filePath": "crates/rvAgent/rvagent-a2a/src/lib.rs",
+      "contentHash": "e991a4c26ad1363626a9193601017aed1e14b4513d2eacdae1f78317d46e06aa",
+      "functions": [],
+      "classes": [],
+      "imports": [
+        "crates/rvAgent/rvagent-a2a/src/artifact_types.rs",
+        "crates/rvAgent/rvagent-a2a/src/budget.rs",
+        "crates/rvAgent/rvagent-a2a/src/client.rs",
+        "crates/rvAgent/rvagent-a2a/src/config.rs",
+        "crates/rvAgent/rvagent-a2a/src/context.rs",
+        "crates/rvAgent/rvagent-a2a/src/error.rs",
+        "crates/rvAgent/rvagent-a2a/src/executor.rs",
+        "crates/rvAgent/rvagent-a2a/src/identity.rs",
+        "crates/rvAgent/rvagent-a2a/src/policy.rs",
+        "crates/rvAgent/rvagent-a2a/src/recursion_guard.rs",
+        "crates/rvAgent/rvagent-a2a/src/routing.rs",
+        "crates/rvAgent/rvagent-a2a/src/server/mod.rs",
+        "crates/rvAgent/rvagent-a2a/src/types.rs"
+      ],
+      "exports": [],
+      "totalLines": 57,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-a2a/src/policy.rs": {
+      "filePath": "crates/rvAgent/rvagent-a2a/src/policy.rs",
+      "contentHash": "894f5fe1d63a179071a3c544b1e53a40d3b5ab0472be72ff4732c3630226fc30",
+      "functions": [],
+      "classes": [],
+      "imports": [
+        "crates/rvAgent/rvagent-a2a/src/context.rs",
+        "crates/rvAgent/rvagent-a2a/src/identity.rs",
+        "crates/rvAgent/rvagent-a2a/src/types.rs"
+      ],
+      "exports": [],
+      "totalLines": 334,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-a2a/src/recursion_guard.rs": {
+      "filePath": "crates/rvAgent/rvagent-a2a/src/recursion_guard.rs",
+      "contentHash": "2726b1b1248de1fc9e602f165f8c12938fed722c212f410449fa22a631d7062c",
+      "functions": [],
+      "classes": [],
+      "imports": [
+        "crates/rvAgent/rvagent-a2a/src/context.rs",
+        "crates/rvAgent/rvagent-a2a/src/identity.rs"
+      ],
+      "exports": [],
+      "totalLines": 182,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-a2a/src/routing.rs": {
+      "filePath": "crates/rvAgent/rvagent-a2a/src/routing.rs",
+      "contentHash": "3010f7844ffda4c41904164602510a46ed6a89a5a699ae6025329e5724cf8727",
+      "functions": [],
+      "classes": [],
+      "imports": [
+        "crates/rvAgent/rvagent-a2a/src/identity.rs",
+        "crates/rvAgent/rvagent-a2a/src/types.rs"
+      ],
+      "exports": [],
+      "totalLines": 595,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-a2a/src/server/json_rpc.rs": {
+      "filePath": "crates/rvAgent/rvagent-a2a/src/server/json_rpc.rs",
+      "contentHash": "ab447b326d178120bb65664b748861495bddb215876fe647238906f48c47ce53",
+      "functions": [],
+      "classes": [],
+      "imports": [
+        "crates/rvAgent/rvagent-a2a/src/error.rs",
+        "crates/rvAgent/rvagent-a2a/src/types.rs"
+      ],
+      "exports": [],
+      "totalLines": 650,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-a2a/src/server/mod.rs": {
+      "filePath": "crates/rvAgent/rvagent-a2a/src/server/mod.rs",
+      "contentHash": "5bde2957cfa1ce106670ba7e36cbbe52a2e912adf31d1c37c6342ad044570375",
+      "functions": [],
+      "classes": [],
+      "imports": [
+        "crates/rvAgent/rvagent-a2a/src/budget.rs",
+        "crates/rvAgent/rvagent-a2a/src/config.rs",
+        "crates/rvAgent/rvagent-a2a/src/executor.rs",
+        "crates/rvAgent/rvagent-a2a/src/routing.rs",
+        "crates/rvAgent/rvagent-a2a/src/server/json_rpc.rs",
+        "crates/rvAgent/rvagent-a2a/src/server/push.rs",
+        "crates/rvAgent/rvagent-a2a/src/server/sse.rs",
+        "crates/rvAgent/rvagent-a2a/src/types.rs"
+      ],
+      "exports": [],
+      "totalLines": 610,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-a2a/src/server/push.rs": {
+      "filePath": "crates/rvAgent/rvagent-a2a/src/server/push.rs",
+      "contentHash": "56d9c2ae36fde7bcd33a24e3602d49cdc0db1c33adadd0c1f7887392488ff0ff",
+      "functions": [],
+      "classes": [],
+      "imports": [
+        "crates/rvAgent/rvagent-a2a/src/error.rs",
+        "crates/rvAgent/rvagent-a2a/src/server/mod.rs",
+        "crates/rvAgent/rvagent-a2a/src/types.rs"
+      ],
+      "exports": [],
+      "totalLines": 653,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-a2a/src/server/sse.rs": {
+      "filePath": "crates/rvAgent/rvagent-a2a/src/server/sse.rs",
+      "contentHash": "8b33a1e6616227a74f301425205711cc8f37dfbdcd8fed75b1af86dfe82caecd",
+      "functions": [],
+      "classes": [],
+      "imports": [
+        "crates/rvAgent/rvagent-a2a/src/types.rs"
+      ],
+      "exports": [],
+      "totalLines": 225,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-a2a/src/types.rs": {
+      "filePath": "crates/rvAgent/rvagent-a2a/src/types.rs",
+      "contentHash": "3790cf11e9d071859a1a13362b5aa02ed54d30dda31e7fda947e9e41f0992031",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 398,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-a2a/tests/artifact_kinds.rs": {
+      "filePath": "crates/rvAgent/rvagent-a2a/tests/artifact_kinds.rs",
+      "contentHash": "7caba959ad8a4d528cdeee07e449d5edf66e594a81b03d4e4af5ba08d4733ca9",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 117,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-a2a/tests/artifact_version_handshake.rs": {
+      "filePath": "crates/rvAgent/rvagent-a2a/tests/artifact_version_handshake.rs",
+      "contentHash": "84617749c839af5c2dc7a0788feef0551692c2a8f6f2b196536c205b2573e00c",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 59,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-a2a/tests/budget_guard.rs": {
+      "filePath": "crates/rvAgent/rvagent-a2a/tests/budget_guard.rs",
+      "contentHash": "60d32fa6333d6bbca0835e44c2ab2ab2a5572b5da1d6938da8e1e8ad55bd5230",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 72,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-a2a/tests/card_roundtrip.rs": {
+      "filePath": "crates/rvAgent/rvagent-a2a/tests/card_roundtrip.rs",
+      "contentHash": "dd0f385087a273eaea40855e741940213fcb11b0d86fc97e67e133cd96b44896",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 108,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-a2a/tests/card_signature.rs": {
+      "filePath": "crates/rvAgent/rvagent-a2a/tests/card_signature.rs",
+      "contentHash": "01b064bc3e5f0971953492f4a2627fd510f4d06cc7e6e7227bc7d236135d29a7",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 84,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-a2a/tests/circuit_breaker.rs": {
+      "filePath": "crates/rvAgent/rvagent-a2a/tests/circuit_breaker.rs",
+      "contentHash": "2b4d166c8c0d192c131b71dbecd867b88c4d0a86b47ca76f37c48a59b654452c",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 102,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-a2a/tests/common/mod.rs": {
+      "filePath": "crates/rvAgent/rvagent-a2a/tests/common/mod.rs",
+      "contentHash": "4ef3f30ff9cfee040a72fa90efe932124dc882a7376dd4947017937226141499",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 143,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-a2a/tests/config_load.rs": {
+      "filePath": "crates/rvAgent/rvagent-a2a/tests/config_load.rs",
+      "contentHash": "40be0a711fbf7cfda3f0481383afa478af08469f8be9dbb3e15fd71f5c2eed4a",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 67,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-a2a/tests/dispatch_order.rs": {
+      "filePath": "crates/rvAgent/rvagent-a2a/tests/dispatch_order.rs",
+      "contentHash": "fe4f774a228bb848c94669badf6fcacb0fb665456d189dd2441014cd6880f754",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 150,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-a2a/tests/executor_remote.rs": {
+      "filePath": "crates/rvAgent/rvagent-a2a/tests/executor_remote.rs",
+      "contentHash": "5de6a4e0ebae5b27dd05f65dd1a74ea3592a5fde5d96a9c3ab5b9a45201babe5",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 204,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-a2a/tests/policy_guard.rs": {
+      "filePath": "crates/rvAgent/rvagent-a2a/tests/policy_guard.rs",
+      "contentHash": "27e926c5038ec6119d905722d2b2127dfec03757201426c951ba4fdc3098cc5d",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 98,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-a2a/tests/push_ed25519.rs": {
+      "filePath": "crates/rvAgent/rvagent-a2a/tests/push_ed25519.rs",
+      "contentHash": "0644b7eaf870717b975564d464a9d2ef7d05f89ba64e796a48dd62c2ad3162ab",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 257,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-a2a/tests/push_rejected.rs": {
+      "filePath": "crates/rvAgent/rvagent-a2a/tests/push_rejected.rs",
+      "contentHash": "4e0aec76c0ac4759368dc699baafcf52637cf7efa1a89cf022316901efa523d8",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 162,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-a2a/tests/push_retry.rs": {
+      "filePath": "crates/rvAgent/rvagent-a2a/tests/push_retry.rs",
+      "contentHash": "f52f55c4301b2847677484d0e1bb809b1be00e98b764f599c9f52cb2428fefcd",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 199,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-a2a/tests/push_signing.rs": {
+      "filePath": "crates/rvAgent/rvagent-a2a/tests/push_signing.rs",
+      "contentHash": "6258d9fe815b873a361e590a926120a2fa8bb8f0c9284ddfce86d616fd2bf6d6",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 216,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-a2a/tests/recursion_guard.rs": {
+      "filePath": "crates/rvAgent/rvagent-a2a/tests/recursion_guard.rs",
+      "contentHash": "413d20d446f3e65d63a5dd9e52225419e02e40109bbfdcee59585ffc3e29f062",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 105,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-a2a/tests/routing_selectors.rs": {
+      "filePath": "crates/rvAgent/rvagent-a2a/tests/routing_selectors.rs",
+      "contentHash": "5dd5b99a41bd3154241d5f0664b9dfe4ed9f4ac5b18af755f7228b7adb56e1ed",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 147,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-a2a/tests/sse_backpressure.rs": {
+      "filePath": "crates/rvAgent/rvagent-a2a/tests/sse_backpressure.rs",
+      "contentHash": "d7d195b3f5f5517e7dbebf7a5383b2097dd7a0d0b13514098880902018b58fa9",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 250,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-a2a/tests/sse_reconnect.rs": {
+      "filePath": "crates/rvAgent/rvagent-a2a/tests/sse_reconnect.rs",
+      "contentHash": "392bbe76be08d2bd5aff049b5301480cd0687d3109ea1b848089e87df5aca308",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 446,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-a2a/tests/sse_stream.rs": {
+      "filePath": "crates/rvAgent/rvagent-a2a/tests/sse_stream.rs",
+      "contentHash": "b822999bbfc0387f0045fd55bfeb5b893c48e70e44d22dd897b253fdb1cd9443",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 217,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-a2a/tests/task_cancel.rs": {
+      "filePath": "crates/rvAgent/rvagent-a2a/tests/task_cancel.rs",
+      "contentHash": "fd47716dbfce4348a7a733de5bf5f44b3ead1b7788a89f62cc064dc8f062df5a",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 79,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-a2a/tests/task_lifecycle.rs": {
+      "filePath": "crates/rvAgent/rvagent-a2a/tests/task_lifecycle.rs",
+      "contentHash": "7afdc2f8176e23659ad34d4a66bf3241084bb97b5f33ea4bcfd962fa908bb6e2",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 67,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-a2a/tests/trace_lineage.rs": {
+      "filePath": "crates/rvAgent/rvagent-a2a/tests/trace_lineage.rs",
+      "contentHash": "ae221d525ee7c9641a2a25533ec35de9bc82946c81f104a6bca2548aca4b73b7",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 72,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-a2a/tests/witness_handoff.rs": {
+      "filePath": "crates/rvAgent/rvagent-a2a/tests/witness_handoff.rs",
+      "contentHash": "dd8866a0a193dd3a39c953f53ec800b84b25bf4a5bfcf36bf904a083330d7cf5",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 91,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-acp/Cargo.toml": {
+      "filePath": "crates/rvAgent/rvagent-acp/Cargo.toml",
+      "contentHash": "3cc8c685437ea5fd1bf536d7724012efa147c17b8c5efdf971384825358793cf",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 226,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-acp/src/agent.rs": {
+      "filePath": "crates/rvAgent/rvagent-acp/src/agent.rs",
+      "contentHash": "c6d07ee6717e3fcda28b7f2c414c8ebacc54133e54022dfe5611c58f545aeddb",
+      "functions": [],
+      "classes": [],
+      "imports": [
+        "crates/rvAgent/rvagent-acp/src/types.rs"
+      ],
+      "exports": [],
+      "totalLines": 369,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-acp/src/auth.rs": {
+      "filePath": "crates/rvAgent/rvagent-acp/src/auth.rs",
+      "contentHash": "f3494c763001079b149e4c8e91fdc111bbf8f01214d44b72c4e393b4b5c1152a",
+      "functions": [],
+      "classes": [],
+      "imports": [
+        "crates/rvAgent/rvagent-acp/src/types.rs"
+      ],
+      "exports": [],
+      "totalLines": 349,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-acp/src/lib.rs": {
+      "filePath": "crates/rvAgent/rvagent-acp/src/lib.rs",
+      "contentHash": "c3a8d58d897b5d8f673c0ccf6c62314b6190a109d1ab77626bb5cccadf410495",
+      "functions": [],
+      "classes": [],
+      "imports": [
+        "crates/rvAgent/rvagent-acp/src/agent.rs",
+        "crates/rvAgent/rvagent-acp/src/auth.rs",
+        "crates/rvAgent/rvagent-acp/src/server.rs",
+        "crates/rvAgent/rvagent-acp/src/types.rs"
+      ],
+      "exports": [],
+      "totalLines": 10,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-acp/src/main.rs": {
+      "filePath": "crates/rvAgent/rvagent-acp/src/main.rs",
+      "contentHash": "be35eeaf018ea957a4d08b1b49f71a85a94d541b554a4339a57a71b5b81a9c21",
+      "functions": [],
+      "classes": [],
+      "imports": [
+        "crates/rvAgent/rvagent-acp/src/agent.rs",
+        "crates/rvAgent/rvagent-acp/src/auth.rs",
+        "crates/rvAgent/rvagent-acp/src/server.rs",
+        "crates/rvAgent/rvagent-acp/src/types.rs"
+      ],
+      "exports": [],
+      "totalLines": 83,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-acp/src/server.rs": {
+      "filePath": "crates/rvAgent/rvagent-acp/src/server.rs",
+      "contentHash": "7966189fefd794d237a2fc8f2ba38d0a567e090388179beafdfdbe53c9ba2aca",
+      "functions": [],
+      "classes": [],
+      "imports": [
+        "crates/rvAgent/rvagent-acp/src/agent.rs",
+        "crates/rvAgent/rvagent-acp/src/auth.rs",
+        "crates/rvAgent/rvagent-acp/src/types.rs"
+      ],
+      "exports": [],
+      "totalLines": 586,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-acp/src/types.rs": {
+      "filePath": "crates/rvAgent/rvagent-acp/src/types.rs",
+      "contentHash": "5ed23482320282cb062e24df9382cfeaba9954a8bdfecbf070f24a81680c87a6",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 263,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-acp/tests/integration_tests.rs": {
+      "filePath": "crates/rvAgent/rvagent-acp/tests/integration_tests.rs",
+      "contentHash": "09bbfb456aac1045de07fc12dbf8c97e8966adda775a85fbd76b522a9a75553c",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 230,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-backends/benches/backend_bench.rs": {
+      "filePath": "crates/rvAgent/rvagent-backends/benches/backend_bench.rs",
+      "contentHash": "01e6a82ac58c2b54d1f7e975db846ecf7c7fee58b828f473992ced4ba7f020e7",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 321,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-backends/Cargo.toml": {
+      "filePath": "crates/rvAgent/rvagent-backends/Cargo.toml",
+      "contentHash": "e34e0f99ef46a18b520ca51f417a77e96c6852cc8855eb5cd50da5d0185d7d86",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 230,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-backends/src/anthropic.rs": {
+      "filePath": "crates/rvAgent/rvagent-backends/src/anthropic.rs",
+      "contentHash": "09b8c84a4b917a15cf65ff0e607e2c762a83a55f701c8f0d6af1d58e2b096cd4",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 911,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-backends/src/composite.rs": {
+      "filePath": "crates/rvAgent/rvagent-backends/src/composite.rs",
+      "contentHash": "db9b0b82ea3474e00193a8eae1a2d3647a714a62485446a784e75a185575dfe3",
+      "functions": [],
+      "classes": [],
+      "imports": [
+        "crates/rvAgent/rvagent-backends/src/protocol.rs",
+        "crates/rvAgent/rvagent-backends/src/state.rs"
+      ],
+      "exports": [],
+      "totalLines": 360,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-backends/src/filesystem.rs": {
+      "filePath": "crates/rvAgent/rvagent-backends/src/filesystem.rs",
+      "contentHash": "8abbbd765826914d8c78a077606f448a45cd54a4192e70bb1177c080bb797026",
+      "functions": [],
+      "classes": [],
+      "imports": [
+        "crates/rvAgent/rvagent-backends/src/protocol.rs",
+        "crates/rvAgent/rvagent-backends/src/utils.rs"
+      ],
+      "exports": [],
+      "totalLines": 1023,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-backends/src/gemini.rs": {
+      "filePath": "crates/rvAgent/rvagent-backends/src/gemini.rs",
+      "contentHash": "0fa9dba8ed42c56fadf876c0a12e8c0e7caa48d44997ae2740247ebf7f3d9eb9",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 373,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-backends/src/lib.rs": {
+      "filePath": "crates/rvAgent/rvagent-backends/src/lib.rs",
+      "contentHash": "6cfbb74e160771e3c3c57c246a150a843612300206eeecc88d2b42546f7d59ce",
+      "functions": [],
+      "classes": [],
+      "imports": [
+        "crates/rvAgent/rvagent-backends/src/anthropic.rs",
+        "crates/rvAgent/rvagent-backends/src/composite.rs",
+        "crates/rvAgent/rvagent-backends/src/filesystem.rs",
+        "crates/rvAgent/rvagent-backends/src/gemini.rs",
+        "crates/rvAgent/rvagent-backends/src/local_shell.rs",
+        "crates/rvAgent/rvagent-backends/src/protocol.rs",
+        "crates/rvAgent/rvagent-backends/src/rvf_store.rs",
+        "crates/rvAgent/rvagent-backends/src/sandbox.rs",
+        "crates/rvAgent/rvagent-backends/src/security.rs",
+        "crates/rvAgent/rvagent-backends/src/state.rs",
+        "crates/rvAgent/rvagent-backends/src/store.rs",
+        "crates/rvAgent/rvagent-backends/src/unicode_security.rs",
+        "crates/rvAgent/rvagent-backends/src/utils.rs"
+      ],
+      "exports": [],
+      "totalLines": 48,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-backends/src/local_shell.rs": {
+      "filePath": "crates/rvAgent/rvagent-backends/src/local_shell.rs",
+      "contentHash": "24fd7df1d3100392cae48fa86ee56eb7ee076f4d653da04a87920a06c2378a83",
+      "functions": [],
+      "classes": [],
+      "imports": [
+        "crates/rvAgent/rvagent-backends/src/filesystem.rs",
+        "crates/rvAgent/rvagent-backends/src/protocol.rs"
+      ],
+      "exports": [],
+      "totalLines": 501,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-backends/src/protocol.rs": {
+      "filePath": "crates/rvAgent/rvagent-backends/src/protocol.rs",
+      "contentHash": "06eb00f03ab31eb2fc1173cf51998ddbaa85a5e83a0f01ad1de3dfe2f67a9a7e",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 275,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-backends/src/rvf_store.rs": {
+      "filePath": "crates/rvAgent/rvagent-backends/src/rvf_store.rs",
+      "contentHash": "365d2d57841fd15b69a9081401c5e36bc5dc6a2042999353bd076967fc404dfc",
+      "functions": [],
+      "classes": [],
+      "imports": [
+        "crates/rvAgent/rvagent-backends/src/protocol.rs",
+        "crates/rvAgent/rvagent-backends/src/state.rs"
+      ],
+      "exports": [],
+      "totalLines": 520,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-backends/src/sandbox.rs": {
+      "filePath": "crates/rvAgent/rvagent-backends/src/sandbox.rs",
+      "contentHash": "a1df7718ddca793d755635429c960f9115b931a9b8309f77ce781e660680deca",
+      "functions": [],
+      "classes": [],
+      "imports": [
+        "crates/rvAgent/rvagent-backends/src/protocol.rs"
+      ],
+      "exports": [],
+      "totalLines": 798,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-backends/src/security.rs": {
+      "filePath": "crates/rvAgent/rvagent-backends/src/security.rs",
+      "contentHash": "5b5674c6b1bc330c07c003b433614424487395ae40110cef82dc6b0a71032de2",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 565,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-backends/src/state.rs": {
+      "filePath": "crates/rvAgent/rvagent-backends/src/state.rs",
+      "contentHash": "ddd9885fe21bdc34b0b791d5b09c148ada30c8240a35f18b43d84c67e59b0ac5",
+      "functions": [],
+      "classes": [],
+      "imports": [
+        "crates/rvAgent/rvagent-backends/src/protocol.rs",
+        "crates/rvAgent/rvagent-backends/src/utils.rs"
+      ],
+      "exports": [],
+      "totalLines": 435,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-backends/src/store.rs": {
+      "filePath": "crates/rvAgent/rvagent-backends/src/store.rs",
+      "contentHash": "1379e9e9c3c88e8d3b4278f2a46b614ae62fde40b8e3eef9e706d23710b42748",
+      "functions": [],
+      "classes": [],
+      "imports": [
+        "crates/rvAgent/rvagent-backends/src/filesystem.rs",
+        "crates/rvAgent/rvagent-backends/src/protocol.rs"
+      ],
+      "exports": [],
+      "totalLines": 228,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-backends/src/unicode_security.rs": {
+      "filePath": "crates/rvAgent/rvagent-backends/src/unicode_security.rs",
+      "contentHash": "2b614bad6cbdfb65bd5c16d881cbc37fe5e6f6bc3bd3d47f381b4afc1d6d6f2c",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 453,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-backends/src/utils.rs": {
+      "filePath": "crates/rvAgent/rvagent-backends/src/utils.rs",
+      "contentHash": "e8282bd6cabeb371debd3c771a68a8fb7f89fb5ae64bc049c5bd2cfe688f86be",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 152,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-backends/tests/composite_tests.rs": {
+      "filePath": "crates/rvAgent/rvagent-backends/tests/composite_tests.rs",
+      "contentHash": "ea79502853eb5a53dd1ef288944b16a7ac0212c01bca2042c94ccd0e8b474c81",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 153,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-backends/tests/filesystem_tests.rs": {
+      "filePath": "crates/rvAgent/rvagent-backends/tests/filesystem_tests.rs",
+      "contentHash": "d8c7e38e3f3b558f40457b1a415fd5a7ec0c20ccfa46abe62c0f504b34e092fc",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 252,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-backends/tests/live_anthropic_test.rs": {
+      "filePath": "crates/rvAgent/rvagent-backends/tests/live_anthropic_test.rs",
+      "contentHash": "2e7ce6d9dccde9e25c018c17a5454ce40802f28a939e9e8d2cc8c8ef8406c164",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 26,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-backends/tests/security_tests.rs": {
+      "filePath": "crates/rvAgent/rvagent-backends/tests/security_tests.rs",
+      "contentHash": "726ad0366d7f2f371f18ee55a0f7708630558d589ae7ac913ef231c787d2e7bd",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 1162,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-backends/tests/shell_tests.rs": {
+      "filePath": "crates/rvAgent/rvagent-backends/tests/shell_tests.rs",
+      "contentHash": "d763d99edbd41f9280c23d28f934daf7f78d46499ebabd15edf8189eabff3151",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 177,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-backends/tests/unicode_tests.rs": {
+      "filePath": "crates/rvAgent/rvagent-backends/tests/unicode_tests.rs",
+      "contentHash": "32d6b76e4b3cbc47228ade629f640c95072963ea8dad8e1c0e3da4ac0efe183f",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 168,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-cli/Cargo.toml": {
+      "filePath": "crates/rvAgent/rvagent-cli/Cargo.toml",
+      "contentHash": "1a63bd864255f7aa617a3032e2765df4a4d62a1ecb17c5f791c00a6e5207768e",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 236,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-cli/src/a2a.rs": {
+      "filePath": "crates/rvAgent/rvagent-cli/src/a2a.rs",
+      "contentHash": "4d3709836a8987d0c01574afe9ee5b988442549d44fb335e1d168b07f48fe68a",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 512,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-cli/src/app.rs": {
+      "filePath": "crates/rvAgent/rvagent-cli/src/app.rs",
+      "contentHash": "a0b3176af30450e6160b18f565abedaac499c9125319d055dcd4d5d5b9e3bf5f",
+      "functions": [],
+      "classes": [],
+      "imports": [
+        "crates/rvAgent/rvagent-cli/src/display.rs",
+        "crates/rvAgent/rvagent-cli/src/mcp.rs",
+        "crates/rvAgent/rvagent-cli/src/session.rs",
+        "crates/rvAgent/rvagent-cli/src/tui.rs"
+      ],
+      "exports": [],
+      "totalLines": 728,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-cli/src/display.rs": {
+      "filePath": "crates/rvAgent/rvagent-cli/src/display.rs",
+      "contentHash": "f0c297812697d021c42e0f38f3293a2c078fa91c6b6dc255df6db49286bc3df1",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 260,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-cli/src/lib.rs": {
+      "filePath": "crates/rvAgent/rvagent-cli/src/lib.rs",
+      "contentHash": "be179fcf7bbc53ebd35461556b67f6c1c77272b540d511bb365a039d5a387cc0",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 1,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-cli/src/main.rs": {
+      "filePath": "crates/rvAgent/rvagent-cli/src/main.rs",
+      "contentHash": "566422551b47956324a1a51edc6048dba30e00fd27b8a16b52b8e2a50ff3a66f",
+      "functions": [],
+      "classes": [],
+      "imports": [
+        "crates/rvAgent/rvagent-cli/src/a2a.rs",
+        "crates/rvAgent/rvagent-cli/src/app.rs",
+        "crates/rvAgent/rvagent-cli/src/display.rs",
+        "crates/rvAgent/rvagent-cli/src/mcp.rs",
+        "crates/rvAgent/rvagent-cli/src/session.rs",
+        "crates/rvAgent/rvagent-cli/src/tui.rs"
+      ],
+      "exports": [],
+      "totalLines": 211,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-cli/src/mcp.rs": {
+      "filePath": "crates/rvAgent/rvagent-cli/src/mcp.rs",
+      "contentHash": "7ce4f40cfe0ebfb0ea2ee6edd882a30c627ce09e63a1cb498bb4e1aecc2b1f1d",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 679,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-cli/src/session.rs": {
+      "filePath": "crates/rvAgent/rvagent-cli/src/session.rs",
+      "contentHash": "5b5d3d23990a04a282d284bdaa4060d37f9242cf49b0d31947de843e11ecb2df",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 398,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-cli/src/tui.rs": {
+      "filePath": "crates/rvAgent/rvagent-cli/src/tui.rs",
+      "contentHash": "52462bdd707b65972a1a2070cb1a88f3aace56c45d2222a2cd784fcc84383967",
+      "functions": [],
+      "classes": [],
+      "imports": [
+        "crates/rvAgent/rvagent-cli/src/app.rs"
+      ],
+      "exports": [],
+      "totalLines": 420,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-cli/tests/a2a_cli.rs": {
+      "filePath": "crates/rvAgent/rvagent-cli/tests/a2a_cli.rs",
+      "contentHash": "d0c9befadd335fabf547a1394baca7df8abc8436866cfc6f498317077ca3b55c",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 152,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-cli/tests/integration_tests.rs": {
+      "filePath": "crates/rvAgent/rvagent-cli/tests/integration_tests.rs",
+      "contentHash": "0cedcc8691c61162179ad0172b8fdbee90afdf9c9197e2dfb4fdfe3b744f5b1c",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 153,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-core/benches/rvf_bridge_bench.rs": {
+      "filePath": "crates/rvAgent/rvagent-core/benches/rvf_bridge_bench.rs",
+      "contentHash": "fbb4d9811b0c8fffa2963d5926762978344f84fa2cd3c0e5c25abcb4e975535f",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 323,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-core/benches/state_bench.rs": {
+      "filePath": "crates/rvAgent/rvagent-core/benches/state_bench.rs",
+      "contentHash": "37bd50588748cd666148712546c0b227ba1c5fdc917c1d89d6fe5614c806656d",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 273,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-core/C9_IMPLEMENTATION_SUMMARY.md": {
+      "filePath": "crates/rvAgent/rvagent-core/C9_IMPLEMENTATION_SUMMARY.md",
+      "contentHash": "82d1c2d2cfad9edabb59f6fbe11ba8108a130dcf4e47f3feb2022210aa1e9259",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 427,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-core/Cargo.toml": {
+      "filePath": "crates/rvAgent/rvagent-core/Cargo.toml",
+      "contentHash": "072cf1769040d70ead6e28f803521e61107bb20a1b30f36ac9b0a1784471b38d",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 227,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-core/docs/cow_state.md": {
+      "filePath": "crates/rvAgent/rvagent-core/docs/cow_state.md",
+      "contentHash": "75cad5c3fb88e4583bd80e253ae22286653aedf1c64e21da05c0464e6cbd3659",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 196,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-core/examples/agi_container_demo.rs": {
+      "filePath": "crates/rvAgent/rvagent-core/examples/agi_container_demo.rs",
+      "contentHash": "2676345d6b833f33737464eff2baf39d06725c033acf66c27cf4b590ae074acf",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 149,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-core/examples/cow_state_demo.rs": {
+      "filePath": "crates/rvAgent/rvagent-core/examples/cow_state_demo.rs",
+      "contentHash": "a173037ad167b989c263cc251153b82f4945d321dc3324dfa0d3f2f7281b755e",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 139,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-core/examples/session_crypto_demo.rs": {
+      "filePath": "crates/rvAgent/rvagent-core/examples/session_crypto_demo.rs",
+      "contentHash": "ce5b836b20a822d63b8a3c349be04c82215316248ea30636916ac6bf85de8e8b",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 139,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-core/IMPLEMENTATION_C9.md": {
+      "filePath": "crates/rvAgent/rvagent-core/IMPLEMENTATION_C9.md",
+      "contentHash": "c36b8a1f21d6355f992cfb506ed48fbcebdf59b77a33e5016d91295f13da0b14",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 289,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-core/src/agi_container.rs": {
+      "filePath": "crates/rvAgent/rvagent-core/src/agi_container.rs",
+      "contentHash": "5e1482ec4b710c07cf513493bcb433330ce66c706e7799bc31e58769ecd5334b",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 627,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-core/src/arena.rs": {
+      "filePath": "crates/rvAgent/rvagent-core/src/arena.rs",
+      "contentHash": "35d070bcbfdca8be244a8a1e9ed5ea4f867e392d02887d84e6ff3cb87c0f09dd",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 137,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-core/src/budget.rs": {
+      "filePath": "crates/rvAgent/rvagent-core/src/budget.rs",
+      "contentHash": "abca614733e3d794df9e4fa7de5d538d82c44121a120b4c13f132e20bb902b12",
+      "functions": [],
+      "classes": [],
+      "imports": [
+        "crates/rvAgent/rvagent-core/src/config.rs"
+      ],
+      "exports": [],
+      "totalLines": 439,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-core/src/config.rs": {
+      "filePath": "crates/rvAgent/rvagent-core/src/config.rs",
+      "contentHash": "60fc65d0812b8ebb27f27ca16ad59f6f3047d9c50e1366929344b2abfbae60e7",
+      "functions": [],
+      "classes": [],
+      "imports": [
+        "crates/rvAgent/rvagent-core/src/prompt.rs",
+        "crates/rvAgent/rvagent-core/src/rvf_bridge.rs"
+      ],
+      "exports": [],
+      "totalLines": 307,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-core/src/cow_state.rs": {
+      "filePath": "crates/rvAgent/rvagent-core/src/cow_state.rs",
+      "contentHash": "c3a01f8d6507de4963f7b12458d958a63d795f39b2a46fe526255e91a023ad7b",
+      "functions": [],
+      "classes": [],
+      "imports": [
+        "crates/rvAgent/rvagent-core/src/error.rs"
+      ],
+      "exports": [],
+      "totalLines": 736,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-core/src/error.rs": {
+      "filePath": "crates/rvAgent/rvagent-core/src/error.rs",
+      "contentHash": "245e122c9bb9d5ca6b3b9336877fad84db03f01c254fd73d54347a75f89c0080",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 120,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-core/src/graph.rs": {
+      "filePath": "crates/rvAgent/rvagent-core/src/graph.rs",
+      "contentHash": "1aabd243054f0eb83f72fd48f8f52e863d6a779ebb13057962d06f305bbd6a30",
+      "functions": [],
+      "classes": [],
+      "imports": [
+        "crates/rvAgent/rvagent-core/src/error.rs",
+        "crates/rvAgent/rvagent-core/src/messages.rs",
+        "crates/rvAgent/rvagent-core/src/models.rs",
+        "crates/rvAgent/rvagent-core/src/state.rs"
+      ],
+      "exports": [],
+      "totalLines": 358,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-core/src/lib.rs": {
+      "filePath": "crates/rvAgent/rvagent-core/src/lib.rs",
+      "contentHash": "42efeccf004b9be0c984c548c7f7a2564a73e5306568d2f226a182345c68b6f1",
+      "functions": [],
+      "classes": [],
+      "imports": [
+        "crates/rvAgent/rvagent-core/src/agi_container.rs",
+        "crates/rvAgent/rvagent-core/src/arena.rs",
+        "crates/rvAgent/rvagent-core/src/budget.rs",
+        "crates/rvAgent/rvagent-core/src/config.rs",
+        "crates/rvAgent/rvagent-core/src/cow_state.rs",
+        "crates/rvAgent/rvagent-core/src/error.rs",
+        "crates/rvAgent/rvagent-core/src/graph.rs",
+        "crates/rvAgent/rvagent-core/src/messages.rs",
+        "crates/rvAgent/rvagent-core/src/metrics.rs",
+        "crates/rvAgent/rvagent-core/src/models.rs",
+        "crates/rvAgent/rvagent-core/src/parallel.rs",
+        "crates/rvAgent/rvagent-core/src/prompt.rs",
+        "crates/rvAgent/rvagent-core/src/rvf_bridge.rs",
+        "crates/rvAgent/rvagent-core/src/session_crypto.rs",
+        "crates/rvAgent/rvagent-core/src/state.rs",
+        "crates/rvAgent/rvagent-core/src/string_pool.rs"
+      ],
+      "exports": [],
+      "totalLines": 58,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-core/src/messages.rs": {
+      "filePath": "crates/rvAgent/rvagent-core/src/messages.rs",
+      "contentHash": "a28255a1b876b60d43d4f327fc4baca74396409e2c20b3751f74bfbc88c53c12",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 214,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-core/src/metrics.rs": {
+      "filePath": "crates/rvAgent/rvagent-core/src/metrics.rs",
+      "contentHash": "d01787c2d0a2eb6a12ec20353fd0a1d4d142b2eab56837712f2d22e78a5b2677",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 137,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-core/src/models.rs": {
+      "filePath": "crates/rvAgent/rvagent-core/src/models.rs",
+      "contentHash": "744fc46c341e4de3f9f0650747fac960baa28a835a6cc4199780fea5bea6f949",
+      "functions": [],
+      "classes": [],
+      "imports": [
+        "crates/rvAgent/rvagent-core/src/error.rs",
+        "crates/rvAgent/rvagent-core/src/messages.rs"
+      ],
+      "exports": [],
+      "totalLines": 290,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-core/src/parallel.rs": {
+      "filePath": "crates/rvAgent/rvagent-core/src/parallel.rs",
+      "contentHash": "17b31c10276a304ee87a4ecde4c902e0cb4a5cdbbf9b5aba5b41c912abe72975",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 118,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-core/src/prompt.rs": {
+      "filePath": "crates/rvAgent/rvagent-core/src/prompt.rs",
+      "contentHash": "27da107d1ca134af64feccbe18dda2d5708a979385095ef19846417a229a2b9a",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 188,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-core/src/rvf_bridge.rs": {
+      "filePath": "crates/rvAgent/rvagent-core/src/rvf_bridge.rs",
+      "contentHash": "bcb996a8f8eb4923ef991e8146ef6b1046e3f9e441e9f0b9ffbc17dd9eb9a95d",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 930,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-core/src/session_crypto.rs": {
+      "filePath": "crates/rvAgent/rvagent-core/src/session_crypto.rs",
+      "contentHash": "9b3d224c971d46bc3d0c149fb2494519da07795e485386d84f927a7b5ec19863",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 422,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-core/src/state.rs": {
+      "filePath": "crates/rvAgent/rvagent-core/src/state.rs",
+      "contentHash": "3d7c753bcaa6aa8f2a6ba228147d99453388750cf689c037de3d848a805d203d",
+      "functions": [],
+      "classes": [],
+      "imports": [
+        "crates/rvAgent/rvagent-core/src/messages.rs"
+      ],
+      "exports": [],
+      "totalLines": 366,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-core/src/string_pool.rs": {
+      "filePath": "crates/rvAgent/rvagent-core/src/string_pool.rs",
+      "contentHash": "7017b0a0c85419aac87ea186515b219c9caa6b7963cf24dc18f55ef0815c6b0a",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 102,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-core/tests/config_tests.rs": {
+      "filePath": "crates/rvAgent/rvagent-core/tests/config_tests.rs",
+      "contentHash": "8e3aca15964b82058712a1191de0c0c6ffdd782eedfd9e4fb2bb68b7ad44bdd5",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 108,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-core/tests/integration_tests.rs": {
+      "filePath": "crates/rvAgent/rvagent-core/tests/integration_tests.rs",
+      "contentHash": "9e9dfb2cfb4d461fdc778d7cec94633754043209288b6d062464bb23294f7c5f",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 346,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-core/tests/message_tests.rs": {
+      "filePath": "crates/rvAgent/rvagent-core/tests/message_tests.rs",
+      "contentHash": "ad9258f05a40b3a858c667d51793841a43a086b1a438a581aec8a57b6bdcc28e",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 145,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-core/tests/model_tests.rs": {
+      "filePath": "crates/rvAgent/rvagent-core/tests/model_tests.rs",
+      "contentHash": "4637695858017e093b087227baed7375280f9676f7adf92ea468cb2f6764618b",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 94,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-core/tests/state_tests.rs": {
+      "filePath": "crates/rvAgent/rvagent-core/tests/state_tests.rs",
+      "contentHash": "f7edb0495e1d190abd0d824e6eb0ddc998305218a1bc0067c893e3c939063709",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 196,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-mcp/Cargo.toml": {
+      "filePath": "crates/rvAgent/rvagent-mcp/Cargo.toml",
+      "contentHash": "b4f0a0f9ec44982995671a8284c3765b5bcd483a0ef6ae60140a37edfa8f5030",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 228,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-mcp/src/client.rs": {
+      "filePath": "crates/rvAgent/rvagent-mcp/src/client.rs",
+      "contentHash": "054e61443b0b84c48cb5e7bcd649d39012ca3a9a53280f5920a21cb13656836d",
+      "functions": [],
+      "classes": [],
+      "imports": [
+        "crates/rvAgent/rvagent-mcp/src/protocol.rs",
+        "crates/rvAgent/rvagent-mcp/src/transport.rs"
+      ],
+      "exports": [],
+      "totalLines": 360,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-mcp/src/groups.rs": {
+      "filePath": "crates/rvAgent/rvagent-mcp/src/groups.rs",
+      "contentHash": "5d595b16177552cb800beebafaffbe6f4908365e3f1253a251d582c3e5d09fb4",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 308,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-mcp/src/lib.rs": {
+      "filePath": "crates/rvAgent/rvagent-mcp/src/lib.rs",
+      "contentHash": "05dc51655dbf5ea4a21dfecf7befc54334fdeab960d11245e223ca374d0376ac",
+      "functions": [],
+      "classes": [],
+      "imports": [
+        "crates/rvAgent/rvagent-mcp/src/client.rs",
+        "crates/rvAgent/rvagent-mcp/src/groups.rs",
+        "crates/rvAgent/rvagent-mcp/src/middleware.rs",
+        "crates/rvAgent/rvagent-mcp/src/protocol.rs",
+        "crates/rvAgent/rvagent-mcp/src/registry.rs",
+        "crates/rvAgent/rvagent-mcp/src/resources.rs",
+        "crates/rvAgent/rvagent-mcp/src/server.rs",
+        "crates/rvAgent/rvagent-mcp/src/skills_bridge.rs",
+        "crates/rvAgent/rvagent-mcp/src/topology.rs",
+        "crates/rvAgent/rvagent-mcp/src/transport.rs"
+      ],
+      "exports": [],
+      "totalLines": 135,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-mcp/src/main.rs": {
+      "filePath": "crates/rvAgent/rvagent-mcp/src/main.rs",
+      "contentHash": "fb54056d1e5a194812a69513f086a0f5540300cb58c165efe6755b8e5a33ab74",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 360,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-mcp/src/middleware.rs": {
+      "filePath": "crates/rvAgent/rvagent-mcp/src/middleware.rs",
+      "contentHash": "533394435df51b0c875a68a5d41682a6592736698e58af82f178f0a34b13f3b9",
+      "functions": [],
+      "classes": [],
+      "imports": [
+        "crates/rvAgent/rvagent-mcp/src/protocol.rs"
+      ],
+      "exports": [],
+      "totalLines": 270,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-mcp/src/protocol.rs": {
+      "filePath": "crates/rvAgent/rvagent-mcp/src/protocol.rs",
+      "contentHash": "7a7e964c28688ee960860bd8bc3011ff0fc3aafaba09961fcd7111d7e770abad",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 810,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-mcp/src/registry.rs": {
+      "filePath": "crates/rvAgent/rvagent-mcp/src/registry.rs",
+      "contentHash": "2925f43af5e576324881c3cb5ecd47183180add01576c118e4bc84c12a69c36f",
+      "functions": [],
+      "classes": [],
+      "imports": [
+        "crates/rvAgent/rvagent-mcp/src/protocol.rs"
+      ],
+      "exports": [],
+      "totalLines": 509,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-mcp/src/resources.rs": {
+      "filePath": "crates/rvAgent/rvagent-mcp/src/resources.rs",
+      "contentHash": "3647537ad1111822dc69e6fb11d330205a04e96c8d570211f47f9208ec515706",
+      "functions": [],
+      "classes": [],
+      "imports": [
+        "crates/rvAgent/rvagent-mcp/src/protocol.rs"
+      ],
+      "exports": [],
+      "totalLines": 626,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-mcp/src/server.rs": {
+      "filePath": "crates/rvAgent/rvagent-mcp/src/server.rs",
+      "contentHash": "f3ff88c5c2d7b2786b06c037dd6a0cb708763af35dfd1502c1e9c796a3759921",
+      "functions": [],
+      "classes": [],
+      "imports": [
+        "crates/rvAgent/rvagent-mcp/src/protocol.rs",
+        "crates/rvAgent/rvagent-mcp/src/registry.rs",
+        "crates/rvAgent/rvagent-mcp/src/resources.rs"
+      ],
+      "exports": [],
+      "totalLines": 426,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-mcp/src/skills_bridge.rs": {
+      "filePath": "crates/rvAgent/rvagent-mcp/src/skills_bridge.rs",
+      "contentHash": "6261acd7760ca4dd0bb54721c6d6baf3bc3d0e71f5a1bad0af7da4e12c87239f",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 254,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-mcp/src/topology.rs": {
+      "filePath": "crates/rvAgent/rvagent-mcp/src/topology.rs",
+      "contentHash": "4d7bb378dcf628cef0fefa438c3f44744002d339c1a4d44ffd2dc85606ce12c0",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 561,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-mcp/src/transport.rs": {
+      "filePath": "crates/rvAgent/rvagent-mcp/src/transport.rs",
+      "contentHash": "dd5901ba4cdb2dd507c47d795aacf6a7a92fd5b2a0058a428e1be58911043548",
+      "functions": [],
+      "classes": [],
+      "imports": [
+        "crates/rvAgent/rvagent-mcp/src/protocol.rs"
+      ],
+      "exports": [],
+      "totalLines": 578,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-mcp/tests/integration.rs": {
+      "filePath": "crates/rvAgent/rvagent-mcp/tests/integration.rs",
+      "contentHash": "78e2ded54d6f78cd62969ec87c7a68bbe7862dc923dad53fba97fc04ba613322",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 1765,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-mcp/tests/stress.rs": {
+      "filePath": "crates/rvAgent/rvagent-mcp/tests/stress.rs",
+      "contentHash": "d689a046b24b31fa0044e26862c571ab9e80448c3accffedc06f00657b949e91",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 688,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-middleware/benches/middleware_bench.rs": {
+      "filePath": "crates/rvAgent/rvagent-middleware/benches/middleware_bench.rs",
+      "contentHash": "c4434218f6560a8fb05a4a14dd6643d41d52e42ac8b80401e3ca0bd899648eda",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 258,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-middleware/Cargo.toml": {
+      "filePath": "crates/rvAgent/rvagent-middleware/Cargo.toml",
+      "contentHash": "ca444aa6dbd1d09b69ab73743b5a15147be878defbddc5f7a2ff7927fdf7f95a",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 232,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-middleware/docs/UNICODE_SECURITY.md": {
+      "filePath": "crates/rvAgent/rvagent-middleware/docs/UNICODE_SECURITY.md",
+      "contentHash": "558af1ea2fea8d64dd5e51ec0d5de7eb588899f62510d24a8a1978c71bf3bb66",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 521,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-middleware/src/filesystem.rs": {
+      "filePath": "crates/rvAgent/rvagent-middleware/src/filesystem.rs",
+      "contentHash": "34b997a6db219397feeb1139fdacef8696cd574d33fc167cf19cefbc2b1ded59",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 269,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-middleware/src/hitl.rs": {
+      "filePath": "crates/rvAgent/rvagent-middleware/src/hitl.rs",
+      "contentHash": "0a52714d0608d212b68ef3bba7338d49f179813a4bc5019a4643218027a8da0a",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 176,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-middleware/src/hnsw.rs": {
+      "filePath": "crates/rvAgent/rvagent-middleware/src/hnsw.rs",
+      "contentHash": "0042d5ede65f8aea8f01706ebe2eafd5261de7754699fd81abc50033aa0a64d4",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 1043,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-middleware/src/lib.rs": {
+      "filePath": "crates/rvAgent/rvagent-middleware/src/lib.rs",
+      "contentHash": "80240f2dcd24f7d2e54154052827eea0d54feb7b091df1752a40dcd165252a93",
+      "functions": [],
+      "classes": [],
+      "imports": [
+        "crates/rvAgent/rvagent-middleware/src/filesystem.rs",
+        "crates/rvAgent/rvagent-middleware/src/hitl.rs",
+        "crates/rvAgent/rvagent-middleware/src/hnsw.rs",
+        "crates/rvAgent/rvagent-middleware/src/mcp_bridge.rs",
+        "crates/rvAgent/rvagent-middleware/src/memory.rs",
+        "crates/rvAgent/rvagent-middleware/src/patch_tool_calls.rs",
+        "crates/rvAgent/rvagent-middleware/src/prompt_caching.rs",
+        "crates/rvAgent/rvagent-middleware/src/retry.rs",
+        "crates/rvAgent/rvagent-middleware/src/rvf_manifest.rs",
+        "crates/rvAgent/rvagent-middleware/src/skills.rs",
+        "crates/rvAgent/rvagent-middleware/src/sona.rs",
+        "crates/rvAgent/rvagent-middleware/src/subagents.rs",
+        "crates/rvAgent/rvagent-middleware/src/summarization.rs",
+        "crates/rvAgent/rvagent-middleware/src/todolist.rs",
+        "crates/rvAgent/rvagent-middleware/src/tool_sanitizer.rs",
+        "crates/rvAgent/rvagent-middleware/src/unicode_security.rs",
+        "crates/rvAgent/rvagent-middleware/src/unicode_security_middleware.rs",
+        "crates/rvAgent/rvagent-middleware/src/utils.rs",
+        "crates/rvAgent/rvagent-middleware/src/witness.rs"
+      ],
+      "exports": [],
+      "totalLines": 833,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-middleware/src/mcp_bridge.rs": {
+      "filePath": "crates/rvAgent/rvagent-middleware/src/mcp_bridge.rs",
+      "contentHash": "8458d3c44b1306286fc0879c9b5ace39ce24cb2b367780bf540fae7c73494e2e",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 288,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-middleware/src/memory.rs": {
+      "filePath": "crates/rvAgent/rvagent-middleware/src/memory.rs",
+      "contentHash": "88ff523666a8ee971b4cce7abab8a978a462399a83131bcba37c7fc81ff8cbe2",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 391,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-middleware/src/patch_tool_calls.rs": {
+      "filePath": "crates/rvAgent/rvagent-middleware/src/patch_tool_calls.rs",
+      "contentHash": "d77a00251e7e74cf215372127a25df898779f86fa3cd001d4b7deb22fb111fac",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 255,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-middleware/src/prompt_caching.rs": {
+      "filePath": "crates/rvAgent/rvagent-middleware/src/prompt_caching.rs",
+      "contentHash": "9b37dd487387e0a1ba5db6b4f2d9039006ede37dfeb1e03b8ef6ebcae0e13daa",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 124,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-middleware/src/retry.rs": {
+      "filePath": "crates/rvAgent/rvagent-middleware/src/retry.rs",
+      "contentHash": "3ec703b539709333cd8ac837a0c7da5b048fd3d9a9a7f55e31ab854673f39bb7",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 285,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-middleware/src/rvf_manifest.rs": {
+      "filePath": "crates/rvAgent/rvagent-middleware/src/rvf_manifest.rs",
+      "contentHash": "775fb395f8bdb82716bcd2325c00ffe965e72324d91ceaaf68528751e9656248",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 359,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-middleware/src/skills.rs": {
+      "filePath": "crates/rvAgent/rvagent-middleware/src/skills.rs",
+      "contentHash": "be4fee4044fec07577ec5bc6594c876e0195338f6b47486d7b746a7c74f6ceed",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 449,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-middleware/src/sona.rs": {
+      "filePath": "crates/rvAgent/rvagent-middleware/src/sona.rs",
+      "contentHash": "2e9f351b8df0a17bfc288557e861260330190a303f66d61e937d212f3c1ac8d6",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 877,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-middleware/src/subagents.rs": {
+      "filePath": "crates/rvAgent/rvagent-middleware/src/subagents.rs",
+      "contentHash": "6b586c951eef0e9595d3a252c8bff3ab8105523a46198df8acd4b0db8706e8c8",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 211,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-middleware/src/summarization.rs": {
+      "filePath": "crates/rvAgent/rvagent-middleware/src/summarization.rs",
+      "contentHash": "3c3b4a1cedb4be80c112179be2439d05dd4b4901fea84ff8b73c3863824730cc",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 250,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-middleware/src/todolist.rs": {
+      "filePath": "crates/rvAgent/rvagent-middleware/src/todolist.rs",
+      "contentHash": "b72116b52472e6b2d1b8ff733db2ec4324a6daf7dfb1d335bc64e3069a6a25ad",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 254,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-middleware/src/tool_sanitizer.rs": {
+      "filePath": "crates/rvAgent/rvagent-middleware/src/tool_sanitizer.rs",
+      "contentHash": "a635fb7a3b628b5a5ce1b1c0321cec973753b8597530aa9458f2b9f59d7ce576",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 183,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-middleware/src/unicode_security_middleware.rs": {
+      "filePath": "crates/rvAgent/rvagent-middleware/src/unicode_security_middleware.rs",
+      "contentHash": "38164e986858be8be436d2d125217cfb0ba8635bd7d9f46be1673623dbd73f6d",
+      "functions": [],
+      "classes": [],
+      "imports": [
+        "crates/rvAgent/rvagent-middleware/src/unicode_security.rs"
+      ],
+      "exports": [],
+      "totalLines": 396,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-middleware/src/unicode_security.rs": {
+      "filePath": "crates/rvAgent/rvagent-middleware/src/unicode_security.rs",
+      "contentHash": "893ecd1b632f146407314bd5ae544cb3ee975772a3959c55801eb1e72362b0f5",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 616,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-middleware/src/utils.rs": {
+      "filePath": "crates/rvAgent/rvagent-middleware/src/utils.rs",
+      "contentHash": "6b291ef351102e8196f8618c78fef17256a96520befa769f0068900b011002e4",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 183,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-middleware/src/witness.rs": {
+      "filePath": "crates/rvAgent/rvagent-middleware/src/witness.rs",
+      "contentHash": "5a8550fd4d64874620a72d642904f41e507ca490f92590e20412d96d298791d4",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 565,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-middleware/tests/hitl_tests.rs": {
+      "filePath": "crates/rvAgent/rvagent-middleware/tests/hitl_tests.rs",
+      "contentHash": "ddf07e31b1b57becc380aecca24c5968afeb8ecb78307e30c4232345d9eff952",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 269,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-middleware/tests/mcp_bridge_tests.rs": {
+      "filePath": "crates/rvAgent/rvagent-middleware/tests/mcp_bridge_tests.rs",
+      "contentHash": "84bde3891a7271f0447679f8977979d802665ed1827f02df07ed594eeaef20c5",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 246,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-middleware/tests/pipeline_tests.rs": {
+      "filePath": "crates/rvAgent/rvagent-middleware/tests/pipeline_tests.rs",
+      "contentHash": "9cf3d90d0f0aadbbe9d56fe39e076773168a53345260432b035bd78b8c615f81",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 224,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-middleware/tests/prompt_caching_tests.rs": {
+      "filePath": "crates/rvAgent/rvagent-middleware/tests/prompt_caching_tests.rs",
+      "contentHash": "bbb3e8ef1e85bfc2d00fcc8ea9e2da3ef5602cf81410d48846113784430cbcca",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 198,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-middleware/tests/security_middleware_tests.rs": {
+      "filePath": "crates/rvAgent/rvagent-middleware/tests/security_middleware_tests.rs",
+      "contentHash": "05623b1dca711980df9ad3ce82f51165d9abb18f98e0ca8b4f129530f18dcca2",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 471,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-middleware/tests/security_tests.rs": {
+      "filePath": "crates/rvAgent/rvagent-middleware/tests/security_tests.rs",
+      "contentHash": "001893b5e598a37121cd0dd6095b934b2aa1388fe07b1d86ee6849642b95df74",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 381,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-middleware/tests/summarization_tests.rs": {
+      "filePath": "crates/rvAgent/rvagent-middleware/tests/summarization_tests.rs",
+      "contentHash": "94d76dcaed6c9838a2bf8befa7faf1ffc28f14474e7ea346dfc34f2bf26f0c1e",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 245,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-middleware/tests/unicode_security_integration.rs": {
+      "filePath": "crates/rvAgent/rvagent-middleware/tests/unicode_security_integration.rs",
+      "contentHash": "bac997e7a86770f34c1febd6ca2ff7b227810ff134558e803dceb65343dea46b",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 367,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-subagents/Cargo.toml": {
+      "filePath": "crates/rvAgent/rvagent-subagents/Cargo.toml",
+      "contentHash": "1a2bb4f7a3e45aaba6410fd2950a360c35078444f6fc17bc0576821c4012ceed",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 214,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-subagents/CRDT_MERGE.md": {
+      "filePath": "crates/rvAgent/rvagent-subagents/CRDT_MERGE.md",
+      "contentHash": "8445fe3c74280335e8336ad532f5ab9cb211f1ac81290067fc7166b15160a742",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 248,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-subagents/examples/crdt_merge_demo.rs": {
+      "filePath": "crates/rvAgent/rvagent-subagents/examples/crdt_merge_demo.rs",
+      "contentHash": "2099a39a44dc46859d9b2798b9953584a95db7b31d38fdd91f1b57c905681138",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 137,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-subagents/src/builder.rs": {
+      "filePath": "crates/rvAgent/rvagent-subagents/src/builder.rs",
+      "contentHash": "d76d3f8ee0f2a856e64c457f0dfbd8a7face5ca580cdd4649ff9d27adc16ddc4",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 301,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-subagents/src/crdt_merge.rs": {
+      "filePath": "crates/rvAgent/rvagent-subagents/src/crdt_merge.rs",
+      "contentHash": "600fff0eddf07009ef9ffc67e2a70eeb8a26be7386a5996927b4fa8891ed8872",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 630,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-subagents/src/lib.rs": {
+      "filePath": "crates/rvAgent/rvagent-subagents/src/lib.rs",
+      "contentHash": "0d8aa8460ebea604a15a38991e52344b5ed0bc7e663055881d8aa4f45ad73d26",
+      "functions": [],
+      "classes": [],
+      "imports": [
+        "crates/rvAgent/rvagent-subagents/src/builder.rs",
+        "crates/rvAgent/rvagent-subagents/src/crdt_merge.rs",
+        "crates/rvAgent/rvagent-subagents/src/orchestrator.rs",
+        "crates/rvAgent/rvagent-subagents/src/prompts.rs",
+        "crates/rvAgent/rvagent-subagents/src/result_validator.rs",
+        "crates/rvAgent/rvagent-subagents/src/validator.rs"
+      ],
+      "exports": [],
+      "totalLines": 395,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-subagents/src/orchestrator.rs": {
+      "filePath": "crates/rvAgent/rvagent-subagents/src/orchestrator.rs",
+      "contentHash": "6582288e3dea7c3ecc82fbef6fff8220552b94ad5bd9ae6b58c7c60c7bdddae3",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 111,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-subagents/src/prompts.rs": {
+      "filePath": "crates/rvAgent/rvagent-subagents/src/prompts.rs",
+      "contentHash": "3837c81489745b220b352d6af1c12cd4a2810f6a1cf6cb5a8b902c4dab5a8173",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 131,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-subagents/src/result_validator.rs": {
+      "filePath": "crates/rvAgent/rvagent-subagents/src/result_validator.rs",
+      "contentHash": "c14556d0f86c5cfcfe6f2467bf9abff3653d6a3114b14d4cde84496ecdf4ed8f",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 444,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-subagents/src/validator.rs": {
+      "filePath": "crates/rvAgent/rvagent-subagents/src/validator.rs",
+      "contentHash": "e13ad113ede82bbccff184b1cae1ad8eb4935635b380549ab9a8a0eb74efc223",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 74,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-subagents/tests/integration_tests.rs": {
+      "filePath": "crates/rvAgent/rvagent-subagents/tests/integration_tests.rs",
+      "contentHash": "70410007aee4869d021a0b61efd5a202097cb01c0860da2dac4b18620a73af8c",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 191,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-subagents/tests/orchestrator_tests.rs": {
+      "filePath": "crates/rvAgent/rvagent-subagents/tests/orchestrator_tests.rs",
+      "contentHash": "196412e563f749affa10bd3637fef058c90b1aff58fa254db214055297647358",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 447,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-subagents/tests/security_validation.rs": {
+      "filePath": "crates/rvAgent/rvagent-subagents/tests/security_validation.rs",
+      "contentHash": "156b1b9e81cf9203f205bacc953f517492362d09ae315666ecd5261fb262d10f",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 328,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-tools/benches/tool_bench.rs": {
+      "filePath": "crates/rvAgent/rvagent-tools/benches/tool_bench.rs",
+      "contentHash": "c97ea158ce23f0c35522af3b14deb2a65e0d07ff1887b9d8b119c66fdc8bce61",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 266,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-tools/Cargo.toml": {
+      "filePath": "crates/rvAgent/rvagent-tools/Cargo.toml",
+      "contentHash": "8af0595cdfcf87f6896f998c3a2bc7f15ef21e4636623ccf649ac46af380e431",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 31,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-tools/src/edit_file.rs": {
+      "filePath": "crates/rvAgent/rvagent-tools/src/edit_file.rs",
+      "contentHash": "a5075b64c271a0c75cedeb91ccee7131d31034bb69de68560d89349ce28ad505",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 229,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-tools/src/execute.rs": {
+      "filePath": "crates/rvAgent/rvagent-tools/src/execute.rs",
+      "contentHash": "3d091b87b405e0701db2887e8b49dca5bea08abf92f6b611961edecf794b3231",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 106,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-tools/src/glob.rs": {
+      "filePath": "crates/rvAgent/rvagent-tools/src/glob.rs",
+      "contentHash": "1f086028bb706bcfe6393eeb499a96e8c61149df8055d69ce02667ce247e7e54",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 109,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-tools/src/grep.rs": {
+      "filePath": "crates/rvAgent/rvagent-tools/src/grep.rs",
+      "contentHash": "29626a3d4a7f8b3eab2a4276274777fd55d16347a1295f6665bf9bca8268a8ec",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 126,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-tools/src/lib.rs": {
+      "filePath": "crates/rvAgent/rvagent-tools/src/lib.rs",
+      "contentHash": "c4b686f3fcb2afc86ada06d37581aacdca004cabe942e06ca53153c132cfb50e",
+      "functions": [],
+      "classes": [],
+      "imports": [
+        "crates/rvAgent/rvagent-tools/src/edit_file.rs",
+        "crates/rvAgent/rvagent-tools/src/execute.rs",
+        "crates/rvAgent/rvagent-tools/src/glob.rs",
+        "crates/rvAgent/rvagent-tools/src/grep.rs",
+        "crates/rvAgent/rvagent-tools/src/ls.rs",
+        "crates/rvAgent/rvagent-tools/src/read_file.rs",
+        "crates/rvAgent/rvagent-tools/src/task.rs",
+        "crates/rvAgent/rvagent-tools/src/write_file.rs",
+        "crates/rvAgent/rvagent-tools/src/write_todos.rs"
+      ],
+      "exports": [],
+      "totalLines": 1047,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-tools/src/ls.rs": {
+      "filePath": "crates/rvAgent/rvagent-tools/src/ls.rs",
+      "contentHash": "6df063d1d2a00e9b01cf011884320e22208c3b36e1bd5599042a7a7e226bd49b",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 111,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-tools/src/read_file.rs": {
+      "filePath": "crates/rvAgent/rvagent-tools/src/read_file.rs",
+      "contentHash": "16ef66e58bb8158c01a24af2df5f0c3e5a12d0e69264d29155a0948c8cf378f7",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 170,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-tools/src/task.rs": {
+      "filePath": "crates/rvAgent/rvagent-tools/src/task.rs",
+      "contentHash": "0d9c807ed29084a2d2ee2c7fcffce8d72ec1f5d28df62cbadcaa37de392778cd",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 135,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-tools/src/write_file.rs": {
+      "filePath": "crates/rvAgent/rvagent-tools/src/write_file.rs",
+      "contentHash": "9fe34a4412493748b5d208f0a55f461315e39cd60e95c046d175b96a15d863e9",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 124,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-tools/src/write_todos.rs": {
+      "filePath": "crates/rvAgent/rvagent-tools/src/write_todos.rs",
+      "contentHash": "0e6ee415e564141656d7fd19df52f4773e9ba46f412cc595c08d7f4eb94581f9",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 197,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-tools/tests/edit_file_tests.rs": {
+      "filePath": "crates/rvAgent/rvagent-tools/tests/edit_file_tests.rs",
+      "contentHash": "b4b2ef7ef29737a0b1a92d2afe2c286bde1baeeddd8e3d4180cbe00b63acb9e4",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 195,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-tools/tests/execute_tests.rs": {
+      "filePath": "crates/rvAgent/rvagent-tools/tests/execute_tests.rs",
+      "contentHash": "5bf47858ad16143e60808f81884dec3be59c4c6f1598726bef37129dfeee146b",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 110,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-tools/tests/glob_tests.rs": {
+      "filePath": "crates/rvAgent/rvagent-tools/tests/glob_tests.rs",
+      "contentHash": "958c915c90b2dbb6e12aeabe623b81b6bdc23cb71a8dbf89c2b17f535c1f6933",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 258,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-tools/tests/grep_tests.rs": {
+      "filePath": "crates/rvAgent/rvagent-tools/tests/grep_tests.rs",
+      "contentHash": "10c0cf482671ca7e7135eb1b2d768437e8c94743371aed7f41aa2dd578e0f3a2",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 138,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-tools/tests/ls_tests.rs": {
+      "filePath": "crates/rvAgent/rvagent-tools/tests/ls_tests.rs",
+      "contentHash": "db6c52154c630d6a3f4c4fccde910babd628f55ab6f931821a80dec491282d09",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 124,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-tools/tests/read_file_tests.rs": {
+      "filePath": "crates/rvAgent/rvagent-tools/tests/read_file_tests.rs",
+      "contentHash": "49a2293a39f111c641e51385e3f00195a18d17b07018ed582ccc6ded42fea3d1",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 134,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-tools/tests/tool_dispatch_tests.rs": {
+      "filePath": "crates/rvAgent/rvagent-tools/tests/tool_dispatch_tests.rs",
+      "contentHash": "f1677f9912a87ccec4b986a82bbc98d8015764d5138db911bab45638ae1b2ce9",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 190,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-tools/tests/write_file_tests.rs": {
+      "filePath": "crates/rvAgent/rvagent-tools/tests/write_file_tests.rs",
+      "contentHash": "87eaab4dbce7e63546e1a1ec2dd6f25fbe4b93564a4c3698adb6b48d65a91363",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 280,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-tools/tests/write_todos_tests.rs": {
+      "filePath": "crates/rvAgent/rvagent-tools/tests/write_todos_tests.rs",
+      "contentHash": "d55806344691ce5dfd086f749f6529faec52ac755a3fbb63296e61ac2e149afe",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 251,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-wasm/Cargo.toml": {
+      "filePath": "crates/rvAgent/rvagent-wasm/Cargo.toml",
+      "contentHash": "31bea54d3c5a53931352d3085dd99c6900b736c42193f629a18a4f9efc7eebbd",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 227,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-wasm/README.md": {
+      "filePath": "crates/rvAgent/rvagent-wasm/README.md",
+      "contentHash": "f03f308e4272b2dc2167f4bd0b50ef1cfaeebc9a4d4269ad7367f3453fc7608c",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 241,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-wasm/src/backends.rs": {
+      "filePath": "crates/rvAgent/rvagent-wasm/src/backends.rs",
+      "contentHash": "0fd49eda338f1543e10c42a796171464da71cc09e8cfa78aad83ae0eca2c3993",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 451,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-wasm/src/bridge.rs": {
+      "filePath": "crates/rvAgent/rvagent-wasm/src/bridge.rs",
+      "contentHash": "e5a9d473e240d337eff39297ced5934b7c0cb65e2e602624e00511b4d7b3a8f8",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 207,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-wasm/src/gallery.rs": {
+      "filePath": "crates/rvAgent/rvagent-wasm/src/gallery.rs",
+      "contentHash": "cc77f9358f18c031c489e4e339b978e6175234e8879c4281408520201dff598d",
+      "functions": [],
+      "classes": [],
+      "imports": [
+        "crates/rvAgent/rvagent-wasm/src/bridge.rs",
+        "crates/rvAgent/rvagent-wasm/src/rvf.rs"
+      ],
+      "exports": [],
+      "totalLines": 1147,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-wasm/src/lib.rs": {
+      "filePath": "crates/rvAgent/rvagent-wasm/src/lib.rs",
+      "contentHash": "384b93facc7f2b3743c3aefa661c490470f8d9426c5b83a37961d4764109662f",
+      "functions": [],
+      "classes": [],
+      "imports": [
+        "crates/rvAgent/rvagent-wasm/src/backends.rs",
+        "crates/rvAgent/rvagent-wasm/src/bridge.rs",
+        "crates/rvAgent/rvagent-wasm/src/gallery.rs",
+        "crates/rvAgent/rvagent-wasm/src/mcp.rs",
+        "crates/rvAgent/rvagent-wasm/src/rvf.rs",
+        "crates/rvAgent/rvagent-wasm/src/tools.rs"
+      ],
+      "exports": [],
+      "totalLines": 517,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-wasm/src/mcp.rs": {
+      "filePath": "crates/rvAgent/rvagent-wasm/src/mcp.rs",
+      "contentHash": "c9ee14465c2b0e62d8de7662da7e000a800204c7aacf1d2565119ef398a3d78e",
+      "functions": [],
+      "classes": [],
+      "imports": [
+        "crates/rvAgent/rvagent-wasm/src/backends.rs",
+        "crates/rvAgent/rvagent-wasm/src/bridge.rs",
+        "crates/rvAgent/rvagent-wasm/src/gallery.rs",
+        "crates/rvAgent/rvagent-wasm/src/tools.rs"
+      ],
+      "exports": [],
+      "totalLines": 1010,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-wasm/src/rvf.rs": {
+      "filePath": "crates/rvAgent/rvagent-wasm/src/rvf.rs",
+      "contentHash": "6864b27d82632c8aa8d788caae6bf220a0ba10e5d42dcc6233ce06aa1d860814",
+      "functions": [],
+      "classes": [],
+      "imports": [
+        "crates/rvAgent/rvagent-wasm/src/bridge.rs"
+      ],
+      "exports": [],
+      "totalLines": 764,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/rvagent-wasm/src/tools.rs": {
+      "filePath": "crates/rvAgent/rvagent-wasm/src/tools.rs",
+      "contentHash": "f74a2f89c0188f672ea8a364b0b12bfc5b9657720851f2a7e350b0c3073443ca",
+      "functions": [],
+      "classes": [],
+      "imports": [
+        "crates/rvAgent/rvagent-wasm/src/backends.rs"
+      ],
+      "exports": [],
+      "totalLines": 311,
+      "hasStructuralAnalysis": false
+    },
+    "crates/rvAgent/test.sh": {
+      "filePath": "crates/rvAgent/test.sh",
+      "contentHash": "21e4e2892b2c31f821bf7aee379ee84c71c3ab731cfec81a92adddd05db53867",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 21,
+      "hasStructuralAnalysis": false
+    }
+  }
+}

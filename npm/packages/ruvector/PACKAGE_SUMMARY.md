@@ -406,4 +406,4 @@ MIT
 
 ## Repository
 
-https://github.com/ruvnet/ruvector
+https://github.com/FlexNetOS/ruvector

@@ -345,8 +345,8 @@ main().catch(console.error);
 
 ## Support
 
-- Documentation: https://github.com/ruvnet/ruvector
-- Issues: https://github.com/ruvnet/ruvector/issues
+- Documentation: https://github.com/FlexNetOS/ruvector
+- Issues: https://github.com/FlexNetOS/ruvector/issues
 
 ---
 

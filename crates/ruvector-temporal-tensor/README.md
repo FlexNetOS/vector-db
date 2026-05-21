@@ -274,6 +274,6 @@ MIT License — see [LICENSE](../../LICENSE) for details.
 
 <div align="center">
 
-**Part of [Ruvector](https://github.com/ruvnet/ruvector)**
+**Part of [Ruvector](https://github.com/FlexNetOS/ruvector)**
 
 </div>

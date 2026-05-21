@@ -33,12 +33,12 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ruvnet/ruvector.git",
+    "url": "git+https://github.com/FlexNetOS/ruvector.git",
     "directory": "examples/OSpipe"
   },
-  "homepage": "https://github.com/ruvnet/ruvector/tree/main/examples/OSpipe#readme",
+  "homepage": "https://github.com/FlexNetOS/ruvector/tree/main/examples/OSpipe#readme",
   "bugs": {
-    "url": "https://github.com/ruvnet/ruvector/issues"
+    "url": "https://github.com/FlexNetOS/ruvector/issues"
   },
   "files": [
     "dist/",

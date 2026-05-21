@@ -166,7 +166,7 @@ gcloud billing budgets create \
 ### 1.1 Clone Repository
 ```bash
 cd /home/user
-git clone https://github.com/ruvnet/ruvector.git
+git clone https://github.com/FlexNetOS/ruvector.git
 cd ruvector
 ```
 
@@ -930,7 +930,7 @@ gcloud run services delete ruvector-streaming --region=us-central1 --quiet
 ## Support
 
 For issues or questions:
-- GitHub Issues: https://github.com/ruvnet/ruvector/issues
+- GitHub Issues: https://github.com/FlexNetOS/ruvector/issues
 - Email: ops@ruvector.io
 - Slack: #ruvector-ops
 

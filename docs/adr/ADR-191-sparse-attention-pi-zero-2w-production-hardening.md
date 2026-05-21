@@ -69,7 +69,7 @@ as a comment, not an API:
 
 ```toml
 ruvllm_sparse_attention = {
-    git = "https://github.com/ruvnet/RuVector",
+    git = "https://github.com/FlexNetOS/ruvector",
     optional = true,
     default-features = false,
     features = ["fp16"],

@@ -7,7 +7,7 @@
 
 **Distributed clustering and sharding for Ruvector vector databases.**
 
-`ruvector-cluster` provides horizontal scaling capabilities with consistent hashing, shard management, and cluster coordination. Enables Ruvector to scale to billions of vectors across multiple nodes. Part of the [Ruvector](https://github.com/ruvnet/ruvector) ecosystem.
+`ruvector-cluster` provides horizontal scaling capabilities with consistent hashing, shard management, and cluster coordination. Enables Ruvector to scale to billions of vectors across multiple nodes. Part of the [Ruvector](https://github.com/FlexNetOS/ruvector) ecosystem.
 
 ## Why Ruvector Cluster?
 
@@ -198,7 +198,7 @@ impl Cluster {
 
 - **[Main README](../../README.md)** - Complete project overview
 - **[API Documentation](https://docs.rs/ruvector-cluster)** - Full API reference
-- **[GitHub Repository](https://github.com/ruvnet/ruvector)** - Source code
+- **[GitHub Repository](https://github.com/FlexNetOS/ruvector)** - Source code
 
 ## License
 
@@ -208,10 +208,10 @@ impl Cluster {
 
 <div align="center">
 
-**Part of [Ruvector](https://github.com/ruvnet/ruvector) - Built by [rUv](https://ruv.io)**
+**Part of [Ruvector](https://github.com/FlexNetOS/ruvector) - Built by [rUv](https://ruv.io)**
 
-[![Star on GitHub](https://img.shields.io/github/stars/ruvnet/ruvector?style=social)](https://github.com/ruvnet/ruvector)
+[![Star on GitHub](https://img.shields.io/github/stars/FlexNetOS/ruvector?style=social)](https://github.com/FlexNetOS/ruvector)
 
-[Documentation](https://docs.rs/ruvector-cluster) | [Crates.io](https://crates.io/crates/ruvector-cluster) | [GitHub](https://github.com/ruvnet/ruvector)
+[Documentation](https://docs.rs/ruvector-cluster) | [Crates.io](https://crates.io/crates/ruvector-cluster) | [GitHub](https://github.com/FlexNetOS/ruvector)
 
 </div>

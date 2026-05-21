@@ -220,4 +220,4 @@ println!("{}", cli.describe_self());
 - Tononi, G. (2008). "Consciousness as Integrated Information"
 - Izhikevich, E.M. (2006). "Polychronization: Computation with Spikes"
 - Friston, K. (2010). "The free-energy principle: a unified brain theory?"
-- ruvLLM: https://github.com/ruvnet/ruvector
+- ruvLLM: https://github.com/FlexNetOS/ruvector

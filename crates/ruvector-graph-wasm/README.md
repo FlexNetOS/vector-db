@@ -397,8 +397,8 @@ MIT - See [LICENSE](../../../LICENSE) for details.
 
 ## Support
 
-- GitHub Issues: https://github.com/ruvnet/ruvector/issues
-- Documentation: https://github.com/ruvnet/ruvector/wiki
+- GitHub Issues: https://github.com/FlexNetOS/ruvector/issues
+- Documentation: https://github.com/FlexNetOS/ruvector/wiki
 
 ## Related Projects
 

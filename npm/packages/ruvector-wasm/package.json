@@ -88,13 +88,13 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/ruvnet/ruvector.git",
+    "url": "https://github.com/FlexNetOS/ruvector.git",
     "directory": "packages/ruvector-wasm"
   },
   "bugs": {
-    "url": "https://github.com/ruvnet/ruvector/issues"
+    "url": "https://github.com/FlexNetOS/ruvector/issues"
   },
-  "homepage": "https://github.com/ruvnet/ruvector/tree/main/packages/ruvector-wasm",
+  "homepage": "https://github.com/FlexNetOS/ruvector/tree/main/packages/ruvector-wasm",
   "publishConfig": {
     "access": "public"
   }

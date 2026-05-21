@@ -1,0 +1,2157 @@
+{
+  "slice": "10f",
+  "scope": "slice 10f",
+  "generatedAt": "2026-05-13T13:11:00Z",
+  "totalFiles": 307,
+  "files": [
+    {
+      "path": "crates/micro-hnsw-wasm/Cargo.toml",
+      "language": "toml",
+      "sizeLines": 38,
+      "fileCategory": "config",
+      "sha1": "e011374eba1c59ff6001ecdf05bc07ded1c910e8"
+    },
+    {
+      "path": "crates/micro-hnsw-wasm/DEEP_REVIEW.md",
+      "language": "markdown",
+      "sizeLines": 135,
+      "fileCategory": "documentation",
+      "sha1": "8f50a617a9e1d6614a260cae7662f2c011d00e92"
+    },
+    {
+      "path": "crates/micro-hnsw-wasm/README.md",
+      "language": "markdown",
+      "sizeLines": 791,
+      "fileCategory": "documentation",
+      "sha1": "87a224d3a326cf5ef7805b3c7226ce53383a8698"
+    },
+    {
+      "path": "crates/micro-hnsw-wasm/src/lib.rs",
+      "language": "rust",
+      "sizeLines": 1367,
+      "fileCategory": "code",
+      "sha1": "99468405c9cc874801319169f308880e435e1280"
+    },
+    {
+      "path": "crates/profiling/README.md",
+      "language": "markdown",
+      "sizeLines": 85,
+      "fileCategory": "documentation",
+      "sha1": "cc9975d27b762176df344fb6e61f6c2ee8b34c8c"
+    },
+    {
+      "path": "crates/ruos-thermal/.cargo/config.toml",
+      "language": "toml",
+      "sizeLines": 7,
+      "fileCategory": "config",
+      "sha1": "d9097451230918bccb23d13ecd144459567d17be"
+    },
+    {
+      "path": "crates/ruos-thermal/Cargo.toml",
+      "language": "toml",
+      "sizeLines": 25,
+      "fileCategory": "config",
+      "sha1": "54057e10dda201aab1116fc9d860e5f9547a7bdc"
+    },
+    {
+      "path": "crates/ruos-thermal/src/lib.rs",
+      "language": "rust",
+      "sizeLines": 480,
+      "fileCategory": "code",
+      "sha1": "1b60c5fb2bea33e80ca1acd004e51e258b35e710"
+    },
+    {
+      "path": "crates/ruos-thermal/src/main.rs",
+      "language": "rust",
+      "sizeLines": 221,
+      "fileCategory": "code",
+      "sha1": "05faf253c4b2f6a6f44030dc3b17f7c6710c1857"
+    },
+    {
+      "path": "crates/ruos-thermal/tests/cli.rs",
+      "language": "rust",
+      "sizeLines": 79,
+      "fileCategory": "code",
+      "sha1": "a8d2dfcf21e3ae07adde36d3d180a28bc1aa7796"
+    },
+    {
+      "path": "crates/ruvector-attention-cli/Cargo.toml",
+      "language": "toml",
+      "sizeLines": 33,
+      "fileCategory": "config",
+      "sha1": "04c16ee9796aa2fd380faaac168c0c05b30a748d"
+    },
+    {
+      "path": "crates/ruvector-attention-cli/config/default.toml",
+      "language": "toml",
+      "sizeLines": 29,
+      "fileCategory": "config",
+      "sha1": "6db0836680c52a32da7071dd71921e638879ec23"
+    },
+    {
+      "path": "crates/ruvector-attention-cli/README.md",
+      "language": "markdown",
+      "sizeLines": 174,
+      "fileCategory": "documentation",
+      "sha1": "c7e03d4f66ce2cfc62604e28e535c7cdc310dc5f"
+    },
+    {
+      "path": "crates/ruvector-attention-cli/src/commands/benchmark.rs",
+      "language": "rust",
+      "sizeLines": 213,
+      "fileCategory": "code",
+      "sha1": "9f1aaef15bb4e4d33f2de80621ea30e94e2ad932"
+    },
+    {
+      "path": "crates/ruvector-attention-cli/src/commands/compute.rs",
+      "language": "rust",
+      "sizeLines": 184,
+      "fileCategory": "code",
+      "sha1": "d70867f9e35b69789ffbab8372a359e871109153"
+    },
+    {
+      "path": "crates/ruvector-attention-cli/src/commands/convert.rs",
+      "language": "rust",
+      "sizeLines": 167,
+      "fileCategory": "code",
+      "sha1": "48f8269fcc9529ab27dd31b74a20a95c0a735751"
+    },
+    {
+      "path": "crates/ruvector-attention-cli/src/commands/mod.rs",
+      "language": "rust",
+      "sizeLines": 67,
+      "fileCategory": "code",
+      "sha1": "9db1b1f6a27001048b49a56d6d4bba472e50cfe7"
+    },
+    {
+      "path": "crates/ruvector-attention-cli/src/commands/repl.rs",
+      "language": "rust",
+      "sizeLines": 221,
+      "fileCategory": "code",
+      "sha1": "24181ffe28e977a86e42776599f3e8e0234a75bf"
+    },
+    {
+      "path": "crates/ruvector-attention-cli/src/commands/serve.rs",
+      "language": "rust",
+      "sizeLines": 291,
+      "fileCategory": "code",
+      "sha1": "25e4738ad3ee27beebf8e798a6914ccfec39a06e"
+    },
+    {
+      "path": "crates/ruvector-attention-cli/src/config.rs",
+      "language": "rust",
+      "sizeLines": 110,
+      "fileCategory": "code",
+      "sha1": "f38a6906729a8732dcbb05d3a00e52bcce83fe39"
+    },
+    {
+      "path": "crates/ruvector-attention-cli/src/main.rs",
+      "language": "rust",
+      "sizeLines": 73,
+      "fileCategory": "code",
+      "sha1": "c3d97fa396867d6b04968f899bb0b1215ad70822"
+    },
+    {
+      "path": "crates/ruvector-attention-cli/src/output.rs",
+      "language": "rust",
+      "sizeLines": 171,
+      "fileCategory": "code",
+      "sha1": "34a188a2b5233b0696ed29e6989effb293736caf"
+    },
+    {
+      "path": "crates/ruvector-attention-cli/src/server/handlers.rs",
+      "language": "rust",
+      "sizeLines": 8,
+      "fileCategory": "code",
+      "sha1": "5bca8e65bccceb87f77328d82d0b636b817ecea3"
+    },
+    {
+      "path": "crates/ruvector-attention-cli/src/server/mod.rs",
+      "language": "rust",
+      "sizeLines": 3,
+      "fileCategory": "code",
+      "sha1": "c9c72e5bc338683c4755a2563050f2466ee7c5df"
+    },
+    {
+      "path": "crates/ruvector-attention-node/build.rs",
+      "language": "rust",
+      "sizeLines": 6,
+      "fileCategory": "code",
+      "sha1": "75c631fc627ac4434eebdb17863e6adccce5efd6"
+    },
+    {
+      "path": "crates/ruvector-attention-node/Cargo.toml",
+      "language": "toml",
+      "sizeLines": 217,
+      "fileCategory": "config",
+      "sha1": "7050484f317faa8b3107fa7eeca0b1c22d7a07d9"
+    },
+    {
+      "path": "crates/ruvector-attention-node/README.md",
+      "language": "markdown",
+      "sizeLines": 214,
+      "fileCategory": "documentation",
+      "sha1": "6d9ffdff6bf9d8309ff1ce11be0042770999d345"
+    },
+    {
+      "path": "crates/ruvector-attention-node/src/async_ops.rs",
+      "language": "rust",
+      "sizeLines": 537,
+      "fileCategory": "code",
+      "sha1": "d72b4cf98ea95b202376dbc72b0faf1477021886"
+    },
+    {
+      "path": "crates/ruvector-attention-node/src/attention.rs",
+      "language": "rust",
+      "sizeLines": 615,
+      "fileCategory": "code",
+      "sha1": "30456304ca1cfaebad8f99a2479d412e14c55091"
+    },
+    {
+      "path": "crates/ruvector-attention-node/src/graph.rs",
+      "language": "rust",
+      "sizeLines": 431,
+      "fileCategory": "code",
+      "sha1": "47798427d9fffbdeb5b0652fe87a3d8942a25368"
+    },
+    {
+      "path": "crates/ruvector-attention-node/src/lib.rs",
+      "language": "rust",
+      "sizeLines": 85,
+      "fileCategory": "code",
+      "sha1": "d678ef636c97618201da190fc738888aaa2ea503"
+    },
+    {
+      "path": "crates/ruvector-attention-node/src/training.rs",
+      "language": "rust",
+      "sizeLines": 914,
+      "fileCategory": "code",
+      "sha1": "c8d5b01b79567d19256346d948fa9a0092451d4c"
+    },
+    {
+      "path": "crates/ruvector-attention-unified-wasm/Cargo.toml",
+      "language": "toml",
+      "sizeLines": 251,
+      "fileCategory": "config",
+      "sha1": "3d434ee8d2ac3f359a9b58f9e934f1b26a3dc14e"
+    },
+    {
+      "path": "crates/ruvector-attention-unified-wasm/pkg/README.md",
+      "language": "markdown",
+      "sizeLines": 402,
+      "fileCategory": "documentation",
+      "sha1": "9b328858950b4cf6d121986eb832e93c69474557"
+    },
+    {
+      "path": "crates/ruvector-attention-unified-wasm/README.md",
+      "language": "markdown",
+      "sizeLines": 554,
+      "fileCategory": "documentation",
+      "sha1": "e96ed675d35f2f554d8c2d5ea679dfdbfbec450d"
+    },
+    {
+      "path": "crates/ruvector-attention-unified-wasm/src/dag.rs",
+      "language": "rust",
+      "sizeLines": 807,
+      "fileCategory": "code",
+      "sha1": "af7b8e986b4a79b5db09c34ac4860a04ea6642b6"
+    },
+    {
+      "path": "crates/ruvector-attention-unified-wasm/src/graph.rs",
+      "language": "rust",
+      "sizeLines": 418,
+      "fileCategory": "code",
+      "sha1": "dc7aa1052b5e7b1f65706c6dc0dacbca685f1c53"
+    },
+    {
+      "path": "crates/ruvector-attention-unified-wasm/src/lib.rs",
+      "language": "rust",
+      "sizeLines": 383,
+      "fileCategory": "code",
+      "sha1": "740211a52723d04ae1389b4aa8c4784c47e9e881"
+    },
+    {
+      "path": "crates/ruvector-attention-unified-wasm/src/mamba.rs",
+      "language": "rust",
+      "sizeLines": 555,
+      "fileCategory": "code",
+      "sha1": "ceb9d44e35983de8662538a116308432ef9c471e"
+    },
+    {
+      "path": "crates/ruvector-attention-unified-wasm/src/neural.rs",
+      "language": "rust",
+      "sizeLines": 440,
+      "fileCategory": "code",
+      "sha1": "915cd3968a3e88eccd007586621543e8abc5a022"
+    },
+    {
+      "path": "crates/ruvector-attention-wasm/Cargo.toml",
+      "language": "toml",
+      "sizeLines": 229,
+      "fileCategory": "config",
+      "sha1": "3119a9465f99a47a7dd56974b304861635f51238"
+    },
+    {
+      "path": "crates/ruvector-attention-wasm/pkg/README.md",
+      "language": "markdown",
+      "sizeLines": 221,
+      "fileCategory": "documentation",
+      "sha1": "1455f28e8ee2438f368aba22fdc87d996b5a52a4"
+    },
+    {
+      "path": "crates/ruvector-attention-wasm/README.md",
+      "language": "markdown",
+      "sizeLines": 221,
+      "fileCategory": "documentation",
+      "sha1": "1455f28e8ee2438f368aba22fdc87d996b5a52a4"
+    },
+    {
+      "path": "crates/ruvector-attention-wasm/src/attention.rs",
+      "language": "rust",
+      "sizeLines": 309,
+      "fileCategory": "code",
+      "sha1": "16e69a8976e2c50b4ff4503fc36ceff37ed1ed51"
+    },
+    {
+      "path": "crates/ruvector-attention-wasm/src/lib.rs",
+      "language": "rust",
+      "sizeLines": 34,
+      "fileCategory": "code",
+      "sha1": "b9f03df7abc14e330f2a3d1bc2e7a5469b9afbe2"
+    },
+    {
+      "path": "crates/ruvector-attention-wasm/src/training.rs",
+      "language": "rust",
+      "sizeLines": 243,
+      "fileCategory": "code",
+      "sha1": "89ad65d8a1160f82b91c21a1d311ff70e6b294b2"
+    },
+    {
+      "path": "crates/ruvector-attention-wasm/src/utils.rs",
+      "language": "rust",
+      "sizeLines": 202,
+      "fileCategory": "code",
+      "sha1": "7b69064ee62d6a46e03ae95e251a8650dd94aac9"
+    },
+    {
+      "path": "crates/ruvector-attention-wasm/tests/web.rs",
+      "language": "rust",
+      "sizeLines": 186,
+      "fileCategory": "code",
+      "sha1": "121c83e7885f6050b9d1cc966f0860fdc2447626"
+    },
+    {
+      "path": "crates/ruvector-bench/Cargo.toml",
+      "language": "toml",
+      "sizeLines": 288,
+      "fileCategory": "config",
+      "sha1": "06343758aaa3b6f171ae3572706e817b85e3761a"
+    },
+    {
+      "path": "crates/ruvector-bench/docs/BENCHMARKS.md",
+      "language": "markdown",
+      "sizeLines": 468,
+      "fileCategory": "documentation",
+      "sha1": "ca2537a7672fd181f8e6d23d3f595ed1b73d4689"
+    },
+    {
+      "path": "crates/ruvector-bench/README.md",
+      "language": "markdown",
+      "sizeLines": 685,
+      "fileCategory": "documentation",
+      "sha1": "538298a38fe3c672b3ad42a3f8105b000c6aefff"
+    },
+    {
+      "path": "crates/ruvector-bench/src/bin/agenticdb_benchmark.rs",
+      "language": "rust",
+      "sizeLines": 539,
+      "fileCategory": "code",
+      "sha1": "f7ff217118c4d7ee6ef51ee942cabdbc3160d017"
+    },
+    {
+      "path": "crates/ruvector-bench/src/bin/ann_benchmark.rs",
+      "language": "rust",
+      "sizeLines": 401,
+      "fileCategory": "code",
+      "sha1": "4cfbe1aaa28c70d8b99fdebc90f6c4f0d953534c"
+    },
+    {
+      "path": "crates/ruvector-bench/src/bin/comparison_benchmark.rs",
+      "language": "rust",
+      "sizeLines": 387,
+      "fileCategory": "code",
+      "sha1": "a0bff767293b08091cbbe8358b4ae96752dc206f"
+    },
+    {
+      "path": "crates/ruvector-bench/src/bin/latency_benchmark.rs",
+      "language": "rust",
+      "sizeLines": 412,
+      "fileCategory": "code",
+      "sha1": "00c8ea853ef1421267584189a834b5764c68a123"
+    },
+    {
+      "path": "crates/ruvector-bench/src/bin/memory_benchmark.rs",
+      "language": "rust",
+      "sizeLines": 433,
+      "fileCategory": "code",
+      "sha1": "5ab366ad864a524c7b3cf9e6bb368c19fe379ba3"
+    },
+    {
+      "path": "crates/ruvector-bench/src/bin/profiling_benchmark.rs",
+      "language": "rust",
+      "sizeLines": 335,
+      "fileCategory": "code",
+      "sha1": "35454943388e275d36c6f0fcb354af11d2ffbf7b"
+    },
+    {
+      "path": "crates/ruvector-bench/src/lib.rs",
+      "language": "rust",
+      "sizeLines": 357,
+      "fileCategory": "code",
+      "sha1": "75fcc4e194a666629c07d676ae4a330cb5a3e3e3"
+    },
+    {
+      "path": "crates/ruvector-bench/tests/wasm_stack_bench.rs",
+      "language": "rust",
+      "sizeLines": 417,
+      "fileCategory": "code",
+      "sha1": "5bda4111fe7cf4a2f9849df5ae384e361bad0fb2"
+    },
+    {
+      "path": "crates/ruvector-cnn-wasm/Cargo.toml",
+      "language": "toml",
+      "sizeLines": 226,
+      "fileCategory": "config",
+      "sha1": "941f544daf81289b65129ca495bc5e7af527cbf8"
+    },
+    {
+      "path": "crates/ruvector-cnn-wasm/src/lib.rs",
+      "language": "rust",
+      "sizeLines": 471,
+      "fileCategory": "code",
+      "sha1": "00a76b6b3db016858f6788c71ab65d85767316f4"
+    },
+    {
+      "path": "crates/ruvector-collections/benches/primality.rs",
+      "language": "rust",
+      "sizeLines": 56,
+      "fileCategory": "code",
+      "sha1": "0b56aebef55f0ba1ebce42caf391d2c2283eae7e"
+    },
+    {
+      "path": "crates/ruvector-collections/build.rs",
+      "language": "rust",
+      "sizeLines": 74,
+      "fileCategory": "code",
+      "sha1": "1f79bfb715016062851f44bbd8bbefc3e8f43eac"
+    },
+    {
+      "path": "crates/ruvector-collections/Cargo.toml",
+      "language": "toml",
+      "sizeLines": 36,
+      "fileCategory": "config",
+      "sha1": "7f6244c5065a9f08ad0b241c4699ba8fbc35001f"
+    },
+    {
+      "path": "crates/ruvector-collections/README.md",
+      "language": "markdown",
+      "sizeLines": 197,
+      "fileCategory": "documentation",
+      "sha1": "7adaafe6d7ff3c227a73bb26bbf0c66f4ae46f89"
+    },
+    {
+      "path": "crates/ruvector-collections/src/collection.rs",
+      "language": "rust",
+      "sizeLines": 578,
+      "fileCategory": "code",
+      "sha1": "58240386d00fc7efbb65ba6b474530ec6132428b"
+    },
+    {
+      "path": "crates/ruvector-collections/src/error.rs",
+      "language": "rust",
+      "sizeLines": 223,
+      "fileCategory": "code",
+      "sha1": "69ebd42f6260ca986b9b577f6435183d98f33926"
+    },
+    {
+      "path": "crates/ruvector-collections/src/lib.rs",
+      "language": "rust",
+      "sizeLines": 59,
+      "fileCategory": "code",
+      "sha1": "43fa1509bdefd1df211ee6ae69478aca637c5da1"
+    },
+    {
+      "path": "crates/ruvector-collections/src/manager.rs",
+      "language": "rust",
+      "sizeLines": 918,
+      "fileCategory": "code",
+      "sha1": "712972c3c6bc228538de6f5571f394dfec91335e"
+    },
+    {
+      "path": "crates/ruvector-collections/src/primality_kernel.rs",
+      "language": "rust",
+      "sizeLines": 163,
+      "fileCategory": "code",
+      "sha1": "56890ff8b4f79173f1e7651b65bd9f092b0ca73b"
+    },
+    {
+      "path": "crates/ruvector-collections/src/primality.rs",
+      "language": "rust",
+      "sizeLines": 319,
+      "fileCategory": "code",
+      "sha1": "8a790328fff8bcbe7d62eee644ed7a6027b37919"
+    },
+    {
+      "path": "crates/ruvector-collections/tests/primality_pseudoprimes.rs",
+      "language": "rust",
+      "sizeLines": 94,
+      "fileCategory": "code",
+      "sha1": "a389d4bcbecba3ca9fe076d7a942fada825af552"
+    },
+    {
+      "path": "crates/ruvector-collections/tests/table_cross_check.rs",
+      "language": "rust",
+      "sizeLines": 98,
+      "fileCategory": "code",
+      "sha1": "a53617bfba24ec92be5e6b32ac40478fd0fe6550"
+    },
+    {
+      "path": "crates/ruvector-crv/Cargo.toml",
+      "language": "toml",
+      "sizeLines": 217,
+      "fileCategory": "config",
+      "sha1": "2a0218aacb9f46e3dd8d36f3c02f2b5f6ddb7d3a"
+    },
+    {
+      "path": "crates/ruvector-crv/README.md",
+      "language": "markdown",
+      "sizeLines": 94,
+      "fileCategory": "documentation",
+      "sha1": "cd3b513399474143f953fab7f2cac2e13b259ec9"
+    },
+    {
+      "path": "crates/ruvector-crv/src/error.rs",
+      "language": "rust",
+      "sizeLines": 39,
+      "fileCategory": "code",
+      "sha1": "907d5351c8e09a1d5c1fe424e7d4239e323b9af1"
+    },
+    {
+      "path": "crates/ruvector-crv/src/lib.rs",
+      "language": "rust",
+      "sizeLines": 179,
+      "fileCategory": "code",
+      "sha1": "6b79f42462341a504454f129bf292963eb3dbbdc"
+    },
+    {
+      "path": "crates/ruvector-crv/src/session.rs",
+      "language": "rust",
+      "sizeLines": 619,
+      "fileCategory": "code",
+      "sha1": "70340737c8e2a8d0fbe5cd2cfee5200612b80852"
+    },
+    {
+      "path": "crates/ruvector-crv/src/stage_iii.rs",
+      "language": "rust",
+      "sizeLines": 282,
+      "fileCategory": "code",
+      "sha1": "bc516e7ebdbd5e1df4e998263ee3427ca3fc8f76"
+    },
+    {
+      "path": "crates/ruvector-crv/src/stage_ii.rs",
+      "language": "rust",
+      "sizeLines": 267,
+      "fileCategory": "code",
+      "sha1": "a50dfffed6712cd8553fa03fd51e4dd50604e4d1"
+    },
+    {
+      "path": "crates/ruvector-crv/src/stage_i.rs",
+      "language": "rust",
+      "sizeLines": 365,
+      "fileCategory": "code",
+      "sha1": "2b32d53343870f095efedd99535fedea4ec707bb"
+    },
+    {
+      "path": "crates/ruvector-crv/src/stage_iv.rs",
+      "language": "rust",
+      "sizeLines": 336,
+      "fileCategory": "code",
+      "sha1": "a60d85c3c139f632e2025cb8678d4458ca784cdd"
+    },
+    {
+      "path": "crates/ruvector-crv/src/stage_vi.rs",
+      "language": "rust",
+      "sizeLines": 394,
+      "fileCategory": "code",
+      "sha1": "466d820bb5301ec234a0516fc9a3cf9c4b0e18da"
+    },
+    {
+      "path": "crates/ruvector-crv/src/stage_v.rs",
+      "language": "rust",
+      "sizeLines": 225,
+      "fileCategory": "code",
+      "sha1": "4731b87bd185fe6b314b782760df111d29cf3d3f"
+    },
+    {
+      "path": "crates/ruvector-crv/src/types.rs",
+      "language": "rust",
+      "sizeLines": 361,
+      "fileCategory": "code",
+      "sha1": "240dd0e74b5a4ba6fa2a85d564ab2a0b20c35eb6"
+    },
+    {
+      "path": "crates/ruvector-dag-wasm/Cargo.toml",
+      "language": "toml",
+      "sizeLines": 227,
+      "fileCategory": "config",
+      "sha1": "8bbc15e2f3d0c733f7a86955eaad529b9f17a65b"
+    },
+    {
+      "path": "crates/ruvector-dag-wasm/src/lib.rs",
+      "language": "rust",
+      "sizeLines": 419,
+      "fileCategory": "code",
+      "sha1": "3af8fc5557c7c646618fd9b32d11bc284dd3ffed"
+    },
+    {
+      "path": "crates/ruvector-diskann/Cargo.toml",
+      "language": "toml",
+      "sizeLines": 217,
+      "fileCategory": "config",
+      "sha1": "79d9b59e827d1e4755e1e32127034d87af0fd049"
+    },
+    {
+      "path": "crates/ruvector-diskann/src/distance.rs",
+      "language": "rust",
+      "sizeLines": 356,
+      "fileCategory": "code",
+      "sha1": "b00d5da03b7ebf2ddb74c6b8e27a58307057476b"
+    },
+    {
+      "path": "crates/ruvector-diskann/src/error.rs",
+      "language": "rust",
+      "sizeLines": 31,
+      "fileCategory": "code",
+      "sha1": "90829c9d8356cd09120655ede2427dc5a835f84b"
+    },
+    {
+      "path": "crates/ruvector-diskann/src/graph.rs",
+      "language": "rust",
+      "sizeLines": 339,
+      "fileCategory": "code",
+      "sha1": "21a05b17ce4f38a64eb8465379591e97627c7344"
+    },
+    {
+      "path": "crates/ruvector-diskann/src/index.rs",
+      "language": "rust",
+      "sizeLines": 663,
+      "fileCategory": "code",
+      "sha1": "b1e95570fbdbebfba3e757869eb9c82feab8086b"
+    },
+    {
+      "path": "crates/ruvector-diskann/src/lib.rs",
+      "language": "rust",
+      "sizeLines": 22,
+      "fileCategory": "code",
+      "sha1": "7f53d5d921c55c0262666316afca3c9e92b12cee"
+    },
+    {
+      "path": "crates/ruvector-diskann/src/pq.rs",
+      "language": "rust",
+      "sizeLines": 246,
+      "fileCategory": "code",
+      "sha1": "6189d242c7c8e0cfacab17793767dbaee54d04de"
+    },
+    {
+      "path": "crates/ruvector-diskann-node/build.rs",
+      "language": "rust",
+      "sizeLines": 4,
+      "fileCategory": "code",
+      "sha1": "690242a8f16f408b9cac1f57b388910449b6778d"
+    },
+    {
+      "path": "crates/ruvector-diskann-node/Cargo.toml",
+      "language": "toml",
+      "sizeLines": 24,
+      "fileCategory": "config",
+      "sha1": "f53ba1b0dd0595366f2a393dbcb601784a7f5e13"
+    },
+    {
+      "path": "crates/ruvector-diskann-node/src/lib.rs",
+      "language": "rust",
+      "sizeLines": 193,
+      "fileCategory": "code",
+      "sha1": "af14dbb38c429e24a5b25f61e7812fe5b107785c"
+    },
+    {
+      "path": "crates/ruvector-dither/benches/dither_bench.rs",
+      "language": "rust",
+      "sizeLines": 61,
+      "fileCategory": "code",
+      "sha1": "def3e5427585bb8653b7340b000e165dadd1aacf"
+    },
+    {
+      "path": "crates/ruvector-dither/Cargo.toml",
+      "language": "toml",
+      "sizeLines": 217,
+      "fileCategory": "config",
+      "sha1": "cc5940e1b32127211b0b749552d396a10f4ee6d2"
+    },
+    {
+      "path": "crates/ruvector-dither/README.md",
+      "language": "markdown",
+      "sizeLines": 76,
+      "fileCategory": "documentation",
+      "sha1": "125603f4527b28c82936e88adc0a66b57832596d"
+    },
+    {
+      "path": "crates/ruvector-dither/src/channel.rs",
+      "language": "rust",
+      "sizeLines": 93,
+      "fileCategory": "code",
+      "sha1": "d973e8245d2a4670f88c43c6dcec1835b7a7e3e1"
+    },
+    {
+      "path": "crates/ruvector-dither/src/golden.rs",
+      "language": "rust",
+      "sizeLines": 101,
+      "fileCategory": "code",
+      "sha1": "01973f226de0e822aef707745eff9b8130d41cf6"
+    },
+    {
+      "path": "crates/ruvector-dither/src/lib.rs",
+      "language": "rust",
+      "sizeLines": 64,
+      "fileCategory": "code",
+      "sha1": "0a392f4e3ec6fd876a05ae8e89164ee31e032d64"
+    },
+    {
+      "path": "crates/ruvector-dither/src/pi.rs",
+      "language": "rust",
+      "sizeLines": 111,
+      "fileCategory": "code",
+      "sha1": "12a09668448a8a75eb5c5faa2ec9fd4f3da7c0e1"
+    },
+    {
+      "path": "crates/ruvector-dither/src/quantize.rs",
+      "language": "rust",
+      "sizeLines": 135,
+      "fileCategory": "code",
+      "sha1": "df5c60b59fa9e379151a1bd6b3df0106170f9e7b"
+    },
+    {
+      "path": "crates/ruvector-domain-expansion/benches/domain_expansion_bench.rs",
+      "language": "rust",
+      "sizeLines": 364,
+      "fileCategory": "code",
+      "sha1": "d79c42df0aaf70d4a2463f572d8982865d0a058a"
+    },
+    {
+      "path": "crates/ruvector-domain-expansion/Cargo.toml",
+      "language": "toml",
+      "sizeLines": 226,
+      "fileCategory": "config",
+      "sha1": "4a5f5dfe2abc31c9508d3c4dfef139a6c4b59829"
+    },
+    {
+      "path": "crates/ruvector-domain-expansion/docs/README.md",
+      "language": "markdown",
+      "sizeLines": 242,
+      "fileCategory": "documentation",
+      "sha1": "a3a5e89a905e70c6a448b9a4134c21fc01baa016"
+    },
+    {
+      "path": "crates/ruvector-domain-expansion/README.md",
+      "language": "markdown",
+      "sizeLines": 222,
+      "fileCategory": "documentation",
+      "sha1": "81bd2410b0366beef4e86ed04390f0095b4f6470"
+    },
+    {
+      "path": "crates/ruvector-domain-expansion/src/cost_curve.rs",
+      "language": "rust",
+      "sizeLines": 483,
+      "fileCategory": "code",
+      "sha1": "fb9ca8a9a99dbb7b9d95695fff23081bc2dc2ce8"
+    },
+    {
+      "path": "crates/ruvector-domain-expansion/src/domain.rs",
+      "language": "rust",
+      "sizeLines": 213,
+      "fileCategory": "code",
+      "sha1": "1ee1d69a7e44f393d45b88253213f58aba127d76"
+    },
+    {
+      "path": "crates/ruvector-domain-expansion/src/error.rs",
+      "language": "rust",
+      "sizeLines": 40,
+      "fileCategory": "code",
+      "sha1": "9f4ffba997e4109a8d335086824404bc196052e0"
+    },
+    {
+      "path": "crates/ruvector-domain-expansion/src/lib.rs",
+      "language": "rust",
+      "sizeLines": 592,
+      "fileCategory": "code",
+      "sha1": "746e191b00b3f250bd20b72648d1d401b008936c"
+    },
+    {
+      "path": "crates/ruvector-domain-expansion/src/meta_learning.rs",
+      "language": "rust",
+      "sizeLines": 1399,
+      "fileCategory": "code",
+      "sha1": "6c05f976f4bd847fbe3b3b261a0f6198d5ca1665"
+    },
+    {
+      "path": "crates/ruvector-domain-expansion/src/planning.rs",
+      "language": "rust",
+      "sizeLines": 648,
+      "fileCategory": "code",
+      "sha1": "6c81c4bd3bc234e81b17ef8a44bd26586e54f38d"
+    },
+    {
+      "path": "crates/ruvector-domain-expansion/src/policy_kernel.rs",
+      "language": "rust",
+      "sizeLines": 469,
+      "fileCategory": "code",
+      "sha1": "946f849d5914b7da667c5e6cfc593828fe0d2977"
+    },
+    {
+      "path": "crates/ruvector-domain-expansion/src/rust_synthesis.rs",
+      "language": "rust",
+      "sizeLines": 604,
+      "fileCategory": "code",
+      "sha1": "c45460b27e6d8cc94de1b5f50ab376d9baf461d4"
+    },
+    {
+      "path": "crates/ruvector-domain-expansion/src/rvf_bridge.rs",
+      "language": "rust",
+      "sizeLines": 716,
+      "fileCategory": "code",
+      "sha1": "af53df8e86fe8090fdcbd22e77f66e1d9588222b"
+    },
+    {
+      "path": "crates/ruvector-domain-expansion/src/tool_orchestration.rs",
+      "language": "rust",
+      "sizeLines": 728,
+      "fileCategory": "code",
+      "sha1": "a6066e51abade6f40bec81de1940232e21409aa5"
+    },
+    {
+      "path": "crates/ruvector-domain-expansion/src/transfer.rs",
+      "language": "rust",
+      "sizeLines": 584,
+      "fileCategory": "code",
+      "sha1": "951ca2963adc55ce5650a2ae9e33a1561fb25ee1"
+    },
+    {
+      "path": "crates/ruvector-domain-expansion-wasm/Cargo.toml",
+      "language": "toml",
+      "sizeLines": 230,
+      "fileCategory": "config",
+      "sha1": "d0066be8ab161b3afa8bb82713a9e1c003799f12"
+    },
+    {
+      "path": "crates/ruvector-domain-expansion-wasm/src/lib.rs",
+      "language": "rust",
+      "sizeLines": 504,
+      "fileCategory": "code",
+      "sha1": "87fca232840fe4c09a98ede150d11bf1a31125d7"
+    },
+    {
+      "path": "crates/ruvector-economy-wasm/Cargo.toml",
+      "language": "toml",
+      "sizeLines": 242,
+      "fileCategory": "config",
+      "sha1": "2736b6f66e9f4f21b064df2b1173559b24ce8499"
+    },
+    {
+      "path": "crates/ruvector-economy-wasm/pkg/README.md",
+      "language": "markdown",
+      "sizeLines": 304,
+      "fileCategory": "documentation",
+      "sha1": "ed31c9e527a6f06c752df87f2ad995550763f6fa"
+    },
+    {
+      "path": "crates/ruvector-economy-wasm/README.md",
+      "language": "markdown",
+      "sizeLines": 407,
+      "fileCategory": "documentation",
+      "sha1": "84dba8a845716e45a83429399e232a58a8c39590"
+    },
+    {
+      "path": "crates/ruvector-economy-wasm/src/curve.rs",
+      "language": "rust",
+      "sizeLines": 246,
+      "fileCategory": "code",
+      "sha1": "c8ab15da727c5ba251b887911cebab16c99ead75"
+    },
+    {
+      "path": "crates/ruvector-economy-wasm/src/ledger.rs",
+      "language": "rust",
+      "sizeLines": 494,
+      "fileCategory": "code",
+      "sha1": "f11e48e56f0ed8bf5662c77762ddb4cf55524ef6"
+    },
+    {
+      "path": "crates/ruvector-economy-wasm/src/lib.rs",
+      "language": "rust",
+      "sizeLines": 93,
+      "fileCategory": "code",
+      "sha1": "3d5afe3dcce65fb39795c3f46934b96424007ce6"
+    },
+    {
+      "path": "crates/ruvector-economy-wasm/src/reputation.rs",
+      "language": "rust",
+      "sizeLines": 376,
+      "fileCategory": "code",
+      "sha1": "aca729c18175f7d93c0e38387225ed43063280dc"
+    },
+    {
+      "path": "crates/ruvector-economy-wasm/src/stake.rs",
+      "language": "rust",
+      "sizeLines": 457,
+      "fileCategory": "code",
+      "sha1": "a1755d0bbb93e337001123c26f94c63848a7c2f5"
+    },
+    {
+      "path": "crates/ruvector-exotic-wasm/Cargo.toml",
+      "language": "toml",
+      "sizeLines": 243,
+      "fileCategory": "config",
+      "sha1": "c01786fa2089a6250b40f934ca3e82d0e25376ff"
+    },
+    {
+      "path": "crates/ruvector-exotic-wasm/pkg/README.md",
+      "language": "markdown",
+      "sizeLines": 302,
+      "fileCategory": "documentation",
+      "sha1": "2140ba73da552f23ba8f405c598ae03b9e4a8258"
+    },
+    {
+      "path": "crates/ruvector-exotic-wasm/README.md",
+      "language": "markdown",
+      "sizeLines": 448,
+      "fileCategory": "documentation",
+      "sha1": "82ce63b10332224ec54959716ac1d560c0c5fb8d"
+    },
+    {
+      "path": "crates/ruvector-exotic-wasm/src/lib.rs",
+      "language": "rust",
+      "sizeLines": 346,
+      "fileCategory": "code",
+      "sha1": "19e15a7265915d5b3263572da437ec7415416a57"
+    },
+    {
+      "path": "crates/ruvector-exotic-wasm/src/morphogenetic.rs",
+      "language": "rust",
+      "sizeLines": 868,
+      "fileCategory": "code",
+      "sha1": "40fb4d4517a0acc803ef215ada86b1e6d5a072a9"
+    },
+    {
+      "path": "crates/ruvector-exotic-wasm/src/nao.rs",
+      "language": "rust",
+      "sizeLines": 746,
+      "fileCategory": "code",
+      "sha1": "93469d1cd9b955ff8f7b0142e60cf9ac255d103f"
+    },
+    {
+      "path": "crates/ruvector-exotic-wasm/src/time_crystal.rs",
+      "language": "rust",
+      "sizeLines": 741,
+      "fileCategory": "code",
+      "sha1": "fd8876fdb31f81b9d0f84cc8a65d48dee31b9a80"
+    },
+    {
+      "path": "crates/ruvector-filter/Cargo.toml",
+      "language": "toml",
+      "sizeLines": 20,
+      "fileCategory": "config",
+      "sha1": "45b8694a7df1336446b8f65ee319b986ddebf833"
+    },
+    {
+      "path": "crates/ruvector-filter/README.md",
+      "language": "markdown",
+      "sizeLines": 227,
+      "fileCategory": "documentation",
+      "sha1": "4248da923721fa55d09d00fcad53fa3bd27ac69e"
+    },
+    {
+      "path": "crates/ruvector-filter/src/error.rs",
+      "language": "rust",
+      "sizeLines": 38,
+      "fileCategory": "code",
+      "sha1": "6e49974befe0b06d10f8706aaf9d23114f5b4915"
+    },
+    {
+      "path": "crates/ruvector-filter/src/evaluator.rs",
+      "language": "rust",
+      "sizeLines": 590,
+      "fileCategory": "code",
+      "sha1": "2959fd0396085fd5729e83e9e5cd843dc5911867"
+    },
+    {
+      "path": "crates/ruvector-filter/src/expression.rs",
+      "language": "rust",
+      "sizeLines": 285,
+      "fileCategory": "code",
+      "sha1": "5f5afdacca0060426e0c85382a51615419107429"
+    },
+    {
+      "path": "crates/ruvector-filter/src/index.rs",
+      "language": "rust",
+      "sizeLines": 381,
+      "fileCategory": "code",
+      "sha1": "f1d074e8bbd02bd0ff3c26e745e8132862ab4b94"
+    },
+    {
+      "path": "crates/ruvector-filter/src/lib.rs",
+      "language": "rust",
+      "sizeLines": 216,
+      "fileCategory": "code",
+      "sha1": "292efec8f6709c95fe3bed1b808cfc61a3ea7994"
+    },
+    {
+      "path": "crates/ruvector-gnn-node/build.rs",
+      "language": "rust",
+      "sizeLines": 6,
+      "fileCategory": "code",
+      "sha1": "75c631fc627ac4434eebdb17863e6adccce5efd6"
+    },
+    {
+      "path": "crates/ruvector-gnn-node/Cargo.toml",
+      "language": "toml",
+      "sizeLines": 215,
+      "fileCategory": "config",
+      "sha1": "9c03c1e1591ebec921740c42e81c3c1a41472220"
+    },
+    {
+      "path": "crates/ruvector-gnn-node/README.md",
+      "language": "markdown",
+      "sizeLines": 253,
+      "fileCategory": "documentation",
+      "sha1": "1c86d0d025edaee67073718352728e4eb43a006b"
+    },
+    {
+      "path": "crates/ruvector-gnn-node/src/lib.rs",
+      "language": "rust",
+      "sizeLines": 422,
+      "fileCategory": "code",
+      "sha1": "736b277d62e66587d66ec0b02549569d0c7bf45c"
+    },
+    {
+      "path": "crates/ruvector-gnn-wasm/Cargo.toml",
+      "language": "toml",
+      "sizeLines": 241,
+      "fileCategory": "config",
+      "sha1": "5d6730b403d5fdd2bac504a987be34ae2fb241f3"
+    },
+    {
+      "path": "crates/ruvector-gnn-wasm/README.md",
+      "language": "markdown",
+      "sizeLines": 191,
+      "fileCategory": "documentation",
+      "sha1": "769dcfac5428546dce83738727b5bbd1af2483e7"
+    },
+    {
+      "path": "crates/ruvector-gnn-wasm/src/lib.rs",
+      "language": "rust",
+      "sizeLines": 411,
+      "fileCategory": "code",
+      "sha1": "c18ba063f419fa2f1811b7f88bf6a1bd41cc5202"
+    },
+    {
+      "path": "crates/ruvector-graph-node/build.rs",
+      "language": "rust",
+      "sizeLines": 4,
+      "fileCategory": "code",
+      "sha1": "690242a8f16f408b9cac1f57b388910449b6778d"
+    },
+    {
+      "path": "crates/ruvector-graph-node/Cargo.toml",
+      "language": "toml",
+      "sizeLines": 233,
+      "fileCategory": "config",
+      "sha1": "f4ecbf986da838fd8119581af52caebf37619db7"
+    },
+    {
+      "path": "crates/ruvector-graph-node/README.md",
+      "language": "markdown",
+      "sizeLines": 245,
+      "fileCategory": "documentation",
+      "sha1": "bb49378d3ae1ed8410fb4ae75148253e12714528"
+    },
+    {
+      "path": "crates/ruvector-graph-node/src/lib.rs",
+      "language": "rust",
+      "sizeLines": 688,
+      "fileCategory": "code",
+      "sha1": "1a181e409c29f552fc1d27aeffba664de9aab071"
+    },
+    {
+      "path": "crates/ruvector-graph-node/src/streaming.rs",
+      "language": "rust",
+      "sizeLines": 124,
+      "fileCategory": "code",
+      "sha1": "12a9bd4a52840248902621947afb316cc937adc7"
+    },
+    {
+      "path": "crates/ruvector-graph-node/src/transactions.rs",
+      "language": "rust",
+      "sizeLines": 162,
+      "fileCategory": "code",
+      "sha1": "bf54b2845abf49bf5c1166bb325cf630c25af3e6"
+    },
+    {
+      "path": "crates/ruvector-graph-node/src/types.rs",
+      "language": "rust",
+      "sizeLines": 240,
+      "fileCategory": "code",
+      "sha1": "88f10c892a563a520b42ab53264816c353f73795"
+    },
+    {
+      "path": "crates/ruvector-graph-wasm/Cargo.toml",
+      "language": "toml",
+      "sizeLines": 270,
+      "fileCategory": "config",
+      "sha1": "818faae9446a860dbdd78790e5d84253deb9d966"
+    },
+    {
+      "path": "crates/ruvector-graph-wasm/README.md",
+      "language": "markdown",
+      "sizeLines": 408,
+      "fileCategory": "documentation",
+      "sha1": "3ed9064dc6f1c7fa25ec0219c0a4165144e30f66"
+    },
+    {
+      "path": "crates/ruvector-graph-wasm/src/async_ops.rs",
+      "language": "rust",
+      "sizeLines": 226,
+      "fileCategory": "code",
+      "sha1": "df44ff794d30ed872e86915241b84ec44d7fa596"
+    },
+    {
+      "path": "crates/ruvector-graph-wasm/src/lib.rs",
+      "language": "rust",
+      "sizeLines": 570,
+      "fileCategory": "code",
+      "sha1": "6be7e39442bfb2d95bbffa1afc48fc074514d482"
+    },
+    {
+      "path": "crates/ruvector-graph-wasm/src/types.rs",
+      "language": "rust",
+      "sizeLines": 306,
+      "fileCategory": "code",
+      "sha1": "4e147785705bd21620e1d175e89d2c14ffbdef08"
+    },
+    {
+      "path": "crates/ruvector-hyperbolic-hnsw/benches/hyperbolic_bench.rs",
+      "language": "rust",
+      "sizeLines": 179,
+      "fileCategory": "code",
+      "sha1": "6d825ae1827ef4d657f1459a383e7c1f95a0314b"
+    },
+    {
+      "path": "crates/ruvector-hyperbolic-hnsw/Cargo.toml",
+      "language": "toml",
+      "sizeLines": 56,
+      "fileCategory": "config",
+      "sha1": "f112f32b94a258004b6fd7dc35197f970bcc450d"
+    },
+    {
+      "path": "crates/ruvector-hyperbolic-hnsw/README.md",
+      "language": "markdown",
+      "sizeLines": 243,
+      "fileCategory": "documentation",
+      "sha1": "599e799a1cfd5d03f575fd74cd688f36e44243dc"
+    },
+    {
+      "path": "crates/ruvector-hyperbolic-hnsw/src/error.rs",
+      "language": "rust",
+      "sizeLines": 43,
+      "fileCategory": "code",
+      "sha1": "429a9f13b18f96fd2c623510568529b8139b8164"
+    },
+    {
+      "path": "crates/ruvector-hyperbolic-hnsw/src/hnsw.rs",
+      "language": "rust",
+      "sizeLines": 651,
+      "fileCategory": "code",
+      "sha1": "a4c5acca664ba610a61fc70530abbc604ed5f9fe"
+    },
+    {
+      "path": "crates/ruvector-hyperbolic-hnsw/src/lib.rs",
+      "language": "rust",
+      "sizeLines": 211,
+      "fileCategory": "code",
+      "sha1": "82d37f648bf7267059c17dc698a333e5f13df3bc"
+    },
+    {
+      "path": "crates/ruvector-hyperbolic-hnsw/src/poincare.rs",
+      "language": "rust",
+      "sizeLines": 628,
+      "fileCategory": "code",
+      "sha1": "97bf5bfee9fb1ae1a62b0b221b92de50ab080927"
+    },
+    {
+      "path": "crates/ruvector-hyperbolic-hnsw/src/shard.rs",
+      "language": "rust",
+      "sizeLines": 576,
+      "fileCategory": "code",
+      "sha1": "2f816c1866c82c309d5b604447d838bc2a66c585"
+    },
+    {
+      "path": "crates/ruvector-hyperbolic-hnsw/src/tangent.rs",
+      "language": "rust",
+      "sizeLines": 349,
+      "fileCategory": "code",
+      "sha1": "896994888f1c984352f428b785710563116e445c"
+    },
+    {
+      "path": "crates/ruvector-hyperbolic-hnsw/tests/math_tests.rs",
+      "language": "rust",
+      "sizeLines": 532,
+      "fileCategory": "code",
+      "sha1": "54d7eca878d5c74afe2820d4ebccf13cfc169b46"
+    },
+    {
+      "path": "crates/ruvector-hyperbolic-hnsw-wasm/Cargo.toml",
+      "language": "toml",
+      "sizeLines": 38,
+      "fileCategory": "config",
+      "sha1": "cd0e25a03455d36a70968a3670b902eae2892df5"
+    },
+    {
+      "path": "crates/ruvector-hyperbolic-hnsw-wasm/src/lib.rs",
+      "language": "rust",
+      "sizeLines": 633,
+      "fileCategory": "code",
+      "sha1": "f974a69f5b425f9f1ec3807d1fa4e636636bbd4f"
+    },
+    {
+      "path": "crates/ruvector-learning-wasm/Cargo.toml",
+      "language": "toml",
+      "sizeLines": 233,
+      "fileCategory": "config",
+      "sha1": "dae7b923962d6539afb0b828533d2b528495a8cb"
+    },
+    {
+      "path": "crates/ruvector-learning-wasm/pkg/README.md",
+      "language": "markdown",
+      "sizeLines": 233,
+      "fileCategory": "documentation",
+      "sha1": "bb9b4710c3589983d469b4ca41c3ee5788836a60"
+    },
+    {
+      "path": "crates/ruvector-learning-wasm/README.md",
+      "language": "markdown",
+      "sizeLines": 314,
+      "fileCategory": "documentation",
+      "sha1": "88388431d94ee3efbfcb31eb1b119ffccea0da04"
+    },
+    {
+      "path": "crates/ruvector-learning-wasm/src/lib.rs",
+      "language": "rust",
+      "sizeLines": 47,
+      "fileCategory": "code",
+      "sha1": "ad96257bdc332b70b2a4d24ea0a897bff53389df"
+    },
+    {
+      "path": "crates/ruvector-learning-wasm/src/lora.rs",
+      "language": "rust",
+      "sizeLines": 560,
+      "fileCategory": "code",
+      "sha1": "3d881b9f5579e4c31a9f8eb3131141ce32857231"
+    },
+    {
+      "path": "crates/ruvector-learning-wasm/src/operator_scope.rs",
+      "language": "rust",
+      "sizeLines": 524,
+      "fileCategory": "code",
+      "sha1": "48a1ca36a0749f26e1a477a146b8a219cd2e33db"
+    },
+    {
+      "path": "crates/ruvector-learning-wasm/src/trajectory.rs",
+      "language": "rust",
+      "sizeLines": 429,
+      "fileCategory": "code",
+      "sha1": "b097bb660981ffb05cf76ad6a5aad303ca64d432"
+    },
+    {
+      "path": "crates/ruvector-math-wasm/Cargo.toml",
+      "language": "toml",
+      "sizeLines": 226,
+      "fileCategory": "config",
+      "sha1": "ed857830a10bf9a62b53451f8616039c448ba41f"
+    },
+    {
+      "path": "crates/ruvector-math-wasm/README.md",
+      "language": "markdown",
+      "sizeLines": 202,
+      "fileCategory": "documentation",
+      "sha1": "46ab753a80269e45fba172cde9bbcb9ab12ea14b"
+    },
+    {
+      "path": "crates/ruvector-math-wasm/src/lib.rs",
+      "language": "rust",
+      "sizeLines": 551,
+      "fileCategory": "code",
+      "sha1": "9c4c11ecd72fbe18fdb3740d6b1971fbaeb1a418"
+    },
+    {
+      "path": "crates/ruvector-metrics/Cargo.toml",
+      "language": "toml",
+      "sizeLines": 17,
+      "fileCategory": "config",
+      "sha1": "0d1d1bb578e39ade4131ec1c03346be9b3870a5e"
+    },
+    {
+      "path": "crates/ruvector-metrics/README.md",
+      "language": "markdown",
+      "sizeLines": 225,
+      "fileCategory": "documentation",
+      "sha1": "ae16586a38149e7d82485e1683dc17152e6fe292"
+    },
+    {
+      "path": "crates/ruvector-metrics/src/health.rs",
+      "language": "rust",
+      "sizeLines": 215,
+      "fileCategory": "code",
+      "sha1": "7970b33c1834e0676d54822a92b11f5776f8ab92"
+    },
+    {
+      "path": "crates/ruvector-metrics/src/lib.rs",
+      "language": "rust",
+      "sizeLines": 106,
+      "fileCategory": "code",
+      "sha1": "745051340b3a28a4bb4b64b97e1ae27742ae3221"
+    },
+    {
+      "path": "crates/ruvector-metrics/src/recorder.rs",
+      "language": "rust",
+      "sizeLines": 176,
+      "fileCategory": "code",
+      "sha1": "d488352057537c314e1cf3fb320dac5ca13ba52d"
+    },
+    {
+      "path": "crates/ruvector-mincut-brain-node/Cargo.toml",
+      "language": "toml",
+      "sizeLines": 24,
+      "fileCategory": "config",
+      "sha1": "557544e829b28c67b1e8ce968e2cd85a484c085d"
+    },
+    {
+      "path": "crates/ruvector-mincut-brain-node/src/lib.rs",
+      "language": "rust",
+      "sizeLines": 60,
+      "fileCategory": "code",
+      "sha1": "3ba4cbff4d60d20702a539ad7ee9f535c2a3f4f7"
+    },
+    {
+      "path": "crates/ruvector-mincut-gated-transformer-wasm/Cargo.toml",
+      "language": "toml",
+      "sizeLines": 33,
+      "fileCategory": "config",
+      "sha1": "2013caad1f5fea8d82f125dd8026eec9c39a515d"
+    },
+    {
+      "path": "crates/ruvector-mincut-gated-transformer-wasm/examples/web_scorer.rs",
+      "language": "rust",
+      "sizeLines": 165,
+      "fileCategory": "code",
+      "sha1": "2bf29ad7f3ed61c4e48409e83409d7bfb31cca3c"
+    },
+    {
+      "path": "crates/ruvector-mincut-gated-transformer-wasm/README.md",
+      "language": "markdown",
+      "sizeLines": 345,
+      "fileCategory": "documentation",
+      "sha1": "2d2bc1de4f3d2de0e124b234a3fc2352dc6de74c"
+    },
+    {
+      "path": "crates/ruvector-mincut-gated-transformer-wasm/src/lib.rs",
+      "language": "rust",
+      "sizeLines": 489,
+      "fileCategory": "code",
+      "sha1": "54fbfd07321125014a51caf1abfc01afbe550489"
+    },
+    {
+      "path": "crates/ruvector-mincut-gated-transformer-wasm/tests/web.rs",
+      "language": "rust",
+      "sizeLines": 153,
+      "fileCategory": "code",
+      "sha1": "d08241cb3bf10634632ae15a553e11c343f8098e"
+    },
+    {
+      "path": "crates/ruvector-mincut-node/build.rs",
+      "language": "rust",
+      "sizeLines": 6,
+      "fileCategory": "code",
+      "sha1": "75c631fc627ac4434eebdb17863e6adccce5efd6"
+    },
+    {
+      "path": "crates/ruvector-mincut-node/Cargo.toml",
+      "language": "toml",
+      "sizeLines": 216,
+      "fileCategory": "config",
+      "sha1": "9639cf1fd618986d2bc5cb8554374c7579e76756"
+    },
+    {
+      "path": "crates/ruvector-mincut-node/README.md",
+      "language": "markdown",
+      "sizeLines": 47,
+      "fileCategory": "documentation",
+      "sha1": "84ae3ecd0a774be3c30fc97713366e8e7ad4b039"
+    },
+    {
+      "path": "crates/ruvector-mincut-node/src/lib.rs",
+      "language": "rust",
+      "sizeLines": 546,
+      "fileCategory": "code",
+      "sha1": "09a11056141bc03e8962b2df60e197dc87f9bce5"
+    },
+    {
+      "path": "crates/ruvector-mincut-wasm/Cargo.toml",
+      "language": "toml",
+      "sizeLines": 220,
+      "fileCategory": "config",
+      "sha1": "11cd740089ea477e24f8811d74a63e2e91845c8a"
+    },
+    {
+      "path": "crates/ruvector-mincut-wasm/README.md",
+      "language": "markdown",
+      "sizeLines": 42,
+      "fileCategory": "documentation",
+      "sha1": "c9e306403a4b3e780509ab11d39a6cea4dbbefc8"
+    },
+    {
+      "path": "crates/ruvector-mincut-wasm/src/lib.rs",
+      "language": "rust",
+      "sizeLines": 779,
+      "fileCategory": "code",
+      "sha1": "34d8d6fee984d3b5a0019d66c97e060f564df5e6"
+    },
+    {
+      "path": "crates/ruvector-node/build.rs",
+      "language": "rust",
+      "sizeLines": 6,
+      "fileCategory": "code",
+      "sha1": "75c631fc627ac4434eebdb17863e6adccce5efd6"
+    },
+    {
+      "path": "crates/ruvector-node/Cargo.toml",
+      "language": "toml",
+      "sizeLines": 231,
+      "fileCategory": "config",
+      "sha1": "06a38fd05a48c983e46e0ca92689638b78991d2e"
+    },
+    {
+      "path": "crates/ruvector-node/PHASE5_STATUS.md",
+      "language": "markdown",
+      "sizeLines": 254,
+      "fileCategory": "documentation",
+      "sha1": "1afe6f7cb52ecef05b194ea3ff4e3bd408a8c651"
+    },
+    {
+      "path": "crates/ruvector-node/README.md",
+      "language": "markdown",
+      "sizeLines": 1086,
+      "fileCategory": "documentation",
+      "sha1": "e3b9fa10b9957714e2ee5070e2a7f121675be289"
+    },
+    {
+      "path": "crates/ruvector-node/src/lib.rs",
+      "language": "rust",
+      "sizeLines": 780,
+      "fileCategory": "code",
+      "sha1": "9832649b2da8cdbe7387ccc06d6723a0f48c90fe"
+    },
+    {
+      "path": "crates/ruvector-profiler/Cargo.toml",
+      "language": "toml",
+      "sizeLines": 19,
+      "fileCategory": "config",
+      "sha1": "68a1af2f3bcbec0004ba8be79be8b9e3c5df36af"
+    },
+    {
+      "path": "crates/ruvector-profiler/README.md",
+      "language": "markdown",
+      "sizeLines": 266,
+      "fileCategory": "documentation",
+      "sha1": "79fbf7b2e07b5c040d59af238b298d4ba58650ca"
+    },
+    {
+      "path": "crates/ruvector-profiler/src/config_hash.rs",
+      "language": "rust",
+      "sizeLines": 143,
+      "fileCategory": "code",
+      "sha1": "43e2f38a97e6127b3bcbbb72c325cd796ca794fc"
+    },
+    {
+      "path": "crates/ruvector-profiler/src/csv_emitter.rs",
+      "language": "rust",
+      "sizeLines": 146,
+      "fileCategory": "code",
+      "sha1": "ca6e016223919c60964b11c44a4711f36ee863fb"
+    },
+    {
+      "path": "crates/ruvector-profiler/src/latency.rs",
+      "language": "rust",
+      "sizeLines": 95,
+      "fileCategory": "code",
+      "sha1": "bb1c4af4ef010e0ededed73f676fc01db764537b"
+    },
+    {
+      "path": "crates/ruvector-profiler/src/lib.rs",
+      "language": "rust",
+      "sizeLines": 14,
+      "fileCategory": "code",
+      "sha1": "44209d8f16488abb963b02c055de69f2705849a0"
+    },
+    {
+      "path": "crates/ruvector-profiler/src/memory.rs",
+      "language": "rust",
+      "sizeLines": 131,
+      "fileCategory": "code",
+      "sha1": "a37a201e110d54170ccc681ed722907ac85e7ea1"
+    },
+    {
+      "path": "crates/ruvector-profiler/src/power.rs",
+      "language": "rust",
+      "sizeLines": 150,
+      "fileCategory": "code",
+      "sha1": "1af34fb252358ac7ab6103c01f95eecde80d3868"
+    },
+    {
+      "path": "crates/ruvector-rabitq/benches/rabitq_bench.rs",
+      "language": "rust",
+      "sizeLines": 121,
+      "fileCategory": "code",
+      "sha1": "79b4ec1a843f0395a059216790d80fa7b36b8bf4"
+    },
+    {
+      "path": "crates/ruvector-rabitq/BENCHMARK.md",
+      "language": "markdown",
+      "sizeLines": 154,
+      "fileCategory": "documentation",
+      "sha1": "5954d86cfe9a770c2815411e0bbc55f2f876e8a2"
+    },
+    {
+      "path": "crates/ruvector-rabitq/Cargo.toml",
+      "language": "toml",
+      "sizeLines": 34,
+      "fileCategory": "config",
+      "sha1": "0959fb806d31e52322953cd8f9e67f03c34d096e"
+    },
+    {
+      "path": "crates/ruvector-rabitq/src/error.rs",
+      "language": "rust",
+      "sizeLines": 22,
+      "fileCategory": "code",
+      "sha1": "364eec9310434709870120472565808f349be607"
+    },
+    {
+      "path": "crates/ruvector-rabitq/src/index.rs",
+      "language": "rust",
+      "sizeLines": 1390,
+      "fileCategory": "code",
+      "sha1": "3a2d55b52b307713cec670ab909e144553ce248b"
+    },
+    {
+      "path": "crates/ruvector-rabitq/src/kernel.rs",
+      "language": "rust",
+      "sizeLines": 206,
+      "fileCategory": "code",
+      "sha1": "da8222cbb3549fe24d6d12f6e0afed96bf47d446"
+    },
+    {
+      "path": "crates/ruvector-rabitq/src/lib.rs",
+      "language": "rust",
+      "sizeLines": 60,
+      "fileCategory": "code",
+      "sha1": "b16f49f11180b5bb93dcc8ae4481f2a48a768330"
+    },
+    {
+      "path": "crates/ruvector-rabitq/src/main.rs",
+      "language": "rust",
+      "sizeLines": 274,
+      "fileCategory": "code",
+      "sha1": "acda0c8a43b1e4adaff7c03a47fd79f7afe4250e"
+    },
+    {
+      "path": "crates/ruvector-rabitq/src/persist.rs",
+      "language": "rust",
+      "sizeLines": 489,
+      "fileCategory": "code",
+      "sha1": "95945a00c2de172b2ab88ab380fa35b7ed9fecdc"
+    },
+    {
+      "path": "crates/ruvector-rabitq/src/quantize.rs",
+      "language": "rust",
+      "sizeLines": 301,
+      "fileCategory": "code",
+      "sha1": "1fea46ec139d9a5d3ba28cc150dc21b1ac6b26b8"
+    },
+    {
+      "path": "crates/ruvector-rabitq/src/rotation.rs",
+      "language": "rust",
+      "sizeLines": 387,
+      "fileCategory": "code",
+      "sha1": "7ed1b6e9d7d4f39f984f5c855735936098ab411e"
+    },
+    {
+      "path": "crates/ruvector-rabitq/src/scan.rs",
+      "language": "rust",
+      "sizeLines": 597,
+      "fileCategory": "code",
+      "sha1": "683e0cce285f952656a4320756e4466ddc2f2310"
+    },
+    {
+      "path": "crates/ruvector-rabitq-wasm/Cargo.toml",
+      "language": "toml",
+      "sizeLines": 48,
+      "fileCategory": "config",
+      "sha1": "02b009e9a5ed9102e2be53c2e8504716b3782245"
+    },
+    {
+      "path": "crates/ruvector-rabitq-wasm/src/lib.rs",
+      "language": "rust",
+      "sizeLines": 189,
+      "fileCategory": "code",
+      "sha1": "41607347285634a0655073335359549cedb8c3f9"
+    },
+    {
+      "path": "crates/ruvector-router-cli/Cargo.toml",
+      "language": "toml",
+      "sizeLines": 34,
+      "fileCategory": "config",
+      "sha1": "7514b1ce36e4fe6c6873459b2db253ff2c92e695"
+    },
+    {
+      "path": "crates/ruvector-router-cli/README.md",
+      "language": "markdown",
+      "sizeLines": 648,
+      "fileCategory": "documentation",
+      "sha1": "89acff7e9345a9528ed8511eb50d5b2b7f4edb40"
+    },
+    {
+      "path": "crates/ruvector-router-cli/src/main.rs",
+      "language": "rust",
+      "sizeLines": 309,
+      "fileCategory": "code",
+      "sha1": "8908d539e4d798384bde989eaa93bfbfdfc09099"
+    },
+    {
+      "path": "crates/ruvector-router-core/benches/vector_search.rs",
+      "language": "rust",
+      "sizeLines": 115,
+      "fileCategory": "code",
+      "sha1": "fd0ca7a6171f32c00833a100a9dfd075f633101c"
+    },
+    {
+      "path": "crates/ruvector-router-core/Cargo.toml",
+      "language": "toml",
+      "sizeLines": 233,
+      "fileCategory": "config",
+      "sha1": "447c8f57522b89cda60cad74eb02128857403852"
+    },
+    {
+      "path": "crates/ruvector-router-core/README.md",
+      "language": "markdown",
+      "sizeLines": 762,
+      "fileCategory": "documentation",
+      "sha1": "835cf26b0e73c97bd812d9cd9a13200d950baa0e"
+    },
+    {
+      "path": "crates/ruvector-router-core/src/distance.rs",
+      "language": "rust",
+      "sizeLines": 196,
+      "fileCategory": "code",
+      "sha1": "505732a1465dd87ad52850c2a30ef35b8ac7a243"
+    },
+    {
+      "path": "crates/ruvector-router-core/src/error.rs",
+      "language": "rust",
+      "sizeLines": 96,
+      "fileCategory": "code",
+      "sha1": "1195314df6875e1d11a011fc2b3eb66cf8a2cc10"
+    },
+    {
+      "path": "crates/ruvector-router-core/src/index.rs",
+      "language": "rust",
+      "sizeLines": 407,
+      "fileCategory": "code",
+      "sha1": "7f36868bbbf75af84fa03fbbef53649dba08e140"
+    },
+    {
+      "path": "crates/ruvector-router-core/src/lib.rs",
+      "language": "rust",
+      "sizeLines": 38,
+      "fileCategory": "code",
+      "sha1": "48b6c57a2d6450c38b238daa033e44860a97b1dd"
+    },
+    {
+      "path": "crates/ruvector-router-core/src/quantization.rs",
+      "language": "rust",
+      "sizeLines": 300,
+      "fileCategory": "code",
+      "sha1": "f5df607de89534c51adb147fdecfc362cbbdd6f3"
+    },
+    {
+      "path": "crates/ruvector-router-core/src/storage.rs",
+      "language": "rust",
+      "sizeLines": 347,
+      "fileCategory": "code",
+      "sha1": "507442c309dcc8c7c1ee725bdb1353cb0bf2cd5f"
+    },
+    {
+      "path": "crates/ruvector-router-core/src/types.rs",
+      "language": "rust",
+      "sizeLines": 131,
+      "fileCategory": "code",
+      "sha1": "a64f9ad84aeccacbe5420bd89f640e602a96773c"
+    },
+    {
+      "path": "crates/ruvector-router-core/src/vector_db.rs",
+      "language": "rust",
+      "sizeLines": 303,
+      "fileCategory": "code",
+      "sha1": "0d20edaa54670ea5d51f637bae117a65f2198f74"
+    },
+    {
+      "path": "crates/ruvector-router-ffi/build.rs",
+      "language": "rust",
+      "sizeLines": 4,
+      "fileCategory": "code",
+      "sha1": "690242a8f16f408b9cac1f57b388910449b6778d"
+    },
+    {
+      "path": "crates/ruvector-router-ffi/Cargo.toml",
+      "language": "toml",
+      "sizeLines": 38,
+      "fileCategory": "config",
+      "sha1": "3086f3562ff56931be73e9d8857a4060a4eb0f18"
+    },
+    {
+      "path": "crates/ruvector-router-ffi/README.md",
+      "language": "markdown",
+      "sizeLines": 808,
+      "fileCategory": "documentation",
+      "sha1": "67cdd3fee0af643adfcbb837934aa3d30a53d3c3"
+    },
+    {
+      "path": "crates/ruvector-router-ffi/src/lib.rs",
+      "language": "rust",
+      "sizeLines": 219,
+      "fileCategory": "code",
+      "sha1": "6d6e6962d5a734111267fa23a0b730a397f8d7de"
+    },
+    {
+      "path": "crates/ruvector-router-wasm/Cargo.toml",
+      "language": "toml",
+      "sizeLines": 35,
+      "fileCategory": "config",
+      "sha1": "700fd173f48828d04f403c0f82d38eeebb1b830e"
+    },
+    {
+      "path": "crates/ruvector-router-wasm/README.md",
+      "language": "markdown",
+      "sizeLines": 849,
+      "fileCategory": "documentation",
+      "sha1": "a0eebf794c542df9e25e205d8d625abb2e5bd603"
+    },
+    {
+      "path": "crates/ruvector-router-wasm/src/lib.rs",
+      "language": "rust",
+      "sizeLines": 138,
+      "fileCategory": "code",
+      "sha1": "5b200d009a4304e2b95d5935e4b232d1a1b7df3e"
+    },
+    {
+      "path": "crates/ruvector-server/Cargo.toml",
+      "language": "toml",
+      "sizeLines": 212,
+      "fileCategory": "config",
+      "sha1": "d60184be6770746b00bd5a5d8917327e533ff635"
+    },
+    {
+      "path": "crates/ruvector-server/README.md",
+      "language": "markdown",
+      "sizeLines": 230,
+      "fileCategory": "documentation",
+      "sha1": "d86103063e6cacf699411c73921abc4032032c79"
+    },
+    {
+      "path": "crates/ruvector-server/src/error.rs",
+      "language": "rust",
+      "sizeLines": 77,
+      "fileCategory": "code",
+      "sha1": "4344cf4675362b2f2db913a74ce873c1a83d3496"
+    },
+    {
+      "path": "crates/ruvector-server/src/lib.rs",
+      "language": "rust",
+      "sizeLines": 126,
+      "fileCategory": "code",
+      "sha1": "e9bad8ff2191110a10dfb379042b3af49e6917cf"
+    },
+    {
+      "path": "crates/ruvector-server/src/routes/collections.rs",
+      "language": "rust",
+      "sizeLines": 122,
+      "fileCategory": "code",
+      "sha1": "1e3dbdc12638cd4e27735bf009db9dbf5cd43961"
+    },
+    {
+      "path": "crates/ruvector-server/src/routes/health.rs",
+      "language": "rust",
+      "sizeLines": 47,
+      "fileCategory": "code",
+      "sha1": "b0436b09536fdba94892c27171cea5b414199169"
+    },
+    {
+      "path": "crates/ruvector-server/src/routes/mod.rs",
+      "language": "rust",
+      "sizeLines": 6,
+      "fileCategory": "code",
+      "sha1": "8cb7af18a4f227bc67f4bcd120a10d7fa677f7ea"
+    },
+    {
+      "path": "crates/ruvector-server/src/routes/points.rs",
+      "language": "rust",
+      "sizeLines": 123,
+      "fileCategory": "code",
+      "sha1": "b89288a3f576e37f60a92722723d4915c2cfc14d"
+    },
+    {
+      "path": "crates/ruvector-server/src/state.rs",
+      "language": "rust",
+      "sizeLines": 61,
+      "fileCategory": "code",
+      "sha1": "1cf03d719e2a62582423e07f9d65d64cd197348b"
+    },
+    {
+      "path": "crates/ruvector-sparsifier/benches/sparsifier_bench.rs",
+      "language": "rust",
+      "sizeLines": 68,
+      "fileCategory": "code",
+      "sha1": "f846beb4629414f145d1b32a40aa539a8123ec46"
+    },
+    {
+      "path": "crates/ruvector-sparsifier/Cargo.toml",
+      "language": "toml",
+      "sizeLines": 232,
+      "fileCategory": "config",
+      "sha1": "f6349ddd14e6a82d94cd430b096a6307920ae3af"
+    },
+    {
+      "path": "crates/ruvector-sparsifier/README.md",
+      "language": "markdown",
+      "sizeLines": 288,
+      "fileCategory": "documentation",
+      "sha1": "80fcd512379b1ad6503a85d7c5df03d37d2c721f"
+    },
+    {
+      "path": "crates/ruvector-sparsifier/src/audit.rs",
+      "language": "rust",
+      "sizeLines": 256,
+      "fileCategory": "code",
+      "sha1": "74e1b3e202b6c284d87bb9d3730c644b9549c8b9"
+    },
+    {
+      "path": "crates/ruvector-sparsifier/src/backbone.rs",
+      "language": "rust",
+      "sizeLines": 263,
+      "fileCategory": "code",
+      "sha1": "4ad0aac2768cd1629543c063a03d13becbaa5324"
+    },
+    {
+      "path": "crates/ruvector-sparsifier/src/error.rs",
+      "language": "rust",
+      "sizeLines": 68,
+      "fileCategory": "code",
+      "sha1": "7005ce1f71cee456adabb1a7f57246374621b6c1"
+    },
+    {
+      "path": "crates/ruvector-sparsifier/src/graph.rs",
+      "language": "rust",
+      "sizeLines": 435,
+      "fileCategory": "code",
+      "sha1": "8b25b3f67a76bb93b7c60778184f634d6cbcd40e"
+    },
+    {
+      "path": "crates/ruvector-sparsifier/src/importance.rs",
+      "language": "rust",
+      "sizeLines": 206,
+      "fileCategory": "code",
+      "sha1": "fbf439d9763f14092c7882650d51b9dcb4901985"
+    },
+    {
+      "path": "crates/ruvector-sparsifier/src/lib.rs",
+      "language": "rust",
+      "sizeLines": 104,
+      "fileCategory": "code",
+      "sha1": "b426ce34747d0b7c98f067eb7e5215be545f8660"
+    },
+    {
+      "path": "crates/ruvector-sparsifier/src/sampler.rs",
+      "language": "rust",
+      "sizeLines": 206,
+      "fileCategory": "code",
+      "sha1": "f3e0d9f8d9caaf9c38c597f2d7a2482ddfdb3d0e"
+    },
+    {
+      "path": "crates/ruvector-sparsifier/src/sparsifier.rs",
+      "language": "rust",
+      "sizeLines": 534,
+      "fileCategory": "code",
+      "sha1": "76b279fc6e641a836cbe39385ef5bb9b2f7f8a32"
+    },
+    {
+      "path": "crates/ruvector-sparsifier/src/traits.rs",
+      "language": "rust",
+      "sizeLines": 90,
+      "fileCategory": "code",
+      "sha1": "a67d8678dfa825db7af9e68c29b1db23d3a61294"
+    },
+    {
+      "path": "crates/ruvector-sparsifier/src/types.rs",
+      "language": "rust",
+      "sizeLines": 191,
+      "fileCategory": "code",
+      "sha1": "5a09582b22bf591346a46d5a78674f30a33b0e5d"
+    },
+    {
+      "path": "crates/ruvector-sparsifier/tests/integration_tests.rs",
+      "language": "rust",
+      "sizeLines": 333,
+      "fileCategory": "code",
+      "sha1": "9af7896df3158d7db23308f3c18da18d7f392624"
+    },
+    {
+      "path": "crates/ruvector-sparsifier-wasm/Cargo.toml",
+      "language": "toml",
+      "sizeLines": 32,
+      "fileCategory": "config",
+      "sha1": "3e7e73aa7fcbda2801f90a0c1382f06ff70a1339"
+    },
+    {
+      "path": "crates/ruvector-sparsifier-wasm/README.md",
+      "language": "markdown",
+      "sizeLines": 89,
+      "fileCategory": "documentation",
+      "sha1": "aea05d05ba5919a419156daacd477168842ababc"
+    },
+    {
+      "path": "crates/ruvector-sparsifier-wasm/src/lib.rs",
+      "language": "rust",
+      "sizeLines": 233,
+      "fileCategory": "code",
+      "sha1": "e98d826b76f341387155be2bbb3f6b79a88251d8"
+    },
+    {
+      "path": "crates/ruvector-wasm/.cargo/config.toml",
+      "language": "toml",
+      "sizeLines": 6,
+      "fileCategory": "config",
+      "sha1": "dc864c7f888202ce072058152390460712ec4b3e"
+    },
+    {
+      "path": "crates/ruvector-wasm/Cargo.toml",
+      "language": "toml",
+      "sizeLines": 280,
+      "fileCategory": "config",
+      "sha1": "ff2fa04b6447571025d4db16387fc516eec9bec8"
+    },
+    {
+      "path": "crates/ruvector-wasm/INTEGRATION_STATUS.md",
+      "language": "markdown",
+      "sizeLines": 203,
+      "fileCategory": "documentation",
+      "sha1": "bcb3a6ce283c6c857bb376bdf684e05cdff2dbcd"
+    },
+    {
+      "path": "crates/ruvector-wasm/kernels/rmsnorm.rs",
+      "language": "rust",
+      "sizeLines": 310,
+      "fileCategory": "code",
+      "sha1": "e369edcc4f30786fd1166dcf0ad08eb734f7160a"
+    },
+    {
+      "path": "crates/ruvector-wasm/kernels/rope.rs",
+      "language": "rust",
+      "sizeLines": 305,
+      "fileCategory": "code",
+      "sha1": "8a3032521cd3da07d3d9690635766bd31ee1efcd"
+    },
+    {
+      "path": "crates/ruvector-wasm/kernels/swiglu.rs",
+      "language": "rust",
+      "sizeLines": 300,
+      "fileCategory": "code",
+      "sha1": "6547496876d9326b517d8315e9a044c851b678dd"
+    },
+    {
+      "path": "crates/ruvector-wasm/README.md",
+      "language": "markdown",
+      "sizeLines": 970,
+      "fileCategory": "documentation",
+      "sha1": "c7da75c0541edbe76b5bba4b764b67a2cd688611"
+    },
+    {
+      "path": "crates/ruvector-wasm/src/kernel/allowlist.rs",
+      "language": "rust",
+      "sizeLines": 335,
+      "fileCategory": "code",
+      "sha1": "c1d5620f7ead621aafb219e5eadac081e9387de8"
+    },
+    {
+      "path": "crates/ruvector-wasm/src/kernel/epoch.rs",
+      "language": "rust",
+      "sizeLines": 315,
+      "fileCategory": "code",
+      "sha1": "e16cc399f5b0adffe3b0c6e32a86b14626beb919"
+    },
+    {
+      "path": "crates/ruvector-wasm/src/kernel/error.rs",
+      "language": "rust",
+      "sizeLines": 369,
+      "fileCategory": "code",
+      "sha1": "8bef3bba6041bc949eb7df7b1b7dee679bb18464"
+    },
+    {
+      "path": "crates/ruvector-wasm/src/kernel/hash.rs",
+      "language": "rust",
+      "sizeLines": 177,
+      "fileCategory": "code",
+      "sha1": "d6255449323374e18ba733c0ece312fd5010bd8c"
+    },
+    {
+      "path": "crates/ruvector-wasm/src/kernel/manifest.rs",
+      "language": "rust",
+      "sizeLines": 501,
+      "fileCategory": "code",
+      "sha1": "0bc72ece4e572618c9362b7a8651c180f909bcaf"
+    },
+    {
+      "path": "crates/ruvector-wasm/src/kernel/memory.rs",
+      "language": "rust",
+      "sizeLines": 467,
+      "fileCategory": "code",
+      "sha1": "7e5638ed691bf731cdc9ea78874aa2f2ea1b1ae4"
+    },
+    {
+      "path": "crates/ruvector-wasm/src/kernel/mod.rs",
+      "language": "rust",
+      "sizeLines": 72,
+      "fileCategory": "code",
+      "sha1": "aff216ec4c42e539882d0247c250f262d20ca678"
+    },
+    {
+      "path": "crates/ruvector-wasm/src/kernel/runtime.rs",
+      "language": "rust",
+      "sizeLines": 576,
+      "fileCategory": "code",
+      "sha1": "16d06a2b69ab8917333de2973a59fb882b08a643"
+    },
+    {
+      "path": "crates/ruvector-wasm/src/kernel/signature.rs",
+      "language": "rust",
+      "sizeLines": 289,
+      "fileCategory": "code",
+      "sha1": "de0459e52667bea97c925c743098bd4adc03a1a4"
+    },
+    {
+      "path": "crates/ruvector-wasm/src/lib.rs",
+      "language": "rust",
+      "sizeLines": 897,
+      "fileCategory": "code",
+      "sha1": "d54b4116410143f35f9b64570f845bf49fa4601a"
+    },
+    {
+      "path": "crates/ruvector-wasm/tests/wasm.rs",
+      "language": "rust",
+      "sizeLines": 161,
+      "fileCategory": "code",
+      "sha1": "8b82d51d10a2745a027824759b6e7c6a1dc3e169"
+    },
+    {
+      "path": "crates/thermorust/benches/motif_bench.rs",
+      "language": "rust",
+      "sizeLines": 99,
+      "fileCategory": "code",
+      "sha1": "257c7e9c8758c16a36c67d720a64f40bdd9254b1"
+    },
+    {
+      "path": "crates/thermorust/Cargo.toml",
+      "language": "toml",
+      "sizeLines": 213,
+      "fileCategory": "config",
+      "sha1": "408124ede5d53808c038360148cbe69ff004304f"
+    },
+    {
+      "path": "crates/thermorust/README.md",
+      "language": "markdown",
+      "sizeLines": 72,
+      "fileCategory": "documentation",
+      "sha1": "9242b7069d5b29c49f363830fa6ea01dc635a12e"
+    },
+    {
+      "path": "crates/thermorust/src/dynamics.rs",
+      "language": "rust",
+      "sizeLines": 164,
+      "fileCategory": "code",
+      "sha1": "ff6e77a946c748651ab67921c52b80ff75a71324"
+    },
+    {
+      "path": "crates/thermorust/src/energy.rs",
+      "language": "rust",
+      "sizeLines": 127,
+      "fileCategory": "code",
+      "sha1": "6e538e35bdfca9db65377f738024ddba354cf4de"
+    },
+    {
+      "path": "crates/thermorust/src/lib.rs",
+      "language": "rust",
+      "sizeLines": 46,
+      "fileCategory": "code",
+      "sha1": "5ef741ce49edcd61686a68447baa6ecea0239303"
+    },
+    {
+      "path": "crates/thermorust/src/metrics.rs",
+      "language": "rust",
+      "sizeLines": 96,
+      "fileCategory": "code",
+      "sha1": "5a01f4a13f9a2945362670be30a00ec95f992e21"
+    },
+    {
+      "path": "crates/thermorust/src/motifs.rs",
+      "language": "rust",
+      "sizeLines": 78,
+      "fileCategory": "code",
+      "sha1": "be348caa6327127ef9bf7104bb34757a3607af07"
+    },
+    {
+      "path": "crates/thermorust/src/noise.rs",
+      "language": "rust",
+      "sizeLines": 49,
+      "fileCategory": "code",
+      "sha1": "d3228396190d3fa7016ddba32b1950c1acf8e000"
+    },
+    {
+      "path": "crates/thermorust/src/state.rs",
+      "language": "rust",
+      "sizeLines": 60,
+      "fileCategory": "code",
+      "sha1": "4cb596523f7975d453bb1e14cb70da2195f7760b"
+    },
+    {
+      "path": "crates/thermorust/tests/correctness.rs",
+      "language": "rust",
+      "sizeLines": 317,
+      "fileCategory": "code",
+      "sha1": "07cc18dfd308ea73d05d7e21377936ca15bff7c7"
+    }
+  ]
+}

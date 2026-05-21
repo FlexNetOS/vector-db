@@ -95,7 +95,7 @@ The 3.9x ratio in Fiedler values proves the boundary separates genuinely differe
 ## How to Reproduce
 
 ```bash
-git clone https://github.com/ruvnet/RuVector.git
+git clone https://github.com/FlexNetOS/ruvector.git
 cd RuVector
 git checkout research/exotic-structure-discovery-rvf
 cargo run -p boundary-discovery

@@ -1,0 +1,2108 @@
+{
+  "slice": "10a",
+  "scope": "crates/ruvix/",
+  "generatedAt": "2026-05-13T13:51:15.358Z",
+  "totalFiles": 300,
+  "files": [
+    {
+      "path": "crates/ruvix/Cargo.toml",
+      "language": "toml",
+      "sizeLines": 112,
+      "fileCategory": "config",
+      "sha1": "f94305abcefac1677c2408025a2cd7fec3275181"
+    },
+    {
+      "path": "crates/ruvix/README.md",
+      "language": "markdown",
+      "sizeLines": 600,
+      "fileCategory": "docs",
+      "sha1": "b4de190e252c34c826dbbf70f800217b5cfe0db6"
+    },
+    {
+      "path": "crates/ruvix/aarch64-boot/.cargo/config.toml",
+      "language": "toml",
+      "sizeLines": 10,
+      "fileCategory": "config",
+      "sha1": "76f5e1cf27f4f707f6bfafd5d0481b45754be04a"
+    },
+    {
+      "path": "crates/ruvix/aarch64-boot/README.md",
+      "language": "markdown",
+      "sizeLines": 229,
+      "fileCategory": "docs",
+      "sha1": "c457d94489688abe561bff7f6542e17e13742cad"
+    },
+    {
+      "path": "crates/ruvix/aarch64-boot/build.rs",
+      "language": "rust",
+      "sizeLines": 4,
+      "fileCategory": "code",
+      "sha1": "877d447ac27a98026d59ab541fe8856e6c1e30f4"
+    },
+    {
+      "path": "crates/ruvix/benches/Cargo.toml",
+      "language": "toml",
+      "sizeLines": 291,
+      "fileCategory": "config",
+      "sha1": "3f70884135d6282be5762510db5fbe8cf7f0660a"
+    },
+    {
+      "path": "crates/ruvix/benches/benches/linux_comparison.rs",
+      "language": "rust",
+      "sizeLines": 408,
+      "fileCategory": "code",
+      "sha1": "7a06639343f60d4056864d28c4780e10bbec57d3"
+    },
+    {
+      "path": "crates/ruvix/benches/benches/proof_tiers.rs",
+      "language": "rust",
+      "sizeLines": 304,
+      "fileCategory": "code",
+      "sha1": "4b1a65c2306699673a8aabfa12ac5e2a51fb2096"
+    },
+    {
+      "path": "crates/ruvix/benches/benches/syscall_benches.rs",
+      "language": "rust",
+      "sizeLines": 322,
+      "fileCategory": "code",
+      "sha1": "a197bea713d7c447471a946dcbbb0d642f2b0419"
+    },
+    {
+      "path": "crates/ruvix/benches/benches/throughput.rs",
+      "language": "rust",
+      "sizeLines": 450,
+      "fileCategory": "code",
+      "sha1": "a6ea5645ca28f7bd4dc846a4a19d24f5402dac7b"
+    },
+    {
+      "path": "crates/ruvix/benches/src/bin/memory_bench.rs",
+      "language": "rust",
+      "sizeLines": 260,
+      "fileCategory": "code",
+      "sha1": "ba56f939ac474189a63b0f1e3db358596f44a023"
+    },
+    {
+      "path": "crates/ruvix/benches/src/bin/proof_overhead.rs",
+      "language": "rust",
+      "sizeLines": 239,
+      "fileCategory": "code",
+      "sha1": "62273d5198fc5fa28e88010f293ce10cecb5ab79"
+    },
+    {
+      "path": "crates/ruvix/benches/src/bin/ruvix_vs_linux.rs",
+      "language": "rust",
+      "sizeLines": 163,
+      "fileCategory": "code",
+      "sha1": "3e07111177189d031a8351bce0d17d9d544e23b5"
+    },
+    {
+      "path": "crates/ruvix/benches/src/bin/syscall_bench.rs",
+      "language": "rust",
+      "sizeLines": 186,
+      "fileCategory": "code",
+      "sha1": "e89b2ee56f5bc4f57dea14a321f014e705fa6cac"
+    },
+    {
+      "path": "crates/ruvix/benches/src/bin/throughput_bench.rs",
+      "language": "rust",
+      "sizeLines": 368,
+      "fileCategory": "code",
+      "sha1": "bb4f100cceaa248a278265dcc9df6f9941782837"
+    },
+    {
+      "path": "crates/ruvix/benches/src/comparison.rs",
+      "language": "rust",
+      "sizeLines": 407,
+      "fileCategory": "code",
+      "sha1": "f67ca79f9f6ebd1219a037fba84159e773a8deed"
+    },
+    {
+      "path": "crates/ruvix/benches/src/lib.rs",
+      "language": "rust",
+      "sizeLines": 259,
+      "fileCategory": "code",
+      "sha1": "1bb594c7937994f35b91036664d521287bfc450f"
+    },
+    {
+      "path": "crates/ruvix/benches/src/linux.rs",
+      "language": "rust",
+      "sizeLines": 609,
+      "fileCategory": "code",
+      "sha1": "fb07fe275f4672b2e85808546864b90275aebb65"
+    },
+    {
+      "path": "crates/ruvix/benches/src/report.rs",
+      "language": "rust",
+      "sizeLines": 535,
+      "fileCategory": "code",
+      "sha1": "52176cc6034c80043054cfecc21a7725225e54ef"
+    },
+    {
+      "path": "crates/ruvix/benches/src/ruvix.rs",
+      "language": "rust",
+      "sizeLines": 516,
+      "fileCategory": "code",
+      "sha1": "d27665fecc3cafa0b28c73c8722fce85970064da"
+    },
+    {
+      "path": "crates/ruvix/benches/src/stats.rs",
+      "language": "rust",
+      "sizeLines": 410,
+      "fileCategory": "code",
+      "sha1": "18dfbfd5df15c1238f92925addf15e662273e727"
+    },
+    {
+      "path": "crates/ruvix/benches/src/targets.rs",
+      "language": "rust",
+      "sizeLines": 279,
+      "fileCategory": "code",
+      "sha1": "6d1b9b02fcf0cde8e95c278bcd8464cdab03853f"
+    },
+    {
+      "path": "crates/ruvix/crates/aarch64/Cargo.toml",
+      "language": "toml",
+      "sizeLines": 210,
+      "fileCategory": "config",
+      "sha1": "19ed49c6931bbbfbb1c92ed4b7f30703b6fce8ce"
+    },
+    {
+      "path": "crates/ruvix/crates/aarch64/README.md",
+      "language": "markdown",
+      "sizeLines": 167,
+      "fileCategory": "docs",
+      "sha1": "ef2c46e7c3cd65baa1315720015668915f37c722"
+    },
+    {
+      "path": "crates/ruvix/crates/aarch64/src/boot.rs",
+      "language": "rust",
+      "sizeLines": 165,
+      "fileCategory": "code",
+      "sha1": "fabda28be29bec1d98d81ac51c36b6ac968b4155"
+    },
+    {
+      "path": "crates/ruvix/crates/aarch64/src/exception.rs",
+      "language": "rust",
+      "sizeLines": 258,
+      "fileCategory": "code",
+      "sha1": "4b2447a0d4f22df42564612376353c15520c4e5c"
+    },
+    {
+      "path": "crates/ruvix/crates/aarch64/src/lib.rs",
+      "language": "rust",
+      "sizeLines": 77,
+      "fileCategory": "code",
+      "sha1": "35d4353670722bb73d453657c713d452654e6433"
+    },
+    {
+      "path": "crates/ruvix/crates/aarch64/src/mmu.rs",
+      "language": "rust",
+      "sizeLines": 263,
+      "fileCategory": "code",
+      "sha1": "3e7673c0056b13c97d36dd4d683d9b946c00f768"
+    },
+    {
+      "path": "crates/ruvix/crates/aarch64/src/registers.rs",
+      "language": "rust",
+      "sizeLines": 215,
+      "fileCategory": "code",
+      "sha1": "e318e6c9bab961230bf313d811cbbdf0e78a9861"
+    },
+    {
+      "path": "crates/ruvix/crates/bcm2711/Cargo.toml",
+      "language": "toml",
+      "sizeLines": 32,
+      "fileCategory": "config",
+      "sha1": "1b77019237b9ec750d333bf410739724d2fa4fbe"
+    },
+    {
+      "path": "crates/ruvix/crates/bcm2711/README.md",
+      "language": "markdown",
+      "sizeLines": 190,
+      "fileCategory": "docs",
+      "sha1": "a7790288b86e3d4694ad04dd3c89bed9ac31cec6"
+    },
+    {
+      "path": "crates/ruvix/crates/bcm2711/src/gpio.rs",
+      "language": "rust",
+      "sizeLines": 599,
+      "fileCategory": "code",
+      "sha1": "a2633bb3cce190c6de3a75a79250f49ea7a0f8e8"
+    },
+    {
+      "path": "crates/ruvix/crates/bcm2711/src/interrupt.rs",
+      "language": "rust",
+      "sizeLines": 553,
+      "fileCategory": "code",
+      "sha1": "e320f9408930aad8d7e55b8535a64dc2829c38c6"
+    },
+    {
+      "path": "crates/ruvix/crates/bcm2711/src/lib.rs",
+      "language": "rust",
+      "sizeLines": 265,
+      "fileCategory": "code",
+      "sha1": "76ad880329dab81ebce9b28cdff9495d050342a7"
+    },
+    {
+      "path": "crates/ruvix/crates/bcm2711/src/mailbox.rs",
+      "language": "rust",
+      "sizeLines": 800,
+      "fileCategory": "code",
+      "sha1": "f2e747a8c0083137a45a86aaa42b00804d4386b7"
+    },
+    {
+      "path": "crates/ruvix/crates/bcm2711/src/mini_uart.rs",
+      "language": "rust",
+      "sizeLines": 581,
+      "fileCategory": "code",
+      "sha1": "b1c1eb08f4919f824769d42e42e0f7d1149938bf"
+    },
+    {
+      "path": "crates/ruvix/crates/bcm2711/src/mmio.rs",
+      "language": "rust",
+      "sizeLines": 305,
+      "fileCategory": "code",
+      "sha1": "0ebd8935cef6681fa7664f7467aaa26935bd892a"
+    },
+    {
+      "path": "crates/ruvix/crates/boot/Cargo.toml",
+      "language": "toml",
+      "sizeLines": 238,
+      "fileCategory": "config",
+      "sha1": "379a46d394ddd583227310c5d28108d800c80ecf"
+    },
+    {
+      "path": "crates/ruvix/crates/boot/README.md",
+      "language": "markdown",
+      "sizeLines": 156,
+      "fileCategory": "docs",
+      "sha1": "da313330fc66a50407a7a3d497695953ff60f2b3"
+    },
+    {
+      "path": "crates/ruvix/crates/boot/src/attestation.rs",
+      "language": "rust",
+      "sizeLines": 426,
+      "fileCategory": "code",
+      "sha1": "9372ff66d07486f590ce67210107bb4825fb4985"
+    },
+    {
+      "path": "crates/ruvix/crates/boot/src/boot_loader.rs",
+      "language": "rust",
+      "sizeLines": 469,
+      "fileCategory": "code",
+      "sha1": "6d2810d52e166115528f13524c7dc6e9e1fb721e"
+    },
+    {
+      "path": "crates/ruvix/crates/boot/src/capability_distribution.rs",
+      "language": "rust",
+      "sizeLines": 467,
+      "fileCategory": "code",
+      "sha1": "0045b0bbe9f71034d8e3ffd103af719675eadb95"
+    },
+    {
+      "path": "crates/ruvix/crates/boot/src/lib.rs",
+      "language": "rust",
+      "sizeLines": 150,
+      "fileCategory": "code",
+      "sha1": "b0964441109482709a91001449729739247c7073"
+    },
+    {
+      "path": "crates/ruvix/crates/boot/src/manifest.rs",
+      "language": "rust",
+      "sizeLines": 795,
+      "fileCategory": "code",
+      "sha1": "33ac0ea57816dc1890e7fe3ab00a1259674130f9"
+    },
+    {
+      "path": "crates/ruvix/crates/boot/src/mount.rs",
+      "language": "rust",
+      "sizeLines": 450,
+      "fileCategory": "code",
+      "sha1": "ad9a928fcab0323c5859ab8a23deab50c8b974f9"
+    },
+    {
+      "path": "crates/ruvix/crates/boot/src/signature.rs",
+      "language": "rust",
+      "sizeLines": 403,
+      "fileCategory": "code",
+      "sha1": "9e39bd8ea35b0735680e6d08054cdaaf53513ddc"
+    },
+    {
+      "path": "crates/ruvix/crates/boot/src/stages.rs",
+      "language": "rust",
+      "sizeLines": 619,
+      "fileCategory": "code",
+      "sha1": "c2be8b0fcfa852e287db536d0242f8f8c6898443"
+    },
+    {
+      "path": "crates/ruvix/crates/boot/src/witness_log.rs",
+      "language": "rust",
+      "sizeLines": 521,
+      "fileCategory": "code",
+      "sha1": "579eb9304472cdbd791fada00485bf486b798824"
+    },
+    {
+      "path": "crates/ruvix/crates/cap/Cargo.toml",
+      "language": "toml",
+      "sizeLines": 232,
+      "fileCategory": "config",
+      "sha1": "920ef861009bd3b5e83a5296ef096fd479d8fd08"
+    },
+    {
+      "path": "crates/ruvix/crates/cap/README.md",
+      "language": "markdown",
+      "sizeLines": 154,
+      "fileCategory": "docs",
+      "sha1": "170721c79885eeedc6b64b337aac72f4b2fa2110"
+    },
+    {
+      "path": "crates/ruvix/crates/cap/benches/cap_bench.rs",
+      "language": "rust",
+      "sizeLines": 626,
+      "fileCategory": "code",
+      "sha1": "a85fcf5f19228869ec6b379cf5f051949a2e4832"
+    },
+    {
+      "path": "crates/ruvix/crates/cap/src/audit.rs",
+      "language": "rust",
+      "sizeLines": 424,
+      "fileCategory": "code",
+      "sha1": "0ab1396688065ef639f921e353a31a1864b41e54"
+    },
+    {
+      "path": "crates/ruvix/crates/cap/src/boot.rs",
+      "language": "rust",
+      "sizeLines": 497,
+      "fileCategory": "code",
+      "sha1": "5e8a1715741eee43259535b99fa534e4ce80cada"
+    },
+    {
+      "path": "crates/ruvix/crates/cap/src/derivation.rs",
+      "language": "rust",
+      "sizeLines": 374,
+      "fileCategory": "code",
+      "sha1": "2f329d711d9bd95b0f6f8f563f095bb064be3b25"
+    },
+    {
+      "path": "crates/ruvix/crates/cap/src/error.rs",
+      "language": "rust",
+      "sizeLines": 105,
+      "fileCategory": "code",
+      "sha1": "d20915a8179c6a21a1691e5bf6004e8d421339ab"
+    },
+    {
+      "path": "crates/ruvix/crates/cap/src/grant.rs",
+      "language": "rust",
+      "sizeLines": 235,
+      "fileCategory": "code",
+      "sha1": "3a8c063a3f543e985ecd06416067c4a4c50b9ca1"
+    },
+    {
+      "path": "crates/ruvix/crates/cap/src/lib.rs",
+      "language": "rust",
+      "sizeLines": 101,
+      "fileCategory": "code",
+      "sha1": "bebdba003d9ee9320dec81484f39b9fa91ceea5d"
+    },
+    {
+      "path": "crates/ruvix/crates/cap/src/manager.rs",
+      "language": "rust",
+      "sizeLines": 551,
+      "fileCategory": "code",
+      "sha1": "f72c266b9644a863c50484dab92670bd85b2d468"
+    },
+    {
+      "path": "crates/ruvix/crates/cap/src/optimized.rs",
+      "language": "rust",
+      "sizeLines": 539,
+      "fileCategory": "code",
+      "sha1": "bd755a141faa2aa186960361254778ba7711f8e7"
+    },
+    {
+      "path": "crates/ruvix/crates/cap/src/revoke.rs",
+      "language": "rust",
+      "sizeLines": 162,
+      "fileCategory": "code",
+      "sha1": "2f9224c1c0fe312d57118ce35fd29a0abb155b18"
+    },
+    {
+      "path": "crates/ruvix/crates/cap/src/security.rs",
+      "language": "rust",
+      "sizeLines": 559,
+      "fileCategory": "code",
+      "sha1": "3ced177098b6864260bf3ba59eea0f77a85d2e64"
+    },
+    {
+      "path": "crates/ruvix/crates/cap/src/table.rs",
+      "language": "rust",
+      "sizeLines": 378,
+      "fileCategory": "code",
+      "sha1": "ac7ac89786a664f602a7fb93553ce8e3da3c57f8"
+    },
+    {
+      "path": "crates/ruvix/crates/cap/tests/capability_test.rs",
+      "language": "rust",
+      "sizeLines": 622,
+      "fileCategory": "code",
+      "sha1": "e99bfa8cac0f30c62d3cce15483184078a639d9a"
+    },
+    {
+      "path": "crates/ruvix/crates/cap/tests/security_test.rs",
+      "language": "rust",
+      "sizeLines": 200,
+      "fileCategory": "code",
+      "sha1": "7c4fad6d4d6969dad91f0594382828a81b9c3a90"
+    },
+    {
+      "path": "crates/ruvix/crates/cli/Cargo.toml",
+      "language": "toml",
+      "sizeLines": 75,
+      "fileCategory": "config",
+      "sha1": "374db80785d69c7c5521a17ee05061f4d31d96c5"
+    },
+    {
+      "path": "crates/ruvix/crates/cli/src/commands/build.rs",
+      "language": "rust",
+      "sizeLines": 265,
+      "fileCategory": "code",
+      "sha1": "a1b73c6a46f294defb8e8cb1081d6f85ded9dfe6"
+    },
+    {
+      "path": "crates/ruvix/crates/cli/src/commands/config.rs",
+      "language": "rust",
+      "sizeLines": 505,
+      "fileCategory": "code",
+      "sha1": "ae5b62aacc908d4a91e2d38d193b690daa1aedfd"
+    },
+    {
+      "path": "crates/ruvix/crates/cli/src/commands/dtb.rs",
+      "language": "rust",
+      "sizeLines": 1103,
+      "fileCategory": "code",
+      "sha1": "6e5c1a23391a849e1c72795687011431186963ff"
+    },
+    {
+      "path": "crates/ruvix/crates/cli/src/commands/flash.rs",
+      "language": "rust",
+      "sizeLines": 271,
+      "fileCategory": "code",
+      "sha1": "115d2b7b761aa753fb84365d0c2571759ac1e719"
+    },
+    {
+      "path": "crates/ruvix/crates/cli/src/commands/keys.rs",
+      "language": "rust",
+      "sizeLines": 1031,
+      "fileCategory": "code",
+      "sha1": "c8bf35f56691fb8a3c28593982515508af8f1101"
+    },
+    {
+      "path": "crates/ruvix/crates/cli/src/commands/mod.rs",
+      "language": "rust",
+      "sizeLines": 11,
+      "fileCategory": "code",
+      "sha1": "733ad488ab49ddfa927b2748bc232b181a4794db"
+    },
+    {
+      "path": "crates/ruvix/crates/cli/src/commands/monitor.rs",
+      "language": "rust",
+      "sizeLines": 625,
+      "fileCategory": "code",
+      "sha1": "3a45178e221eda7930a79d25823b0b6ff1c54422"
+    },
+    {
+      "path": "crates/ruvix/crates/cli/src/commands/security.rs",
+      "language": "rust",
+      "sizeLines": 755,
+      "fileCategory": "code",
+      "sha1": "15a8adaabd0bc9ec85cce1a61f6373210395585e"
+    },
+    {
+      "path": "crates/ruvix/crates/cli/src/main.rs",
+      "language": "rust",
+      "sizeLines": 195,
+      "fileCategory": "code",
+      "sha1": "674ab1777a635a12b0c0029bf9e8ae1f020e1b24"
+    },
+    {
+      "path": "crates/ruvix/crates/dma/Cargo.toml",
+      "language": "toml",
+      "sizeLines": 26,
+      "fileCategory": "config",
+      "sha1": "7cadf2beff2d8afa8b7b4683a128beb67236a804"
+    },
+    {
+      "path": "crates/ruvix/crates/dma/README.md",
+      "language": "markdown",
+      "sizeLines": 170,
+      "fileCategory": "docs",
+      "sha1": "cd98df5faeff545b4b542595b9b8589c4fb792ba"
+    },
+    {
+      "path": "crates/ruvix/crates/dma/src/buffer.rs",
+      "language": "rust",
+      "sizeLines": 452,
+      "fileCategory": "code",
+      "sha1": "2698917340005713f03b8f142e13b7bbec7a6be8"
+    },
+    {
+      "path": "crates/ruvix/crates/dma/src/channel.rs",
+      "language": "rust",
+      "sizeLines": 404,
+      "fileCategory": "code",
+      "sha1": "6ad94edfd1ab60066908bc11e65f159b31d65ab8"
+    },
+    {
+      "path": "crates/ruvix/crates/dma/src/config.rs",
+      "language": "rust",
+      "sizeLines": 468,
+      "fileCategory": "code",
+      "sha1": "cd2d9dd53e97c16e9f5115cbd18583fe2503dbd1"
+    },
+    {
+      "path": "crates/ruvix/crates/dma/src/controller.rs",
+      "language": "rust",
+      "sizeLines": 490,
+      "fileCategory": "code",
+      "sha1": "fca7464f1d7fe28ec2010e79ab8df73c866319bb"
+    },
+    {
+      "path": "crates/ruvix/crates/dma/src/descriptor.rs",
+      "language": "rust",
+      "sizeLines": 579,
+      "fileCategory": "code",
+      "sha1": "a7f383926b66fe3870827d0172eae853c62e4671"
+    },
+    {
+      "path": "crates/ruvix/crates/dma/src/error.rs",
+      "language": "rust",
+      "sizeLines": 208,
+      "fileCategory": "code",
+      "sha1": "3addf466ea69149dc2b9470ea68bc882c0d22b2a"
+    },
+    {
+      "path": "crates/ruvix/crates/dma/src/lib.rs",
+      "language": "rust",
+      "sizeLines": 255,
+      "fileCategory": "code",
+      "sha1": "58506befde6c0d5230c7c57621cc4d3bad411396"
+    },
+    {
+      "path": "crates/ruvix/crates/drivers/Cargo.toml",
+      "language": "toml",
+      "sizeLines": 210,
+      "fileCategory": "config",
+      "sha1": "41b1b8840a973b3f573736a4612c7be4506b1094"
+    },
+    {
+      "path": "crates/ruvix/crates/drivers/README.md",
+      "language": "markdown",
+      "sizeLines": 224,
+      "fileCategory": "docs",
+      "sha1": "75ad0681964d27939250d2cbea10ae273819a1c2"
+    },
+    {
+      "path": "crates/ruvix/crates/drivers/src/gic.rs",
+      "language": "rust",
+      "sizeLines": 464,
+      "fileCategory": "code",
+      "sha1": "ea712329a436b2d4c431c3febcac0f86c3485293"
+    },
+    {
+      "path": "crates/ruvix/crates/drivers/src/lib.rs",
+      "language": "rust",
+      "sizeLines": 70,
+      "fileCategory": "code",
+      "sha1": "ae4967d8285efe3e1b9b8e3ab11bba67ab23143e"
+    },
+    {
+      "path": "crates/ruvix/crates/drivers/src/mmio.rs",
+      "language": "rust",
+      "sizeLines": 203,
+      "fileCategory": "code",
+      "sha1": "f5275cb8db26777c588a337da54829558de21143"
+    },
+    {
+      "path": "crates/ruvix/crates/drivers/src/pl011.rs",
+      "language": "rust",
+      "sizeLines": 305,
+      "fileCategory": "code",
+      "sha1": "e514202dca78188362ce4045b92f2a45f8b4a625"
+    },
+    {
+      "path": "crates/ruvix/crates/drivers/src/timer.rs",
+      "language": "rust",
+      "sizeLines": 289,
+      "fileCategory": "code",
+      "sha1": "b5e159a1c60481f9abeff8e0e4268fb02ae6ec2f"
+    },
+    {
+      "path": "crates/ruvix/crates/dtb/Cargo.toml",
+      "language": "toml",
+      "sizeLines": 25,
+      "fileCategory": "config",
+      "sha1": "974ae8c4860967c792ddb10e814b60f1ea8f0647"
+    },
+    {
+      "path": "crates/ruvix/crates/dtb/README.md",
+      "language": "markdown",
+      "sizeLines": 218,
+      "fileCategory": "docs",
+      "sha1": "0b38415ab38bc8ec0c52000e0da02472807a09a9"
+    },
+    {
+      "path": "crates/ruvix/crates/dtb/src/error.rs",
+      "language": "rust",
+      "sizeLines": 269,
+      "fileCategory": "code",
+      "sha1": "62e62a9c057871bdb2c05b9b6eba5ed8b2a468a9"
+    },
+    {
+      "path": "crates/ruvix/crates/dtb/src/header.rs",
+      "language": "rust",
+      "sizeLines": 325,
+      "fileCategory": "code",
+      "sha1": "8f09a604fd5602c1f955db28b0e51342d03647a7"
+    },
+    {
+      "path": "crates/ruvix/crates/dtb/src/lib.rs",
+      "language": "rust",
+      "sizeLines": 230,
+      "fileCategory": "code",
+      "sha1": "be1ae9655ee0756594ce9674ca1eb9f1d4e19de2"
+    },
+    {
+      "path": "crates/ruvix/crates/dtb/src/node.rs",
+      "language": "rust",
+      "sizeLines": 403,
+      "fileCategory": "code",
+      "sha1": "1f5bae6e056138824ecb906333c6f96c12c6868a"
+    },
+    {
+      "path": "crates/ruvix/crates/dtb/src/parser.rs",
+      "language": "rust",
+      "sizeLines": 552,
+      "fileCategory": "code",
+      "sha1": "98c1b5b9909d05b1a1791db1fdd5e12b71fc2f87"
+    },
+    {
+      "path": "crates/ruvix/crates/dtb/src/property.rs",
+      "language": "rust",
+      "sizeLines": 385,
+      "fileCategory": "code",
+      "sha1": "2b30219fbba13d7f03480e895b75ef5cc8fd221e"
+    },
+    {
+      "path": "crates/ruvix/crates/fs/Cargo.toml",
+      "language": "toml",
+      "sizeLines": 52,
+      "fileCategory": "config",
+      "sha1": "0e1fda483c4d10d057f9ee8b5be79c1b8ca2ac27"
+    },
+    {
+      "path": "crates/ruvix/crates/fs/README.md",
+      "language": "markdown",
+      "sizeLines": 319,
+      "fileCategory": "docs",
+      "sha1": "b59f0ab9e7f6dd1f50c04beb4879f266066dbc89"
+    },
+    {
+      "path": "crates/ruvix/crates/fs/benches/fs_bench.rs",
+      "language": "rust",
+      "sizeLines": 278,
+      "fileCategory": "code",
+      "sha1": "443c94841036a6a8a936920bfbb6c0f7b29d6e2c"
+    },
+    {
+      "path": "crates/ruvix/crates/fs/src/block.rs",
+      "language": "rust",
+      "sizeLines": 506,
+      "fileCategory": "code",
+      "sha1": "2e383aeefa373ada293ead58e5480f1694a8580a"
+    },
+    {
+      "path": "crates/ruvix/crates/fs/src/error.rs",
+      "language": "rust",
+      "sizeLines": 237,
+      "fileCategory": "code",
+      "sha1": "cdc8f1c188262e5345e72a8531be81bd2cd4d908"
+    },
+    {
+      "path": "crates/ruvix/crates/fs/src/fat32.rs",
+      "language": "rust",
+      "sizeLines": 1024,
+      "fileCategory": "code",
+      "sha1": "0bfa49a7af3b369b6d98122260f22f3af59b9407"
+    },
+    {
+      "path": "crates/ruvix/crates/fs/src/lib.rs",
+      "language": "rust",
+      "sizeLines": 114,
+      "fileCategory": "code",
+      "sha1": "cfb15a11080076ee516fc56ee2859f6e6f30421a"
+    },
+    {
+      "path": "crates/ruvix/crates/fs/src/path.rs",
+      "language": "rust",
+      "sizeLines": 578,
+      "fileCategory": "code",
+      "sha1": "bcabbf34d22e59b08bbddf2cf77a2ef337c0ebac"
+    },
+    {
+      "path": "crates/ruvix/crates/fs/src/ramfs.rs",
+      "language": "rust",
+      "sizeLines": 945,
+      "fileCategory": "code",
+      "sha1": "0ac76c6a787777c180b2b173b9888f5d4b7fc81e"
+    },
+    {
+      "path": "crates/ruvix/crates/fs/src/vfs.rs",
+      "language": "rust",
+      "sizeLines": 895,
+      "fileCategory": "code",
+      "sha1": "165feb27306937eb249ee33c8cf4cd3f478e2ab6"
+    },
+    {
+      "path": "crates/ruvix/crates/fs/tests/fs_test.rs",
+      "language": "rust",
+      "sizeLines": 835,
+      "fileCategory": "code",
+      "sha1": "f7ce20147a59967e8a85e9b2a7bc490166dd7db6"
+    },
+    {
+      "path": "crates/ruvix/crates/hal/Cargo.toml",
+      "language": "toml",
+      "sizeLines": 208,
+      "fileCategory": "config",
+      "sha1": "d6ea8480c9be8e7f565409b9352fd88d8457a13e"
+    },
+    {
+      "path": "crates/ruvix/crates/hal/README.md",
+      "language": "markdown",
+      "sizeLines": 235,
+      "fileCategory": "docs",
+      "sha1": "c396e295d6ca9500fa8fb0b33ac0e11977f7be1b"
+    },
+    {
+      "path": "crates/ruvix/crates/hal/src/console.rs",
+      "language": "rust",
+      "sizeLines": 239,
+      "fileCategory": "code",
+      "sha1": "b2887c2885c87bd06690fbe2eece683bc2261921"
+    },
+    {
+      "path": "crates/ruvix/crates/hal/src/interrupt.rs",
+      "language": "rust",
+      "sizeLines": 457,
+      "fileCategory": "code",
+      "sha1": "30ad0a95b9ab350027511b1b684f45cd6b950e98"
+    },
+    {
+      "path": "crates/ruvix/crates/hal/src/lib.rs",
+      "language": "rust",
+      "sizeLines": 70,
+      "fileCategory": "code",
+      "sha1": "9c7c029027f0b7deac7e04d8b0d385408bd33155"
+    },
+    {
+      "path": "crates/ruvix/crates/hal/src/mmu.rs",
+      "language": "rust",
+      "sizeLines": 499,
+      "fileCategory": "code",
+      "sha1": "fa3e7f3236f2a7b221f00ee0daaa3187c0081822"
+    },
+    {
+      "path": "crates/ruvix/crates/hal/src/power.rs",
+      "language": "rust",
+      "sizeLines": 460,
+      "fileCategory": "code",
+      "sha1": "be6582b0e1319650adf255b10f8bd0e8a3ab1e46"
+    },
+    {
+      "path": "crates/ruvix/crates/hal/src/timer.rs",
+      "language": "rust",
+      "sizeLines": 419,
+      "fileCategory": "code",
+      "sha1": "d807ac165d641e16d9ad348981dbe6ac68e6cd0d"
+    },
+    {
+      "path": "crates/ruvix/crates/net/Cargo.toml",
+      "language": "toml",
+      "sizeLines": 27,
+      "fileCategory": "config",
+      "sha1": "677d5058f4ba95b4865cd17e5505c5e952ad6a40"
+    },
+    {
+      "path": "crates/ruvix/crates/net/README.md",
+      "language": "markdown",
+      "sizeLines": 219,
+      "fileCategory": "docs",
+      "sha1": "68a68789dced4832a790eabffc5cce0aeb2521db"
+    },
+    {
+      "path": "crates/ruvix/crates/net/src/arp.rs",
+      "language": "rust",
+      "sizeLines": 740,
+      "fileCategory": "code",
+      "sha1": "e0dfa9415c351fec0557831be0b634e3d5648402"
+    },
+    {
+      "path": "crates/ruvix/crates/net/src/device.rs",
+      "language": "rust",
+      "sizeLines": 542,
+      "fileCategory": "code",
+      "sha1": "74c4a6b8a4fa27973eb54565bfb8da066db3ee06"
+    },
+    {
+      "path": "crates/ruvix/crates/net/src/error.rs",
+      "language": "rust",
+      "sizeLines": 232,
+      "fileCategory": "code",
+      "sha1": "79d35ede169140af361a1e852bc4d685137942c2"
+    },
+    {
+      "path": "crates/ruvix/crates/net/src/ethernet.rs",
+      "language": "rust",
+      "sizeLines": 469,
+      "fileCategory": "code",
+      "sha1": "54224cd2b0f05c75f0d9001227eb86461429607b"
+    },
+    {
+      "path": "crates/ruvix/crates/net/src/icmp.rs",
+      "language": "rust",
+      "sizeLines": 662,
+      "fileCategory": "code",
+      "sha1": "3e3128921d2ec10e7e5dbc9d52f4f8a1ce8f90ab"
+    },
+    {
+      "path": "crates/ruvix/crates/net/src/ipv4.rs",
+      "language": "rust",
+      "sizeLines": 803,
+      "fileCategory": "code",
+      "sha1": "5867de9de3eda9feaf1581612bc0934471893313"
+    },
+    {
+      "path": "crates/ruvix/crates/net/src/lib.rs",
+      "language": "rust",
+      "sizeLines": 112,
+      "fileCategory": "code",
+      "sha1": "72cc20b2ef28db0d16075be7d92f0b9605609332"
+    },
+    {
+      "path": "crates/ruvix/crates/net/src/stack.rs",
+      "language": "rust",
+      "sizeLines": 665,
+      "fileCategory": "code",
+      "sha1": "143fdd895009351e356d976cc1d2d5bda5f609dd"
+    },
+    {
+      "path": "crates/ruvix/crates/net/src/udp.rs",
+      "language": "rust",
+      "sizeLines": 725,
+      "fileCategory": "code",
+      "sha1": "0f677bc4735b53e8866d2a8abc99f0cec244190a"
+    },
+    {
+      "path": "crates/ruvix/crates/nucleus/Cargo.toml",
+      "language": "toml",
+      "sizeLines": 86,
+      "fileCategory": "config",
+      "sha1": "de0294e4976af0e5e37380fc000723999bdb558f"
+    },
+    {
+      "path": "crates/ruvix/crates/nucleus/README.md",
+      "language": "markdown",
+      "sizeLines": 194,
+      "fileCategory": "docs",
+      "sha1": "488f73ac13a6a3c0c25ef6f730cd0c31142668c8"
+    },
+    {
+      "path": "crates/ruvix/crates/nucleus/benches/syscall_bench.rs",
+      "language": "rust",
+      "sizeLines": 417,
+      "fileCategory": "code",
+      "sha1": "6c52904c09a0f3c1161d391d4f736890c74c15de"
+    },
+    {
+      "path": "crates/ruvix/crates/nucleus/src/checkpoint.rs",
+      "language": "rust",
+      "sizeLines": 715,
+      "fileCategory": "code",
+      "sha1": "002019d5ff019056702738e2cc0e6127f5976594"
+    },
+    {
+      "path": "crates/ruvix/crates/nucleus/src/graph_store.rs",
+      "language": "rust",
+      "sizeLines": 739,
+      "fileCategory": "code",
+      "sha1": "5e2405ab89f95a8c56fb53b83476282d9aa7fa9a"
+    },
+    {
+      "path": "crates/ruvix/crates/nucleus/src/kernel.rs",
+      "language": "rust",
+      "sizeLines": 1036,
+      "fileCategory": "code",
+      "sha1": "f3377d8278ca42327d007fd930809546d757b442"
+    },
+    {
+      "path": "crates/ruvix/crates/nucleus/src/lib.rs",
+      "language": "rust",
+      "sizeLines": 135,
+      "fileCategory": "code",
+      "sha1": "5891e18caf2539147caeb636c2800d91feaf075a"
+    },
+    {
+      "path": "crates/ruvix/crates/nucleus/src/proof_engine.rs",
+      "language": "rust",
+      "sizeLines": 518,
+      "fileCategory": "code",
+      "sha1": "31f20797fa03c1945d1bd449df162a963bba06dc"
+    },
+    {
+      "path": "crates/ruvix/crates/nucleus/src/scheduler.rs",
+      "language": "rust",
+      "sizeLines": 715,
+      "fileCategory": "code",
+      "sha1": "ea062db3a6effc76233414f5e9f39a8cff3b11bc"
+    },
+    {
+      "path": "crates/ruvix/crates/nucleus/src/shell_backend.rs",
+      "language": "rust",
+      "sizeLines": 489,
+      "fileCategory": "code",
+      "sha1": "b4317c06caed06770bd903635037d42ea41bf35c"
+    },
+    {
+      "path": "crates/ruvix/crates/nucleus/src/syscall.rs",
+      "language": "rust",
+      "sizeLines": 588,
+      "fileCategory": "code",
+      "sha1": "cf7491b673092a398d8a7abc099d0c3fae9aeb1e"
+    },
+    {
+      "path": "crates/ruvix/crates/nucleus/src/vector_store.rs",
+      "language": "rust",
+      "sizeLines": 607,
+      "fileCategory": "code",
+      "sha1": "3ba7cc74da0a4cf46c01f1b53a373b4f75964b3d"
+    },
+    {
+      "path": "crates/ruvix/crates/nucleus/src/witness_log.rs",
+      "language": "rust",
+      "sizeLines": 686,
+      "fileCategory": "code",
+      "sha1": "8d1df643097118a93f0477b3d325d7316295106f"
+    },
+    {
+      "path": "crates/ruvix/crates/nucleus/tests/acceptance.rs",
+      "language": "rust",
+      "sizeLines": 554,
+      "fileCategory": "code",
+      "sha1": "ae442cb745cdf13918087b9d8df4b8e4aa0ac0cb"
+    },
+    {
+      "path": "crates/ruvix/crates/nucleus/tests/deterministic_replay.rs",
+      "language": "rust",
+      "sizeLines": 689,
+      "fileCategory": "code",
+      "sha1": "457608631b914a1f39ce5373859195eafa87adea"
+    },
+    {
+      "path": "crates/ruvix/crates/nucleus/tests/syscall_tests.rs",
+      "language": "rust",
+      "sizeLines": 1089,
+      "fileCategory": "code",
+      "sha1": "d659a22821480b161ff36316b45cdf28d8d11a79"
+    },
+    {
+      "path": "crates/ruvix/crates/physmem/Cargo.toml",
+      "language": "toml",
+      "sizeLines": 45,
+      "fileCategory": "config",
+      "sha1": "2345b75adcbf0637bfbb2bdcd76e1288bcebfa3e"
+    },
+    {
+      "path": "crates/ruvix/crates/physmem/README.md",
+      "language": "markdown",
+      "sizeLines": 241,
+      "fileCategory": "docs",
+      "sha1": "1a6ce42e3611d2ab4337e99b1c3a9253f295c31a"
+    },
+    {
+      "path": "crates/ruvix/crates/physmem/benches/buddy_bench.rs",
+      "language": "rust",
+      "sizeLines": 155,
+      "fileCategory": "code",
+      "sha1": "9e5400bd10bd6d2886d4e8891f752893feb9e393"
+    },
+    {
+      "path": "crates/ruvix/crates/physmem/src/addr.rs",
+      "language": "rust",
+      "sizeLines": 604,
+      "fileCategory": "code",
+      "sha1": "1e678b7cc3d09545dcdd63069e8d0ca9d2a67c58"
+    },
+    {
+      "path": "crates/ruvix/crates/physmem/src/allocator.rs",
+      "language": "rust",
+      "sizeLines": 1030,
+      "fileCategory": "code",
+      "sha1": "cccdf9ed9fd26839f52399aec8c2e1b732be416a"
+    },
+    {
+      "path": "crates/ruvix/crates/physmem/src/error.rs",
+      "language": "rust",
+      "sizeLines": 166,
+      "fileCategory": "code",
+      "sha1": "c0bb487e42c1fff42fedc929a0847db7686de45a"
+    },
+    {
+      "path": "crates/ruvix/crates/physmem/src/frame.rs",
+      "language": "rust",
+      "sizeLines": 728,
+      "fileCategory": "code",
+      "sha1": "c7434bc23fa382855e0f97e3f5335bc7352528aa"
+    },
+    {
+      "path": "crates/ruvix/crates/physmem/src/lib.rs",
+      "language": "rust",
+      "sizeLines": 310,
+      "fileCategory": "code",
+      "sha1": "a076f8103d57a151b4af3ce46f0ddb60388666b6"
+    },
+    {
+      "path": "crates/ruvix/crates/physmem/src/stats.rs",
+      "language": "rust",
+      "sizeLines": 488,
+      "fileCategory": "code",
+      "sha1": "e145929a6e794ce7727fc7c91cde91b5c24478c7"
+    },
+    {
+      "path": "crates/ruvix/crates/proof/Cargo.toml",
+      "language": "toml",
+      "sizeLines": 232,
+      "fileCategory": "config",
+      "sha1": "474d19d8bee4ede61f0e357a9e93e81a6f275ee3"
+    },
+    {
+      "path": "crates/ruvix/crates/proof/README.md",
+      "language": "markdown",
+      "sizeLines": 95,
+      "fileCategory": "docs",
+      "sha1": "2a828ce8e6d4e278f174cf936a81fdb696e05d5a"
+    },
+    {
+      "path": "crates/ruvix/crates/proof/benches/proof_bench.rs",
+      "language": "rust",
+      "sizeLines": 12,
+      "fileCategory": "code",
+      "sha1": "94c6135ef84c42cd60df83b117b1161db724a170"
+    },
+    {
+      "path": "crates/ruvix/crates/proof/src/attestation.rs",
+      "language": "rust",
+      "sizeLines": 496,
+      "fileCategory": "code",
+      "sha1": "70358aac036893edeebed46c46f0d8da09e7de54"
+    },
+    {
+      "path": "crates/ruvix/crates/proof/src/cache.rs",
+      "language": "rust",
+      "sizeLines": 452,
+      "fileCategory": "code",
+      "sha1": "a9a0a1a0178d2ec1062e224af5e21a3dd51918ef"
+    },
+    {
+      "path": "crates/ruvix/crates/proof/src/engine.rs",
+      "language": "rust",
+      "sizeLines": 553,
+      "fileCategory": "code",
+      "sha1": "7a9f679891d10519ac0428faff1acf264de2bcf2"
+    },
+    {
+      "path": "crates/ruvix/crates/proof/src/error.rs",
+      "language": "rust",
+      "sizeLines": 209,
+      "fileCategory": "code",
+      "sha1": "5eaf077b0dbc83b390164d652fde80ce6b4120fd"
+    },
+    {
+      "path": "crates/ruvix/crates/proof/src/integration.rs",
+      "language": "rust",
+      "sizeLines": 153,
+      "fileCategory": "code",
+      "sha1": "7a4c4007c1ebec63eeee2b9259ca96371a781d4c"
+    },
+    {
+      "path": "crates/ruvix/crates/proof/src/lib.rs",
+      "language": "rust",
+      "sizeLines": 98,
+      "fileCategory": "code",
+      "sha1": "911d6c45750e436247a4c17a334b84b5ed09e90b"
+    },
+    {
+      "path": "crates/ruvix/crates/proof/src/routing.rs",
+      "language": "rust",
+      "sizeLines": 353,
+      "fileCategory": "code",
+      "sha1": "2497e873212f9c9b0631b5aa12d916a25ab1262e"
+    },
+    {
+      "path": "crates/ruvix/crates/proof/src/verifier.rs",
+      "language": "rust",
+      "sizeLines": 596,
+      "fileCategory": "code",
+      "sha1": "cd614ee6e781e0316bc3e1318881db1f3b3c5452"
+    },
+    {
+      "path": "crates/ruvix/crates/proof/src/witness.rs",
+      "language": "rust",
+      "sizeLines": 341,
+      "fileCategory": "code",
+      "sha1": "745cda6a0aa83ce98c189e27e1370af79b88155e"
+    },
+    {
+      "path": "crates/ruvix/crates/proof/tests/security_integration.rs",
+      "language": "rust",
+      "sizeLines": 274,
+      "fileCategory": "code",
+      "sha1": "2a493b9c772d54c7273005fbcba4c0066f4229ae"
+    },
+    {
+      "path": "crates/ruvix/crates/queue/Cargo.toml",
+      "language": "toml",
+      "sizeLines": 228,
+      "fileCategory": "config",
+      "sha1": "6da58f5d84e5a7ebcd45c899d247c376f7b86299"
+    },
+    {
+      "path": "crates/ruvix/crates/queue/README.md",
+      "language": "markdown",
+      "sizeLines": 138,
+      "fileCategory": "docs",
+      "sha1": "7a44bf40ad12802f8a8e61e98bf7fc6bc5992010"
+    },
+    {
+      "path": "crates/ruvix/crates/queue/benches/queue_bench.rs",
+      "language": "rust",
+      "sizeLines": 579,
+      "fileCategory": "code",
+      "sha1": "91adab9bc2aa4e44748061f959ea557ff39563db"
+    },
+    {
+      "path": "crates/ruvix/crates/queue/src/descriptor.rs",
+      "language": "rust",
+      "sizeLines": 329,
+      "fileCategory": "code",
+      "sha1": "ea878f91262d14c7df9c8884ea4c809052ba2286"
+    },
+    {
+      "path": "crates/ruvix/crates/queue/src/kernel_queue.rs",
+      "language": "rust",
+      "sizeLines": 614,
+      "fileCategory": "code",
+      "sha1": "ab1f3312cdefb61007885243604c5247eba0e7fc"
+    },
+    {
+      "path": "crates/ruvix/crates/queue/src/lib.rs",
+      "language": "rust",
+      "sizeLines": 122,
+      "fileCategory": "code",
+      "sha1": "8ad50883491b214c1458172e3290f3cabee61d99"
+    },
+    {
+      "path": "crates/ruvix/crates/queue/src/ring.rs",
+      "language": "rust",
+      "sizeLines": 614,
+      "fileCategory": "code",
+      "sha1": "39c79c468299f2b8c69034f111cc5d92578cd3b1"
+    },
+    {
+      "path": "crates/ruvix/crates/queue/src/ring_optimized.rs",
+      "language": "rust",
+      "sizeLines": 490,
+      "fileCategory": "code",
+      "sha1": "960a9fa4db2d8e9f2da49ff8a2afeee4a30f433a"
+    },
+    {
+      "path": "crates/ruvix/crates/queue/tests/integration.rs",
+      "language": "rust",
+      "sizeLines": 687,
+      "fileCategory": "code",
+      "sha1": "dca1bc1760da79775b9ca4875c32ec0dfb20bc8e"
+    },
+    {
+      "path": "crates/ruvix/crates/region/Cargo.toml",
+      "language": "toml",
+      "sizeLines": 236,
+      "fileCategory": "config",
+      "sha1": "f82499fae3d8768442eb4a2eb8a3597344bd4ba5"
+    },
+    {
+      "path": "crates/ruvix/crates/region/README.md",
+      "language": "markdown",
+      "sizeLines": 122,
+      "fileCategory": "docs",
+      "sha1": "d3532bc1558ac1871c0076208fbfd6a94732f7c5"
+    },
+    {
+      "path": "crates/ruvix/crates/region/benches/slab_bench.rs",
+      "language": "rust",
+      "sizeLines": 459,
+      "fileCategory": "code",
+      "sha1": "db781d6b223aa4edc9a976a6d24ded63f0fc4f89"
+    },
+    {
+      "path": "crates/ruvix/crates/region/src/append_only.rs",
+      "language": "rust",
+      "sizeLines": 358,
+      "fileCategory": "code",
+      "sha1": "a8b03fdf40f71d4c7040b41cdc2573ff90cadc82"
+    },
+    {
+      "path": "crates/ruvix/crates/region/src/backing.rs",
+      "language": "rust",
+      "sizeLines": 294,
+      "fileCategory": "code",
+      "sha1": "2b23e8bde2c7e247fc9821439901a1d502dbf19c"
+    },
+    {
+      "path": "crates/ruvix/crates/region/src/immutable.rs",
+      "language": "rust",
+      "sizeLines": 343,
+      "fileCategory": "code",
+      "sha1": "b97b32c79431b687d5d1d1094ef8daca53304922"
+    },
+    {
+      "path": "crates/ruvix/crates/region/src/lib.rs",
+      "language": "rust",
+      "sizeLines": 94,
+      "fileCategory": "code",
+      "sha1": "5aa1c43427e9de02a72fc810ea593718b5b927e4"
+    },
+    {
+      "path": "crates/ruvix/crates/region/src/manager.rs",
+      "language": "rust",
+      "sizeLines": 585,
+      "fileCategory": "code",
+      "sha1": "be991f2a7b2ac416c0a9f65564b1101ec3ec27d4"
+    },
+    {
+      "path": "crates/ruvix/crates/region/src/slab.rs",
+      "language": "rust",
+      "sizeLines": 596,
+      "fileCategory": "code",
+      "sha1": "34f7720e234d75d1f648aedcb116ecaf3017b359"
+    },
+    {
+      "path": "crates/ruvix/crates/region/src/slab_optimized.rs",
+      "language": "rust",
+      "sizeLines": 555,
+      "fileCategory": "code",
+      "sha1": "e566d81af87d907e17b8988ba6a84638e0c5c832"
+    },
+    {
+      "path": "crates/ruvix/crates/region/tests/region_test.rs",
+      "language": "rust",
+      "sizeLines": 866,
+      "fileCategory": "code",
+      "sha1": "fb5492ff2f9536112585adb516835d57a9409095"
+    },
+    {
+      "path": "crates/ruvix/crates/rpi-boot/Cargo.toml",
+      "language": "toml",
+      "sizeLines": 31,
+      "fileCategory": "config",
+      "sha1": "1b1f31f5422e5545a75fe85399209e97c89f95b0"
+    },
+    {
+      "path": "crates/ruvix/crates/rpi-boot/README.md",
+      "language": "markdown",
+      "sizeLines": 219,
+      "fileCategory": "docs",
+      "sha1": "9e0984ef50aa7173d74252514896eff2dd9f0672"
+    },
+    {
+      "path": "crates/ruvix/crates/rpi-boot/src/config.rs",
+      "language": "rust",
+      "sizeLines": 418,
+      "fileCategory": "code",
+      "sha1": "f3ba71b7e4fc3510d2e9da9f7be2fc7faefa324f"
+    },
+    {
+      "path": "crates/ruvix/crates/rpi-boot/src/dtb.rs",
+      "language": "rust",
+      "sizeLines": 366,
+      "fileCategory": "code",
+      "sha1": "49b9bdeb796dc443b1a9fc4d288115d0408ffecf"
+    },
+    {
+      "path": "crates/ruvix/crates/rpi-boot/src/early_uart.rs",
+      "language": "rust",
+      "sizeLines": 310,
+      "fileCategory": "code",
+      "sha1": "c4dcb3f130635577855156fd63ae4670e02a1b30"
+    },
+    {
+      "path": "crates/ruvix/crates/rpi-boot/src/lib.rs",
+      "language": "rust",
+      "sizeLines": 413,
+      "fileCategory": "code",
+      "sha1": "f0c7ef317d61d28cc0a7982ba9bccc1e4b0bcb2a"
+    },
+    {
+      "path": "crates/ruvix/crates/rpi-boot/src/spin_table.rs",
+      "language": "rust",
+      "sizeLines": 436,
+      "fileCategory": "code",
+      "sha1": "158e2be941af953e277d37e1a23e3af930fe81ce"
+    },
+    {
+      "path": "crates/ruvix/crates/sched/Cargo.toml",
+      "language": "toml",
+      "sizeLines": 232,
+      "fileCategory": "config",
+      "sha1": "9c98692c9ab52363df1d34db1afc6949543e2099"
+    },
+    {
+      "path": "crates/ruvix/crates/sched/README.md",
+      "language": "markdown",
+      "sizeLines": 139,
+      "fileCategory": "docs",
+      "sha1": "76d8b41ee59caab4933182fc0dacb7c7e0050297"
+    },
+    {
+      "path": "crates/ruvix/crates/sched/benches/scheduler_bench.rs",
+      "language": "rust",
+      "sizeLines": 260,
+      "fileCategory": "code",
+      "sha1": "f9e332ed620e34e9f9944cc1f9e00e61fa87697e"
+    },
+    {
+      "path": "crates/ruvix/crates/sched/src/error.rs",
+      "language": "rust",
+      "sizeLines": 72,
+      "fileCategory": "code",
+      "sha1": "eac331c4e6757e118ae248fcfbad75a5dd5fe9fa"
+    },
+    {
+      "path": "crates/ruvix/crates/sched/src/lib.rs",
+      "language": "rust",
+      "sizeLines": 204,
+      "fileCategory": "code",
+      "sha1": "e586598b1c742883bbeb9a5568f05df692d73690"
+    },
+    {
+      "path": "crates/ruvix/crates/sched/src/novelty.rs",
+      "language": "rust",
+      "sizeLines": 500,
+      "fileCategory": "code",
+      "sha1": "931c23a4475e41f66e840d330a4742971d41f5f3"
+    },
+    {
+      "path": "crates/ruvix/crates/sched/src/partition.rs",
+      "language": "rust",
+      "sizeLines": 496,
+      "fileCategory": "code",
+      "sha1": "6332f218e2c85953c8f42ce0e76eff5540ea9b00"
+    },
+    {
+      "path": "crates/ruvix/crates/sched/src/priority.rs",
+      "language": "rust",
+      "sizeLines": 365,
+      "fileCategory": "code",
+      "sha1": "18ccae7e88315bbf5f815e79a72d3df12bb012b0"
+    },
+    {
+      "path": "crates/ruvix/crates/sched/src/scheduler.rs",
+      "language": "rust",
+      "sizeLines": 767,
+      "fileCategory": "code",
+      "sha1": "47fcbe1c052125ea292975505261c688b60308a7"
+    },
+    {
+      "path": "crates/ruvix/crates/sched/src/task.rs",
+      "language": "rust",
+      "sizeLines": 462,
+      "fileCategory": "code",
+      "sha1": "bdfbce17d83b32b89fe87943df21e3b5b875b6b3"
+    },
+    {
+      "path": "crates/ruvix/crates/shell/Cargo.toml",
+      "language": "toml",
+      "sizeLines": 222,
+      "fileCategory": "config",
+      "sha1": "ae3fb692a9ea8749ad2b0f813184fa3f4aeb02e5"
+    },
+    {
+      "path": "crates/ruvix/crates/shell/README.md",
+      "language": "markdown",
+      "sizeLines": 72,
+      "fileCategory": "docs",
+      "sha1": "0a470bcecb60836c23ad17517c1d281333bbf7d7"
+    },
+    {
+      "path": "crates/ruvix/crates/shell/src/commands/caps.rs",
+      "language": "rust",
+      "sizeLines": 125,
+      "fileCategory": "code",
+      "sha1": "0e2d6f36a66297c551f5f727f3b1ed7176f0b9fe"
+    },
+    {
+      "path": "crates/ruvix/crates/shell/src/commands/cpu.rs",
+      "language": "rust",
+      "sizeLines": 81,
+      "fileCategory": "code",
+      "sha1": "061667a8e4dc219fea3cb77f93e997e6cecd1a1b"
+    },
+    {
+      "path": "crates/ruvix/crates/shell/src/commands/info.rs",
+      "language": "rust",
+      "sizeLines": 73,
+      "fileCategory": "code",
+      "sha1": "388989afb1758a125a885b1f6ab7508ef2b740e0"
+    },
+    {
+      "path": "crates/ruvix/crates/shell/src/commands/mem.rs",
+      "language": "rust",
+      "sizeLines": 71,
+      "fileCategory": "code",
+      "sha1": "450de4590b2edd441a045a8b7d96ea29de8e9927"
+    },
+    {
+      "path": "crates/ruvix/crates/shell/src/commands/mod.rs",
+      "language": "rust",
+      "sizeLines": 43,
+      "fileCategory": "code",
+      "sha1": "0a2e7e0fec35efc3b23495fe87bfdba5a88706dd"
+    },
+    {
+      "path": "crates/ruvix/crates/shell/src/commands/perf.rs",
+      "language": "rust",
+      "sizeLines": 62,
+      "fileCategory": "code",
+      "sha1": "1e09734e40dddc763aecfd6f6a613a6a2ee2fb24"
+    },
+    {
+      "path": "crates/ruvix/crates/shell/src/commands/proofs.rs",
+      "language": "rust",
+      "sizeLines": 85,
+      "fileCategory": "code",
+      "sha1": "719efe0155c1174d9424c49e5b45ed89f77bb1aa"
+    },
+    {
+      "path": "crates/ruvix/crates/shell/src/commands/queues.rs",
+      "language": "rust",
+      "sizeLines": 65,
+      "fileCategory": "code",
+      "sha1": "fd72cf15fd5496c624679290055dfff26a910c19"
+    },
+    {
+      "path": "crates/ruvix/crates/shell/src/commands/tasks.rs",
+      "language": "rust",
+      "sizeLines": 80,
+      "fileCategory": "code",
+      "sha1": "00827dbb5c2cd6517286cfe2848f9a95837d49ff"
+    },
+    {
+      "path": "crates/ruvix/crates/shell/src/commands/vectors.rs",
+      "language": "rust",
+      "sizeLines": 87,
+      "fileCategory": "code",
+      "sha1": "70adcb5a1055994a7a6363cf6db5c9dd93578da7"
+    },
+    {
+      "path": "crates/ruvix/crates/shell/src/commands/witness.rs",
+      "language": "rust",
+      "sizeLines": 98,
+      "fileCategory": "code",
+      "sha1": "1b3d6dcc0e607f3a286b6799082eb5c3c064dda9"
+    },
+    {
+      "path": "crates/ruvix/crates/shell/src/lib.rs",
+      "language": "rust",
+      "sizeLines": 651,
+      "fileCategory": "code",
+      "sha1": "ec254d8edffae9b5c18bb90f6e26cef6f279db2b"
+    },
+    {
+      "path": "crates/ruvix/crates/shell/src/parser.rs",
+      "language": "rust",
+      "sizeLines": 384,
+      "fileCategory": "code",
+      "sha1": "0745f7b2ba4ab9a2deeb39f3d2cdc3bfba4e97c2"
+    },
+    {
+      "path": "crates/ruvix/crates/smp/Cargo.toml",
+      "language": "toml",
+      "sizeLines": 38,
+      "fileCategory": "config",
+      "sha1": "b4a1e0a459e33f544aec3b57b8e53bf898bb48cd"
+    },
+    {
+      "path": "crates/ruvix/crates/smp/README.md",
+      "language": "markdown",
+      "sizeLines": 351,
+      "fileCategory": "docs",
+      "sha1": "dbd2ea0b7b892aacd50635280e34ed62cb4f8421"
+    },
+    {
+      "path": "crates/ruvix/crates/smp/src/barriers.rs",
+      "language": "rust",
+      "sizeLines": 484,
+      "fileCategory": "code",
+      "sha1": "153c98712b4a0e94de43e62100e17e840946208a"
+    },
+    {
+      "path": "crates/ruvix/crates/smp/src/cpu.rs",
+      "language": "rust",
+      "sizeLines": 401,
+      "fileCategory": "code",
+      "sha1": "a4a3dc42e8bec1bca85e9137ce0f4e57f62ce2d8"
+    },
+    {
+      "path": "crates/ruvix/crates/smp/src/ipi.rs",
+      "language": "rust",
+      "sizeLines": 466,
+      "fileCategory": "code",
+      "sha1": "5dba3f653f3241402b7c0261c8f49bad0dfd0f01"
+    },
+    {
+      "path": "crates/ruvix/crates/smp/src/lib.rs",
+      "language": "rust",
+      "sizeLines": 124,
+      "fileCategory": "code",
+      "sha1": "a3cd986ec16faf81510217d2eaad38fa76b43db5"
+    },
+    {
+      "path": "crates/ruvix/crates/smp/src/percpu.rs",
+      "language": "rust",
+      "sizeLines": 395,
+      "fileCategory": "code",
+      "sha1": "81b2e27df548ff3ddd6e77ce182eff63b15ca63d"
+    },
+    {
+      "path": "crates/ruvix/crates/smp/src/spinlock.rs",
+      "language": "rust",
+      "sizeLines": 509,
+      "fileCategory": "code",
+      "sha1": "b1c3bee9ed444e61e3a6f40a85522d4e4412f5c4"
+    },
+    {
+      "path": "crates/ruvix/crates/smp/src/topology.rs",
+      "language": "rust",
+      "sizeLines": 555,
+      "fileCategory": "code",
+      "sha1": "e5a44273f7bcf8e0f79b658d15f65131a0d938de"
+    },
+    {
+      "path": "crates/ruvix/crates/types/Cargo.toml",
+      "language": "toml",
+      "sizeLines": 231,
+      "fileCategory": "config",
+      "sha1": "6c75cd2ee0f0743b12a6716695de86b91bc4b8cb"
+    },
+    {
+      "path": "crates/ruvix/crates/types/README.md",
+      "language": "markdown",
+      "sizeLines": 113,
+      "fileCategory": "docs",
+      "sha1": "37f4436456a3ba3552d4e5f7417c7af9c76a25ee"
+    },
+    {
+      "path": "crates/ruvix/crates/types/benches/serialization.rs",
+      "language": "rust",
+      "sizeLines": 317,
+      "fileCategory": "code",
+      "sha1": "43cb213343ae519d15460578c5f44aa3a55c5066"
+    },
+    {
+      "path": "crates/ruvix/crates/types/benches/type_construction.rs",
+      "language": "rust",
+      "sizeLines": 246,
+      "fileCategory": "code",
+      "sha1": "ffc3a2198c776215e7bd98675c5c9d4c532574a4"
+    },
+    {
+      "path": "crates/ruvix/crates/types/src/capability.rs",
+      "language": "rust",
+      "sizeLines": 340,
+      "fileCategory": "code",
+      "sha1": "35e08f0a7dc54b690bd7c2dbf9da8a31e651856f"
+    },
+    {
+      "path": "crates/ruvix/crates/types/src/error.rs",
+      "language": "rust",
+      "sizeLines": 202,
+      "fileCategory": "code",
+      "sha1": "6f180a564f142b707909c0a26866b560ce96ce4d"
+    },
+    {
+      "path": "crates/ruvix/crates/types/src/graph.rs",
+      "language": "rust",
+      "sizeLines": 246,
+      "fileCategory": "code",
+      "sha1": "14e4eceffb223f8d036fca821029fb88fb19ce2d"
+    },
+    {
+      "path": "crates/ruvix/crates/types/src/handle.rs",
+      "language": "rust",
+      "sizeLines": 94,
+      "fileCategory": "code",
+      "sha1": "036b0fc4032925082d61b6d68c8a992f76063d62"
+    },
+    {
+      "path": "crates/ruvix/crates/types/src/lib.rs",
+      "language": "rust",
+      "sizeLines": 89,
+      "fileCategory": "code",
+      "sha1": "a6d32d9fb420c2b183571edd7e8c3ea3047945ae"
+    },
+    {
+      "path": "crates/ruvix/crates/types/src/object.rs",
+      "language": "rust",
+      "sizeLines": 101,
+      "fileCategory": "code",
+      "sha1": "b61fe53ef5d057bd5cb6afdb039854331e413e75"
+    },
+    {
+      "path": "crates/ruvix/crates/types/src/proof.rs",
+      "language": "rust",
+      "sizeLines": 276,
+      "fileCategory": "code",
+      "sha1": "c7bc7c206923ef12405f31cb3252d18e483caa7f"
+    },
+    {
+      "path": "crates/ruvix/crates/types/src/proof_cache.rs",
+      "language": "rust",
+      "sizeLines": 593,
+      "fileCategory": "code",
+      "sha1": "e5f8ea6b8337eddf7cadf8f5ae95a3d69db8a78c"
+    },
+    {
+      "path": "crates/ruvix/crates/types/src/proof_cache_optimized.rs",
+      "language": "rust",
+      "sizeLines": 493,
+      "fileCategory": "code",
+      "sha1": "f13cfdc354a2fe6c1e461c24943124089b444875"
+    },
+    {
+      "path": "crates/ruvix/crates/types/src/queue.rs",
+      "language": "rust",
+      "sizeLines": 175,
+      "fileCategory": "code",
+      "sha1": "1de68699cf673c2dcb0b1efb14222035b560382c"
+    },
+    {
+      "path": "crates/ruvix/crates/types/src/region.rs",
+      "language": "rust",
+      "sizeLines": 195,
+      "fileCategory": "code",
+      "sha1": "1f8fd00ffda6cbecd62e5d117ff9ffca3865992b"
+    },
+    {
+      "path": "crates/ruvix/crates/types/src/rvf.rs",
+      "language": "rust",
+      "sizeLines": 186,
+      "fileCategory": "code",
+      "sha1": "1f43271ccadcb757221ed279bc0ded63752eceb0"
+    },
+    {
+      "path": "crates/ruvix/crates/types/src/scheduler.rs",
+      "language": "rust",
+      "sizeLines": 221,
+      "fileCategory": "code",
+      "sha1": "b94f91dee86a863cc9881a1db0500a7d2d581a98"
+    },
+    {
+      "path": "crates/ruvix/crates/types/src/sensor.rs",
+      "language": "rust",
+      "sizeLines": 227,
+      "fileCategory": "code",
+      "sha1": "3c885f5558e14b85aa632c84485aa1b5bc220b64"
+    },
+    {
+      "path": "crates/ruvix/crates/types/src/task.rs",
+      "language": "rust",
+      "sizeLines": 138,
+      "fileCategory": "code",
+      "sha1": "ed7a0629bb62008385b82b15416f0fb7dbb2f247"
+    },
+    {
+      "path": "crates/ruvix/crates/types/src/timer.rs",
+      "language": "rust",
+      "sizeLines": 126,
+      "fileCategory": "code",
+      "sha1": "30dbded8618d67c764189890bea8dcfc96f9a512"
+    },
+    {
+      "path": "crates/ruvix/crates/types/src/vector.rs",
+      "language": "rust",
+      "sizeLines": 255,
+      "fileCategory": "code",
+      "sha1": "55dee2bd58c42529f6cb4cbd1925e65af7447603"
+    },
+    {
+      "path": "crates/ruvix/crates/types/tests/proof_cache_test.rs",
+      "language": "rust",
+      "sizeLines": 307,
+      "fileCategory": "code",
+      "sha1": "f328fc9d188650709d5a6b19a63923acc9808379"
+    },
+    {
+      "path": "crates/ruvix/crates/types/tests/types_test.rs",
+      "language": "rust",
+      "sizeLines": 496,
+      "fileCategory": "code",
+      "sha1": "14cecd325cbf59f64fa98ab56512a9feecf1a89e"
+    },
+    {
+      "path": "crates/ruvix/crates/vecgraph/Cargo.toml",
+      "language": "toml",
+      "sizeLines": 226,
+      "fileCategory": "config",
+      "sha1": "4d99e1ba6a76d4b93bdd782301c5c0a24b73b2d4"
+    },
+    {
+      "path": "crates/ruvix/crates/vecgraph/README.md",
+      "language": "markdown",
+      "sizeLines": 166,
+      "fileCategory": "docs",
+      "sha1": "7b206ad6f18860cceed222234d4f206340743e22"
+    },
+    {
+      "path": "crates/ruvix/crates/vecgraph/src/coherence.rs",
+      "language": "rust",
+      "sizeLines": 373,
+      "fileCategory": "code",
+      "sha1": "f90459df5d4ed4715ec7299f4d119fae06f62470"
+    },
+    {
+      "path": "crates/ruvix/crates/vecgraph/src/graph_store.rs",
+      "language": "rust",
+      "sizeLines": 1070,
+      "fileCategory": "code",
+      "sha1": "6a6be1a65963d60ab3373cbe0f5098306273e024"
+    },
+    {
+      "path": "crates/ruvix/crates/vecgraph/src/hnsw.rs",
+      "language": "rust",
+      "sizeLines": 456,
+      "fileCategory": "code",
+      "sha1": "0808fadf64e2046ed427d0540669f0bbaab0c4a6"
+    },
+    {
+      "path": "crates/ruvix/crates/vecgraph/src/lib.rs",
+      "language": "rust",
+      "sizeLines": 99,
+      "fileCategory": "code",
+      "sha1": "9a135216d3c661d7a432d6e185a52caa41e17901"
+    },
+    {
+      "path": "crates/ruvix/crates/vecgraph/src/proof_policy.rs",
+      "language": "rust",
+      "sizeLines": 551,
+      "fileCategory": "code",
+      "sha1": "e57d2c786bbec3bbde884320d99487dddebce8fb"
+    },
+    {
+      "path": "crates/ruvix/crates/vecgraph/src/simd_distance.rs",
+      "language": "rust",
+      "sizeLines": 714,
+      "fileCategory": "code",
+      "sha1": "9033b77220e20c6b8662f5bb4bb9aaa41e8539cf"
+    },
+    {
+      "path": "crates/ruvix/crates/vecgraph/src/vector_store.rs",
+      "language": "rust",
+      "sizeLines": 884,
+      "fileCategory": "code",
+      "sha1": "ab48679df7ded27cfd9583f1865982982527504c"
+    },
+    {
+      "path": "crates/ruvix/crates/vecgraph/src/witness.rs",
+      "language": "rust",
+      "sizeLines": 512,
+      "fileCategory": "code",
+      "sha1": "b2a8ec003fe17fd6a179227b353a85247837993e"
+    },
+    {
+      "path": "crates/ruvix/crates/vecgraph/tests/proof_gated.rs",
+      "language": "rust",
+      "sizeLines": 682,
+      "fileCategory": "code",
+      "sha1": "70ffa094fd28b9beb04845ae8eccd25400ea4858"
+    },
+    {
+      "path": "crates/ruvix/examples/cognitive_demo/Cargo.toml",
+      "language": "toml",
+      "sizeLines": 277,
+      "fileCategory": "config",
+      "sha1": "e4c8f964c56f4b7c872c942c0a104b99e3a4e70e"
+    },
+    {
+      "path": "crates/ruvix/examples/cognitive_demo/benches/pipeline_bench.rs",
+      "language": "rust",
+      "sizeLines": 214,
+      "fileCategory": "code",
+      "sha1": "c5ef35762d631170668f6c29971097dc4e888b7b"
+    },
+    {
+      "path": "crates/ruvix/examples/cognitive_demo/examples/cognitive_demo.rs",
+      "language": "rust",
+      "sizeLines": 245,
+      "fileCategory": "code",
+      "sha1": "276f2b5f46ba8de2e4658cdb2fc89f1e96847560"
+    },
+    {
+      "path": "crates/ruvix/examples/cognitive_demo/src/components/attestor.rs",
+      "language": "rust",
+      "sizeLines": 471,
+      "fileCategory": "code",
+      "sha1": "ccc71e933df3d7a8e10227c5ec59a8805b62c9cd"
+    },
+    {
+      "path": "crates/ruvix/examples/cognitive_demo/src/components/coordinator.rs",
+      "language": "rust",
+      "sizeLines": 509,
+      "fileCategory": "code",
+      "sha1": "f3ab0fc3fbb0235e1b9979c3c10eadd48d720281"
+    },
+    {
+      "path": "crates/ruvix/examples/cognitive_demo/src/components/feature_extractor.rs",
+      "language": "rust",
+      "sizeLines": 394,
+      "fileCategory": "code",
+      "sha1": "f95b0138f6964133398b01e0bf758a8283eed65c"
+    },
+    {
+      "path": "crates/ruvix/examples/cognitive_demo/src/components/mod.rs",
+      "language": "rust",
+      "sizeLines": 481,
+      "fileCategory": "code",
+      "sha1": "9331a668aaedb6bf985c40d9c675a530d8fa952b"
+    },
+    {
+      "path": "crates/ruvix/examples/cognitive_demo/src/components/reasoning_engine.rs",
+      "language": "rust",
+      "sizeLines": 467,
+      "fileCategory": "code",
+      "sha1": "b1f5aab136c105913c5dedb97bb2e6237c374ec9"
+    },
+    {
+      "path": "crates/ruvix/examples/cognitive_demo/src/components/sensor_adapter.rs",
+      "language": "rust",
+      "sizeLines": 322,
+      "fileCategory": "code",
+      "sha1": "2f76b01ac302aee548121f66d8083bd3dc10f2d3"
+    },
+    {
+      "path": "crates/ruvix/examples/cognitive_demo/src/lib.rs",
+      "language": "rust",
+      "sizeLines": 381,
+      "fileCategory": "code",
+      "sha1": "c4c73304a5905ca76df1f63c2e38295b705e5e36"
+    },
+    {
+      "path": "crates/ruvix/examples/cognitive_demo/src/manifest.rs",
+      "language": "rust",
+      "sizeLines": 839,
+      "fileCategory": "code",
+      "sha1": "75d7a2c41c4a853875bdd79aa54f5c1fa401ec0e"
+    },
+    {
+      "path": "crates/ruvix/examples/cognitive_demo/src/pipeline.rs",
+      "language": "rust",
+      "sizeLines": 560,
+      "fileCategory": "code",
+      "sha1": "3fefbfedb80af472739f411d9f98062c4de34410"
+    },
+    {
+      "path": "crates/ruvix/examples/cognitive_demo/src/stats.rs",
+      "language": "rust",
+      "sizeLines": 679,
+      "fileCategory": "code",
+      "sha1": "002883eab7f58a8668dd4e819a3a6d29db834d8a"
+    },
+    {
+      "path": "crates/ruvix/examples/cognitive_demo/tests/feature_coverage.rs",
+      "language": "rust",
+      "sizeLines": 501,
+      "fileCategory": "code",
+      "sha1": "e98b3bbfabfe814794004ff8d3bf8e6ff277d5d8"
+    },
+    {
+      "path": "crates/ruvix/examples/cognitive_demo/tests/full_pipeline.rs",
+      "language": "rust",
+      "sizeLines": 349,
+      "fileCategory": "code",
+      "sha1": "4e6b3785869b1d85b1a12d3bc48383e3051f5703"
+    },
+    {
+      "path": "crates/ruvix/examples/rvf-demos/swarm-consensus/Cargo.toml",
+      "language": "toml",
+      "sizeLines": 18,
+      "fileCategory": "config",
+      "sha1": "20ae73c88787359119f35e6f79d7370206461b7e"
+    },
+    {
+      "path": "crates/ruvix/examples/rvf-demos/swarm-consensus/README.md",
+      "language": "markdown",
+      "sizeLines": 249,
+      "fileCategory": "docs",
+      "sha1": "4a7fb6dfab9c0496f95b8280bb79dc4f0ab911a3"
+    },
+    {
+      "path": "crates/ruvix/examples/rvf-demos/swarm-consensus/src/main.rs",
+      "language": "rust",
+      "sizeLines": 490,
+      "fileCategory": "code",
+      "sha1": "fdccbd0a824e3ca08abe8e30255eb3a2eda7e54a"
+    },
+    {
+      "path": "crates/ruvix/qemu-swarm/Cargo.toml",
+      "language": "toml",
+      "sizeLines": 69,
+      "fileCategory": "config",
+      "sha1": "47453361e65f185db9bbd05475108b34994b1a62"
+    },
+    {
+      "path": "crates/ruvix/qemu-swarm/README.md",
+      "language": "markdown",
+      "sizeLines": 316,
+      "fileCategory": "docs",
+      "sha1": "b0154fe43ce59ca15aa2ca7502338eda33261b3f"
+    },
+    {
+      "path": "crates/ruvix/qemu-swarm/configs/3-node-cluster.toml",
+      "language": "toml",
+      "sizeLines": 96,
+      "fileCategory": "config",
+      "sha1": "52dd6a6645827afafdff9aed73a2d4ea19648e17"
+    },
+    {
+      "path": "crates/ruvix/qemu-swarm/configs/8-node-swarm.toml",
+      "language": "toml",
+      "sizeLines": 299,
+      "fileCategory": "config",
+      "sha1": "095ec77282b9660e5f5a414f502a20464687021b"
+    },
+    {
+      "path": "crates/ruvix/qemu-swarm/configs/single-node.toml",
+      "language": "toml",
+      "sizeLines": 26,
+      "fileCategory": "config",
+      "sha1": "c8cec22e1d654ba3aa70c192d175724dbe3ded9e"
+    },
+    {
+      "path": "crates/ruvix/qemu-swarm/src/cluster.rs",
+      "language": "rust",
+      "sizeLines": 717,
+      "fileCategory": "code",
+      "sha1": "4c976d3b4d5da361c73a1be909574effa26148cf"
+    },
+    {
+      "path": "crates/ruvix/qemu-swarm/src/config.rs",
+      "language": "rust",
+      "sizeLines": 339,
+      "fileCategory": "code",
+      "sha1": "467a1f07bb960b1a41a6753e93d26641897da9e8"
+    },
+    {
+      "path": "crates/ruvix/qemu-swarm/src/consensus.rs",
+      "language": "rust",
+      "sizeLines": 1303,
+      "fileCategory": "code",
+      "sha1": "90e12a9d8a74f7833e86b9efd430a8fdacce245b"
+    },
+    {
+      "path": "crates/ruvix/qemu-swarm/src/console.rs",
+      "language": "rust",
+      "sizeLines": 605,
+      "fileCategory": "code",
+      "sha1": "e1659757075284985cc3e6aea826053790ed02ee"
+    },
+    {
+      "path": "crates/ruvix/qemu-swarm/src/error.rs",
+      "language": "rust",
+      "sizeLines": 132,
+      "fileCategory": "code",
+      "sha1": "760d53b9e07157ccc50ddee09305c8e9e9757789"
+    },
+    {
+      "path": "crates/ruvix/qemu-swarm/src/lib.rs",
+      "language": "rust",
+      "sizeLines": 154,
+      "fileCategory": "code",
+      "sha1": "aff0135464e86ff7d09a514ca0278fab080767ae"
+    },
+    {
+      "path": "crates/ruvix/qemu-swarm/src/main.rs",
+      "language": "rust",
+      "sizeLines": 481,
+      "fileCategory": "code",
+      "sha1": "1ab076b6a8c249f0373a7982840d8c1daea71a23"
+    },
+    {
+      "path": "crates/ruvix/qemu-swarm/src/monitor.rs",
+      "language": "rust",
+      "sizeLines": 377,
+      "fileCategory": "code",
+      "sha1": "5b69ff570fe2cb2d410678e1174fec25acd64cb0"
+    },
+    {
+      "path": "crates/ruvix/qemu-swarm/src/network.rs",
+      "language": "rust",
+      "sizeLines": 611,
+      "fileCategory": "code",
+      "sha1": "eb3a3ee6b7434192acb05b7734c783ba43843bcd"
+    },
+    {
+      "path": "crates/ruvix/qemu-swarm/src/node.rs",
+      "language": "rust",
+      "sizeLines": 708,
+      "fileCategory": "code",
+      "sha1": "f0e93c0ed9124e67192531fa3a450540e45cbe34"
+    },
+    {
+      "path": "crates/ruvix/qemu-swarm/src/orchestrator.rs",
+      "language": "rust",
+      "sizeLines": 734,
+      "fileCategory": "code",
+      "sha1": "694860253ace05fa93011fc319ca470ca97da872"
+    },
+    {
+      "path": "crates/ruvix/tests/Cargo.toml",
+      "language": "toml",
+      "sizeLines": 233,
+      "fileCategory": "config",
+      "sha1": "84d43c1b7e43561223959fe7b606010ebbf54922"
+    },
+    {
+      "path": "crates/ruvix/tests/benches/integration_bench.rs",
+      "language": "rust",
+      "sizeLines": 495,
+      "fileCategory": "code",
+      "sha1": "f794b2629f7ed94444dfddf6440ebf95c37e55f9"
+    },
+    {
+      "path": "crates/ruvix/tests/src/lib.rs",
+      "language": "rust",
+      "sizeLines": 177,
+      "fileCategory": "code",
+      "sha1": "2c7b6a5a9b81356bd751df0efe074bb09c217065"
+    },
+    {
+      "path": "crates/ruvix/tests/tests/adr087_section17_acceptance.rs",
+      "language": "rust",
+      "sizeLines": 719,
+      "fileCategory": "code",
+      "sha1": "f62a607a36f26a6c1b46571832c4d866aa30e351"
+    },
+    {
+      "path": "crates/ruvix/tests/tests/syscall_flows.rs",
+      "language": "rust",
+      "sizeLines": 539,
+      "fileCategory": "code",
+      "sha1": "4c04cb8621d0a2f7a1b2a48f1a39ac0ad709b459"
+    }
+  ]
+}

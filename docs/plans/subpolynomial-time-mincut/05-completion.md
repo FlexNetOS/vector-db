@@ -31,7 +31,7 @@ edition = "2021"
 authors = ["RuVector Team"]
 description = "Subpolynomial-time dynamic minimum cut algorithm"
 license = "MIT OR Apache-2.0"
-repository = "https://github.com/ruvnet/ruvector"
+repository = "https://github.com/FlexNetOS/ruvector"
 keywords = ["graph", "minimum-cut", "dynamic", "algorithms"]
 categories = ["algorithms", "data-structures"]
 
@@ -646,7 +646,7 @@ ruvector-mincut = "0.1"
 ## From source
 
 ```bash
-git clone https://github.com/ruvnet/ruvector.git
+git clone https://github.com/FlexNetOS/ruvector.git
 cd ruvector
 cargo build --package ruvector-mincut --release
 ```

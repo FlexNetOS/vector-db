@@ -160,7 +160,7 @@ let results = store.query(&query_vec, 10, &query_options)?;
 
 ## Project Links
 
-- **Repository**: https://github.com/ruvnet/ruvector
+- **Repository**: https://github.com/FlexNetOS/ruvector
 - **ADRs**: `docs/adr/` (55+ decisions)
 - **Benchmarks**: `cargo bench` in individual crates
 - **Knowledge export**: `docs/research/knowledge-export/ruvector-knowledge.rvf.json`

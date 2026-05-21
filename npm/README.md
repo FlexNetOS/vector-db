@@ -9,7 +9,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![Node.js](https://img.shields.io/badge/Node.js-18%2B-green.svg)](https://nodejs.org)
 [![TypeScript](https://img.shields.io/badge/TypeScript-Ready-blue.svg)](https://www.typescriptlang.org)
-[![Build Status](https://img.shields.io/badge/build-passing-brightgreen.svg)](https://github.com/ruvnet/ruvector)
+[![Build Status](https://img.shields.io/badge/build-passing-brightgreen.svg)](https://github.com/FlexNetOS/ruvector)
 
 **Blazing-fast vector similarity search powered by Rust • Sub-millisecond queries • Universal deployment**
 
@@ -369,7 +369,7 @@ npx ruvector <command> [options]
 --version            # Show version
 ```
 
-See [CLI Documentation](https://github.com/ruvnet/ruvector/blob/main/crates/ruvector-cli/README.md) for complete reference.
+See [CLI Documentation](https://github.com/FlexNetOS/ruvector/blob/main/crates/ruvector-cli/README.md) for complete reference.
 
 ---
 
@@ -703,19 +703,19 @@ function search(queryEmbedding, k = 10) {
 The repository includes full working examples:
 
 **Node.js Examples:**
-- [`simple.mjs`](https://github.com/ruvnet/ruvector/blob/main/crates/ruvector-node/examples/simple.mjs) - Basic operations
-- [`advanced.mjs`](https://github.com/ruvnet/ruvector/blob/main/crates/ruvector-node/examples/advanced.mjs) - HNSW tuning & batching
-- [`semantic-search.mjs`](https://github.com/ruvnet/ruvector/blob/main/crates/ruvector-node/examples/semantic-search.mjs) - Text similarity
+- [`simple.mjs`](https://github.com/FlexNetOS/ruvector/blob/main/crates/ruvector-node/examples/simple.mjs) - Basic operations
+- [`advanced.mjs`](https://github.com/FlexNetOS/ruvector/blob/main/crates/ruvector-node/examples/advanced.mjs) - HNSW tuning & batching
+- [`semantic-search.mjs`](https://github.com/FlexNetOS/ruvector/blob/main/crates/ruvector-node/examples/semantic-search.mjs) - Text similarity
 
 **Browser Examples:**
-- [Vanilla JS Demo](https://github.com/ruvnet/ruvector/tree/main/examples/wasm-vanilla) - Pure JavaScript
-- [React Demo](https://github.com/ruvnet/ruvector/tree/main/examples/wasm-react) - React integration
+- [Vanilla JS Demo](https://github.com/FlexNetOS/ruvector/tree/main/examples/wasm-vanilla) - Pure JavaScript
+- [React Demo](https://github.com/FlexNetOS/ruvector/tree/main/examples/wasm-react) - React integration
 
 **Run Examples:**
 
 ```bash
 # Clone repository
-git clone https://github.com/ruvnet/ruvector.git
+git clone https://github.com/FlexNetOS/ruvector.git
 cd ruvector
 
 # Node.js examples
@@ -745,7 +745,7 @@ npm install && npm start
 
 ```bash
 # Clone repository
-git clone https://github.com/ruvnet/ruvector.git
+git clone https://github.com/FlexNetOS/ruvector.git
 cd ruvector
 
 # Build all crates
@@ -795,19 +795,19 @@ We welcome contributions! Areas where you can help:
 
 **How to Contribute:**
 
-1. Fork the repository: [github.com/ruvnet/ruvector](https://github.com/ruvnet/ruvector)
+1. Fork the repository: [github.com/FlexNetOS/ruvector](https://github.com/FlexNetOS/ruvector)
 2. Create a feature branch: `git checkout -b feature/amazing-feature`
 3. Commit your changes: `git commit -m 'Add amazing feature'`
 4. Push to the branch: `git push origin feature/amazing-feature`
 5. Open a Pull Request
 
-See [Contributing Guidelines](https://github.com/ruvnet/ruvector/blob/main/docs/development/CONTRIBUTING.md) for details.
+See [Contributing Guidelines](https://github.com/FlexNetOS/ruvector/blob/main/docs/development/CONTRIBUTING.md) for details.
 
 ### License
 
 **MIT License** - Free to use for commercial and personal projects.
 
-See [LICENSE](https://github.com/ruvnet/ruvector/blob/main/LICENSE) for full details.
+See [LICENSE](https://github.com/FlexNetOS/ruvector/blob/main/LICENSE) for full details.
 
 ---
 
@@ -815,17 +815,17 @@ See [LICENSE](https://github.com/ruvnet/ruvector/blob/main/LICENSE) for full det
 
 ### Get Help
 
-- **GitHub Issues**: [Report bugs or request features](https://github.com/ruvnet/ruvector/issues)
-- **GitHub Discussions**: [Ask questions and share ideas](https://github.com/ruvnet/ruvector/discussions)
+- **GitHub Issues**: [Report bugs or request features](https://github.com/FlexNetOS/ruvector/issues)
+- **GitHub Discussions**: [Ask questions and share ideas](https://github.com/FlexNetOS/ruvector/discussions)
 - **Discord**: [Join our community](https://discord.gg/ruvnet)
 - **Twitter**: [@ruvnet](https://twitter.com/ruvnet)
 
 ### Documentation
 
-- **[Getting Started Guide](https://github.com/ruvnet/ruvector/blob/main/docs/guide/GETTING_STARTED.md)** - Complete tutorial
-- **[API Reference](https://github.com/ruvnet/ruvector/blob/main/docs/api/NODEJS_API.md)** - Full API documentation
-- **[Performance Tuning](https://github.com/ruvnet/ruvector/blob/main/docs/optimization/PERFORMANCE_TUNING_GUIDE.md)** - Optimization guide
-- **[Complete Documentation](https://github.com/ruvnet/ruvector/blob/main/docs/README.md)** - All documentation
+- **[Getting Started Guide](https://github.com/FlexNetOS/ruvector/blob/main/docs/guide/GETTING_STARTED.md)** - Complete tutorial
+- **[API Reference](https://github.com/FlexNetOS/ruvector/blob/main/docs/api/NODEJS_API.md)** - Full API documentation
+- **[Performance Tuning](https://github.com/FlexNetOS/ruvector/blob/main/docs/optimization/PERFORMANCE_TUNING_GUIDE.md)** - Optimization guide
+- **[Complete Documentation](https://github.com/FlexNetOS/ruvector/blob/main/docs/README.md)** - All documentation
 
 ### Enterprise Support
 
@@ -858,9 +858,9 @@ Special thanks to the Rust, Node.js, and WebAssembly communities! 🎉
 npm install ruvector
 ```
 
-**Built by [rUv](https://ruv.io) • Open Source on [GitHub](https://github.com/ruvnet/ruvector)**
+**Built by [rUv](https://ruv.io) • Open Source on [GitHub](https://github.com/FlexNetOS/ruvector)**
 
-[![Star on GitHub](https://img.shields.io/github/stars/ruvnet/ruvector?style=social)](https://github.com/ruvnet/ruvector)
+[![Star on GitHub](https://img.shields.io/github/stars/FlexNetOS/ruvector?style=social)](https://github.com/FlexNetOS/ruvector)
 [![Follow @ruvnet](https://img.shields.io/twitter/follow/ruvnet?style=social)](https://twitter.com/ruvnet)
 [![Discord](https://img.shields.io/badge/Discord-Join%20Chat-7289da.svg)](https://discord.gg/ruvnet)
 
@@ -868,6 +868,6 @@ npm install ruvector
 
 **Perfect for**: RAG Systems • Semantic Search • Recommendation Engines • AI Agents
 
-[Get Started](https://github.com/ruvnet/ruvector/blob/main/docs/guide/GETTING_STARTED.md) • [Documentation](https://github.com/ruvnet/ruvector/blob/main/docs/README.md) • [Examples](https://github.com/ruvnet/ruvector/tree/main/examples) • [API Reference](https://github.com/ruvnet/ruvector/blob/main/docs/api/NODEJS_API.md)
+[Get Started](https://github.com/FlexNetOS/ruvector/blob/main/docs/guide/GETTING_STARTED.md) • [Documentation](https://github.com/FlexNetOS/ruvector/blob/main/docs/README.md) • [Examples](https://github.com/FlexNetOS/ruvector/tree/main/examples) • [API Reference](https://github.com/FlexNetOS/ruvector/blob/main/docs/api/NODEJS_API.md)
 
 </div>

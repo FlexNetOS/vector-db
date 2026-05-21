@@ -7,7 +7,7 @@
 
 **Sublinear-time sparse solvers -- O(log n) PageRank, spectral methods, and linear systems in Rust and WASM.**
 
-Most numerical libraries use dense solvers that slow down dramatically as data grows. ruvector-solver provides seven specialized sparse algorithms that run in O(log n) to O(sqrt(n)) time, automatically picks the best one for your problem, and works in native Rust or in the browser via WebAssembly. It powers the graph analytics and AI coherence layers inside [RuVector](https://github.com/ruvnet/ruvector).
+Most numerical libraries use dense solvers that slow down dramatically as data grows. ruvector-solver provides seven specialized sparse algorithms that run in O(log n) to O(sqrt(n)) time, automatically picks the best one for your problem, and works in native Rust or in the browser via WebAssembly. It powers the graph analytics and AI coherence layers inside [RuVector](https://github.com/FlexNetOS/ruvector).
 
 | | Dense Solvers (e.g. nalgebra) | ruvector-solver |
 |---|---|---|
@@ -361,4 +361,4 @@ Licensed under the [MIT License](../../LICENSE).
 
 ---
 
-Part of [RuVector](https://github.com/ruvnet/ruvector) -- the self-learning vector database.
+Part of [RuVector](https://github.com/FlexNetOS/ruvector) -- the self-learning vector database.

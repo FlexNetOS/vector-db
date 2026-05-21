@@ -44,7 +44,7 @@ impl BenchResult {
 /// Run a benchmark with the given closure
 fn bench<F>(name: &str, iterations: usize, mut f: F) -> BenchResult
 where
-    F: FnMut() -> (),
+    F: FnMut(),
 {
     let mut times = Vec::with_capacity(iterations);
 

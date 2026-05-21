@@ -231,9 +231,9 @@ crates/router-wasm      → crates/ruvector-router-wasm
 ## 🔗 Resources
 
 - **Crates.io:** https://crates.io/users/ruvnet
-- **GitHub:** https://github.com/ruvnet/ruvector
+- **GitHub:** https://github.com/FlexNetOS/ruvector
 - **Documentation:** https://docs.rs/ruvector-core
-- **Issues:** https://github.com/ruvnet/ruvector/issues
+- **Issues:** https://github.com/FlexNetOS/ruvector/issues
 
 ## ✅ Success Metrics
 

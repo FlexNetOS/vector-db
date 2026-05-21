@@ -6,7 +6,7 @@
 
 <p align="center">
   <a href="https://apify.com/llm"><img src="https://img.shields.io/badge/Apify-Actor-FF9900?style=for-the-badge&logo=apify&logoColor=white" alt="Apify Actor"></a>
-  <a href="https://github.com/ruvnet/ruvector"><img src="https://img.shields.io/badge/RuVector-Powered-4A90D9?style=for-the-badge" alt="RuVector"></a>
+  <a href="https://github.com/FlexNetOS/ruvector"><img src="https://img.shields.io/badge/RuVector-Powered-4A90D9?style=for-the-badge" alt="RuVector"></a>
 </p>
 
 <p align="center">
@@ -1589,7 +1589,7 @@ RuvLLM is part of the RuVector ecosystem:
 |-------|---------|-------------|
 | [Agentic Synth](https://apify.com/ruv/ai-synthetic-data-generator) | Training data generation | Synthetic datasets for LoRA |
 | [AI Memory Engine](https://apify.com/ruv/ai-memory-engine) | Vector storage & RAG | Memory persistence |
-| [RuVector Core](https://github.com/ruvnet/ruvector) | Native embeddings | SIMD-accelerated vectors |
+| [RuVector Core](https://github.com/FlexNetOS/ruvector) | Native embeddings | SIMD-accelerated vectors |
 
 ### Workflow Example
 
@@ -1632,8 +1632,8 @@ npm run push
 
 ## Support
 
-- **Documentation**: [github.com/ruvnet/ruvector](https://github.com/ruvnet/ruvector)
-- **Issues**: [github.com/ruvnet/ruvector/issues](https://github.com/ruvnet/ruvector/issues)
+- **Documentation**: [github.com/FlexNetOS/ruvector](https://github.com/FlexNetOS/ruvector)
+- **Issues**: [github.com/FlexNetOS/ruvector/issues](https://github.com/FlexNetOS/ruvector/issues)
 - **Related Actors**: [Agentic Synth](https://apify.com/ruv/ai-synthetic-data-generator) | [AI Memory Engine](https://apify.com/ruv/ai-memory-engine)
 
 ---

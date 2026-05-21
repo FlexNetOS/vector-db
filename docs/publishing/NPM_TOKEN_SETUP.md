@@ -11,7 +11,7 @@
 
 ### 2. Add Token to GitHub Repository
 
-1. Go to your repository: https://github.com/ruvnet/ruvector
+1. Go to your repository: https://github.com/FlexNetOS/ruvector
 2. Navigate to **Settings** → **Secrets and variables** → **Actions**
 3. Click **"New repository secret"**
 4. Name: `NPM_TOKEN`
@@ -91,7 +91,7 @@ gh workflow run "Build Native Modules"
 
 1. **Navigate to Repository Settings**
    ```
-   https://github.com/ruvnet/ruvector/settings/secrets/actions
+   https://github.com/FlexNetOS/ruvector/settings/secrets/actions
    ```
 
 2. **Add New Secret**

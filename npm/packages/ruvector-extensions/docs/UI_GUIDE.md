@@ -381,6 +381,6 @@ Contributions welcome! Please see CONTRIBUTING.md for guidelines.
 
 ## Support
 
-- 📖 Documentation: https://github.com/ruvnet/ruvector
-- 🐛 Issues: https://github.com/ruvnet/ruvector/issues
-- 💬 Discussions: https://github.com/ruvnet/ruvector/discussions
+- 📖 Documentation: https://github.com/FlexNetOS/ruvector
+- 🐛 Issues: https://github.com/FlexNetOS/ruvector/issues
+- 💬 Discussions: https://github.com/FlexNetOS/ruvector/discussions

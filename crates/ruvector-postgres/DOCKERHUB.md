@@ -16,7 +16,7 @@
 docker run -d --name ruvector \
   -e POSTGRES_PASSWORD=secret \
   -p 5432:5432 \
-  ruvnet/ruvector-postgres:latest
+  flexnetos/ruvector-postgres:latest
 
 # Connect and use
 psql -h localhost -U ruvector -d ruvector_test
@@ -214,7 +214,7 @@ ruvector-pg bench run --type all --size 10000
 
 ## Links
 
-- [GitHub](https://github.com/ruvnet/ruvector)
+- [GitHub](https://github.com/FlexNetOS/ruvector)
 - [npm CLI](https://www.npmjs.com/package/@ruvector/postgres-cli)
 - [crates.io](https://crates.io/crates/ruvector-postgres)
 - [Documentation](https://docs.rs/ruvector-postgres)

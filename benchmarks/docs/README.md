@@ -553,7 +553,7 @@ ts-node benchmark-runner.ts run baseline_500m
 ### Support
 
 For issues or questions:
-- GitHub Issues: https://github.com/ruvnet/ruvector/issues
+- GitHub Issues: https://github.com/FlexNetOS/ruvector/issues
 - Documentation: https://docs.ruvector.io
 - Community: https://discord.gg/ruvector
 
@@ -662,4 +662,4 @@ const allPassed = Array.from(results.values()).every(
 
 **Happy Benchmarking!** 🚀
 
-For questions or contributions, please visit: https://github.com/ruvnet/ruvector
+For questions or contributions, please visit: https://github.com/FlexNetOS/ruvector

@@ -246,4 +246,4 @@ This demo can be extended for:
 
 - [ADR-087: RuVix Cognition Kernel](../../../../docs/adr/ADR-087-ruvix-cognition-kernel.md)
 - [RVF Specification](../../../rvf/)
-- [Claude-Flow Swarm Integration](https://github.com/ruvnet/claude-flow)
+- [Claude-Flow Swarm Integration](https://github.com/FlexNetOS/claude-flow)

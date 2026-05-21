@@ -7,6 +7,10 @@ exclude = ["crates/micro-hnsw-wasm", "crates/ruvector-hyperbolic-hnsw", "crates/
     # works in stock environments. Build it explicitly with `cargo build -p ruvector-postgres`
     # after running pgrx init.
     "crates/ruvector-postgres",
+    # Vendored cognitum-one SDK source. Excluded from the workspace so it
+    # keeps its own (upstream) lint surface and `cargo {check,clippy} --workspace`
+    # never touches it. See `vendor/cognitum-one/VENDORED.md`.
+    "vendor/cognitum-one",
     # Iter 219 (closes ADR-178 Gap E folded into Gap B): the hailo
     # crates rejoined the workspace once the iter-218 ruvector-core
     # path dep + EmbeddingProvider impls landed. The `hailo` feature
@@ -242,9 +246,18 @@ edition = "2021"
 rust-version = "1.77"
 license = "MIT"
 authors = ["Ruvector Team"]
-repository = "https://github.com/ruvnet/ruvector"
+repository = "https://github.com/FlexNetOS/ruvector"
 
 [workspace.dependencies]
+# Cognitum Seed / Cloud SDK (https://cognitum.one/developers).
+# Vendored in-tree at `vendor/cognitum-one/` (v0.2.1, MIT, upstream
+# `cognitum-one/sdks` @ `a9e1c073`). See `vendor/cognitum-one/VENDORED.md`
+# for provenance and update procedure. Crates opt in by listing
+# `cognitum-one.workspace = true` in their own `Cargo.toml`. Default features
+# enable rustls + the `seed` (LAN appliance) surface; add `mdns` / `stream` /
+# `blocking` features per crate as needed.
+cognitum-one = { path = "vendor/cognitum-one", default-features = false, features = ["rustls", "seed"] }
+
 # Core functionality
 redb = "2.1"
 memmap2 = "0.9"

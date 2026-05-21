@@ -1130,7 +1130,7 @@ export class HierarchicalAttention {
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/ruvnet/ruvector"
+    "url": "https://github.com/FlexNetOS/ruvector"
   },
   "napi": {
     "name": "ruvector-node",

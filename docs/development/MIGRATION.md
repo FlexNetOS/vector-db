@@ -478,8 +478,8 @@ Need help with migration?
 
 1. **Check examples**: See [examples/](../examples/) for migration examples
 2. **Read docs**: [Getting Started](guide/GETTING_STARTED.md)
-3. **Open an issue**: [GitHub Issues](https://github.com/ruvnet/ruvector/issues)
-4. **Ask questions**: [GitHub Discussions](https://github.com/ruvnet/ruvector/discussions)
+3. **Open an issue**: [GitHub Issues](https://github.com/FlexNetOS/ruvector/issues)
+4. **Ask questions**: [GitHub Discussions](https://github.com/FlexNetOS/ruvector/discussions)
 
 ## Success Stories
 
@@ -526,4 +526,4 @@ Migrating from agenticDB to Ruvector is straightforward:
 
 No code changes required beyond the import statement!
 
-For questions, open an issue at: https://github.com/ruvnet/ruvector/issues
+For questions, open an issue at: https://github.com/FlexNetOS/ruvector/issues

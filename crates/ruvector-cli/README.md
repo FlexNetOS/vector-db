@@ -32,7 +32,7 @@ Or build from source:
 
 ```bash
 # Clone repository
-git clone https://github.com/ruvnet/ruvector.git
+git clone https://github.com/FlexNetOS/ruvector.git
 cd ruvector
 
 # Build CLI
@@ -702,7 +702,7 @@ Contributions welcome! Please see the [Contributing Guidelines](../../docs/devel
 
 ```bash
 # Clone repository
-git clone https://github.com/ruvnet/ruvector.git
+git clone https://github.com/FlexNetOS/ruvector.git
 cd ruvector/crates/ruvector-cli
 
 # Run tests
@@ -733,6 +733,6 @@ Built with:
 
 ---
 
-**Built by [rUv](https://ruv.io) • Part of the [Ruvector](https://github.com/ruvnet/ruvector) ecosystem**
+**Built by [rUv](https://ruv.io) • Part of the [Ruvector](https://github.com/FlexNetOS/ruvector) ecosystem**
 
-[Main Documentation](../../README.md) • [API Reference](../../docs/api/RUST_API.md) • [GitHub](https://github.com/ruvnet/ruvector)
+[Main Documentation](../../README.md) • [API Reference](../../docs/api/RUST_API.md) • [GitHub](https://github.com/FlexNetOS/ruvector)

@@ -676,7 +676,7 @@ class CollaborativeDataWorkflow {
 
 ## 🔗 Related Resources
 
-- [Agentic-Jujutsu Repository](https://github.com/ruvnet/agentic-jujutsu)
+- [Agentic-Jujutsu Repository](https://github.com/FlexNetOS/agentic-jujutsu)
 - [Agentic-Synth Documentation](../../README.md)
 - [Jujutsu VCS Documentation](https://github.com/martinvonz/jj)
 - [ReasoningBank Paper](https://arxiv.org/abs/example)
@@ -696,8 +696,8 @@ MIT License - see LICENSE file for details
 
 ## 💬 Support
 
-- Issues: [GitHub Issues](https://github.com/ruvnet/ruvector/issues)
-- Discussions: [GitHub Discussions](https://github.com/ruvnet/ruvector/discussions)
+- Issues: [GitHub Issues](https://github.com/FlexNetOS/ruvector/issues)
+- Discussions: [GitHub Discussions](https://github.com/FlexNetOS/ruvector/discussions)
 - Email: support@ruv.io
 
 ---

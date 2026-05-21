@@ -5,7 +5,7 @@
 [![Crates.io](https://img.shields.io/crates/v/agentic-robotics-core.svg)](https://crates.io/crates/agentic-robotics-core)
 [![Documentation](https://docs.rs/agentic-robotics-core/badge.svg)](https://docs.rs/agentic-robotics-core)
 [![License](https://img.shields.io/badge/license-MIT%2FApache--2.0-blue.svg)](LICENSE)
-[![Build Status](https://img.shields.io/github/actions/workflow/status/ruvnet/vibecast/ci.yml)](https://github.com/ruvnet/vibecast/actions)
+[![Build Status](https://img.shields.io/github/actions/workflow/status/FlexNetOS/vibecast/ci.yml)](https://github.com/FlexNetOS/vibecast/actions)
 [![Rust Version](https://img.shields.io/badge/rust-1.70%2B-orange.svg)](https://www.rust-lang.org)
 [![ROS2 Compatible](https://img.shields.io/badge/ROS2-Compatible-green.svg)](https://www.ros.org)
 
@@ -339,7 +339,7 @@ pub.publish(&msg).await?;
 
 ```bash
 # Clone repository
-git clone https://github.com/ruvnet/vibecast
+git clone https://github.com/FlexNetOS/vibecast
 cd vibecast
 
 # Build all crates
@@ -419,8 +419,8 @@ at your option.
 
 - **Website**: [ruv.io](https://ruv.io)
 - **Email**: hello@ruv.io
-- **GitHub**: [github.com/ruvnet/vibecast](https://github.com/ruvnet/vibecast)
-- **Issues**: [github.com/ruvnet/vibecast/issues](https://github.com/ruvnet/vibecast/issues)
+- **GitHub**: [github.com/FlexNetOS/vibecast](https://github.com/FlexNetOS/vibecast)
+- **Issues**: [github.com/FlexNetOS/vibecast/issues](https://github.com/FlexNetOS/vibecast/issues)
 
 ---
 

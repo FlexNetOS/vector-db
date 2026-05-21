@@ -369,7 +369,7 @@ println!("{} valid, {} invalid embeddings", valid_count, invalid_count);
 ## Links
 
 - **Homepage**: [ruv.io](https://ruv.io)
-- **Repository**: [github.com/ruvnet/ruvector](https://github.com/ruvnet/ruvector)
+- **Repository**: [github.com/FlexNetOS/ruvector](https://github.com/FlexNetOS/ruvector)
 - **Crates.io**: [crates.io/crates/sevensense-embedding](https://crates.io/crates/sevensense-embedding)
 - **Documentation**: [docs.rs/sevensense-embedding](https://docs.rs/sevensense-embedding)
 

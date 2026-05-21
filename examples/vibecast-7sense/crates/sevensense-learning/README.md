@@ -403,7 +403,7 @@ Input Embeddings (1536-dim)
 ## Links
 
 - **Homepage**: [ruv.io](https://ruv.io)
-- **Repository**: [github.com/ruvnet/ruvector](https://github.com/ruvnet/ruvector)
+- **Repository**: [github.com/FlexNetOS/ruvector](https://github.com/FlexNetOS/ruvector)
 - **Crates.io**: [crates.io/crates/sevensense-learning](https://crates.io/crates/sevensense-learning)
 - **Documentation**: [docs.rs/sevensense-learning](https://docs.rs/sevensense-learning)
 

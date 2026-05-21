@@ -3,7 +3,7 @@
 **Authors:** RuVector Research Collective
 **Date:** 2026-04-12
 **Status:** Preprint — Open Research
-**Repository:** github.com/ruvnet/RuVector
+**Repository:** github.com/FlexNetOS/ruvector
 **Branch:** `research/exotic-structure-discovery-rvf`
 
 ---
@@ -438,7 +438,7 @@ GW170817 demonstrated that multi-messenger coincidence reveals structure invisib
 
 All experiments described in this paper can be reproduced using:
 
-1. **Code**: github.com/ruvnet/RuVector, branch `research/exotic-structure-discovery-rvf`
+1. **Code**: github.com/FlexNetOS/ruvector, branch `research/exotic-structure-discovery-rvf`
 2. **Data**: All 13 datasets are freely available at the URLs listed in Section 3
 3. **Hardware**: All experiments run on a consumer laptop (Apple M-series or x86_64)
 4. **Dependencies**: Rust stable (≥1.92), no proprietary libraries

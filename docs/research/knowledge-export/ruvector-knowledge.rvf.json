@@ -7,7 +7,7 @@
   "META_SEG": {
     "project": "RuVector",
     "description": "High-performance Rust-native vector/graph computation platform with 91 crates spanning HNSW indexing, GNN, graph transformers, LLM serving, sparse inference, formal verification, and quantum simulation",
-    "repository": "https://github.com/ruvnet/ruvector",
+    "repository": "https://github.com/FlexNetOS/ruvector",
     "license": "MIT (workspace default)",
     "version": "2.0.5",
     "rust_edition": "2021",

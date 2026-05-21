@@ -2,7 +2,7 @@
 
 [![Crates.io](https://img.shields.io/crates/v/ruqu-algorithms.svg)](https://crates.io/crates/ruqu-algorithms)
 [![Documentation](https://docs.rs/ruqu-algorithms/badge.svg)](https://docs.rs/ruqu-algorithms)
-[![License](https://img.shields.io/crates/l/ruqu-algorithms.svg)](https://github.com/ruvnet/ruvector)
+[![License](https://img.shields.io/crates/l/ruqu-algorithms.svg)](https://github.com/FlexNetOS/ruvector)
 
 **Production-ready quantum algorithms in Rust** — VQE for chemistry, Grover's search, QAOA optimization, and Surface Code error correction.
 
@@ -117,10 +117,10 @@ let corrected = decoder.correct(&noisy, &syndromes)?;
 
 ## Documentation
 
-- [VQE Algorithm (ADR-QE-005)](https://github.com/ruvnet/ruvector/blob/main/docs/adr/quantum-engine/ADR-QE-005-vqe-algorithm-support.md)
-- [Grover's Search (ADR-QE-006)](https://github.com/ruvnet/ruvector/blob/main/docs/adr/quantum-engine/ADR-QE-006-grover-search-implementation.md)
-- [QAOA MaxCut (ADR-QE-007)](https://github.com/ruvnet/ruvector/blob/main/docs/adr/quantum-engine/ADR-QE-007-qaoa-maxcut-implementation.md)
-- [Surface Code (ADR-QE-008)](https://github.com/ruvnet/ruvector/blob/main/docs/adr/quantum-engine/ADR-QE-008-surface-code-error-correction.md)
+- [VQE Algorithm (ADR-QE-005)](https://github.com/FlexNetOS/ruvector/blob/main/docs/adr/quantum-engine/ADR-QE-005-vqe-algorithm-support.md)
+- [Grover's Search (ADR-QE-006)](https://github.com/FlexNetOS/ruvector/blob/main/docs/adr/quantum-engine/ADR-QE-006-grover-search-implementation.md)
+- [QAOA MaxCut (ADR-QE-007)](https://github.com/FlexNetOS/ruvector/blob/main/docs/adr/quantum-engine/ADR-QE-007-qaoa-maxcut-implementation.md)
+- [Surface Code (ADR-QE-008)](https://github.com/FlexNetOS/ruvector/blob/main/docs/adr/quantum-engine/ADR-QE-008-surface-code-error-correction.md)
 
 ## License
 

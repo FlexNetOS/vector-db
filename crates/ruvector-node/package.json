@@ -71,12 +71,12 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/ruvnet/ruvector.git",
+    "url": "https://github.com/FlexNetOS/ruvector.git",
     "directory": "crates/ruvector-node"
   },
-  "homepage": "https://github.com/ruvnet/ruvector#readme",
+  "homepage": "https://github.com/FlexNetOS/ruvector#readme",
   "bugs": {
-    "url": "https://github.com/ruvnet/ruvector/issues"
+    "url": "https://github.com/FlexNetOS/ruvector/issues"
   },
   "optionalDependencies": {
     "@ruvector/node-win32-x64-msvc": "0.1.19",

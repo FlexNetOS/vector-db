@@ -370,7 +370,7 @@ println!("Estimated memory: {:.2} GB", estimated_bytes as f64 / 1e9);
 ## Links
 
 - **Homepage**: [ruv.io](https://ruv.io)
-- **Repository**: [github.com/ruvnet/ruvector](https://github.com/ruvnet/ruvector)
+- **Repository**: [github.com/FlexNetOS/ruvector](https://github.com/FlexNetOS/ruvector)
 - **Crates.io**: [crates.io/crates/sevensense-vector](https://crates.io/crates/sevensense-vector)
 - **Documentation**: [docs.rs/sevensense-vector](https://docs.rs/sevensense-vector)
 

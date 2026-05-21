@@ -523,10 +523,10 @@ gh release create v0.1.2 \
 - Feature 2
 - Bug fix 3
 
-**Full Changelog**: https://github.com/ruvnet/ruvector/compare/v0.1.1...v0.1.2"
+**Full Changelog**: https://github.com/FlexNetOS/ruvector/compare/v0.1.1...v0.1.2"
 
 # Or create manually at:
-# https://github.com/ruvnet/ruvector/releases/new
+# https://github.com/FlexNetOS/ruvector/releases/new
 ```
 
 ### Announce Release
@@ -576,9 +576,9 @@ Use this checklist for each release:
 
 If you encounter issues not covered in this guide:
 
-1. Check [GitHub Issues](https://github.com/ruvnet/ruvector/issues)
-2. Review [GitHub Actions Logs](https://github.com/ruvnet/ruvector/actions)
-3. Ask in [Discussions](https://github.com/ruvnet/ruvector/discussions)
+1. Check [GitHub Issues](https://github.com/FlexNetOS/ruvector/issues)
+2. Review [GitHub Actions Logs](https://github.com/FlexNetOS/ruvector/actions)
+3. Ask in [Discussions](https://github.com/FlexNetOS/ruvector/discussions)
 4. Contact maintainers
 
 ---

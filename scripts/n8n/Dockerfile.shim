@@ -1,0 +1,13 @@
+FROM python:3.12-slim
+WORKDIR /app
+RUN pip install --no-cache-dir fastapi uvicorn[standard] pydantic
+COPY ruvector_shim.py /app/ruvector_shim.py
+ENV PORT=8080
+ENV RUVECTOR_DATA_DIR=/data
+EXPOSE 8080
+# Shell-form CMD with `exec` so SIGTERM reaches uvicorn directly: dash on
+# Debian-slim does not forward signals to children, so without `exec` PID 1
+# is `sh` and `docker stop` waits the full grace period before SIGKILL.
+# `exec` replaces the shell with the python process while still letting the
+# shell expand ${PORT:-8080}.
+CMD exec python -m uvicorn ruvector_shim:app --host 0.0.0.0 --port "${PORT:-8080}"

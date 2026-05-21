@@ -6,29 +6,29 @@ Standalone command-line tool for creating, inspecting, querying, and managing RV
 
 ### Pre-built binaries (recommended)
 
-Download from [GitHub Releases](https://github.com/ruvnet/ruvector/releases):
+Download from [GitHub Releases](https://github.com/FlexNetOS/ruvector/releases):
 
 ```bash
 # macOS (Apple Silicon)
-curl -L -o rvf https://github.com/ruvnet/ruvector/releases/latest/download/rvf-darwin-arm64
+curl -L -o rvf https://github.com/FlexNetOS/ruvector/releases/latest/download/rvf-darwin-arm64
 chmod +x rvf && sudo mv rvf /usr/local/bin/
 
 # macOS (Intel)
-curl -L -o rvf https://github.com/ruvnet/ruvector/releases/latest/download/rvf-darwin-x64
+curl -L -o rvf https://github.com/FlexNetOS/ruvector/releases/latest/download/rvf-darwin-x64
 chmod +x rvf && sudo mv rvf /usr/local/bin/
 
 # Linux x64
-curl -L -o rvf https://github.com/ruvnet/ruvector/releases/latest/download/rvf-linux-x64
+curl -L -o rvf https://github.com/FlexNetOS/ruvector/releases/latest/download/rvf-linux-x64
 chmod +x rvf && sudo mv rvf /usr/local/bin/
 
 # Linux ARM64
-curl -L -o rvf https://github.com/ruvnet/ruvector/releases/latest/download/rvf-linux-arm64
+curl -L -o rvf https://github.com/FlexNetOS/ruvector/releases/latest/download/rvf-linux-arm64
 chmod +x rvf && sudo mv rvf /usr/local/bin/
 ```
 
 **Windows (PowerShell):**
 ```powershell
-Invoke-WebRequest -Uri https://github.com/ruvnet/ruvector/releases/latest/download/rvf-windows-x64.exe -OutFile rvf.exe
+Invoke-WebRequest -Uri https://github.com/FlexNetOS/ruvector/releases/latest/download/rvf-windows-x64.exe -OutFile rvf.exe
 ```
 
 ### Build from source
@@ -36,13 +36,13 @@ Invoke-WebRequest -Uri https://github.com/ruvnet/ruvector/releases/latest/downlo
 Requires [Rust](https://rustup.rs):
 
 ```bash
-cargo install --git https://github.com/ruvnet/ruvector.git rvf-cli
+cargo install --git https://github.com/FlexNetOS/ruvector.git rvf-cli
 ```
 
 Or clone and build:
 
 ```bash
-git clone https://github.com/ruvnet/ruvector.git
+git clone https://github.com/FlexNetOS/ruvector.git
 cd ruvector
 cargo build -p rvf-cli --release
 # Binary: target/release/rvf (or rvf.exe on Windows)

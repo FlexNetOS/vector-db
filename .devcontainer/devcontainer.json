@@ -1,0 +1,16 @@
+{
+  "name": "RuVector",
+  "build": {
+    "dockerfile": "Dockerfile",
+    "context": ".."
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "rust-lang.rust-analyzer",
+        "tamasfe.even-better-toml"
+      ]
+    }
+  },
+  "postCreateCommand": "rustc --version && cargo --version && node --version && gh --version"
+}

@@ -227,7 +227,7 @@ If you want, I can turn this into:
         Google DeepMind
       
     "
-[4]: https://github.com/ruvnet/ruvector "GitHub - ruvnet/ruvector: A distributed vector database that learns. Store embeddings, query with Cypher, scale horizontally with Raft consensus, and let the index improve itself through Graph Neural Networks."
+[4]: https://github.com/FlexNetOS/ruvector "GitHub - FlexNetOS/ruvector: A distributed vector database that learns. Store embeddings, query with Cypher, scale horizontally with Raft consensus, and let the index improve itself through Graph Neural Networks."
 [5]: https://huggingface.co/justinchuby/Perch-onnx?utm_source=chatgpt.com "justinchuby/Perch-onnx"
 [6]: https://docs.rs/birdnet-onnx?utm_source=chatgpt.com "birdnet_onnx - Rust"
 [7]: https://arxiv.org/html/2508.04665v1?utm_source=chatgpt.com "Perch 2.0: The Bittern Lesson for Bioacoustics"

@@ -1,6 +1,6 @@
 # ruvector-extensions
 
-Advanced persistence and extension features for the [ruvector](https://github.com/ruvnet/ruvector) vector database.
+Advanced persistence and extension features for the [ruvector](https://github.com/FlexNetOS/ruvector) vector database.
 
 ## Features
 
@@ -377,10 +377,10 @@ MIT - See [LICENSE](LICENSE) for details
 
 ## Contributing
 
-Contributions welcome! Please see the main [ruvector repository](https://github.com/ruvnet/ruvector) for contribution guidelines.
+Contributions welcome! Please see the main [ruvector repository](https://github.com/FlexNetOS/ruvector) for contribution guidelines.
 
 ## Support
 
-- Documentation: https://github.com/ruvnet/ruvector
-- Issues: https://github.com/ruvnet/ruvector/issues
+- Documentation: https://github.com/FlexNetOS/ruvector
+- Issues: https://github.com/FlexNetOS/ruvector/issues
 - Discord: [Join our community](https://discord.gg/ruvector)

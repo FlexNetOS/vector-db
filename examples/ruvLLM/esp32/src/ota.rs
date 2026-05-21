@@ -199,7 +199,7 @@ impl OtaManager {
                 ).unwrap_or_default(),
                 notes: heapless::String::try_from("Performance improvements and bug fixes").unwrap_or_default(),
                 download_url: heapless::String::try_from(
-                    "https://github.com/ruvnet/ruvector/releases/latest/download/ruvllm-esp32"
+                    "https://github.com/FlexNetOS/ruvector/releases/latest/download/ruvllm-esp32"
                 ).unwrap_or_default(),
             });
             self.state = OtaState::UpdateAvailable;

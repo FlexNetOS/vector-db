@@ -767,4 +767,4 @@ fn hierarchical_retrieval() -> Result<(), Box<dyn std::error::Error>> {
 
 ---
 
-**Questions?** Open an issue at https://github.com/ruvnet/ruvector/issues
+**Questions?** Open an issue at https://github.com/FlexNetOS/ruvector/issues

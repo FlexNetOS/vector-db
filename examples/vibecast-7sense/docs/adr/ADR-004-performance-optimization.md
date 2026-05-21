@@ -968,7 +968,7 @@ FULL RETRAINING: 4 hour max
 ## References
 
 - Perch 2.0: https://arxiv.org/abs/2508.04665
-- RuVector: https://github.com/ruvnet/ruvector
+- RuVector: https://github.com/FlexNetOS/ruvector
 - HNSW Paper: Malkov & Yashunin, 2018
 - Product Quantization: Jegou et al., 2011
 - Graph Attention Networks: Velickovic et al., 2018

@@ -7,7 +7,7 @@
 
 **A Graph Neural Network layer that makes HNSW vector search get smarter over time.**
 
-Most vector indexes return the same results every time you search. `ruvector-gnn` adds a GNN layer on top of HNSW that learns from your query patterns -- so search results actually improve with use. It runs message passing directly on the HNSW graph structure with SIMD acceleration, keeping latency low even on large indexes. Part of the [RuVector](https://github.com/ruvnet/ruvector) ecosystem.
+Most vector indexes return the same results every time you search. `ruvector-gnn` adds a GNN layer on top of HNSW that learns from your query patterns -- so search results actually improve with use. It runs message passing directly on the HNSW graph structure with SIMD acceleration, keeping latency low even on large indexes. Part of the [RuVector](https://github.com/FlexNetOS/ruvector) ecosystem.
 
 | | ruvector-gnn | Standard HNSW Search |
 |---|---|---|
@@ -255,7 +255,7 @@ With mmap weights       ~10MB (+ disk)
 
 - **[Main README](../../README.md)** - Complete project overview
 - **[API Documentation](https://docs.rs/ruvector-gnn)** - Full API reference
-- **[GitHub Repository](https://github.com/ruvnet/ruvector)** - Source code
+- **[GitHub Repository](https://github.com/FlexNetOS/ruvector)** - Source code
 
 ## License
 
@@ -265,10 +265,10 @@ With mmap weights       ~10MB (+ disk)
 
 <div align="center">
 
-**Part of [RuVector](https://github.com/ruvnet/ruvector) - Built by [rUv](https://ruv.io)**
+**Part of [RuVector](https://github.com/FlexNetOS/ruvector) - Built by [rUv](https://ruv.io)**
 
-[![Star on GitHub](https://img.shields.io/github/stars/ruvnet/ruvector?style=social)](https://github.com/ruvnet/ruvector)
+[![Star on GitHub](https://img.shields.io/github/stars/FlexNetOS/ruvector?style=social)](https://github.com/FlexNetOS/ruvector)
 
-[Documentation](https://docs.rs/ruvector-gnn) | [Crates.io](https://crates.io/crates/ruvector-gnn) | [GitHub](https://github.com/ruvnet/ruvector)
+[Documentation](https://docs.rs/ruvector-gnn) | [Crates.io](https://crates.io/crates/ruvector-gnn) | [GitHub](https://github.com/FlexNetOS/ruvector)
 
 </div>

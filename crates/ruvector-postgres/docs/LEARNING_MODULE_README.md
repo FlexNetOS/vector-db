@@ -328,5 +328,5 @@ SELECT ruvector_enable_learning('my_table',
 ## Support
 
 For issues or questions:
-- GitHub Issues: https://github.com/ruvnet/ruvector/issues
-- Documentation: https://github.com/ruvnet/ruvector/tree/main/docs
+- GitHub Issues: https://github.com/FlexNetOS/ruvector/issues
+- Documentation: https://github.com/FlexNetOS/ruvector/tree/main/docs

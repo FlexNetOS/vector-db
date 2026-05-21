@@ -3,7 +3,7 @@
 [![Crates.io](https://img.shields.io/crates/v/prime-radiant.svg)](https://crates.io/crates/prime-radiant)
 [![Documentation](https://docs.rs/prime-radiant/badge.svg)](https://docs.rs/prime-radiant)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Build Status](https://img.shields.io/github/actions/workflow/status/ruvnet/ruvector/ci.yml)](https://github.com/ruvnet/ruvector/actions)
+[![Build Status](https://img.shields.io/github/actions/workflow/status/FlexNetOS/ruvector/ci.yml)](https://github.com/FlexNetOS/ruvector/actions)
 
 **A Real-Time Coherence Gate for Autonomous Systems**
 

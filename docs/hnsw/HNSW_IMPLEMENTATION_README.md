@@ -455,4 +455,4 @@ MIT License - See LICENSE file for details.
 **PostgreSQL**: 14, 15, 16, 17
 **pgrx**: 0.12.x
 
-For questions or issues, please visit: https://github.com/ruvnet/ruvector
+For questions or issues, please visit: https://github.com/FlexNetOS/ruvector

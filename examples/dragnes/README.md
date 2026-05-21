@@ -80,5 +80,5 @@ for the container build.
 ## Related
 
 - [ADR-117: DrAgnes Architecture](../../docs/adr/)
-- [HAM10000 Analysis](docs/HAM10000_analysis.md)
-- [HIPAA Compliance](docs/hipaa-compliance.md)
+- [HAM10000 Analysis](../../docs/research/DrAgnes/HAM10000_analysis.md)
+- [HIPAA Compliance](../../docs/research/DrAgnes/hipaa-compliance.md)

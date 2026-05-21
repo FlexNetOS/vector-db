@@ -548,6 +548,6 @@ MIT OR Apache-2.0
 
 ## Links
 
-- [GitHub Repository](https://github.com/ruvnet/ruvector)
+- [GitHub Repository](https://github.com/FlexNetOS/ruvector)
 - [Documentation](https://ruvector.dev/docs)
 - [NPM Package](https://www.npmjs.com/package/ruvector-attention-unified-wasm)

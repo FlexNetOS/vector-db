@@ -1,0 +1,125 @@
+{
+  "name": "Knowledge Base — On Doc Change (CI hook)",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "kb-on-doc-change",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "wh-change",
+      "name": "Webhook (CI)",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [240, 300],
+      "webhookId": "kb-on-doc-change"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Expect: { repo, sha, changed_paths: [\"docs/foo.md\", ...] }\n// Optional: each entry of changed_paths may be { path, content } so the CI\n// caller can avoid a round-trip through GitHub raw. We honour `content` when\n// it is provided and otherwise fall back to fetching raw content downstream.\nconst body = $input.first().json.body || $input.first().json;\nconst paths = body.changed_paths || [];\nconst items = paths.map(p => {\n  const obj = (typeof p === 'string') ? { path: p } : (p || {});\n  return { json: { repo: body.repo, sha: body.sha, path: obj.path || null, content: obj.content || null } };\n});\nreturn items.length ? items : [{ json: { repo: body.repo, sha: body.sha, path: null, content: null } }];\n"
+      },
+      "id": "fn-fanout",
+      "name": "Fan out paths",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [480, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": { "caseSensitive": true, "leftValue": "", "typeValidation": "strict" },
+          "conditions": [
+            { "id": "has-path", "leftValue": "={{ $json.path }}", "rightValue": "", "operator": { "type": "string", "operation": "notEmpty", "singleValue": true } },
+            { "id": "no-content", "leftValue": "={{ $json.content }}", "rightValue": "", "operator": { "type": "string", "operation": "empty", "singleValue": true } }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "if-fetch",
+      "name": "Need to fetch from GitHub?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [720, 300]
+    },
+    {
+      "parameters": {
+        "url": "=https://raw.githubusercontent.com/{{ $json.repo }}/{{ $json.sha }}/{{ $json.path }}",
+        "authentication": "none",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "User-Agent", "value": "ruvector-n8n-kb-on-doc-change" },
+            { "name": "Authorization", "value": "={{ $env.GITHUB_TOKEN ? ('Bearer ' + $env.GITHUB_TOKEN) : '' }}" }
+          ]
+        },
+        "options": {
+          "response": { "response": { "responseFormat": "text", "neverError": true } },
+          "timeout": 15000
+        }
+      },
+      "id": "http-fetch",
+      "name": "Fetch raw content",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [960, 220]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Merge the fetched body back onto the per-path item. The `Fetch raw content`\n// node returns the body in `$json.data` (text response). If the fetch failed\n// (non-2xx with neverError=true), `data` will be the error body and we drop\n// the item rather than ingesting a 404 page.\nconst src = $('Fan out paths').item.json;\nconst fetched = $json.data;\nif (!fetched || /^Not Found\\b|^404:?/i.test(String(fetched).trim())) {\n  return [{ json: { ...src, content: null, _fetch_failed: true } }];\n}\nreturn [{ json: { ...src, content: String(fetched) } }];\n"
+      },
+      "id": "fn-merge",
+      "name": "Merge content",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1200, 220]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{$env.N8N_WEBHOOK_URL || 'http://localhost:5678'}}/webhook/kb-ingest",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"namespace\": \"ruvector-docs\",\n  \"content\": $json.content || \"\",\n  \"tags\": [\"ci\", `repo:${$json.repo}`, `sha:${$json.sha}`, `path:${$json.path}`],\n  \"metadata\": { \"repo\": $json.repo, \"sha\": $json.sha, \"source_path\": $json.path, \"trigger\": \"doc-change\", \"fetch_failed\": $json._fetch_failed === true }\n}",
+        "options": {
+          "response": { "response": { "neverError": false } }
+        }
+      },
+      "id": "http-fwd",
+      "name": "Forward to kb-ingest",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1440, 300]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { ok: true, fanned_out: $items().length } }}"
+      },
+      "id": "respond",
+      "name": "Respond",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [1680, 300]
+    }
+  ],
+  "connections": {
+    "Webhook (CI)":             { "main": [[{ "node": "Fan out paths", "type": "main", "index": 0 }]] },
+    "Fan out paths":            { "main": [[{ "node": "Need to fetch from GitHub?", "type": "main", "index": 0 }]] },
+    "Need to fetch from GitHub?": { "main": [
+      [{ "node": "Fetch raw content", "type": "main", "index": 0 }],
+      [{ "node": "Forward to kb-ingest", "type": "main", "index": 0 }]
+    ] },
+    "Fetch raw content":        { "main": [[{ "node": "Merge content", "type": "main", "index": 0 }]] },
+    "Merge content":            { "main": [[{ "node": "Forward to kb-ingest", "type": "main", "index": 0 }]] },
+    "Forward to kb-ingest":     { "main": [[{ "node": "Respond", "type": "main", "index": 0 }]] }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "tags": [
+    { "name": "knowledge-base" },
+    { "name": "ci" }
+  ]
+}

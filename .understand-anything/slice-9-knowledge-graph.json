@@ -1,0 +1,2300 @@
+{
+  "version": "1.0.0",
+  "project": {
+    "name": "ruvector slice 9 \u2014 Neural Trader",
+    "languages": [
+      "dockerfile",
+      "javascript",
+      "markdown",
+      "rust",
+      "toml"
+    ],
+    "frameworks": [
+      "Docker",
+      "Serde",
+      "wasm-bindgen"
+    ],
+    "description": "Neural Trader subsystem of RuVector \u2014 five Rust crates (coherence, core, replay, strategies, wasm) implementing self-learning, vector-memory-driven trading strategies with a WASM bridge.",
+    "analyzedAt": "2026-05-13T06:07:29Z",
+    "gitCommitHash": "9054c2cc6793ff11175460694a6479be3ac5b0af"
+  },
+  "nodes": [
+    {
+      "id": "config:crates/neural-trader-coherence/Cargo.toml",
+      "type": "config",
+      "name": "Cargo.toml",
+      "filePath": "crates/neural-trader-coherence/Cargo.toml",
+      "summary": "Cargo manifest for the L5 coherence-gate crate; declares the neural-trader-coherence library and pulls in serde/anyhow for the threshold-gate evaluator.",
+      "tags": [
+        "configuration",
+        "cargo",
+        "rust-manifest",
+        "neural-trader"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:crates/neural-trader-coherence/src/lib.rs",
+      "type": "file",
+      "name": "lib.rs",
+      "filePath": "crates/neural-trader-coherence/src/lib.rs",
+      "summary": "L5 coherence layer of the Neural Trader: implements the regime-adaptive ThresholdGate with MinCut floors, CUSUM drift detection, boundary-stability gating, and the VerifiedToken / WitnessReceipt audit primitives that the proof-gated mutation protocol relies on.",
+      "tags": [
+        "coherence-gate",
+        "neural-trader",
+        "mincut",
+        "audit",
+        "trading-engine"
+      ],
+      "complexity": "complex",
+      "languageNotes": "Trait-based design with a single default ThresholdGate impl; gate emits four boolean permissions (retrieve/write/learn/act) with regime-conditional floors."
+    },
+    {
+      "id": "class:crates/neural-trader-coherence/src/lib.rs:CoherenceDecision",
+      "type": "class",
+      "name": "CoherenceDecision",
+      "filePath": "crates/neural-trader-coherence/src/lib.rs",
+      "lineRange": [
+        16,
+        27
+      ],
+      "summary": "Output struct of every gate evaluation; carries the four permission booleans plus diagnostic mincut value, partition hash, drift/CUSUM scores, and human-readable reasons.",
+      "tags": [
+        "data-model",
+        "coherence-gate",
+        "neural-trader"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:crates/neural-trader-coherence/src/lib.rs:GateContext",
+      "type": "class",
+      "name": "GateContext",
+      "filePath": "crates/neural-trader-coherence/src/lib.rs",
+      "lineRange": [
+        47,
+        64
+      ],
+      "summary": "Input context feeding the coherence gate: symbol/venue/timestamp, current mincut and partition hash, CUSUM and drift scores, regime label, and consecutive stable-boundary window count.",
+      "tags": [
+        "data-model",
+        "coherence-gate",
+        "neural-trader"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:crates/neural-trader-coherence/src/lib.rs:RegimeLabel",
+      "type": "class",
+      "name": "RegimeLabel",
+      "filePath": "crates/neural-trader-coherence/src/lib.rs",
+      "lineRange": [
+        68,
+        72
+      ],
+      "summary": "Coarse market-regime enum (Calm / Normal / Volatile) used to pick which MinCut floor the gate enforces.",
+      "tags": [
+        "enum",
+        "regime",
+        "neural-trader"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:crates/neural-trader-coherence/src/lib.rs:GateConfig",
+      "type": "class",
+      "name": "GateConfig",
+      "filePath": "crates/neural-trader-coherence/src/lib.rs",
+      "lineRange": [
+        80,
+        87
+      ],
+      "summary": "Configurable thresholds for the coherence gate: per-regime MinCut floors (12/9/6), CUSUM threshold (4.5), boundary-stability windows (8), and max drift score (0.5).",
+      "tags": [
+        "configuration",
+        "thresholds",
+        "neural-trader"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:crates/neural-trader-coherence/src/lib.rs:ThresholdGate",
+      "type": "class",
+      "name": "ThresholdGate",
+      "filePath": "crates/neural-trader-coherence/src/lib.rs",
+      "lineRange": [
+        112,
+        177
+      ],
+      "summary": "Default CoherenceGate implementation; evaluates MinCut, CUSUM, drift, and boundary stability against GateConfig and returns a CoherenceDecision with learn requiring a stricter (half) drift margin than act/write.",
+      "tags": [
+        "coherence-gate",
+        "trading-engine",
+        "neural-trader",
+        "policy"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:crates/neural-trader-coherence/src/lib.rs:CoherenceGate",
+      "type": "class",
+      "name": "CoherenceGate",
+      "filePath": "crates/neural-trader-coherence/src/lib.rs",
+      "lineRange": [
+        107,
+        109
+      ],
+      "summary": "Single-method trait (`evaluate`) that every coherence gate implementation satisfies, enabling alternative gates (e.g. ML-based) to swap in for ThresholdGate.",
+      "tags": [
+        "trait",
+        "coherence-gate",
+        "neural-trader"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:crates/neural-trader-coherence/src/lib.rs:VerifiedToken",
+      "type": "class",
+      "name": "VerifiedToken",
+      "filePath": "crates/neural-trader-coherence/src/lib.rs",
+      "lineRange": [
+        186,
+        192
+      ],
+      "summary": "Mutation token minted only when the coherence gate and the policy kernel both approve an action; carries hashes that bind the decision to a specific action_intent.",
+      "tags": [
+        "proof-token",
+        "audit",
+        "neural-trader"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:crates/neural-trader-coherence/src/lib.rs:WitnessReceipt",
+      "type": "class",
+      "name": "WitnessReceipt",
+      "filePath": "crates/neural-trader-coherence/src/lib.rs",
+      "lineRange": [
+        196,
+        205
+      ],
+      "summary": "Immutable audit record appended after every state mutation, hashing the input segment, coherence witness, policy, action intent, verified token, and resulting state.",
+      "tags": [
+        "audit",
+        "witness",
+        "neural-trader"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:crates/neural-trader-coherence/src/lib.rs:WitnessLogger",
+      "type": "class",
+      "name": "WitnessLogger",
+      "filePath": "crates/neural-trader-coherence/src/lib.rs",
+      "lineRange": [
+        208,
+        210
+      ],
+      "summary": "Trait for appending WitnessReceipt audit records; implemented downstream by neural-trader-replay's InMemoryReceiptLog and any persistent log.",
+      "tags": [
+        "trait",
+        "audit",
+        "neural-trader"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "config:crates/neural-trader-core/Cargo.toml",
+      "type": "config",
+      "name": "Cargo.toml",
+      "filePath": "crates/neural-trader-core/Cargo.toml",
+      "summary": "Cargo manifest for the L1 ingest crate; declares neural-trader-core and pulls in serde/anyhow that the canonical event and graph types depend on.",
+      "tags": [
+        "configuration",
+        "cargo",
+        "rust-manifest",
+        "neural-trader"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "document:crates/neural-trader-core/README.md",
+      "type": "document",
+      "name": "README.md",
+      "filePath": "crates/neural-trader-core/README.md",
+      "summary": "Top-level Neural Trader architecture document: 6-layer pipeline (L1 Ingest -> L2 Graph -> L3 GNN+Attention -> L4 Memory -> L5 Coherence -> L6 Policy), per-crate type tables, gate semantics, and references to ADR-085/086.",
+      "tags": [
+        "documentation",
+        "architecture",
+        "neural-trader",
+        "entry-point"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:crates/neural-trader-core/src/lib.rs",
+      "type": "file",
+      "name": "lib.rs",
+      "filePath": "crates/neural-trader-core/src/lib.rs",
+      "summary": "L1 ingest layer of the Neural Trader: canonical MarketEvent envelope (fixed-point price/qty, venue/symbol ids, 16-byte hashes), 10 NodeKinds, 12 EdgeKinds, 17 PropertyKeys, GraphDelta, plus EventIngestor/GraphUpdater/Embedder traits.",
+      "tags": [
+        "data-model",
+        "ingest",
+        "neural-trader",
+        "trading-engine",
+        "schema-definition"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "Uses #[repr(u8)] on every enum to keep the hot ingest path stack-allocated and serde-portable for replay segments."
+    },
+    {
+      "id": "class:crates/neural-trader-core/src/lib.rs:MarketEvent",
+      "type": "class",
+      "name": "MarketEvent",
+      "filePath": "crates/neural-trader-core/src/lib.rs",
+      "lineRange": [
+        17,
+        33
+      ],
+      "summary": "Normalized market event envelope every feed message is converted into before entering the graph or embedding pipeline; carries exchange/ingest timestamps, fixed-point price/qty, venue/symbol ids, and opaque 16-byte hashes for order/participant identity.",
+      "tags": [
+        "data-model",
+        "ingest",
+        "neural-trader",
+        "market-event"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:crates/neural-trader-core/src/lib.rs:EventType",
+      "type": "class",
+      "name": "EventType",
+      "filePath": "crates/neural-trader-core/src/lib.rs",
+      "lineRange": [
+        38,
+        46
+      ],
+      "summary": "Seven-variant discriminant for market events: NewOrder, ModifyOrder, CancelOrder, Trade, BookSnapshot, SessionMarker, VenueStatus.",
+      "tags": [
+        "enum",
+        "ingest",
+        "neural-trader"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:crates/neural-trader-core/src/lib.rs:Side",
+      "type": "class",
+      "name": "Side",
+      "filePath": "crates/neural-trader-core/src/lib.rs",
+      "lineRange": [
+        51,
+        54
+      ],
+      "summary": "Order side enum (Bid / Ask) attached to a MarketEvent when applicable.",
+      "tags": [
+        "enum",
+        "ingest",
+        "neural-trader"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:crates/neural-trader-core/src/lib.rs:NodeKind",
+      "type": "class",
+      "name": "NodeKind",
+      "filePath": "crates/neural-trader-core/src/lib.rs",
+      "lineRange": [
+        63,
+        74
+      ],
+      "summary": "Ten-variant enum naming the typed nodes of the heterogeneous market graph (Symbol, Venue, PriceLevel, Order, Trade, Event, Participant, TimeBucket, Regime, StrategyState).",
+      "tags": [
+        "enum",
+        "graph-schema",
+        "neural-trader"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:crates/neural-trader-core/src/lib.rs:EdgeKind",
+      "type": "class",
+      "name": "EdgeKind",
+      "filePath": "crates/neural-trader-core/src/lib.rs",
+      "lineRange": [
+        79,
+        92
+      ],
+      "summary": "Twelve-variant enum for typed edges in the market graph (AtLevel, NextTick, Generated, Matched, ModifiedFrom, CanceledBy, BelongsToSymbol, OnVenue, InWindow, CorrelatedWith, InRegime, AffectsState).",
+      "tags": [
+        "enum",
+        "graph-schema",
+        "neural-trader"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:crates/neural-trader-core/src/lib.rs:PropertyKey",
+      "type": "class",
+      "name": "PropertyKey",
+      "filePath": "crates/neural-trader-core/src/lib.rs",
+      "lineRange": [
+        103,
+        121
+      ],
+      "summary": "Seventeen-variant property-key enum covering depth, queue, imbalance, hazards, slippage, influence, and coherence-contribution metrics \u2014 kept as an enum to avoid heap-allocating strings on the hot ingest path.",
+      "tags": [
+        "enum",
+        "graph-schema",
+        "neural-trader"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:crates/neural-trader-core/src/lib.rs:GraphDelta",
+      "type": "class",
+      "name": "GraphDelta",
+      "filePath": "crates/neural-trader-core/src/lib.rs",
+      "lineRange": [
+        125,
+        129
+      ],
+      "summary": "Diff struct returned by GraphUpdater::apply_event listing added nodes, added edges, and property updates produced from a single MarketEvent.",
+      "tags": [
+        "data-model",
+        "graph-schema",
+        "neural-trader"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:crates/neural-trader-core/src/lib.rs:StateWindow",
+      "type": "class",
+      "name": "StateWindow",
+      "filePath": "crates/neural-trader-core/src/lib.rs",
+      "lineRange": [
+        152,
+        158
+      ],
+      "summary": "Sliding window of MarketEvents (symbol, venue, [start_ns, end_ns]) passed to Embedder::embed_state to produce a feature vector for downstream layers.",
+      "tags": [
+        "data-model",
+        "embedding",
+        "neural-trader"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:crates/neural-trader-core/src/lib.rs:EventIngestor",
+      "type": "class",
+      "name": "EventIngestor",
+      "filePath": "crates/neural-trader-core/src/lib.rs",
+      "lineRange": [
+        136,
+        138
+      ],
+      "summary": "Trait implemented by sinks that accept normalized MarketEvents (e.g. graph projectors, replay writers).",
+      "tags": [
+        "trait",
+        "ingest",
+        "neural-trader"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:crates/neural-trader-core/src/lib.rs:GraphUpdater",
+      "type": "class",
+      "name": "GraphUpdater",
+      "filePath": "crates/neural-trader-core/src/lib.rs",
+      "lineRange": [
+        141,
+        143
+      ],
+      "summary": "Trait for components that project incoming MarketEvents onto the dynamic heterogeneous graph and emit a GraphDelta.",
+      "tags": [
+        "trait",
+        "graph-schema",
+        "neural-trader"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:crates/neural-trader-core/src/lib.rs:Embedder",
+      "type": "class",
+      "name": "Embedder",
+      "filePath": "crates/neural-trader-core/src/lib.rs",
+      "lineRange": [
+        146,
+        148
+      ],
+      "summary": "Trait for components that turn a StateWindow into a Vec<f32> embedding consumed by the L3 GNN+Attention stage.",
+      "tags": [
+        "trait",
+        "embedding",
+        "neural-trader"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "config:crates/neural-trader-replay/Cargo.toml",
+      "type": "config",
+      "name": "Cargo.toml",
+      "filePath": "crates/neural-trader-replay/Cargo.toml",
+      "summary": "Cargo manifest for the L4 replay-memory crate; declares neural-trader-replay and depends on neural-trader-core, neural-trader-coherence, serde, and anyhow.",
+      "tags": [
+        "configuration",
+        "cargo",
+        "rust-manifest",
+        "neural-trader"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:crates/neural-trader-replay/src/lib.rs",
+      "type": "file",
+      "name": "lib.rs",
+      "filePath": "crates/neural-trader-replay/src/lib.rs",
+      "summary": "L4 replay-memory layer of the Neural Trader: ReplaySegment (signed window of events + embedding + labels + coherence stats + lineage + witness hash), MemoryStore trait, ReservoirStore with gate-guarded O(1) eviction, and InMemoryReceiptLog implementing WitnessLogger.",
+      "tags": [
+        "memory-store",
+        "replay",
+        "neural-trader",
+        "trading-engine",
+        "audit"
+      ],
+      "complexity": "complex",
+      "languageNotes": "Uses VecDeque for O(1) front eviction instead of Vec::remove(0); MemoryStore::maybe_write fails closed when the coherence gate denies write."
+    },
+    {
+      "id": "class:crates/neural-trader-replay/src/lib.rs:ReplaySegment",
+      "type": "class",
+      "name": "ReplaySegment",
+      "filePath": "crates/neural-trader-replay/src/lib.rs",
+      "lineRange": [
+        19,
+        37
+      ],
+      "summary": "Sealed replay window containing serialized events, an optional embedding snapshot, realized labels, coherence statistics, lineage metadata, and a 16-byte witness hash for tamper detection.",
+      "tags": [
+        "data-model",
+        "replay",
+        "neural-trader"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:crates/neural-trader-replay/src/lib.rs:SegmentKind",
+      "type": "class",
+      "name": "SegmentKind",
+      "filePath": "crates/neural-trader-replay/src/lib.rs",
+      "lineRange": [
+        41,
+        49
+      ],
+      "summary": "Seven-variant classification of why a segment was retained (HighUncertainty, LargeImpact, RegimeTransition, StructuralAnomaly, RareQueuePattern, HeadDisagreement, Routine).",
+      "tags": [
+        "enum",
+        "replay",
+        "neural-trader"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:crates/neural-trader-replay/src/lib.rs:CoherenceStats",
+      "type": "class",
+      "name": "CoherenceStats",
+      "filePath": "crates/neural-trader-replay/src/lib.rs",
+      "lineRange": [
+        53,
+        58
+      ],
+      "summary": "Snapshot of coherence diagnostics (mincut, partition hash, drift, CUSUM) captured at the moment a segment was written so audits can reconstruct why memory was admitted.",
+      "tags": [
+        "data-model",
+        "coherence-gate",
+        "neural-trader"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:crates/neural-trader-replay/src/lib.rs:SegmentLineage",
+      "type": "class",
+      "name": "SegmentLineage",
+      "filePath": "crates/neural-trader-replay/src/lib.rs",
+      "lineRange": [
+        62,
+        66
+      ],
+      "summary": "Lineage metadata (model_id, policy_version, ingest_batch_id) linking a segment back to the model and policy that produced it.",
+      "tags": [
+        "data-model",
+        "audit",
+        "neural-trader"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:crates/neural-trader-replay/src/lib.rs:MemoryQuery",
+      "type": "class",
+      "name": "MemoryQuery",
+      "filePath": "crates/neural-trader-replay/src/lib.rs",
+      "lineRange": [
+        74,
+        79
+      ],
+      "summary": "Retrieval query carrying symbol_id, an embedding vector, an optional regime filter, and a result limit.",
+      "tags": [
+        "data-model",
+        "retrieval",
+        "neural-trader"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:crates/neural-trader-replay/src/lib.rs:MemoryStore",
+      "type": "class",
+      "name": "MemoryStore",
+      "filePath": "crates/neural-trader-replay/src/lib.rs",
+      "lineRange": [
+        82,
+        89
+      ],
+      "summary": "Two-method trait (`retrieve`, `maybe_write`) for selective bounded memory; writes accept a CoherenceDecision so the store can fail closed when the gate denies admission.",
+      "tags": [
+        "trait",
+        "memory-store",
+        "neural-trader"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:crates/neural-trader-replay/src/lib.rs:InMemoryReceiptLog",
+      "type": "class",
+      "name": "InMemoryReceiptLog",
+      "filePath": "crates/neural-trader-replay/src/lib.rs",
+      "lineRange": [
+        96,
+        127
+      ],
+      "summary": "Simple in-memory implementation of WitnessLogger used in tests and research; stores receipts in a Vec and exposes len/is_empty helpers.",
+      "tags": [
+        "audit",
+        "witness",
+        "in-memory",
+        "neural-trader"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:crates/neural-trader-replay/src/lib.rs:ReservoirStore",
+      "type": "class",
+      "name": "ReservoirStore",
+      "filePath": "crates/neural-trader-replay/src/lib.rs",
+      "lineRange": [
+        136,
+        184
+      ],
+      "summary": "Bounded reservoir MemoryStore implementation backed by a VecDeque<ReplaySegment>; honours the coherence gate (returns false when allow_write is false), evicts via O(1) pop_front when full, and retrieves the most recent matching segments by symbol.",
+      "tags": [
+        "memory-store",
+        "reservoir",
+        "trading-engine",
+        "neural-trader"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "config:crates/neural-trader-strategies/Cargo.toml",
+      "type": "config",
+      "name": "Cargo.toml",
+      "filePath": "crates/neural-trader-strategies/Cargo.toml",
+      "summary": "Cargo manifest for the L6 venue-agnostic strategy crate; declares neural-trader-strategies, ties together neural-trader-core / coherence / ruvector-attention dependencies, and configures benchmarks/tests for the EV-Kelly, AttentionScalper, CoherenceArb strategies and the RiskGate.",
+      "tags": [
+        "configuration",
+        "cargo",
+        "rust-manifest",
+        "neural-trader"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:crates/neural-trader-strategies/src/attention_scalper.rs",
+      "type": "file",
+      "name": "attention_scalper.rs",
+      "filePath": "crates/neural-trader-strategies/src/attention_scalper.rs",
+      "summary": "Multi-level order-book imbalance scalper that consumes MarketEvent::BookSnapshot and emits buy/sell Intents; supports two imbalance modes (geometric decay, default; or ruvector-attention ScaledDotProductAttention via use_sdpa) and applies EMA smoothing before crossing the abs_threshold.",
+      "tags": [
+        "strategy",
+        "neural-trader",
+        "trading-engine",
+        "attention",
+        "order-book"
+      ],
+      "complexity": "complex",
+      "languageNotes": "Honest ruvector-attention integration: when use_sdpa is true, each price level is encoded as a [size_log, side_sign, depth_idx, 1.0] vector and the attention-weighted context's sign dimension becomes the signed imbalance."
+    },
+    {
+      "id": "class:crates/neural-trader-strategies/src/attention_scalper.rs:AttentionScalperConfig",
+      "type": "class",
+      "name": "AttentionScalperConfig",
+      "filePath": "crates/neural-trader-strategies/src/attention_scalper.rs",
+      "lineRange": [
+        34,
+        51
+      ],
+      "summary": "Configuration for the scalper: top-N depth, geometric level_decay, ema_alpha smoothing, abs_threshold, contract quantity, strategy_name, and the use_sdpa toggle that switches to ruvector ScaledDotProductAttention.",
+      "tags": [
+        "configuration",
+        "strategy",
+        "neural-trader"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:crates/neural-trader-strategies/src/attention_scalper.rs:AttentionScalper",
+      "type": "class",
+      "name": "AttentionScalper",
+      "filePath": "crates/neural-trader-strategies/src/attention_scalper.rs",
+      "lineRange": [
+        76,
+        233
+      ],
+      "summary": "Stateful per-symbol scalper that maintains yes/no level books, recomputes the imbalance (geometric or SDPA) on every BookSnapshot, smooths via EMA, and emits a YES or NO Intent when |smoothed_imbalance| crosses abs_threshold.",
+      "tags": [
+        "strategy",
+        "neural-trader",
+        "trading-engine",
+        "attention"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:crates/neural-trader-strategies/src/attention_scalper.rs:sdpa_imbalance",
+      "type": "function",
+      "name": "sdpa_imbalance",
+      "filePath": "crates/neural-trader-strategies/src/attention_scalper.rs",
+      "lineRange": [
+        184,
+        220
+      ],
+      "summary": "Computes signed book imbalance via ruvector_attention::ScaledDotProductAttention; encodes each level as a 4-d vector, queries with a fixed pressure vector, and returns the sign dimension of the attention-weighted context.",
+      "tags": [
+        "attention",
+        "imbalance",
+        "neural-trader"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:crates/neural-trader-strategies/src/attention_scalper.rs:update_snapshot",
+      "type": "function",
+      "name": "update_snapshot",
+      "filePath": "crates/neural-trader-strategies/src/attention_scalper.rs",
+      "lineRange": [
+        89,
+        129
+      ],
+      "summary": "Ingests one BookSnapshot, appends the level to yes/no buffers, truncates each side to the configured depth, computes raw imbalance (SDPA or geometric), and EMA-smooths it into per-symbol state.",
+      "tags": [
+        "order-book",
+        "imbalance",
+        "neural-trader"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:crates/neural-trader-strategies/src/attention_scalper.rs:maybe_emit",
+      "type": "function",
+      "name": "maybe_emit",
+      "filePath": "crates/neural-trader-strategies/src/attention_scalper.rs",
+      "lineRange": [
+        131,
+        163
+      ],
+      "summary": "Throttled emitter: if the EMA-smoothed imbalance magnitude crosses abs_threshold and the event seq has advanced, returns a Buy YES or Buy NO Intent sized by config.quantity with edge_bps proportional to the imbalance.",
+      "tags": [
+        "strategy",
+        "emit-intent",
+        "neural-trader"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:crates/neural-trader-strategies/src/coherence_arb.rs",
+      "type": "file",
+      "name": "coherence_arb.rs",
+      "filePath": "crates/neural-trader-strategies/src/coherence_arb.rs",
+      "summary": "Cross-market coherence arbitrage strategy: watches operator-configured (reference, mirror) Kalshi pairs and emits a Buy YES on the cheaper side when its mid diverges from the reference by more than min_divergence_bps.",
+      "tags": [
+        "strategy",
+        "arbitrage",
+        "neural-trader",
+        "trading-engine"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "class:crates/neural-trader-strategies/src/coherence_arb.rs:CoherenceArbConfig",
+      "type": "class",
+      "name": "CoherenceArbConfig",
+      "filePath": "crates/neural-trader-strategies/src/coherence_arb.rs",
+      "lineRange": [
+        28,
+        39
+      ],
+      "summary": "Operator-supplied (reference, mirror) symbol pairs, divergence threshold in basis points, fractional Kelly, bankroll, and strategy attribution name.",
+      "tags": [
+        "configuration",
+        "strategy",
+        "neural-trader"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:crates/neural-trader-strategies/src/coherence_arb.rs:CoherenceArb",
+      "type": "class",
+      "name": "CoherenceArb",
+      "filePath": "crates/neural-trader-strategies/src/coherence_arb.rs",
+      "lineRange": [
+        54,
+        120
+      ],
+      "summary": "Stateful arbitrage strategy that maintains the latest YES-mid for every configured symbol and emits Buy-YES Intents on the divergent leg when prices fall out of coherence.",
+      "tags": [
+        "strategy",
+        "arbitrage",
+        "neural-trader",
+        "trading-engine"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:crates/neural-trader-strategies/src/coherence_arb.rs:try_arb_for",
+      "type": "function",
+      "name": "try_arb_for",
+      "filePath": "crates/neural-trader-strategies/src/coherence_arb.rs",
+      "lineRange": [
+        74,
+        103
+      ],
+      "summary": "For a given symbol whose mid just updated, walks the configured pair list and returns a Buy-YES Intent on whichever leg now trades more than min_divergence_bps below its partner.",
+      "tags": [
+        "strategy",
+        "arbitrage",
+        "neural-trader"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:crates/neural-trader-strategies/src/coherence_bridge.rs",
+      "type": "file",
+      "name": "coherence_bridge.rs",
+      "filePath": "crates/neural-trader-strategies/src/coherence_bridge.rs",
+      "summary": "Thin bridge that wires neural-trader-coherence's CoherenceGate into the Strategy -> Intent -> RiskGate -> Order pipeline; re-exports the gate types and exposes a CoherenceChecker that fails closed when the gate errors so internal failures never authorize actuation.",
+      "tags": [
+        "coherence-gate",
+        "bridge",
+        "neural-trader",
+        "trading-engine"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:crates/neural-trader-strategies/src/coherence_bridge.rs:CoherenceChecker",
+      "type": "class",
+      "name": "CoherenceChecker",
+      "filePath": "crates/neural-trader-strategies/src/coherence_bridge.rs",
+      "lineRange": [
+        25,
+        70
+      ],
+      "summary": "Pre-order coherence wrapper around any CoherenceGate impl; check() returns Pass(intent) only when allow_act is true, otherwise Block with the decision (and any internal error is folded into a defensive Block).",
+      "tags": [
+        "coherence-gate",
+        "bridge",
+        "neural-trader"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:crates/neural-trader-strategies/src/coherence_bridge.rs:CoherenceOutcome",
+      "type": "class",
+      "name": "CoherenceOutcome",
+      "filePath": "crates/neural-trader-strategies/src/coherence_bridge.rs",
+      "lineRange": [
+        31,
+        39
+      ],
+      "summary": "Two-variant enum returned by CoherenceChecker::check: Pass(Intent) or Block{intent, decision}.",
+      "tags": [
+        "enum",
+        "coherence-gate",
+        "neural-trader"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:crates/neural-trader-strategies/src/coherence_bridge.rs:simple_context",
+      "type": "function",
+      "name": "simple_context",
+      "filePath": "crates/neural-trader-strategies/src/coherence_bridge.rs",
+      "lineRange": [
+        76,
+        116
+      ],
+      "summary": "Helper that builds a GateContext with sensible defaults for a single intent so callers without a full graph projection can still exercise the gate in paper-trading flows.",
+      "tags": [
+        "helper",
+        "coherence-gate",
+        "neural-trader"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:crates/neural-trader-strategies/src/ev_kelly.rs",
+      "type": "file",
+      "name": "ev_kelly.rs",
+      "filePath": "crates/neural-trader-strategies/src/ev_kelly.rs",
+      "summary": "Expected-Value Kelly strategy for binary Kalshi contracts: external probability prior `p` against market mid `m` cents drives `kelly = (p - m/100) / (1 - m/100)`, sized by a conservative kelly_fraction (default 0.25) and the intent's confidence, then converted into contract count at the current ask.",
+      "tags": [
+        "strategy",
+        "ev-kelly",
+        "neural-trader",
+        "trading-engine",
+        "kalshi"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "class:crates/neural-trader-strategies/src/ev_kelly.rs:ExpectedValueKellyConfig",
+      "type": "class",
+      "name": "ExpectedValueKellyConfig",
+      "filePath": "crates/neural-trader-strategies/src/ev_kelly.rs",
+      "lineRange": [
+        49,
+        60
+      ],
+      "summary": "Configuration carrying kelly_fraction, bankroll_cents, min_edge_bps (defensive pre-RiskGate filter), and attribution name.",
+      "tags": [
+        "configuration",
+        "strategy",
+        "neural-trader"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:crates/neural-trader-strategies/src/ev_kelly.rs:ExpectedValueKelly",
+      "type": "class",
+      "name": "ExpectedValueKelly",
+      "filePath": "crates/neural-trader-strategies/src/ev_kelly.rs",
+      "lineRange": [
+        74,
+        159
+      ],
+      "summary": "Stateful per-symbol EV-Kelly strategy: stores externally supplied priors (clamped to [0.01, 0.99]) and the latest mid, emits at most one Intent per event kind via maybe_emit when the computed edge clears min_edge_bps.",
+      "tags": [
+        "strategy",
+        "ev-kelly",
+        "neural-trader",
+        "trading-engine"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:crates/neural-trader-strategies/src/ev_kelly.rs:maybe_emit",
+      "type": "function",
+      "name": "maybe_emit",
+      "filePath": "crates/neural-trader-strategies/src/ev_kelly.rs",
+      "lineRange": [
+        113,
+        145
+      ],
+      "summary": "Computes Kelly fraction from prior vs mid, applies kelly_fraction and confidence, converts the resulting bankroll fraction into a contract count, and emits a Buy YES or Buy NO Intent if edge_bps clears the configured floor.",
+      "tags": [
+        "strategy",
+        "emit-intent",
+        "neural-trader"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:crates/neural-trader-strategies/src/intent.rs",
+      "type": "file",
+      "name": "intent.rs",
+      "filePath": "crates/neural-trader-strategies/src/intent.rs",
+      "summary": "Canonical venue-agnostic Intent struct and its Action / Side enums; this is the type every strategy emits and every downstream stage (CoherenceChecker, RiskGate, venue adapter) consumes.",
+      "tags": [
+        "data-model",
+        "intent",
+        "neural-trader",
+        "trading-engine"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:crates/neural-trader-strategies/src/intent.rs:Action",
+      "type": "class",
+      "name": "Action",
+      "filePath": "crates/neural-trader-strategies/src/intent.rs",
+      "lineRange": [
+        7,
+        10
+      ],
+      "summary": "Two-variant enum (Buy / Sell) capturing whether an Intent opens or closes a position.",
+      "tags": [
+        "enum",
+        "intent",
+        "neural-trader"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:crates/neural-trader-strategies/src/intent.rs:Side",
+      "type": "class",
+      "name": "Side",
+      "filePath": "crates/neural-trader-strategies/src/intent.rs",
+      "lineRange": [
+        14,
+        17
+      ],
+      "summary": "Binary contract side enum (Yes / No) \u2014 distinct from neural_trader_core::Side which is Bid/Ask for limit orders.",
+      "tags": [
+        "enum",
+        "intent",
+        "neural-trader"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:crates/neural-trader-strategies/src/intent.rs:Intent",
+      "type": "class",
+      "name": "Intent",
+      "filePath": "crates/neural-trader-strategies/src/intent.rs",
+      "lineRange": [
+        21,
+        41
+      ],
+      "summary": "Strategy intent struct: canonical symbol_id, Yes/No side, Buy/Sell action, limit price in Kalshi cents, quantity, edge in basis points, model confidence in [0,1], and a static strategy attribution string.",
+      "tags": [
+        "data-model",
+        "intent",
+        "neural-trader",
+        "trading-engine"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:crates/neural-trader-strategies/src/lib.rs",
+      "type": "file",
+      "name": "lib.rs",
+      "filePath": "crates/neural-trader-strategies/src/lib.rs",
+      "summary": "Crate root for the L6 strategy runtime: declares the six submodules (attention_scalper, coherence_arb, coherence_bridge, ev_kelly, intent, risk), re-exports the public surface, and defines the venue-agnostic `Strategy` trait that all concrete strategies implement.",
+      "tags": [
+        "entry-point",
+        "barrel",
+        "strategy",
+        "neural-trader"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:crates/neural-trader-strategies/src/lib.rs:Strategy",
+      "type": "class",
+      "name": "Strategy",
+      "filePath": "crates/neural-trader-strategies/src/lib.rs",
+      "lineRange": [
+        41,
+        44
+      ],
+      "summary": "Two-method strategy trait: name() for attribution and on_event(&mut self, &MarketEvent) -> Option<Intent>; implementers return at most one Intent per event so composites can stream follow-ups.",
+      "tags": [
+        "trait",
+        "strategy",
+        "neural-trader"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:crates/neural-trader-strategies/src/risk.rs",
+      "type": "file",
+      "name": "risk.rs",
+      "filePath": "crates/neural-trader-strategies/src/risk.rs",
+      "summary": "Mandatory RiskGate sitting between every strategy Intent and the venue adapter: enforces non-positive quantity, price-range, daily-loss kill (3% default), edge threshold (300 bps default), hard cash check, single-position cap (10%), cluster concentration (40%), and the KALSHI_ENABLE_LIVE env flag before approving an order.",
+      "tags": [
+        "risk-gate",
+        "trading-engine",
+        "neural-trader",
+        "policy",
+        "kill-switch"
+      ],
+      "complexity": "complex",
+      "languageNotes": "Cheapest checks first; failures return RejectReason variants distinguishing InsufficientCash from PositionTooLarge so operators can debug rejections."
+    },
+    {
+      "id": "class:crates/neural-trader-strategies/src/risk.rs:Position",
+      "type": "class",
+      "name": "Position",
+      "filePath": "crates/neural-trader-strategies/src/risk.rs",
+      "lineRange": [
+        14,
+        27
+      ],
+      "summary": "Open-position record (symbol_id, side, quantity, avg_price_cents) with a notional_cents() helper used by cluster accounting.",
+      "tags": [
+        "data-model",
+        "portfolio",
+        "neural-trader"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:crates/neural-trader-strategies/src/risk.rs:PortfolioState",
+      "type": "class",
+      "name": "PortfolioState",
+      "filePath": "crates/neural-trader-strategies/src/risk.rs",
+      "lineRange": [
+        39,
+        64
+      ],
+      "summary": "Snapshot of cash, starting cash, day P&L, open positions and symbol->cluster map fed into RiskGate::evaluate; exposes total_notional_cents and cluster_notional_cents helpers.",
+      "tags": [
+        "data-model",
+        "portfolio",
+        "neural-trader",
+        "trading-engine"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:crates/neural-trader-strategies/src/risk.rs:RiskConfig",
+      "type": "class",
+      "name": "RiskConfig",
+      "filePath": "crates/neural-trader-strategies/src/risk.rs",
+      "lineRange": [
+        69,
+        94
+      ],
+      "summary": "Hard risk limits: max_position_frac (0.10), max_daily_loss_frac (0.03), min_edge_bps (300), max_cluster_frac (0.40), and require_live_flag toggle gating real-money orders behind KALSHI_ENABLE_LIVE=1.",
+      "tags": [
+        "configuration",
+        "risk-gate",
+        "neural-trader"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:crates/neural-trader-strategies/src/risk.rs:RiskDecision",
+      "type": "class",
+      "name": "RiskDecision",
+      "filePath": "crates/neural-trader-strategies/src/risk.rs",
+      "lineRange": [
+        99,
+        105
+      ],
+      "summary": "Two-variant outcome enum (Approve(Intent) / Reject{reason, intent}) returned by RiskGate::evaluate.",
+      "tags": [
+        "enum",
+        "risk-gate",
+        "neural-trader"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:crates/neural-trader-strategies/src/risk.rs:RejectReason",
+      "type": "class",
+      "name": "RejectReason",
+      "filePath": "crates/neural-trader-strategies/src/risk.rs",
+      "lineRange": [
+        108,
+        117
+      ],
+      "summary": "Eight-variant rejection-reason enum: EdgeTooThin, PositionTooLarge, DailyLossKill, ClusterConcentration, LiveTradingDisabled, InsufficientCash, NonPositiveQuantity, PriceOutOfRange.",
+      "tags": [
+        "enum",
+        "risk-gate",
+        "neural-trader"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:crates/neural-trader-strategies/src/risk.rs:RiskGate",
+      "type": "class",
+      "name": "RiskGate",
+      "filePath": "crates/neural-trader-strategies/src/risk.rs",
+      "lineRange": [
+        120,
+        214
+      ],
+      "summary": "Stateless RiskGate that runs the seven check tiers in order against a PortfolioState and approves or rejects each Intent; closing sells are always allowed so positions can be exited after the daily-loss kill trips.",
+      "tags": [
+        "risk-gate",
+        "trading-engine",
+        "neural-trader",
+        "kill-switch"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:crates/neural-trader-strategies/src/risk.rs:evaluate",
+      "type": "function",
+      "name": "evaluate",
+      "filePath": "crates/neural-trader-strategies/src/risk.rs",
+      "lineRange": [
+        130,
+        207
+      ],
+      "summary": "Core gate routine: runs sanity, daily-loss kill, edge floor, cash check, single-position cap, cluster concentration, and live-flag check in cheapest-first order and returns Approve or a specific RejectReason.",
+      "tags": [
+        "risk-gate",
+        "neural-trader",
+        "trading-engine"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "config:crates/neural-trader-wasm/Cargo.toml",
+      "type": "config",
+      "name": "Cargo.toml",
+      "filePath": "crates/neural-trader-wasm/Cargo.toml",
+      "summary": "Cargo manifest for the WASM binding crate; configures cdylib output, wasm-bindgen/serde-wasm-bindgen/console_error_panic_hook, and depends on neural-trader-core / coherence / replay for the bindings exposed to @ruvector/neural-trader-wasm.",
+      "tags": [
+        "configuration",
+        "cargo",
+        "rust-manifest",
+        "wasm",
+        "neural-trader"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "service:crates/neural-trader-wasm/Dockerfile.test",
+      "type": "service",
+      "name": "Dockerfile.test",
+      "filePath": "crates/neural-trader-wasm/Dockerfile.test",
+      "summary": "Two-stage Docker test runner: stage 1 builds the WASM module with rust:1.83 + wasm-pack against a minimal generated workspace Cargo.toml (only the four neural-trader crates), stage 2 runs the Node smoke test in node:20-slim to verify the WASM module loads and exports are correct.",
+      "tags": [
+        "containerization",
+        "infrastructure",
+        "wasm",
+        "test",
+        "neural-trader"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "Generates a minimal workspace Cargo.toml inline to avoid pulling all 87 RuVector workspace members into the build."
+    },
+    {
+      "id": "file:crates/neural-trader-wasm/src/lib.rs",
+      "type": "file",
+      "name": "lib.rs",
+      "filePath": "crates/neural-trader-wasm/src/lib.rs",
+      "summary": "WASM bindings (ADR-085/ADR-086) exposing the Neural Trader's L1/L4/L5 surface to JavaScript: 7 enum wrappers, MarketEventWasm/GraphDeltaWasm/GateConfigWasm/GateContextWasm/ThresholdGateWasm/CoherenceDecisionWasm/ReplaySegmentWasm/ReservoirStoreWasm wrapper classes, hex helpers for 16-byte hashes, and serde-wasm-bindgen serialization that preserves u64 precision via BigInt.",
+      "tags": [
+        "wasm-bindings",
+        "neural-trader",
+        "javascript-interop",
+        "trading-engine",
+        "barrel"
+      ],
+      "complexity": "complex",
+      "languageNotes": "Uses an enum_convert! macro to bridge wasm-bindgen-compatible enums with native crate enums; serializer is configured with serialize_large_number_types_as_bigints(true) to avoid u64 precision loss in JS."
+    },
+    {
+      "id": "function:crates/neural-trader-wasm/src/lib.rs:init",
+      "type": "function",
+      "name": "init",
+      "filePath": "crates/neural-trader-wasm/src/lib.rs",
+      "lineRange": [
+        20,
+        23
+      ],
+      "summary": "WASM start hook that installs console_error_panic_hook when the optional feature is enabled so Rust panics surface as readable JS errors.",
+      "tags": [
+        "wasm",
+        "init",
+        "neural-trader"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:crates/neural-trader-wasm/src/lib.rs:hex_to_bytes16_inner",
+      "type": "function",
+      "name": "hex_to_bytes16_inner",
+      "filePath": "crates/neural-trader-wasm/src/lib.rs",
+      "lineRange": [
+        45,
+        62
+      ],
+      "summary": "Parses a 32-char (optional 0x-prefixed) hex string into [u8; 16]; used to round-trip event/order/participant 16-byte hashes across the WASM boundary.",
+      "tags": [
+        "wasm",
+        "hex",
+        "neural-trader"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:crates/neural-trader-wasm/src/lib.rs:MarketEventWasm",
+      "type": "class",
+      "name": "MarketEventWasm",
+      "filePath": "crates/neural-trader-wasm/src/lib.rs",
+      "lineRange": [
+        219,
+        366
+      ],
+      "summary": "wasm-bindgen wrapper around neural_trader_core::MarketEvent: exposes getter/setter properties for every field, hex round-trip for the 16-byte hashes, and to_json/from_json helpers.",
+      "tags": [
+        "wasm-bindings",
+        "ingest",
+        "neural-trader",
+        "javascript-interop"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "class:crates/neural-trader-wasm/src/lib.rs:GraphDeltaWasm",
+      "type": "class",
+      "name": "GraphDeltaWasm",
+      "filePath": "crates/neural-trader-wasm/src/lib.rs",
+      "lineRange": [
+        374,
+        424
+      ],
+      "summary": "wasm-bindgen wrapper around neural_trader_core::GraphDelta exposing nodes_added / edges_added / properties_updated as JsValue arrays.",
+      "tags": [
+        "wasm-bindings",
+        "graph-schema",
+        "neural-trader",
+        "javascript-interop"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:crates/neural-trader-wasm/src/lib.rs:GateConfigWasm",
+      "type": "class",
+      "name": "GateConfigWasm",
+      "filePath": "crates/neural-trader-wasm/src/lib.rs",
+      "lineRange": [
+        432,
+        504
+      ],
+      "summary": "WASM wrapper around neural_trader_coherence::GateConfig with getter/setter pairs for every threshold so JavaScript can configure the regime-adaptive coherence gate.",
+      "tags": [
+        "wasm-bindings",
+        "configuration",
+        "coherence-gate",
+        "neural-trader"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:crates/neural-trader-wasm/src/lib.rs:GateContextWasm",
+      "type": "class",
+      "name": "GateContextWasm",
+      "filePath": "crates/neural-trader-wasm/src/lib.rs",
+      "lineRange": [
+        512,
+        601
+      ],
+      "summary": "WASM wrapper around neural_trader_coherence::GateContext; constructor accepts the partition_hash as a hex string and the regime as a RegimeLabelWasm enum, with to_inner() to materialize the native GateContext on demand.",
+      "tags": [
+        "wasm-bindings",
+        "coherence-gate",
+        "neural-trader"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:crates/neural-trader-wasm/src/lib.rs:ThresholdGateWasm",
+      "type": "class",
+      "name": "ThresholdGateWasm",
+      "filePath": "crates/neural-trader-wasm/src/lib.rs",
+      "lineRange": [
+        609,
+        630
+      ],
+      "summary": "WASM wrapper around neural_trader_coherence::ThresholdGate; `evaluate` consumes a GateContextWasm and returns a CoherenceDecisionWasm so JS callers can drive the gate end-to-end.",
+      "tags": [
+        "wasm-bindings",
+        "coherence-gate",
+        "trading-engine",
+        "neural-trader"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:crates/neural-trader-wasm/src/lib.rs:CoherenceDecisionWasm",
+      "type": "class",
+      "name": "CoherenceDecisionWasm",
+      "filePath": "crates/neural-trader-wasm/src/lib.rs",
+      "lineRange": [
+        638,
+        701
+      ],
+      "summary": "WASM wrapper around CoherenceDecision exposing the four permission booleans, diagnostic values, all_allowed/fully_blocked convenience flags, and to_json for JS-side logging.",
+      "tags": [
+        "wasm-bindings",
+        "coherence-gate",
+        "neural-trader"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:crates/neural-trader-wasm/src/lib.rs:ReplaySegmentWasm",
+      "type": "class",
+      "name": "ReplaySegmentWasm",
+      "filePath": "crates/neural-trader-wasm/src/lib.rs",
+      "lineRange": [
+        709,
+        746
+      ],
+      "summary": "WASM wrapper around neural_trader_replay::ReplaySegment exposing the core ids, time range, and to_json/from_json round-trip for JS callers.",
+      "tags": [
+        "wasm-bindings",
+        "replay",
+        "neural-trader"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:crates/neural-trader-wasm/src/lib.rs:ReservoirStoreWasm",
+      "type": "class",
+      "name": "ReservoirStoreWasm",
+      "filePath": "crates/neural-trader-wasm/src/lib.rs",
+      "lineRange": [
+        754,
+        809
+      ],
+      "summary": "WASM wrapper around neural_trader_replay::ReservoirStore; exposes new/len/is_empty plus maybe_write (gate-aware) and retrieve_by_symbol so JS callers can drive the bounded gate-guarded memory store from the browser.",
+      "tags": [
+        "wasm-bindings",
+        "memory-store",
+        "reservoir",
+        "neural-trader",
+        "trading-engine"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:crates/neural-trader-wasm/tests/node-smoke.mjs",
+      "type": "file",
+      "name": "node-smoke.mjs",
+      "filePath": "crates/neural-trader-wasm/tests/node-smoke.mjs",
+      "summary": "Node 20 smoke test that loads the wasm-pack-built @ruvector/neural-trader-wasm module and asserts every public export (init, version, healthCheck, MarketEventWasm round-trip, GateConfigWasm, ThresholdGateWasm gate evaluation, ReservoirStoreWasm) behaves as the Rust crate documents.",
+      "tags": [
+        "test",
+        "wasm",
+        "neural-trader",
+        "smoke-test"
+      ],
+      "complexity": "moderate"
+    }
+  ],
+  "edges": [
+    {
+      "source": "config:crates/neural-trader-coherence/Cargo.toml",
+      "target": "file:crates/neural-trader-coherence/src/lib.rs",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:crates/neural-trader-coherence/src/lib.rs",
+      "target": "class:crates/neural-trader-coherence/src/lib.rs:CoherenceDecision",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:crates/neural-trader-coherence/src/lib.rs",
+      "target": "class:crates/neural-trader-coherence/src/lib.rs:GateContext",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:crates/neural-trader-coherence/src/lib.rs",
+      "target": "class:crates/neural-trader-coherence/src/lib.rs:RegimeLabel",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:crates/neural-trader-coherence/src/lib.rs",
+      "target": "class:crates/neural-trader-coherence/src/lib.rs:GateConfig",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:crates/neural-trader-coherence/src/lib.rs",
+      "target": "class:crates/neural-trader-coherence/src/lib.rs:ThresholdGate",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:crates/neural-trader-coherence/src/lib.rs",
+      "target": "class:crates/neural-trader-coherence/src/lib.rs:CoherenceGate",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:crates/neural-trader-coherence/src/lib.rs",
+      "target": "class:crates/neural-trader-coherence/src/lib.rs:VerifiedToken",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:crates/neural-trader-coherence/src/lib.rs",
+      "target": "class:crates/neural-trader-coherence/src/lib.rs:WitnessReceipt",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:crates/neural-trader-coherence/src/lib.rs",
+      "target": "class:crates/neural-trader-coherence/src/lib.rs:WitnessLogger",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:crates/neural-trader-coherence/src/lib.rs",
+      "target": "class:crates/neural-trader-coherence/src/lib.rs:ThresholdGate",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:crates/neural-trader-coherence/src/lib.rs",
+      "target": "class:crates/neural-trader-coherence/src/lib.rs:CoherenceGate",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:crates/neural-trader-coherence/src/lib.rs",
+      "target": "class:crates/neural-trader-coherence/src/lib.rs:WitnessLogger",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "config:crates/neural-trader-core/Cargo.toml",
+      "target": "file:crates/neural-trader-core/src/lib.rs",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "document:crates/neural-trader-core/README.md",
+      "target": "file:crates/neural-trader-core/src/lib.rs",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:crates/neural-trader-core/README.md",
+      "target": "file:crates/neural-trader-coherence/src/lib.rs",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:crates/neural-trader-core/README.md",
+      "target": "file:crates/neural-trader-replay/src/lib.rs",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:crates/neural-trader-core/README.md",
+      "target": "file:crates/neural-trader-wasm/src/lib.rs",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:crates/neural-trader-core/src/lib.rs",
+      "target": "class:crates/neural-trader-core/src/lib.rs:MarketEvent",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:crates/neural-trader-core/src/lib.rs",
+      "target": "class:crates/neural-trader-core/src/lib.rs:EventType",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:crates/neural-trader-core/src/lib.rs",
+      "target": "class:crates/neural-trader-core/src/lib.rs:Side",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:crates/neural-trader-core/src/lib.rs",
+      "target": "class:crates/neural-trader-core/src/lib.rs:NodeKind",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:crates/neural-trader-core/src/lib.rs",
+      "target": "class:crates/neural-trader-core/src/lib.rs:EdgeKind",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:crates/neural-trader-core/src/lib.rs",
+      "target": "class:crates/neural-trader-core/src/lib.rs:PropertyKey",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:crates/neural-trader-core/src/lib.rs",
+      "target": "class:crates/neural-trader-core/src/lib.rs:GraphDelta",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:crates/neural-trader-core/src/lib.rs",
+      "target": "class:crates/neural-trader-core/src/lib.rs:StateWindow",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:crates/neural-trader-core/src/lib.rs",
+      "target": "class:crates/neural-trader-core/src/lib.rs:EventIngestor",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:crates/neural-trader-core/src/lib.rs",
+      "target": "class:crates/neural-trader-core/src/lib.rs:GraphUpdater",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:crates/neural-trader-core/src/lib.rs",
+      "target": "class:crates/neural-trader-core/src/lib.rs:Embedder",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:crates/neural-trader-core/src/lib.rs",
+      "target": "class:crates/neural-trader-core/src/lib.rs:MarketEvent",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:crates/neural-trader-core/src/lib.rs",
+      "target": "class:crates/neural-trader-core/src/lib.rs:GraphDelta",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:crates/neural-trader-core/src/lib.rs",
+      "target": "class:crates/neural-trader-core/src/lib.rs:EventIngestor",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "config:crates/neural-trader-replay/Cargo.toml",
+      "target": "file:crates/neural-trader-replay/src/lib.rs",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:crates/neural-trader-replay/src/lib.rs",
+      "target": "file:crates/neural-trader-coherence/src/lib.rs",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:crates/neural-trader-replay/src/lib.rs",
+      "target": "file:crates/neural-trader-core/src/lib.rs",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:crates/neural-trader-replay/src/lib.rs",
+      "target": "class:crates/neural-trader-replay/src/lib.rs:ReplaySegment",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:crates/neural-trader-replay/src/lib.rs",
+      "target": "class:crates/neural-trader-replay/src/lib.rs:SegmentKind",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:crates/neural-trader-replay/src/lib.rs",
+      "target": "class:crates/neural-trader-replay/src/lib.rs:CoherenceStats",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:crates/neural-trader-replay/src/lib.rs",
+      "target": "class:crates/neural-trader-replay/src/lib.rs:SegmentLineage",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:crates/neural-trader-replay/src/lib.rs",
+      "target": "class:crates/neural-trader-replay/src/lib.rs:MemoryQuery",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:crates/neural-trader-replay/src/lib.rs",
+      "target": "class:crates/neural-trader-replay/src/lib.rs:MemoryStore",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:crates/neural-trader-replay/src/lib.rs",
+      "target": "class:crates/neural-trader-replay/src/lib.rs:InMemoryReceiptLog",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:crates/neural-trader-replay/src/lib.rs",
+      "target": "class:crates/neural-trader-replay/src/lib.rs:ReservoirStore",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:crates/neural-trader-replay/src/lib.rs",
+      "target": "class:crates/neural-trader-replay/src/lib.rs:ReplaySegment",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:crates/neural-trader-replay/src/lib.rs",
+      "target": "class:crates/neural-trader-replay/src/lib.rs:MemoryStore",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:crates/neural-trader-replay/src/lib.rs",
+      "target": "class:crates/neural-trader-replay/src/lib.rs:ReservoirStore",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:crates/neural-trader-replay/src/lib.rs",
+      "target": "class:crates/neural-trader-replay/src/lib.rs:InMemoryReceiptLog",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "config:crates/neural-trader-strategies/Cargo.toml",
+      "target": "file:crates/neural-trader-strategies/src/lib.rs",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:crates/neural-trader-strategies/src/lib.rs",
+      "target": "file:crates/neural-trader-strategies/src/attention_scalper.rs",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:crates/neural-trader-strategies/src/lib.rs",
+      "target": "file:crates/neural-trader-strategies/src/coherence_arb.rs",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:crates/neural-trader-strategies/src/lib.rs",
+      "target": "file:crates/neural-trader-strategies/src/coherence_bridge.rs",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:crates/neural-trader-strategies/src/lib.rs",
+      "target": "file:crates/neural-trader-strategies/src/ev_kelly.rs",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:crates/neural-trader-strategies/src/lib.rs",
+      "target": "file:crates/neural-trader-strategies/src/intent.rs",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:crates/neural-trader-strategies/src/lib.rs",
+      "target": "file:crates/neural-trader-strategies/src/risk.rs",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:crates/neural-trader-strategies/src/attention_scalper.rs",
+      "target": "file:crates/neural-trader-strategies/src/intent.rs",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:crates/neural-trader-strategies/src/coherence_arb.rs",
+      "target": "file:crates/neural-trader-strategies/src/intent.rs",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:crates/neural-trader-strategies/src/coherence_bridge.rs",
+      "target": "file:crates/neural-trader-strategies/src/intent.rs",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:crates/neural-trader-strategies/src/ev_kelly.rs",
+      "target": "file:crates/neural-trader-strategies/src/intent.rs",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:crates/neural-trader-strategies/src/risk.rs",
+      "target": "file:crates/neural-trader-strategies/src/intent.rs",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:crates/neural-trader-strategies/src/lib.rs",
+      "target": "class:crates/neural-trader-strategies/src/lib.rs:Strategy",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:crates/neural-trader-strategies/src/lib.rs",
+      "target": "class:crates/neural-trader-strategies/src/lib.rs:Strategy",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:crates/neural-trader-strategies/src/intent.rs",
+      "target": "class:crates/neural-trader-strategies/src/intent.rs:Action",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:crates/neural-trader-strategies/src/intent.rs",
+      "target": "class:crates/neural-trader-strategies/src/intent.rs:Side",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:crates/neural-trader-strategies/src/intent.rs",
+      "target": "class:crates/neural-trader-strategies/src/intent.rs:Intent",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:crates/neural-trader-strategies/src/intent.rs",
+      "target": "class:crates/neural-trader-strategies/src/intent.rs:Intent",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:crates/neural-trader-strategies/src/attention_scalper.rs",
+      "target": "class:crates/neural-trader-strategies/src/attention_scalper.rs:AttentionScalperConfig",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:crates/neural-trader-strategies/src/attention_scalper.rs",
+      "target": "class:crates/neural-trader-strategies/src/attention_scalper.rs:AttentionScalper",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:crates/neural-trader-strategies/src/attention_scalper.rs",
+      "target": "function:crates/neural-trader-strategies/src/attention_scalper.rs:sdpa_imbalance",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:crates/neural-trader-strategies/src/attention_scalper.rs",
+      "target": "function:crates/neural-trader-strategies/src/attention_scalper.rs:update_snapshot",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:crates/neural-trader-strategies/src/attention_scalper.rs",
+      "target": "function:crates/neural-trader-strategies/src/attention_scalper.rs:maybe_emit",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:crates/neural-trader-strategies/src/attention_scalper.rs",
+      "target": "class:crates/neural-trader-strategies/src/attention_scalper.rs:AttentionScalper",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:crates/neural-trader-strategies/src/coherence_arb.rs",
+      "target": "class:crates/neural-trader-strategies/src/coherence_arb.rs:CoherenceArbConfig",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:crates/neural-trader-strategies/src/coherence_arb.rs",
+      "target": "class:crates/neural-trader-strategies/src/coherence_arb.rs:CoherenceArb",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:crates/neural-trader-strategies/src/coherence_arb.rs",
+      "target": "function:crates/neural-trader-strategies/src/coherence_arb.rs:try_arb_for",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:crates/neural-trader-strategies/src/coherence_arb.rs",
+      "target": "class:crates/neural-trader-strategies/src/coherence_arb.rs:CoherenceArb",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:crates/neural-trader-strategies/src/coherence_bridge.rs",
+      "target": "class:crates/neural-trader-strategies/src/coherence_bridge.rs:CoherenceChecker",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:crates/neural-trader-strategies/src/coherence_bridge.rs",
+      "target": "class:crates/neural-trader-strategies/src/coherence_bridge.rs:CoherenceOutcome",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:crates/neural-trader-strategies/src/coherence_bridge.rs",
+      "target": "function:crates/neural-trader-strategies/src/coherence_bridge.rs:simple_context",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:crates/neural-trader-strategies/src/coherence_bridge.rs",
+      "target": "class:crates/neural-trader-strategies/src/coherence_bridge.rs:CoherenceChecker",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:crates/neural-trader-strategies/src/ev_kelly.rs",
+      "target": "class:crates/neural-trader-strategies/src/ev_kelly.rs:ExpectedValueKellyConfig",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:crates/neural-trader-strategies/src/ev_kelly.rs",
+      "target": "class:crates/neural-trader-strategies/src/ev_kelly.rs:ExpectedValueKelly",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:crates/neural-trader-strategies/src/ev_kelly.rs",
+      "target": "function:crates/neural-trader-strategies/src/ev_kelly.rs:maybe_emit",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:crates/neural-trader-strategies/src/ev_kelly.rs",
+      "target": "class:crates/neural-trader-strategies/src/ev_kelly.rs:ExpectedValueKelly",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:crates/neural-trader-strategies/src/risk.rs",
+      "target": "class:crates/neural-trader-strategies/src/risk.rs:Position",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:crates/neural-trader-strategies/src/risk.rs",
+      "target": "class:crates/neural-trader-strategies/src/risk.rs:PortfolioState",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:crates/neural-trader-strategies/src/risk.rs",
+      "target": "class:crates/neural-trader-strategies/src/risk.rs:RiskConfig",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:crates/neural-trader-strategies/src/risk.rs",
+      "target": "class:crates/neural-trader-strategies/src/risk.rs:RiskDecision",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:crates/neural-trader-strategies/src/risk.rs",
+      "target": "class:crates/neural-trader-strategies/src/risk.rs:RejectReason",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:crates/neural-trader-strategies/src/risk.rs",
+      "target": "class:crates/neural-trader-strategies/src/risk.rs:RiskGate",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:crates/neural-trader-strategies/src/risk.rs",
+      "target": "function:crates/neural-trader-strategies/src/risk.rs:evaluate",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:crates/neural-trader-strategies/src/risk.rs",
+      "target": "class:crates/neural-trader-strategies/src/risk.rs:RiskGate",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "config:crates/neural-trader-wasm/Cargo.toml",
+      "target": "file:crates/neural-trader-wasm/src/lib.rs",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "service:crates/neural-trader-wasm/Dockerfile.test",
+      "target": "file:crates/neural-trader-wasm/src/lib.rs",
+      "type": "deploys",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "service:crates/neural-trader-wasm/Dockerfile.test",
+      "target": "file:crates/neural-trader-wasm/tests/node-smoke.mjs",
+      "type": "deploys",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:crates/neural-trader-wasm/src/lib.rs",
+      "target": "file:crates/neural-trader-coherence/src/lib.rs",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:crates/neural-trader-wasm/src/lib.rs",
+      "target": "file:crates/neural-trader-core/src/lib.rs",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:crates/neural-trader-wasm/src/lib.rs",
+      "target": "file:crates/neural-trader-replay/src/lib.rs",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:crates/neural-trader-wasm/src/lib.rs",
+      "target": "function:crates/neural-trader-wasm/src/lib.rs:init",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:crates/neural-trader-wasm/src/lib.rs",
+      "target": "function:crates/neural-trader-wasm/src/lib.rs:hex_to_bytes16_inner",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:crates/neural-trader-wasm/src/lib.rs",
+      "target": "class:crates/neural-trader-wasm/src/lib.rs:MarketEventWasm",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:crates/neural-trader-wasm/src/lib.rs",
+      "target": "class:crates/neural-trader-wasm/src/lib.rs:GraphDeltaWasm",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:crates/neural-trader-wasm/src/lib.rs",
+      "target": "class:crates/neural-trader-wasm/src/lib.rs:GateConfigWasm",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:crates/neural-trader-wasm/src/lib.rs",
+      "target": "class:crates/neural-trader-wasm/src/lib.rs:GateContextWasm",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:crates/neural-trader-wasm/src/lib.rs",
+      "target": "class:crates/neural-trader-wasm/src/lib.rs:ThresholdGateWasm",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:crates/neural-trader-wasm/src/lib.rs",
+      "target": "class:crates/neural-trader-wasm/src/lib.rs:CoherenceDecisionWasm",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:crates/neural-trader-wasm/src/lib.rs",
+      "target": "class:crates/neural-trader-wasm/src/lib.rs:ReplaySegmentWasm",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:crates/neural-trader-wasm/src/lib.rs",
+      "target": "class:crates/neural-trader-wasm/src/lib.rs:ReservoirStoreWasm",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:crates/neural-trader-wasm/src/lib.rs",
+      "target": "class:crates/neural-trader-wasm/src/lib.rs:MarketEventWasm",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:crates/neural-trader-wasm/src/lib.rs",
+      "target": "class:crates/neural-trader-wasm/src/lib.rs:ThresholdGateWasm",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:crates/neural-trader-wasm/src/lib.rs",
+      "target": "class:crates/neural-trader-wasm/src/lib.rs:ReservoirStoreWasm",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    }
+  ],
+  "layers": [
+    {
+      "id": "layer:slice9-trader-core",
+      "name": "Trader Core (L1 Ingest + L4 Memory)",
+      "description": "Canonical MarketEvent envelope, GraphDelta types, EventIngestor/GraphUpdater/Embedder traits (L1), plus the ReplaySegment / ReservoirStore / InMemoryReceiptLog memory layer (L4) that records the witness-hashed event windows feeding every downstream stage.",
+      "nodeIds": [
+        "file:crates/neural-trader-core/src/lib.rs",
+        "file:crates/neural-trader-replay/src/lib.rs"
+      ]
+    },
+    {
+      "id": "layer:slice9-coherence-gate",
+      "name": "Coherence Gate (L5)",
+      "description": "L5 ThresholdGate with MinCut floors, CUSUM drift detection, boundary-stability gating, plus the VerifiedToken and WitnessReceipt audit primitives that implement the proof-gated mutation protocol referenced by replay, strategies, and the WASM bindings.",
+      "nodeIds": [
+        "file:crates/neural-trader-coherence/src/lib.rs"
+      ]
+    },
+    {
+      "id": "layer:slice9-strategies",
+      "name": "Strategy Runtime (L6 Policy + Risk)",
+      "description": "Venue-agnostic Strategy trait, the shared Intent type, four concrete strategies (AttentionScalper, CoherenceArb, EV-Kelly, CoherenceBridge to the gate), and the mandatory RiskGate enforcing kill-switch, edge, single-position, and cluster-concentration policy before any venue actuation.",
+      "nodeIds": [
+        "file:crates/neural-trader-strategies/src/lib.rs",
+        "file:crates/neural-trader-strategies/src/intent.rs",
+        "file:crates/neural-trader-strategies/src/attention_scalper.rs",
+        "file:crates/neural-trader-strategies/src/coherence_arb.rs",
+        "file:crates/neural-trader-strategies/src/coherence_bridge.rs",
+        "file:crates/neural-trader-strategies/src/ev_kelly.rs",
+        "file:crates/neural-trader-strategies/src/risk.rs"
+      ]
+    },
+    {
+      "id": "layer:slice9-wasm-bindings",
+      "name": "WASM JavaScript Bindings",
+      "description": "ADR-085/086 WASM surface that exposes L1/L4/L5 types (MarketEventWasm, GraphDeltaWasm, ThresholdGateWasm, ReservoirStoreWasm) to JavaScript via wasm-bindgen with BigInt-preserving u64 serialization, plus the Node 20 smoke test that exercises every public export.",
+      "nodeIds": [
+        "file:crates/neural-trader-wasm/src/lib.rs",
+        "file:crates/neural-trader-wasm/tests/node-smoke.mjs"
+      ]
+    },
+    {
+      "id": "layer:slice9-docs-config",
+      "name": "Manifests, Docs, and Test Infrastructure",
+      "description": "Per-crate Cargo manifests wiring up the four neural-trader libraries and the WASM cdylib, the top-level Neural Trader architecture README documenting the L1-L6 pipeline, and the two-stage Dockerfile.test that builds the WASM module with wasm-pack and runs the Node smoke test.",
+      "nodeIds": [
+        "config:crates/neural-trader-coherence/Cargo.toml",
+        "config:crates/neural-trader-core/Cargo.toml",
+        "config:crates/neural-trader-replay/Cargo.toml",
+        "config:crates/neural-trader-strategies/Cargo.toml",
+        "config:crates/neural-trader-wasm/Cargo.toml",
+        "document:crates/neural-trader-core/README.md",
+        "service:crates/neural-trader-wasm/Dockerfile.test"
+      ]
+    }
+  ],
+  "tour": [
+    {
+      "order": 1,
+      "title": "Slice 9 Architecture Overview",
+      "description": "Start with the Neural Trader README, which lays out the 6-layer pipeline (L1 Ingest -> L2 Graph -> L3 GNN+Attention -> L4 Memory -> L5 Coherence -> L6 Policy), the per-crate type tables, gate semantics, and the ADR-085/086 references that drive Slice 9's proof-gated mutation protocol. This is the roadmap every subsequent step builds on.",
+      "nodeIds": [
+        "document:crates/neural-trader-core/README.md"
+      ]
+    },
+    {
+      "order": 2,
+      "title": "Slice 9 L1 Ingest - Core Types",
+      "description": "neural-trader-core defines the canonical vocabulary the rest of the pipeline speaks: the MarketEvent envelope with fixed-point price/qty and 16-byte hashes, the 10 NodeKinds / 12 EdgeKinds / 17 PropertyKeys that describe the graph (L2), GraphDelta updates, and the EventIngestor/GraphUpdater/Embedder traits that downstream layers plug into. Every later step refers back to these types.",
+      "nodeIds": [
+        "config:crates/neural-trader-core/Cargo.toml",
+        "file:crates/neural-trader-core/src/lib.rs"
+      ],
+      "languageLesson": "Rust newtype + fixed-point encoding: representing price/qty as integers (e.g. i64 scaled by 10^k) instead of f64 eliminates floating-point non-determinism, which is essential for deterministic replay and cryptographic hashing of MarketEvents."
+    },
+    {
+      "order": 3,
+      "title": "Slice 9 L5 Coherence Gate",
+      "description": "neural-trader-coherence implements the regime-adaptive ThresholdGate that decides whether an action is allowed to mutate state. It combines MinCut floors, CUSUM drift detection, and boundary-stability checks, and emits VerifiedToken / WitnessReceipt audit primitives that the proof-gated mutation protocol from Step 1 relies on. This is the single chokepoint every later strategy must clear.",
+      "nodeIds": [
+        "config:crates/neural-trader-coherence/Cargo.toml",
+        "file:crates/neural-trader-coherence/src/lib.rs"
+      ]
+    },
+    {
+      "order": 4,
+      "title": "Slice 9 L4 Memory - Replay Reservoir",
+      "description": "neural-trader-replay is the time-series memory of the trader. ReplaySegment captures a signed window of MarketEvents (from Step 2) plus its embedding, labels, coherence stats, lineage and witness hash; ReservoirStore provides O(1) gate-guarded eviction; and InMemoryReceiptLog implements WitnessLogger so every stored segment is auditable against the L5 gate from Step 3.",
+      "nodeIds": [
+        "config:crates/neural-trader-replay/Cargo.toml",
+        "file:crates/neural-trader-replay/src/lib.rs"
+      ],
+      "languageLesson": "Trait-bounded generics in Rust let neural-trader-replay define the MemoryStore trait once and then provide a concrete ReservoirStore implementation; downstream layers can swap in a disk-backed store without changing call sites, which keeps the proof-gated invariants stable across implementations."
+    },
+    {
+      "order": 5,
+      "title": "Slice 9 L6 Policy - Intent + Strategy Trait",
+      "description": "neural-trader-strategies is the policy layer. lib.rs declares the venue-agnostic Strategy trait and wires up the six submodules; intent.rs defines the canonical Intent / Action / Side types that every strategy emits and every downstream stage (CoherenceChecker, RiskGate, venue adapter) consumes. intent.rs has the highest fan-in in the whole slice - it is the contract that holds L6 together.",
+      "nodeIds": [
+        "config:crates/neural-trader-strategies/Cargo.toml",
+        "file:crates/neural-trader-strategies/src/lib.rs",
+        "file:crates/neural-trader-strategies/src/intent.rs"
+      ]
+    },
+    {
+      "order": 6,
+      "title": "Slice 9 Strategies + Coherence Bridge",
+      "description": "The four concrete strategies all emit Intents from Step 5 but reach the market through different signals: attention_scalper consumes BookSnapshots and applies geometric or ScaledDotProductAttention imbalance with EMA smoothing; coherence_arb watches Kalshi reference/mirror pairs for divergence; ev_kelly sizes binary Kalshi positions via fractional Kelly against a prior; and coherence_bridge wires the L5 CoherenceGate (Step 3) into the pipeline as a fail-closed CoherenceChecker so internal errors never authorize actuation.",
+      "nodeIds": [
+        "file:crates/neural-trader-strategies/src/attention_scalper.rs",
+        "file:crates/neural-trader-strategies/src/coherence_arb.rs",
+        "file:crates/neural-trader-strategies/src/ev_kelly.rs",
+        "file:crates/neural-trader-strategies/src/coherence_bridge.rs"
+      ]
+    },
+    {
+      "order": 7,
+      "title": "Slice 9 RiskGate - Last Line Before the Venue",
+      "description": "risk.rs is the mandatory RiskGate that sits between every Intent (Step 5) and the venue adapter. It enforces non-positive quantity, price-range, a 3% daily-loss kill, 300 bps edge threshold, hard cash check, 10% single-position cap, 40% cluster concentration, and the KALSHI_ENABLE_LIVE env flag before any order is approved. Combined with the L5 coherence gate from Step 3, this gives Slice 9 its two-stage proof-gated execution guarantee.",
+      "nodeIds": [
+        "file:crates/neural-trader-strategies/src/risk.rs"
+      ]
+    },
+    {
+      "order": 8,
+      "title": "Slice 9 WASM Surface + Containerized Smoke Test",
+      "description": "neural-trader-wasm (per ADR-085/086) exposes the L1/L4/L5 surface to JavaScript via wrapper classes (MarketEventWasm, ThresholdGateWasm, ReservoirStoreWasm) with hex helpers and serde-wasm-bindgen that preserves u64 via BigInt. node-smoke.mjs round-trips every export, and Dockerfile.test runs the whole thing in a two-stage rust:1.83 -> node:20-slim container so the WASM module is verified the same way in CI as on a developer laptop.",
+      "nodeIds": [
+        "config:crates/neural-trader-wasm/Cargo.toml",
+        "file:crates/neural-trader-wasm/src/lib.rs",
+        "file:crates/neural-trader-wasm/tests/node-smoke.mjs",
+        "service:crates/neural-trader-wasm/Dockerfile.test"
+      ],
+      "languageLesson": "wasm-bindgen cannot pass u64 across the JS boundary as a JS Number (which is f64 and loses precision above 2^53); the workaround used here is serde-wasm-bindgen with the BigInt option, which materializes u64 fields as BigInt on the JS side - critical for the 16-byte hash and nanosecond-timestamp fields the L1 envelope carries."
+    }
+  ]
+}

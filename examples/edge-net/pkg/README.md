@@ -1161,7 +1161,7 @@ Edge-net is a **research platform** for collective computing. The rUv units are:
 - [Design Document](./DESIGN.md)
 - [Technical Report](./docs/FINAL_REPORT.md)
 - [Simulation Guide](./sim/README.md)
-- [RuVector GitHub](https://github.com/ruvnet/ruvector)
+- [RuVector GitHub](https://github.com/FlexNetOS/ruvector)
 
 ## License
 

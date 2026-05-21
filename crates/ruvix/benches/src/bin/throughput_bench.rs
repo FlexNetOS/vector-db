@@ -77,7 +77,7 @@ fn setup_kernel() -> Kernel {
 
 fn run_throughput_bench<F>(name: &str, duration_secs: u64, mut f: F) -> (u64, Duration, f64)
 where
-    F: FnMut() -> (),
+    F: FnMut(),
 {
     let target_duration = Duration::from_secs(duration_secs);
     let start = Instant::now();

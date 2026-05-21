@@ -8,7 +8,7 @@
 
 <p align="center">
   <a href="https://ruv.io"><img src="https://img.shields.io/badge/ruv.io-quantum_computing-blueviolet?style=for-the-badge" alt="ruv.io"></a>
-  <a href="https://github.com/ruvnet/ruvector"><img src="https://img.shields.io/badge/RuVector-monorepo-orange?style=for-the-badge&logo=github" alt="RuVector"></a>
+  <a href="https://github.com/FlexNetOS/ruvector"><img src="https://img.shields.io/badge/RuVector-monorepo-orange?style=for-the-badge&logo=github" alt="RuVector"></a>
 </p>
 
 <p align="center">
@@ -254,7 +254,7 @@ fn main() -> Result<(), ruqu::RuQuError> {
 ### Option 2: Run the Interactive Demo
 
 ```bash
-git clone https://github.com/ruvnet/ruvector
+git clone https://github.com/FlexNetOS/ruvector
 cd ruvector
 cargo run -p ruqu --bin ruqu_demo --release -- --distance 5 --rounds 1000 --error-rate 0.01
 ```
@@ -606,8 +606,8 @@ assert_eq!(imported.seed, original.seed);
 
 ### Project
 
-- [ADR-QE-001: Quantum Engine Core Architecture](https://github.com/ruvnet/ruvector/blob/main/docs/adr/quantum-engine/ADR-QE-001-quantum-engine-core-architecture.md)
-- [ADR-QE-015: Execution Engine Module Map](https://github.com/ruvnet/ruvector/blob/main/docs/adr/quantum-engine/)
+- [ADR-QE-001: Quantum Engine Core Architecture](https://github.com/FlexNetOS/ruvector/blob/main/docs/adr/quantum-engine/ADR-QE-001-quantum-engine-core-architecture.md)
+- [ADR-QE-015: Execution Engine Module Map](https://github.com/FlexNetOS/ruvector/blob/main/docs/adr/quantum-engine/)
 
 ---
 
@@ -623,8 +623,8 @@ MIT OR Apache-2.0
 
 <p align="center">
   <a href="https://ruv.io">ruv.io</a> &bull;
-  <a href="https://github.com/ruvnet/ruvector">RuVector</a> &bull;
-  <a href="https://github.com/ruvnet/ruvector/issues">Issues</a>
+  <a href="https://github.com/FlexNetOS/ruvector">RuVector</a> &bull;
+  <a href="https://github.com/FlexNetOS/ruvector/issues">Issues</a>
 </p>
 
 <p align="center">

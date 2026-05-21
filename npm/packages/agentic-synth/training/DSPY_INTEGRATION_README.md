@@ -548,7 +548,7 @@ npm list dspy.ts
 - [dspy.ts GitHub](https://github.com/dzhng/dspy.ts)
 - [dspy.ts Documentation](https://github.com/dzhng/dspy.ts#readme)
 - [DSPy Paper](https://arxiv.org/abs/2310.03714)
-- [Agentic-Synth](https://github.com/ruvnet/ruvector/tree/main/packages/agentic-synth)
+- [Agentic-Synth](https://github.com/FlexNetOS/ruvector/tree/main/packages/agentic-synth)
 
 ## License
 
@@ -560,4 +560,4 @@ Contributions welcome! Please submit PRs to improve the integration.
 
 ---
 
-**Built with ❤️ using [dspy.ts](https://github.com/dzhng/dspy.ts) and [agentic-synth](https://github.com/ruvnet/ruvector)**
+**Built with ❤️ using [dspy.ts](https://github.com/dzhng/dspy.ts) and [agentic-synth](https://github.com/FlexNetOS/ruvector)**

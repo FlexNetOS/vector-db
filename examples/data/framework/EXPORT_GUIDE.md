@@ -344,5 +344,5 @@ Once these methods are added, the GraphML and DOT exports will include actual no
 ## Support
 
 For issues or questions:
-- GitHub: https://github.com/ruvnet/ruvector
+- GitHub: https://github.com/FlexNetOS/ruvector
 - Documentation: See framework README

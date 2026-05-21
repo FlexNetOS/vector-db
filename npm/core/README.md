@@ -224,6 +224,6 @@ MIT
 
 ## Links
 
-- [GitHub Repository](https://github.com/ruvnet/ruvector)
-- [Documentation](https://github.com/ruvnet/ruvector#readme)
-- [Issue Tracker](https://github.com/ruvnet/ruvector/issues)
+- [GitHub Repository](https://github.com/FlexNetOS/ruvector)
+- [Documentation](https://github.com/FlexNetOS/ruvector#readme)
+- [Issue Tracker](https://github.com/FlexNetOS/ruvector/issues)

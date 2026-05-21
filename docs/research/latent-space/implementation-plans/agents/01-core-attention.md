@@ -31,7 +31,7 @@ edition = "2021"
 authors = ["Ruvector Team"]
 description = "High-performance attention mechanisms for graph neural networks and latent spaces"
 license = "MIT OR Apache-2.0"
-repository = "https://github.com/ruvnet/ruvector"
+repository = "https://github.com/FlexNetOS/ruvector"
 
 [dependencies]
 # Core dependencies

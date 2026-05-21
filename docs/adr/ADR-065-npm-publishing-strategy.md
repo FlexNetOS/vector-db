@@ -155,7 +155,7 @@ All `@ruvector/` packages must include:
   "license": "MIT OR Apache-2.0",
   "repository": {
     "type": "git",
-    "url": "https://github.com/ruvnet/ruvector"
+    "url": "https://github.com/FlexNetOS/ruvector"
   },
   "engines": { "node": ">=18" },
   "type": "module",

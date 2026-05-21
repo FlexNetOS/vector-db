@@ -47,7 +47,7 @@ pub fn spawn_fakeworker(port: u16, dim: usize, fingerprint: &str) -> std::proces
     let mut child = cmd.spawn().expect("spawn fakeworker");
 
     let start = Instant::now();
-    while start.elapsed() < Duration::from_secs(1) {
+    while start.elapsed() < Duration::from_secs(5) {
         if std::net::TcpStream::connect_timeout(&bind, Duration::from_millis(50)).is_ok() {
             return child;
         }

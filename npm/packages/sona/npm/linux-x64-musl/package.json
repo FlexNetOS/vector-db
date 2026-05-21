@@ -6,5 +6,5 @@
   "main": "sona.linux-x64-musl.node",
   "files": ["sona.linux-x64-musl.node"],
   "license": "MIT",
-  "repository": {"type": "git", "url": "https://github.com/ruvnet/ruvector.git"}
+  "repository": {"type": "git", "url": "https://github.com/FlexNetOS/ruvector.git"}
 }

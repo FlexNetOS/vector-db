@@ -8,7 +8,7 @@
 | **Authors** | ruvnet                                          |
 | **Series**  | ADR-093 (DeepAgents), ADR-104 (MCP Skills), ADR-108 (ruvbot) |
 | **Related** | ADR-106 (RuViX Kernel), ADR-105 (MCP Implementation) |
-| **Source**  | https://github.com/ruvnet/ruflo/tree/main/ruflo/src/ruvocal |
+| **Source**  | https://github.com/FlexNetOS/ruflo/tree/main/ruflo/src/ruvocal |
 
 ## Context
 
@@ -663,7 +663,7 @@ Ruvocal uses rvAgent's SubAgentResultValidator (ADR-103 C8) for all responses:
 
 ## References
 
-- [Ruvocal Source (ruflo)](https://github.com/ruvnet/ruflo/tree/main/ruflo/src/ruvocal)
+- [Ruvocal Source (ruflo)](https://github.com/FlexNetOS/ruflo/tree/main/ruflo/src/ruvocal)
 - [MCP Specification](https://spec.modelcontextprotocol.io/)
 - [SvelteKit Documentation](https://kit.svelte.dev/)
 - [rvAgent MCP Server](../crates/rvAgent/rvagent-mcp/)

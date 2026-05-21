@@ -1,0 +1,20 @@
+name: artifact policy
+
+on:
+  pull_request:
+  push:
+    branches: [main, work]
+
+permissions:
+  contents: read
+
+jobs:
+  guard:
+    name: source/release artifact guard
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Verify generated binaries and model artifacts are not committed
+        run: bash scripts/ci/check-artifact-policy.sh

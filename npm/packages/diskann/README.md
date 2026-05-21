@@ -1,7 +1,7 @@
 # @ruvector/diskann
 
 [![npm](https://img.shields.io/npm/v/@ruvector/diskann.svg)](https://www.npmjs.com/package/@ruvector/diskann)
-[![License](https://img.shields.io/npm/l/@ruvector/diskann.svg)](https://github.com/ruvnet/ruvector/blob/main/LICENSE)
+[![License](https://img.shields.io/npm/l/@ruvector/diskann.svg)](https://github.com/FlexNetOS/ruvector/blob/main/LICENSE)
 [![Node](https://img.shields.io/node/v/@ruvector/diskann.svg)](https://nodejs.org)
 
 **DiskANN / Vamana** approximate-nearest-neighbor (ANN) search for Node.js — a Rust core compiled to native `.node` addons via [NAPI-RS](https://napi.rs/) for Linux x64/arm64, macOS x64/arm64, and Windows x64.
@@ -152,7 +152,7 @@ Validated by the in-tree Rust test suite (17 tests across distance, PQ, Vamana, 
 
 Insertion appends vectors to a contiguous `FlatVectors` buffer. `build()` computes the medoid (point nearest the centroid, parallel via rayon), initializes a bounded-degree random graph, then runs two passes of *greedy-search-from-medoid → α-robust-prune → bidirectional-edge-update*: pass 1 with α=1.0 (accuracy), pass 2 with α=1.2 (navigability). If `pqSubspaces > 0`, a Product Quantizer is trained with k-means++ initialization and Lloyd's iterations; per-query, a distance table is precomputed so PQ distance is a sum of M table lookups. Search is greedy beam-search from the medoid with a top-L candidate pool; with PQ enabled, top results are re-ranked with exact L2.
 
-For the full design — including persistence layout, optimization rationale, and trade-off analysis — see [ADR-146: DiskANN/Vamana Implementation](https://github.com/ruvnet/ruvector/blob/main/docs/adr/ADR-146-diskann-vamana-implementation.md).
+For the full design — including persistence layout, optimization rationale, and trade-off analysis — see [ADR-146: DiskANN/Vamana Implementation](https://github.com/FlexNetOS/ruvector/blob/main/docs/adr/ADR-146-diskann-vamana-implementation.md).
 
 ## Related packages
 
@@ -162,10 +162,10 @@ For the full design — including persistence layout, optimization rationale, an
 
 ## Links
 
-- Repository: <https://github.com/ruvnet/ruvector>
-- Issues: <https://github.com/ruvnet/ruvector/issues>
+- Repository: <https://github.com/FlexNetOS/ruvector>
+- Issues: <https://github.com/FlexNetOS/ruvector/issues>
 - DiskANN paper (NeurIPS 2019): <https://proceedings.neurips.cc/paper/2019/hash/09853c7fb1d3f8ee67a61b6bf4a7f8e6-Abstract.html>
 
 ## License
 
-[MIT](https://github.com/ruvnet/ruvector/blob/main/LICENSE)
+[MIT](https://github.com/FlexNetOS/ruvector/blob/main/LICENSE)

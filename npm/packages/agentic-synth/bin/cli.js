@@ -65,7 +65,7 @@ Advanced Examples (via @ruvector/agentic-synth-examples):
 
 Learn more:
   https://www.npmjs.com/package/@ruvector/agentic-synth-examples
-  https://github.com/ruvnet/ruvector/tree/main/packages/agentic-synth
+  https://github.com/FlexNetOS/ruvector/tree/main/packages/agentic-synth
 `);
 
 program

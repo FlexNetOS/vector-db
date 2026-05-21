@@ -15,5 +15,5 @@
   "engines": {
     "node": ">= 10"
   },
-  "repository": "https://github.com/ruvnet/ruvector"
+  "repository": "https://github.com/FlexNetOS/ruvector"
 }

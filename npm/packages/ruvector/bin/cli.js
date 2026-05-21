@@ -136,7 +136,7 @@ function reportGnnBindingError(error) {
   if (msg.includes('Given napi value is not an array') || msg.includes('TypedArray info failed')) {
     console.error(chalk.yellow('  Note: this is a known regression in the @ruvector/gnn native binding,'));
     console.error(chalk.yellow('  not in the CLI. Track at:'));
-    console.error(chalk.white('    https://github.com/ruvnet/ruvector/issues/402'));
+    console.error(chalk.white('    https://github.com/FlexNetOS/ruvector/issues/402'));
   }
 }
 
@@ -1593,7 +1593,7 @@ program
 
     // Quick install
     console.log(chalk.cyan('Quick Install (one-liner):'));
-    console.log(chalk.white('  curl -fsSL https://raw.githubusercontent.com/ruvnet/ruvector/main/install.sh | bash'));
+    console.log(chalk.white('  curl -fsSL https://raw.githubusercontent.com/FlexNetOS/ruvector/main/install.sh | bash'));
     console.log('');
 
     if (showAll || options.npm) {
@@ -1681,10 +1681,10 @@ program
     console.log(chalk.cyan('Documentation & Resources'));
     console.log(chalk.cyan('───────────────────────────────────────────────────────────────\n'));
 
-    console.log(chalk.white('  GitHub:     https://github.com/ruvnet/ruvector'));
+    console.log(chalk.white('  GitHub:     https://github.com/FlexNetOS/ruvector'));
     console.log(chalk.white('  npm:        https://www.npmjs.com/package/ruvector'));
     console.log(chalk.white('  crates.io:  https://crates.io/crates/ruvector-core'));
-    console.log(chalk.white('  Issues:     https://github.com/ruvnet/ruvector/issues'));
+    console.log(chalk.white('  Issues:     https://github.com/FlexNetOS/ruvector/issues'));
     console.log('');
 
     console.log(chalk.cyan('Quick Commands:'));
@@ -1846,7 +1846,7 @@ program
       console.log(chalk.white(`    --grpc-port ${options.grpcPort}       # gRPC port`));
       console.log(chalk.white(`    --data-dir ${options.dataDir}  # Data directory`));
       console.log('');
-      console.log(chalk.gray('  Track progress: https://github.com/ruvnet/ruvector/issues/20'));
+      console.log(chalk.gray('  Track progress: https://github.com/FlexNetOS/ruvector/issues/20'));
       console.log('');
       return;
     }
@@ -1893,7 +1893,7 @@ program
     console.log(chalk.white('    npx ruvector cluster --join 192.168.1.10:7000'));
     console.log(chalk.white('    npx ruvector cluster --nodes'));
     console.log('');
-    console.log(chalk.gray('  Track progress: https://github.com/ruvnet/ruvector/issues/20'));
+    console.log(chalk.gray('  Track progress: https://github.com/FlexNetOS/ruvector/issues/20'));
     console.log('');
   });
 
@@ -2646,7 +2646,7 @@ program
           console.error(chalk.red(`  GNN demo failed: ${msg}`));
           console.error(chalk.yellow('\n  This looks like a regression in the @ruvector/gnn native binding,'));
           console.error(chalk.yellow('  not in the CLI. Tracking at:'));
-          console.error(chalk.white('    https://github.com/ruvnet/ruvector/issues/402'));
+          console.error(chalk.white('    https://github.com/FlexNetOS/ruvector/issues/402'));
         } else {
           console.error(chalk.red('GNN demo failed:', msg));
         }
@@ -4052,7 +4052,7 @@ npx ruvector hooks init --force      # Overwrite existing configuration
 \`\`\`
 
 ---
-*Powered by [RuVector](https://github.com/ruvnet/ruvector) self-learning intelligence v2.0*
+*Powered by [RuVector](https://github.com/FlexNetOS/ruvector) self-learning intelligence v2.0*
 `;
     fs.writeFileSync(claudeMdPath, claudeMdContent);
     console.log(chalk.green('✅ CLAUDE.md created in project root'));
@@ -7357,7 +7357,7 @@ const RVF_EXAMPLES = [
   { name: 'reasoning_grandchild', size: '162 B', desc: 'Minimal derived file' },
 ];
 
-const RVF_BASE_URL = 'https://raw.githubusercontent.com/ruvnet/ruvector/main/examples/rvf/output';
+const RVF_BASE_URL = 'https://raw.githubusercontent.com/FlexNetOS/ruvector/main/examples/rvf/output';
 
 rvfCmd.command('examples')
   .description('List available example .rvf files')
@@ -7376,7 +7376,7 @@ rvfCmd.command('examples')
       const size = chalk.yellow(ex.size.padStart(maxSize));
       console.log(`  ${name}  ${size}  ${chalk.dim(ex.desc)}`);
     }
-    console.log(chalk.dim(`\nFull catalog: https://github.com/ruvnet/ruvector/tree/main/examples/rvf/output\n`));
+    console.log(chalk.dim(`\nFull catalog: https://github.com/FlexNetOS/ruvector/tree/main/examples/rvf/output\n`));
   });
 
 rvfCmd.command('download [names...]')
@@ -9270,7 +9270,7 @@ const optimizeCmd = program.command('optimize')
       console.error(chalk.yellow('\n  ruvector optimize: not yet shipped in this release.\n'));
       console.error(chalk.gray('  The optimizer module (profiles, settings generation) is in development'));
       console.error(chalk.gray('  and will land in a future release. Track progress at:'));
-      console.error(chalk.white('    https://github.com/ruvnet/ruvector/issues/401\n'));
+      console.error(chalk.white('    https://github.com/FlexNetOS/ruvector/issues/401\n'));
       process.exit(1);
     }
 

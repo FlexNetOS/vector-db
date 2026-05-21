@@ -58,7 +58,7 @@ hyperbolic-attention = "0.1"
 Or for development:
 
 ```bash
-git clone https://github.com/ruvnet/ruvector
+git clone https://github.com/FlexNetOS/ruvector
 cd ruvector/examples/exo-ai-2025/research/09-hyperbolic-attention
 cargo build --release
 cargo test
@@ -270,7 +270,7 @@ If you use this research in your work, please cite:
   author = {rUv Research},
   title = {Hyperbolic Attention Networks: Non-Euclidean Cognition},
   year = {2025},
-  url = {https://github.com/ruvnet/ruvector},
+  url = {https://github.com/FlexNetOS/ruvector},
   note = {Research implementation based on Hypformer (KDD 2024)}
 }
 ```
@@ -299,8 +299,8 @@ Based on foundational work by:
 ## Contact
 
 - **Research**: research@ruv.io
-- **Issues**: https://github.com/ruvnet/ruvector/issues
-- **Discussions**: https://github.com/ruvnet/ruvector/discussions
+- **Issues**: https://github.com/FlexNetOS/ruvector/issues
+- **Discussions**: https://github.com/FlexNetOS/ruvector/discussions
 
 ---
 

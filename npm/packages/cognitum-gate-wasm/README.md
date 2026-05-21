@@ -2,7 +2,7 @@
 
 [![npm version](https://img.shields.io/npm/v/@cognitum/gate.svg)](https://www.npmjs.com/package/@cognitum/gate)
 [![bundle size](https://img.shields.io/bundlephobia/minzip/@cognitum/gate)](https://bundlephobia.com/package/@cognitum/gate)
-[![license](https://img.shields.io/npm/l/@cognitum/gate.svg)](https://github.com/ruvnet/ruvector/blob/main/LICENSE)
+[![license](https://img.shields.io/npm/l/@cognitum/gate.svg)](https://github.com/FlexNetOS/ruvector/blob/main/LICENSE)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.0+-blue.svg)](https://www.typescriptlang.org/)
 [![WASM](https://img.shields.io/badge/WebAssembly-1.0-654FF0.svg)](https://webassembly.org/)
 
@@ -20,7 +20,7 @@ Unlike traditional attention mechanisms that weight tokens by relevance, the coh
 
 The gate achieves sub-millisecond latency through a 256-tile WASM fabric that distributes verification across Web Workers (browser) or worker threads (Node.js). Each tile maintains its own coherence state, enabling horizontal scaling without sacrificing consistency. The result is a system that can handle thousands of permission checks per second while generating cryptographic receipts suitable for compliance, debugging, and post-hoc analysis.
 
-**Created by [ruv.io](https://ruv.io) and [RuVector](https://github.com/ruvnet/ruvector)**
+**Created by [ruv.io](https://ruv.io) and [RuVector](https://github.com/FlexNetOS/ruvector)**
 
 ---
 
@@ -1263,6 +1263,6 @@ Unless you explicitly state otherwise, any contribution intentionally submitted 
 
 ---
 
-**Created by [ruv.io](https://ruv.io) and [RuVector](https://github.com/ruvnet/ruvector)**
+**Created by [ruv.io](https://ruv.io) and [RuVector](https://github.com/FlexNetOS/ruvector)**
 
 *Attention becomes a permission system, not a popularity contest.*

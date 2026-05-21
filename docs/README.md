@@ -133,7 +133,7 @@ docs/
 
 ## 🔗 External Resources
 
-- **GitHub Repository**: https://github.com/ruvnet/ruvector
+- **GitHub Repository**: https://github.com/FlexNetOS/ruvector
 - **Main README**: [../README.md](../README.md)
 - **Changelog**: [../CHANGELOG.md](../CHANGELOG.md)
 - **License**: [../LICENSE](../LICENSE)

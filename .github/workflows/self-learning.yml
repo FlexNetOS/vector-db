@@ -1,0 +1,157 @@
+name: Self-learning loop
+
+# Phase 6 of the cross-repo self-learning roadmap. Walks the canonical
+# Attractor pipeline (Identify -> Implement -> Validate -> Optimize ->
+# Distill) on a schedule and on demand. Failures are *not* CI failures:
+# the whole point of the loop is that fail trajectories are training
+# signal for ReasoningBank. We always upload the run artifacts so the
+# audit trail lives outside the runner.
+
+on:
+  schedule:
+    # Nightly at 06:00 UTC. Pick a low-traffic slot so the long-running
+    # cargo check on the 150-crate workspace doesn't fight foreground PRs
+    # for cache slots. Adjust if it starts colliding with other workflows.
+    - cron: '0 6 * * *'
+  workflow_dispatch:
+    inputs:
+      run_node:
+        description: 'Run a single node only (identify | implement | validate | optimize | distill). Empty = full loop.'
+        required: false
+        default: ''
+
+env:
+  CARGO_TERM_COLOR: always
+  RUST_BACKTRACE: 1
+  CARGO_INCREMENTAL: 0
+  # Force NO_COLOR off in the script's own auto-detection: GitHub-hosted
+  # runners present a non-TTY stderr, so attractor.sh already strips ANSI
+  # there. This env var is set as a defense-in-depth so artifact logs are
+  # readable in plain text.
+  NO_COLOR: 1
+
+jobs:
+  attractor:
+    name: Attractor pipeline
+    runs-on: ubuntu-latest
+    # The pipeline must NOT fail the workflow on a red trajectory --
+    # that's recorded as training signal, not as a failure. Job-level
+    # `continue-on-error` is the wrong primitive (it changes the rolled-
+    # up status), so we use a step-level `|| true` on the run step
+    # below and a boolean output to drive a post-step summary.
+    timeout-minutes: 60
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          # Self-learning needs full history so identify.sh can sample
+          # recent commits for trend analysis later. Keep this until
+          # identify.sh evolves past stub.
+          fetch-depth: 0
+
+      - name: Install system dependencies
+        run: sudo apt-get update && sudo apt-get install -y libfontconfig1-dev graphviz
+
+      - name: Install Rust stable
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          components: clippy,rustfmt
+
+      - name: Cache Rust
+        uses: Swatinem/rust-cache@v2
+        with:
+          shared-key: attractor-self-learning
+
+      - name: Validate pipeline graph (strict)
+        run: scripts/attractor.sh validate --strict
+
+      - name: Dry-run topology
+        run: scripts/attractor.sh dry-run
+
+      - name: Execute attractor pipeline
+        id: run
+        # `|| true` because a fail trajectory is *expected output*, not
+        # a CI failure. The exit code is captured and surfaced via the
+        # step summary instead. Distinguishes:
+        #   0  green trajectory
+        #   2  validate failed (optimize skipped, distill ran)
+        #   3  identify/implement/optimize/distill failed
+        run: |
+          set +e
+          if [ -n "${{ github.event.inputs.run_node }}" ]; then
+            scripts/attractor.sh node "${{ github.event.inputs.run_node }}"
+          else
+            scripts/attractor.sh run
+          fi
+          rc=$?
+          echo "attractor_rc=$rc" >> "$GITHUB_OUTPUT"
+          exit 0
+
+      - name: Surface latest run summary
+        # Always run, even if a previous step crashed before producing
+        # artifacts. The summary degrades gracefully when there's
+        # nothing to read.
+        if: always()
+        run: |
+          set -e
+          latest_jsonl="$(ls -1t .attractor/runs/*.jsonl 2>/dev/null | head -n1 || true)"
+          latest_distill="$(ls -1t .attractor/runs/*.distill.jsonl 2>/dev/null | head -n1 || true)"
+          {
+            echo "## Attractor self-learning run"
+            echo ""
+            echo "- Trigger: \`${{ github.event_name }}\`"
+            echo "- Exit code: \`${{ steps.run.outputs.attractor_rc }}\`"
+            if [ -n "$latest_jsonl" ]; then
+              echo "- Trajectory: \`$latest_jsonl\`"
+              echo ""
+              echo "### Trajectory"
+              echo ""
+              echo '```json'
+              cat "$latest_jsonl"
+              echo '```'
+            else
+              echo ""
+              echo "_No trajectory recorded._"
+            fi
+            if [ -n "$latest_distill" ]; then
+              echo ""
+              echo "### Distilled lessons"
+              echo ""
+              echo '```json'
+              cat "$latest_distill"
+              echo '```'
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload run artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: attractor-run-${{ github.run_id }}
+          # `.attractor/runs/` is gitignored at rest; the artifact upload
+          # is the canonical archival path. Sidecar stderr logs in
+          # `<stamp>-stdout/` ride along automatically.
+          path: |
+            .attractor/runs/
+          # Retain for 30 days; ReasoningBank distillation is meant to
+          # consume these and drop them. 30 days is the sweet spot
+          # between disk pressure and the 30-day rolling window most
+          # postmortems care about.
+          retention-days: 30
+          if-no-files-found: warn
+
+      - name: Mark workflow result
+        # Promote attractor's exit code to the job-level conclusion so
+        # the schedule view distinguishes "ran cleanly" from "ran but
+        # produced a fail trajectory". Both are valid outcomes; only the
+        # latter should appear yellow (warning) in the run history.
+        if: always()
+        run: |
+          rc='${{ steps.run.outputs.attractor_rc }}'
+          if [ "$rc" = "0" ]; then
+            echo "::notice::Attractor pipeline produced a green trajectory."
+          elif [ "$rc" = "2" ]; then
+            echo "::warning::Attractor produced a validate-fail trajectory; distill ran on the failure (training signal)."
+          else
+            echo "::warning::Attractor exited with rc=$rc (identify/implement/optimize/distill error). See step summary."
+          fi

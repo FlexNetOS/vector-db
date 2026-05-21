@@ -1298,7 +1298,7 @@ cargo bench -p ruvector-cnn -- --input-size 224
 
 - **[Main README](../../README.md)** - Complete project overview
 - **[API Documentation](https://docs.rs/ruvector-cnn)** - Full API reference
-- **[GitHub Repository](https://github.com/ruvnet/ruvector)** - Source code
+- **[GitHub Repository](https://github.com/FlexNetOS/ruvector)** - Source code
 
 ## Roadmap
 
@@ -1327,10 +1327,10 @@ at your option.
 
 <div align="center">
 
-**Part of [RuVector](https://github.com/ruvnet/ruvector) - Built by [rUv](https://ruv.io)**
+**Part of [RuVector](https://github.com/FlexNetOS/ruvector) - Built by [rUv](https://ruv.io)**
 
-[![Star on GitHub](https://img.shields.io/github/stars/ruvnet/ruvector?style=social)](https://github.com/ruvnet/ruvector)
+[![Star on GitHub](https://img.shields.io/github/stars/FlexNetOS/ruvector?style=social)](https://github.com/FlexNetOS/ruvector)
 
-[Documentation](https://docs.rs/ruvector-cnn) | [Crates.io](https://crates.io/crates/ruvector-cnn) | [GitHub](https://github.com/ruvnet/ruvector)
+[Documentation](https://docs.rs/ruvector-cnn) | [Crates.io](https://crates.io/crates/ruvector-cnn) | [GitHub](https://github.com/FlexNetOS/ruvector)
 
 </div>

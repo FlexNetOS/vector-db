@@ -213,7 +213,7 @@ S(ρ) = -Tr(ρ log ρ) = -Σᵢ |αᵢ|² log|αᵢ|²
   author={AI Research Collective},
   year={2025},
   month={December},
-  url={https://github.com/ruvnet/ruvector/tree/main/examples/exo-ai-2025/research/02-quantum-superposition},
+  url={https://github.com/FlexNetOS/ruvector/tree/main/examples/exo-ai-2025/research/02-quantum-superposition},
   note={Research code for quantum-inspired cognitive modeling}
 }
 ```

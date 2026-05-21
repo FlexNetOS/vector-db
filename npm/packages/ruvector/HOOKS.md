@@ -216,6 +216,6 @@ npx ruvector hooks init --force --pretrain
 
 ## Links
 
-- [RuVector GitHub](https://github.com/ruvnet/ruvector)
+- [RuVector GitHub](https://github.com/FlexNetOS/ruvector)
 - [npm Package](https://www.npmjs.com/package/ruvector)
 - [Claude Code Documentation](https://docs.anthropic.com/claude-code)

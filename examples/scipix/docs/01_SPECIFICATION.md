@@ -2532,7 +2532,7 @@ cargo >= 1.70.0
    - https://www.w3.org/TR/MathML3/
 
 7. **ruvector-core Documentation**
-   - https://github.com/ruvnet/ruvector
+   - https://github.com/FlexNetOS/ruvector
 
 ---
 

@@ -150,7 +150,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Version**: 0.1.0
 - **License**: MIT
 - **Author**: ruvnet
-- **Repository**: https://github.com/ruvnet/ruvector
+- **Repository**: https://github.com/FlexNetOS/ruvector
 - **Keywords**: agentic-synth, examples, dspy, dspy-ts, synthetic-data, multi-model, benchmarking
 
 ### Dependencies
@@ -221,4 +221,4 @@ npm run test:ui         # Interactive UI
 
 **Ready for npm publication** ✅
 
-[0.1.0]: https://github.com/ruvnet/ruvector/releases/tag/agentic-synth-examples-v0.1.0
+[0.1.0]: https://github.com/FlexNetOS/ruvector/releases/tag/agentic-synth-examples-v0.1.0

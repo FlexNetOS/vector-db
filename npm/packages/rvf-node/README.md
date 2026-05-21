@@ -1,6 +1,6 @@
 # @ruvector/rvf-node
 
-Native Node.js bindings for the [RuVector Format](https://github.com/ruvnet/ruvector/tree/main/crates/rvf) (RVF) vector database. Built with Rust via N-API for native speed with zero serialization overhead.
+Native Node.js bindings for the [RuVector Format](https://github.com/FlexNetOS/ruvector/tree/main/crates/rvf) (RVF) vector database. Built with Rust via N-API for native speed with zero serialization overhead.
 
 ## Install
 
@@ -328,7 +328,7 @@ claude_code_appliance.rvf
 
 Final file: **5.1 MB single `.rvf`** — boots Linux, serves queries, runs Claude Code.
 
-See the [full RVF documentation](https://github.com/ruvnet/ruvector/tree/main/crates/rvf) for details.
+See the [full RVF documentation](https://github.com/FlexNetOS/ruvector/tree/main/crates/rvf) for details.
 
 ## Build from Source
 

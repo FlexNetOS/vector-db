@@ -116,13 +116,13 @@ https://docs.rs/ruvector-gnn/latest/ruvector_gnn/
 
 https://www.npmjs.com/package/@ruvector/postgres-cli
 
-GitHub - ruvnet/ruvector: A distributed vector database that learns. Store embeddings, query with Cypher, scale horizontally with Raft consensus, and let the index improve itself through Graph Neural Networks.
+GitHub - FlexNetOS/ruvector: A distributed vector database that learns. Store embeddings, query with Cypher, scale horizontally with Raft consensus, and let the index improve itself through Graph Neural Networks.
 
-https://github.com/ruvnet/ruvector
+https://github.com/FlexNetOS/ruvector
 
-GitHub - ruvnet/ruvector: A distributed vector database that learns. Store embeddings, query with Cypher, scale horizontally with Raft consensus, and let the index improve itself through Graph Neural Networks.
+GitHub - FlexNetOS/ruvector: A distributed vector database that learns. Store embeddings, query with Cypher, scale horizontally with Raft consensus, and let the index improve itself through Graph Neural Networks.
 
-https://github.com/ruvnet/ruvector
+https://github.com/FlexNetOS/ruvector
 
 RuVector: AI-Powered Database with Graph Neural Networks | Reuven Cohen posted on the topic | LinkedIn
 
@@ -154,13 +154,13 @@ Pitch- and spectral-based dynamic time warping methods for comparing field recor
 
 https://pmc.ncbi.nlm.nih.gov/articles/PMC3745477/
 
-GitHub - ruvnet/ruvector: A distributed vector database that learns. Store embeddings, query with Cypher, scale horizontally with Raft consensus, and let the index improve itself through Graph Neural Networks.
+GitHub - FlexNetOS/ruvector: A distributed vector database that learns. Store embeddings, query with Cypher, scale horizontally with Raft consensus, and let the index improve itself through Graph Neural Networks.
 
-https://github.com/ruvnet/ruvector
+https://github.com/FlexNetOS/ruvector
 
-GitHub - ruvnet/ruvector: A distributed vector database that learns. Store embeddings, query with Cypher, scale horizontally with Raft consensus, and let the index improve itself through Graph Neural Networks.
+GitHub - FlexNetOS/ruvector: A distributed vector database that learns. Store embeddings, query with Cypher, scale horizontally with Raft consensus, and let the index improve itself through Graph Neural Networks.
 
-https://github.com/ruvnet/ruvector
+https://github.com/FlexNetOS/ruvector
 
 ruvector_gnn - Rust
 
@@ -179,13 +179,13 @@ Hierarchical Navigable Small-World Graph
 
 https://www.emergentmind.com/topics/hierarchical-navigable-small-world-hnsw-graph
 
-GitHub - ruvnet/ruvector: A distributed vector database that learns. Store embeddings, query with Cypher, scale horizontally with Raft consensus, and let the index improve itself through Graph Neural Networks.
+GitHub - FlexNetOS/ruvector: A distributed vector database that learns. Store embeddings, query with Cypher, scale horizontally with Raft consensus, and let the index improve itself through Graph Neural Networks.
 
-https://github.com/ruvnet/ruvector
+https://github.com/FlexNetOS/ruvector
 
-GitHub - ruvnet/ruvector: A distributed vector database that learns. Store embeddings, query with Cypher, scale horizontally with Raft consensus, and let the index improve itself through Graph Neural Networks.
+GitHub - FlexNetOS/ruvector: A distributed vector database that learns. Store embeddings, query with Cypher, scale horizontally with Raft consensus, and let the index improve itself through Graph Neural Networks.
 
-https://github.com/ruvnet/ruvector
+https://github.com/FlexNetOS/ruvector
 
 How AI reveals Birds' Language?? For the first time ... - Instagram
 

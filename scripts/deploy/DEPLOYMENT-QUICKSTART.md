@@ -147,4 +147,4 @@ tail -f logs/deployment/deploy-*.log
 - Full docs: [DEPLOYMENT.md](DEPLOYMENT.md)
 - Script help: `./scripts/deploy.sh --help`
 - Test script: `./scripts/test-deploy.sh`
-- Issues: https://github.com/ruvnet/ruvector/issues
+- Issues: https://github.com/FlexNetOS/ruvector/issues

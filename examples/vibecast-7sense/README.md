@@ -85,7 +85,7 @@ Traditional bird monitoring relies on expert human listeners or basic spectrogra
 
 ```bash
 # Clone the repository
-git clone https://github.com/ruvnet/vibecast.git
+git clone https://github.com/FlexNetOS/vibecast.git
 cd vibecast
 
 # Build all crates

@@ -1801,7 +1801,7 @@ mod security_tests {
 - [NIST Cybersecurity Framework](https://www.nist.gov/cyberframework)
 - [Endangered Species Act Data Requirements](https://www.fws.gov/endangered/)
 - [Perch 2.0 Model Documentation](https://arxiv.org/abs/2508.04665)
-- [RuVector Security Architecture](https://github.com/ruvnet/ruvector)
+- [RuVector Security Architecture](https://github.com/FlexNetOS/ruvector)
 - [Argon2 Password Hashing](https://www.password-hashing.net/)
 - [ONNX Runtime Security Best Practices](https://onnxruntime.ai/)
 

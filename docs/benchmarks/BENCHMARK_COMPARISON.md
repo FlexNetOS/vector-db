@@ -138,7 +138,7 @@ cargo bench -p ruvector-core --bench quantization_bench
 
 ## References
 
-- [rUvector Repository](https://github.com/ruvnet/ruvector)
+- [rUvector Repository](https://github.com/FlexNetOS/ruvector)
 - [SimSIMD SIMD Library](https://github.com/ashvardanian/SimSIMD)
 - [hnsw_rs Rust Implementation](https://github.com/jean-pierreBoth/hnswlib-rs)
 

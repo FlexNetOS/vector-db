@@ -3,7 +3,7 @@
 [![npm version](https://img.shields.io/npm/v/@ruvector/ruvllm-wasm.svg)](https://www.npmjs.com/package/@ruvector/ruvllm-wasm)
 [![npm downloads](https://img.shields.io/npm/dt/@ruvector/ruvllm-wasm.svg)](https://www.npmjs.com/package/@ruvector/ruvllm-wasm)
 [![npm downloads/month](https://img.shields.io/npm/dm/@ruvector/ruvllm-wasm.svg)](https://www.npmjs.com/package/@ruvector/ruvllm-wasm)
-[![License](https://img.shields.io/npm/l/@ruvector/ruvllm-wasm.svg)](https://github.com/ruvnet/ruvector/blob/main/LICENSE)
+[![License](https://img.shields.io/npm/l/@ruvector/ruvllm-wasm.svg)](https://github.com/FlexNetOS/ruvector/blob/main/LICENSE)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue.svg)](https://www.typescriptlang.org/)
 
 **Run large language models directly in the browser** using WebAssembly with optional WebGPU acceleration for faster inference.
@@ -263,9 +263,9 @@ Small models suitable for browser inference:
 
 ## Documentation
 
-- [WASM Crate](https://github.com/ruvnet/ruvector/tree/main/crates/ruvllm-wasm)
+- [WASM Crate](https://github.com/FlexNetOS/ruvector/tree/main/crates/ruvllm-wasm)
 - [API Reference](https://docs.rs/ruvllm-wasm)
-- [Examples](https://github.com/ruvnet/ruvector/tree/main/examples/ruvLLM)
+- [Examples](https://github.com/FlexNetOS/ruvector/tree/main/examples/ruvLLM)
 
 ## License
 
@@ -273,4 +273,4 @@ MIT OR Apache-2.0
 
 ---
 
-**Part of the [RuVector](https://github.com/ruvnet/ruvector) ecosystem** - High-performance vector database with self-learning capabilities.
+**Part of the [RuVector](https://github.com/FlexNetOS/ruvector) ecosystem** - High-performance vector database with self-learning capabilities.

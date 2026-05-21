@@ -4,7 +4,7 @@ version = "0.1.0"
 edition = "2021"
 description = "WASM bindings for ruvector-rabitq — 1-bit quantized vector index for browsers and edge runtimes"
 license = "MIT OR Apache-2.0"
-repository = "https://github.com/ruvnet/ruvector"
+repository = "https://github.com/FlexNetOS/ruvector"
 keywords = ["rabitq", "vector-search", "wasm", "quantization", "embeddings"]
 categories = ["wasm", "science", "algorithms"]
 

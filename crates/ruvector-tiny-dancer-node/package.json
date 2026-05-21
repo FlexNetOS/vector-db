@@ -35,7 +35,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/ruvnet/ruvector"
+    "url": "https://github.com/FlexNetOS/ruvector"
   },
   "devDependencies": {
     "@napi-rs/cli": "^2.16.0"

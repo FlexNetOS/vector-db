@@ -404,7 +404,7 @@ async function runDeploymentWizard() {
     console.log('     ' + chalk_1.default.cyan('ruvbot deploy-cloud k8s'));
     console.log();
     console.log('For interactive setup, use the install script:');
-    console.log(chalk_1.default.cyan('  RUVBOT_WIZARD=true curl -fsSL https://raw.githubusercontent.com/ruvnet/ruvector/main/npm/packages/ruvbot/scripts/install.sh | bash'));
+    console.log(chalk_1.default.cyan('  RUVBOT_WIZARD=true curl -fsSL https://raw.githubusercontent.com/FlexNetOS/ruvector/main/npm/packages/ruvbot/scripts/install.sh | bash'));
     console.log();
 }
 async function checkDeploymentStatus(options) {

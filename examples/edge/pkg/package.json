@@ -29,11 +29,11 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/ruvnet/ruvector"
+    "url": "https://github.com/FlexNetOS/ruvector"
   },
-  "homepage": "https://github.com/ruvnet/ruvector/tree/main/examples/edge",
+  "homepage": "https://github.com/FlexNetOS/ruvector/tree/main/examples/edge",
   "bugs": {
-    "url": "https://github.com/ruvnet/ruvector/issues"
+    "url": "https://github.com/FlexNetOS/ruvector/issues"
   },
   "files": [
     "ruvector_edge_bg.wasm",

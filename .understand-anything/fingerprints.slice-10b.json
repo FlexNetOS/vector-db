@@ -1,0 +1,1898 @@
+{
+  "slice": "10b",
+  "scope": "crates/prime-radiant + crates/ruvector-nervous-system + crates/ruvector-nervous-system-wasm + crates/sona",
+  "generatedAt": "2026-05-13T13:57:56.315Z",
+  "totalFiles": 270,
+  "files": [
+    {
+      "path": "crates/prime-radiant/Cargo.toml",
+      "language": "toml",
+      "sizeLines": 515,
+      "fileCategory": "config",
+      "sha1": "07fcd4061c7ab8a0e6c13b07060dac561260d624"
+    },
+    {
+      "path": "crates/prime-radiant/README.md",
+      "language": "markdown",
+      "sizeLines": 675,
+      "fileCategory": "docs",
+      "sha1": "ba68827236a1acf8ecf91b4663752ecfe35e5401"
+    },
+    {
+      "path": "crates/prime-radiant/benches/attention_bench.rs",
+      "language": "rust",
+      "sizeLines": 15,
+      "fileCategory": "code",
+      "sha1": "a0777dd11da8ca5c46fa9cf45982a6d8f3ce7b93"
+    },
+    {
+      "path": "crates/prime-radiant/benches/coherence_bench.rs",
+      "language": "rust",
+      "sizeLines": 15,
+      "fileCategory": "code",
+      "sha1": "ef0658797658d35e9e4a2b580e56c6914f465afd"
+    },
+    {
+      "path": "crates/prime-radiant/benches/coherence_benchmarks.rs",
+      "language": "rust",
+      "sizeLines": 1063,
+      "fileCategory": "code",
+      "sha1": "e0299f58cd34401fbfe20f4c47ee64c8603dacb0"
+    },
+    {
+      "path": "crates/prime-radiant/benches/energy_bench.rs",
+      "language": "rust",
+      "sizeLines": 546,
+      "fileCategory": "code",
+      "sha1": "9c44f93341a1831f8c02c301314a7a39cf0bb1da"
+    },
+    {
+      "path": "crates/prime-radiant/benches/gate_bench.rs",
+      "language": "rust",
+      "sizeLines": 629,
+      "fileCategory": "code",
+      "sha1": "4d56f07e07f4fdfdaef70501937316d950c1d5a6"
+    },
+    {
+      "path": "crates/prime-radiant/benches/gpu_benchmarks.rs",
+      "language": "rust",
+      "sizeLines": 784,
+      "fileCategory": "code",
+      "sha1": "a6c260deaaf98f8bcf671d90a2d6694fd10b7176"
+    },
+    {
+      "path": "crates/prime-radiant/benches/hyperbolic_bench.rs",
+      "language": "rust",
+      "sizeLines": 488,
+      "fileCategory": "code",
+      "sha1": "b6f4c26cc76f6c59f9a623c558799c6867e204a7"
+    },
+    {
+      "path": "crates/prime-radiant/benches/incremental_bench.rs",
+      "language": "rust",
+      "sizeLines": 608,
+      "fileCategory": "code",
+      "sha1": "9a560fe37dadd2685b62c21ff03efa46ac22943c"
+    },
+    {
+      "path": "crates/prime-radiant/benches/mincut_bench.rs",
+      "language": "rust",
+      "sizeLines": 630,
+      "fileCategory": "code",
+      "sha1": "0d57a66342e187eb2051a26bb2c1588ce84de3cf"
+    },
+    {
+      "path": "crates/prime-radiant/benches/residual_bench.rs",
+      "language": "rust",
+      "sizeLines": 506,
+      "fileCategory": "code",
+      "sha1": "2e34dd736e8664a5e179fe85ba95763cd92332b9"
+    },
+    {
+      "path": "crates/prime-radiant/benches/simd_benchmarks.rs",
+      "language": "rust",
+      "sizeLines": 800,
+      "fileCategory": "code",
+      "sha1": "ff20850516ed83838086ca623daa56001e8333a6"
+    },
+    {
+      "path": "crates/prime-radiant/benches/sona_bench.rs",
+      "language": "rust",
+      "sizeLines": 549,
+      "fileCategory": "code",
+      "sha1": "b3b0d694c9cfcbcce29432704e8f15c65ea1cc85"
+    },
+    {
+      "path": "crates/prime-radiant/benches/tile_bench.rs",
+      "language": "rust",
+      "sizeLines": 663,
+      "fileCategory": "code",
+      "sha1": "98c9f28fdaa0d08fec2f52fa109b45cbf4749878"
+    },
+    {
+      "path": "crates/prime-radiant/docs/GOAP_ADVANCED_MATH_FRAMEWORKS.md",
+      "language": "markdown",
+      "sizeLines": 1656,
+      "fileCategory": "docs",
+      "sha1": "5c7b0273042367e7a7b55725e7bc37dd876c8d0c"
+    },
+    {
+      "path": "crates/prime-radiant/examples/basic_coherence.rs",
+      "language": "rust",
+      "sizeLines": 251,
+      "fileCategory": "code",
+      "sha1": "aa9bcdd60b108aec2332ecae932ccef137f54752"
+    },
+    {
+      "path": "crates/prime-radiant/examples/compute_ladder.rs",
+      "language": "rust",
+      "sizeLines": 368,
+      "fileCategory": "code",
+      "sha1": "ae7880a905560b38ba0f8d1b4176d39be7ec1d64"
+    },
+    {
+      "path": "crates/prime-radiant/examples/governance_audit.rs",
+      "language": "rust",
+      "sizeLines": 371,
+      "fileCategory": "code",
+      "sha1": "83745c9db64dbb04b7e6b13e482839b65934a8d1"
+    },
+    {
+      "path": "crates/prime-radiant/examples/llm_validation.rs",
+      "language": "rust",
+      "sizeLines": 289,
+      "fileCategory": "code",
+      "sha1": "bb4810f45ff4038118487012a6a39b78b8f31322"
+    },
+    {
+      "path": "crates/prime-radiant/examples/memory_tracking.rs",
+      "language": "rust",
+      "sizeLines": 353,
+      "fileCategory": "code",
+      "sha1": "08d26561810fce1c2cd6522cc7eb7e988eda9f5d"
+    },
+    {
+      "path": "crates/prime-radiant/src/attention/adapter.rs",
+      "language": "rust",
+      "sizeLines": 280,
+      "fileCategory": "code",
+      "sha1": "9f4db5e955f6a9a0b10810d73ab3a0b0bec3ce21"
+    },
+    {
+      "path": "crates/prime-radiant/src/attention/config.rs",
+      "language": "rust",
+      "sizeLines": 228,
+      "fileCategory": "code",
+      "sha1": "e4f866a461081f8c50df770dd4009ce08b65d520"
+    },
+    {
+      "path": "crates/prime-radiant/src/attention/diffusion.rs",
+      "language": "rust",
+      "sizeLines": 336,
+      "fileCategory": "code",
+      "sha1": "d7d21fa0d1b6584d820d9c7913353f7c37be6ad3"
+    },
+    {
+      "path": "crates/prime-radiant/src/attention/mod.rs",
+      "language": "rust",
+      "sizeLines": 404,
+      "fileCategory": "code",
+      "sha1": "7f9abcbc4d123618e85c19bd97e133a80273e163"
+    },
+    {
+      "path": "crates/prime-radiant/src/attention/moe.rs",
+      "language": "rust",
+      "sizeLines": 360,
+      "fileCategory": "code",
+      "sha1": "a82894c72678a96fb073fd5f526beccfb44d163a"
+    },
+    {
+      "path": "crates/prime-radiant/src/attention/topology.rs",
+      "language": "rust",
+      "sizeLines": 381,
+      "fileCategory": "code",
+      "sha1": "c076e151d7c2f86127e0c31aeb586f5662eb40ed"
+    },
+    {
+      "path": "crates/prime-radiant/src/coherence/energy.rs",
+      "language": "rust",
+      "sizeLines": 759,
+      "fileCategory": "code",
+      "sha1": "7946ef5825f7ba3176da18c02a2dbcb2c74d83c1"
+    },
+    {
+      "path": "crates/prime-radiant/src/coherence/engine.rs",
+      "language": "rust",
+      "sizeLines": 1165,
+      "fileCategory": "code",
+      "sha1": "c9c744760cbbadf454cadcd2c7c35e4a404292d3"
+    },
+    {
+      "path": "crates/prime-radiant/src/coherence/history.rs",
+      "language": "rust",
+      "sizeLines": 619,
+      "fileCategory": "code",
+      "sha1": "ff4b47a4c8411088b3f4f1667f4c2eae15ed0a16"
+    },
+    {
+      "path": "crates/prime-radiant/src/coherence/incremental.rs",
+      "language": "rust",
+      "sizeLines": 694,
+      "fileCategory": "code",
+      "sha1": "30767ff027b7a9c8e115d03c52d426982dbe6deb"
+    },
+    {
+      "path": "crates/prime-radiant/src/coherence/mod.rs",
+      "language": "rust",
+      "sizeLines": 78,
+      "fileCategory": "code",
+      "sha1": "9d3b997fb46c2d76dbee11efc14f64a4a2f5a0ac"
+    },
+    {
+      "path": "crates/prime-radiant/src/coherence/spectral.rs",
+      "language": "rust",
+      "sizeLines": 737,
+      "fileCategory": "code",
+      "sha1": "b1ce1a1212857a7d14a96cd0de992d61d2888752"
+    },
+    {
+      "path": "crates/prime-radiant/src/cohomology/cocycle.rs",
+      "language": "rust",
+      "sizeLines": 470,
+      "fileCategory": "code",
+      "sha1": "b511dbb2858f8d57262772b436b6621ea7ea754e"
+    },
+    {
+      "path": "crates/prime-radiant/src/cohomology/cohomology_group.rs",
+      "language": "rust",
+      "sizeLines": 605,
+      "fileCategory": "code",
+      "sha1": "fe89b2bb4eff5b03179dcfbab279c78f68ae6c6f"
+    },
+    {
+      "path": "crates/prime-radiant/src/cohomology/diffusion.rs",
+      "language": "rust",
+      "sizeLines": 485,
+      "fileCategory": "code",
+      "sha1": "a69bb22bc9505814524044872b21d2e5477238a1"
+    },
+    {
+      "path": "crates/prime-radiant/src/cohomology/laplacian.rs",
+      "language": "rust",
+      "sizeLines": 545,
+      "fileCategory": "code",
+      "sha1": "35764252ce6153b5f5e9302ede0456c6432fc267"
+    },
+    {
+      "path": "crates/prime-radiant/src/cohomology/mod.rs",
+      "language": "rust",
+      "sizeLines": 60,
+      "fileCategory": "code",
+      "sha1": "c3aed66c562b24cd89312f6028510966055fb056"
+    },
+    {
+      "path": "crates/prime-radiant/src/cohomology/neural.rs",
+      "language": "rust",
+      "sizeLines": 650,
+      "fileCategory": "code",
+      "sha1": "ac46494abd78487b75a49bde6630d4131e7b707c"
+    },
+    {
+      "path": "crates/prime-radiant/src/cohomology/obstruction.rs",
+      "language": "rust",
+      "sizeLines": 524,
+      "fileCategory": "code",
+      "sha1": "967008c117c1b95b2171da29089bc5ef8f8cbb00"
+    },
+    {
+      "path": "crates/prime-radiant/src/cohomology/sheaf.rs",
+      "language": "rust",
+      "sizeLines": 463,
+      "fileCategory": "code",
+      "sha1": "0213a8d8d37ffa26e47841073df3f5a6b69227bf"
+    },
+    {
+      "path": "crates/prime-radiant/src/cohomology/simplex.rs",
+      "language": "rust",
+      "sizeLines": 597,
+      "fileCategory": "code",
+      "sha1": "2bec538fbf660d229a2177d15609be89e67cd12d"
+    },
+    {
+      "path": "crates/prime-radiant/src/distributed/adapter.rs",
+      "language": "rust",
+      "sizeLines": 388,
+      "fileCategory": "code",
+      "sha1": "e0269f7f492d015cdb76ced03d4d78141382d69a"
+    },
+    {
+      "path": "crates/prime-radiant/src/distributed/config.rs",
+      "language": "rust",
+      "sizeLines": 238,
+      "fileCategory": "code",
+      "sha1": "af5cf50170cbb0382d94c450fb5a602e2e5f08f8"
+    },
+    {
+      "path": "crates/prime-radiant/src/distributed/mod.rs",
+      "language": "rust",
+      "sizeLines": 435,
+      "fileCategory": "code",
+      "sha1": "bdae4f12bb685b516da2ad3b062db1e5e455a185"
+    },
+    {
+      "path": "crates/prime-radiant/src/distributed/state.rs",
+      "language": "rust",
+      "sizeLines": 502,
+      "fileCategory": "code",
+      "sha1": "7f3d6408373c133c663340065e29815d52b09d45"
+    },
+    {
+      "path": "crates/prime-radiant/src/error.rs",
+      "language": "rust",
+      "sizeLines": 357,
+      "fileCategory": "code",
+      "sha1": "5a3f459f1f45db78bc5b8a040c6293e39f3476d0"
+    },
+    {
+      "path": "crates/prime-radiant/src/events.rs",
+      "language": "rust",
+      "sizeLines": 504,
+      "fileCategory": "code",
+      "sha1": "cce9661d4cf956099707418d7199d1526bf9a85d"
+    },
+    {
+      "path": "crates/prime-radiant/src/execution/action.rs",
+      "language": "rust",
+      "sizeLines": 599,
+      "fileCategory": "code",
+      "sha1": "412c2698d2a7acdbde6dd370ebdd50ce68ee2104"
+    },
+    {
+      "path": "crates/prime-radiant/src/execution/executor.rs",
+      "language": "rust",
+      "sizeLines": 860,
+      "fileCategory": "code",
+      "sha1": "d1c3bbad315a34096156362fd688c7ac06c160cc"
+    },
+    {
+      "path": "crates/prime-radiant/src/execution/gate.rs",
+      "language": "rust",
+      "sizeLines": 858,
+      "fileCategory": "code",
+      "sha1": "c16d4abd6a3f93b600a0f5f15473127104f10ef4"
+    },
+    {
+      "path": "crates/prime-radiant/src/execution/ladder.rs",
+      "language": "rust",
+      "sizeLines": 577,
+      "fileCategory": "code",
+      "sha1": "d0b5054ad8a534a042fb648a4fbe5dad7af16c97"
+    },
+    {
+      "path": "crates/prime-radiant/src/execution/mod.rs",
+      "language": "rust",
+      "sizeLines": 298,
+      "fileCategory": "code",
+      "sha1": "a99ddd12b4be8801c7f8e38b4b9c75ec6878ac4c"
+    },
+    {
+      "path": "crates/prime-radiant/src/governance/lineage.rs",
+      "language": "rust",
+      "sizeLines": 872,
+      "fileCategory": "code",
+      "sha1": "fa24592deb6faca1f3c8627a0e6ad697fd680084"
+    },
+    {
+      "path": "crates/prime-radiant/src/governance/mod.rs",
+      "language": "rust",
+      "sizeLines": 438,
+      "fileCategory": "code",
+      "sha1": "ca925618f0936056597c3be8a6f426a4e38445e2"
+    },
+    {
+      "path": "crates/prime-radiant/src/governance/policy.rs",
+      "language": "rust",
+      "sizeLines": 969,
+      "fileCategory": "code",
+      "sha1": "74b03ef23e88f3b3468ecc557bc46de7f24f6d12"
+    },
+    {
+      "path": "crates/prime-radiant/src/governance/repository.rs",
+      "language": "rust",
+      "sizeLines": 1061,
+      "fileCategory": "code",
+      "sha1": "7f166bec2654d99521ec3d4c1a1260f41314ddf7"
+    },
+    {
+      "path": "crates/prime-radiant/src/governance/witness.rs",
+      "language": "rust",
+      "sizeLines": 722,
+      "fileCategory": "code",
+      "sha1": "ce1593174126a381dbc553c7e8c7eb22f088ddec"
+    },
+    {
+      "path": "crates/prime-radiant/src/gpu/buffer.rs",
+      "language": "rust",
+      "sizeLines": 705,
+      "fileCategory": "code",
+      "sha1": "bac7350361718d081613daeb586dc6e783db7e10"
+    },
+    {
+      "path": "crates/prime-radiant/src/gpu/device.rs",
+      "language": "rust",
+      "sizeLines": 290,
+      "fileCategory": "code",
+      "sha1": "3db2c54ceb5e5754542f89e58096e4c049dfbd49"
+    },
+    {
+      "path": "crates/prime-radiant/src/gpu/dispatch.rs",
+      "language": "rust",
+      "sizeLines": 426,
+      "fileCategory": "code",
+      "sha1": "d9017efaa19751ae5866515f69dfff29614cb932"
+    },
+    {
+      "path": "crates/prime-radiant/src/gpu/engine.rs",
+      "language": "rust",
+      "sizeLines": 814,
+      "fileCategory": "code",
+      "sha1": "658df56bb2b77c6f50699f8009e6c9ffa1983805"
+    },
+    {
+      "path": "crates/prime-radiant/src/gpu/error.rs",
+      "language": "rust",
+      "sizeLines": 228,
+      "fileCategory": "code",
+      "sha1": "b15ac50d075a2598d9bb15187f2fd8aafbd3d81a"
+    },
+    {
+      "path": "crates/prime-radiant/src/gpu/kernels.rs",
+      "language": "rust",
+      "sizeLines": 760,
+      "fileCategory": "code",
+      "sha1": "b7ced8d917e4487a3044776e793e20f465932407"
+    },
+    {
+      "path": "crates/prime-radiant/src/gpu/mod.rs",
+      "language": "rust",
+      "sizeLines": 156,
+      "fileCategory": "code",
+      "sha1": "4df9d00251198959885d2383db594bf24a9868a6"
+    },
+    {
+      "path": "crates/prime-radiant/src/gpu/pipeline.rs",
+      "language": "rust",
+      "sizeLines": 513,
+      "fileCategory": "code",
+      "sha1": "077fa0b72b462e6a808f8a1ce9d28b44cd78bca6"
+    },
+    {
+      "path": "crates/prime-radiant/src/hyperbolic/adapter.rs",
+      "language": "rust",
+      "sizeLines": 332,
+      "fileCategory": "code",
+      "sha1": "8f50cefff0fa5abbdf170163cae57d62d4ee8340"
+    },
+    {
+      "path": "crates/prime-radiant/src/hyperbolic/config.rs",
+      "language": "rust",
+      "sizeLines": 169,
+      "fileCategory": "code",
+      "sha1": "15e338a69b25c27ddddfa87cadb2a9b4d54e147a"
+    },
+    {
+      "path": "crates/prime-radiant/src/hyperbolic/depth.rs",
+      "language": "rust",
+      "sizeLines": 214,
+      "fileCategory": "code",
+      "sha1": "986036d9d79ea591edb331521275d77b0af159af"
+    },
+    {
+      "path": "crates/prime-radiant/src/hyperbolic/energy.rs",
+      "language": "rust",
+      "sizeLines": 351,
+      "fileCategory": "code",
+      "sha1": "5072d5155c97eff5e059f36376664dd8a4283b37"
+    },
+    {
+      "path": "crates/prime-radiant/src/hyperbolic/mod.rs",
+      "language": "rust",
+      "sizeLines": 362,
+      "fileCategory": "code",
+      "sha1": "a44ad0de83f26b57cd82284d1211c57e7325ccc3"
+    },
+    {
+      "path": "crates/prime-radiant/src/learned_rho/config.rs",
+      "language": "rust",
+      "sizeLines": 389,
+      "fileCategory": "code",
+      "sha1": "c2696f4b75ce470f964669a32a0b82ef5aab72f1"
+    },
+    {
+      "path": "crates/prime-radiant/src/learned_rho/error.rs",
+      "language": "rust",
+      "sizeLines": 75,
+      "fileCategory": "code",
+      "sha1": "f6c7823254b9093e9723a035f75049f05ffdf0e0"
+    },
+    {
+      "path": "crates/prime-radiant/src/learned_rho/map.rs",
+      "language": "rust",
+      "sizeLines": 562,
+      "fileCategory": "code",
+      "sha1": "6ac357b0ee879b0adac7485cc6f2d0cd7adffd5d"
+    },
+    {
+      "path": "crates/prime-radiant/src/learned_rho/mod.rs",
+      "language": "rust",
+      "sizeLines": 52,
+      "fileCategory": "code",
+      "sha1": "e3f406a5f2306f60672c6868d8bc12ffae65d715"
+    },
+    {
+      "path": "crates/prime-radiant/src/learned_rho/training.rs",
+      "language": "rust",
+      "sizeLines": 275,
+      "fileCategory": "code",
+      "sha1": "6c31a127d16a336ad3e320e5701c2e9230f50f45"
+    },
+    {
+      "path": "crates/prime-radiant/src/lib.rs",
+      "language": "rust",
+      "sizeLines": 610,
+      "fileCategory": "code",
+      "sha1": "623fe1b81c5063950068ad36d65b4089ed662b5e"
+    },
+    {
+      "path": "crates/prime-radiant/src/mincut/adapter.rs",
+      "language": "rust",
+      "sizeLines": 381,
+      "fileCategory": "code",
+      "sha1": "5093ae7d56fb833202653b45df45b4f67214fbf3"
+    },
+    {
+      "path": "crates/prime-radiant/src/mincut/config.rs",
+      "language": "rust",
+      "sizeLines": 161,
+      "fileCategory": "code",
+      "sha1": "23ff0cdb4ebe2b1fba9d47bda3c35794033ca86f"
+    },
+    {
+      "path": "crates/prime-radiant/src/mincut/isolation.rs",
+      "language": "rust",
+      "sizeLines": 354,
+      "fileCategory": "code",
+      "sha1": "add7d47a6248cd263d90999e2375c1e5a01c64f6"
+    },
+    {
+      "path": "crates/prime-radiant/src/mincut/metrics.rs",
+      "language": "rust",
+      "sizeLines": 300,
+      "fileCategory": "code",
+      "sha1": "09e26df841e8b094c418021606410f3fdce62831"
+    },
+    {
+      "path": "crates/prime-radiant/src/mincut/mod.rs",
+      "language": "rust",
+      "sizeLines": 528,
+      "fileCategory": "code",
+      "sha1": "16b6c22f5b0764eb6219f37405f85e8b94959755"
+    },
+    {
+      "path": "crates/prime-radiant/src/neural_gate/config.rs",
+      "language": "rust",
+      "sizeLines": 212,
+      "fileCategory": "code",
+      "sha1": "3bc1a483c33fc0bc5c95f2f3ec87d43ae2d8f01b"
+    },
+    {
+      "path": "crates/prime-radiant/src/neural_gate/decision.rs",
+      "language": "rust",
+      "sizeLines": 248,
+      "fileCategory": "code",
+      "sha1": "8f982407cc8cf178fcb9a85532c31dc62d8c7d1b"
+    },
+    {
+      "path": "crates/prime-radiant/src/neural_gate/encoding.rs",
+      "language": "rust",
+      "sizeLines": 379,
+      "fileCategory": "code",
+      "sha1": "cc5b309112e9875fca59721cca1d02f80326a607"
+    },
+    {
+      "path": "crates/prime-radiant/src/neural_gate/error.rs",
+      "language": "rust",
+      "sizeLines": 79,
+      "fileCategory": "code",
+      "sha1": "c4cc94e5fbbd5e349be8af548ccd03dd6ee93c8c"
+    },
+    {
+      "path": "crates/prime-radiant/src/neural_gate/gate.rs",
+      "language": "rust",
+      "sizeLines": 514,
+      "fileCategory": "code",
+      "sha1": "e6b609fef4fdf077cb42045056b8d066e345bc9c"
+    },
+    {
+      "path": "crates/prime-radiant/src/neural_gate/mod.rs",
+      "language": "rust",
+      "sizeLines": 56,
+      "fileCategory": "code",
+      "sha1": "accbe7cbe9fe0959af8575a847e960cb705d4a80"
+    },
+    {
+      "path": "crates/prime-radiant/src/ruvllm_integration/adapter.rs",
+      "language": "rust",
+      "sizeLines": 222,
+      "fileCategory": "code",
+      "sha1": "efd82dac0563d8ace241f0fb1ab606853567f507"
+    },
+    {
+      "path": "crates/prime-radiant/src/ruvllm_integration/bridge.rs",
+      "language": "rust",
+      "sizeLines": 327,
+      "fileCategory": "code",
+      "sha1": "a1c078520e13c4d21914a4e3d14a90efb88133e0"
+    },
+    {
+      "path": "crates/prime-radiant/src/ruvllm_integration/coherence_validator.rs",
+      "language": "rust",
+      "sizeLines": 1019,
+      "fileCategory": "code",
+      "sha1": "b9317ffea9286a5ca3330aada4eb4723fb2f7df4"
+    },
+    {
+      "path": "crates/prime-radiant/src/ruvllm_integration/confidence.rs",
+      "language": "rust",
+      "sizeLines": 800,
+      "fileCategory": "code",
+      "sha1": "e93fde2998a76edf8fcdab0ad353b5e1e112c13f"
+    },
+    {
+      "path": "crates/prime-radiant/src/ruvllm_integration/config.rs",
+      "language": "rust",
+      "sizeLines": 192,
+      "fileCategory": "code",
+      "sha1": "143772ea16a06a7c06f0137902aaf8388e8a69df"
+    },
+    {
+      "path": "crates/prime-radiant/src/ruvllm_integration/error.rs",
+      "language": "rust",
+      "sizeLines": 359,
+      "fileCategory": "code",
+      "sha1": "cb1cecefe725e71d02083aa6c3bdc223d63ed44f"
+    },
+    {
+      "path": "crates/prime-radiant/src/ruvllm_integration/gate.rs",
+      "language": "rust",
+      "sizeLines": 426,
+      "fileCategory": "code",
+      "sha1": "9b129d4b12b999fac6e83033bfb232595ad698be"
+    },
+    {
+      "path": "crates/prime-radiant/src/ruvllm_integration/memory_layer.rs",
+      "language": "rust",
+      "sizeLines": 1259,
+      "fileCategory": "code",
+      "sha1": "d8c74c0a59c8b35f5367463c24ea4273b10d8d53"
+    },
+    {
+      "path": "crates/prime-radiant/src/ruvllm_integration/mod.rs",
+      "language": "rust",
+      "sizeLines": 314,
+      "fileCategory": "code",
+      "sha1": "e3dd4f916aacda0f995fd7c3118717a90ae354ee"
+    },
+    {
+      "path": "crates/prime-radiant/src/ruvllm_integration/pattern_bridge.rs",
+      "language": "rust",
+      "sizeLines": 972,
+      "fileCategory": "code",
+      "sha1": "9bb1905cc3949de7b34ec2ace6521c3f988c3e5c"
+    },
+    {
+      "path": "crates/prime-radiant/src/ruvllm_integration/traits.rs",
+      "language": "rust",
+      "sizeLines": 395,
+      "fileCategory": "code",
+      "sha1": "dd67bd19412d913305751e1d83c4ab5b91b90606"
+    },
+    {
+      "path": "crates/prime-radiant/src/ruvllm_integration/witness.rs",
+      "language": "rust",
+      "sizeLines": 372,
+      "fileCategory": "code",
+      "sha1": "d8c7aa38b0aefd1560f50ec72e44b41de29f9385"
+    },
+    {
+      "path": "crates/prime-radiant/src/ruvllm_integration/witness_log.rs",
+      "language": "rust",
+      "sizeLines": 1129,
+      "fileCategory": "code",
+      "sha1": "4152a2fed38c1be023e092dc2fa2eb1376eae108"
+    },
+    {
+      "path": "crates/prime-radiant/src/security/limits.rs",
+      "language": "rust",
+      "sizeLines": 256,
+      "fileCategory": "code",
+      "sha1": "1bdfc988bc6d708cf7299ac896c4be2a1c34e121"
+    },
+    {
+      "path": "crates/prime-radiant/src/security/mod.rs",
+      "language": "rust",
+      "sizeLines": 40,
+      "fileCategory": "code",
+      "sha1": "851363b3a70c27ed63348870ce70f4b0cf1b6d39"
+    },
+    {
+      "path": "crates/prime-radiant/src/security/validation.rs",
+      "language": "rust",
+      "sizeLines": 605,
+      "fileCategory": "code",
+      "sha1": "4aa6caa8b8538efd4bb4baf15cf94a68ea46a251"
+    },
+    {
+      "path": "crates/prime-radiant/src/signal/ingestion.rs",
+      "language": "rust",
+      "sizeLines": 219,
+      "fileCategory": "code",
+      "sha1": "35207e3e2a4f1d71f87cbebe3427e199be9d165c"
+    },
+    {
+      "path": "crates/prime-radiant/src/signal/mod.rs",
+      "language": "rust",
+      "sizeLines": 108,
+      "fileCategory": "code",
+      "sha1": "0e10d8afc392e67f1b8a9ed765ba41b1752e6a5c"
+    },
+    {
+      "path": "crates/prime-radiant/src/signal/normalization.rs",
+      "language": "rust",
+      "sizeLines": 131,
+      "fileCategory": "code",
+      "sha1": "1dbd37c8ec70f087b3af637791d84021344dd258"
+    },
+    {
+      "path": "crates/prime-radiant/src/signal/validation.rs",
+      "language": "rust",
+      "sizeLines": 131,
+      "fileCategory": "code",
+      "sha1": "1043b95a988aa20fe0621ef05c373c4f10f9bf7b"
+    },
+    {
+      "path": "crates/prime-radiant/src/simd/energy.rs",
+      "language": "rust",
+      "sizeLines": 703,
+      "fileCategory": "code",
+      "sha1": "08300fb2063bb7e8150834f7157958a9964e7c5f"
+    },
+    {
+      "path": "crates/prime-radiant/src/simd/matrix.rs",
+      "language": "rust",
+      "sizeLines": 580,
+      "fileCategory": "code",
+      "sha1": "90257f46d33c5fb6a64121e6df026ad6c1940f01"
+    },
+    {
+      "path": "crates/prime-radiant/src/simd/mod.rs",
+      "language": "rust",
+      "sizeLines": 332,
+      "fileCategory": "code",
+      "sha1": "9c03f7917dcd03c851f1fb89754188d0b97e03e0"
+    },
+    {
+      "path": "crates/prime-radiant/src/simd/vectors.rs",
+      "language": "rust",
+      "sizeLines": 681,
+      "fileCategory": "code",
+      "sha1": "9c928225d8e9d4275899910757873196f7ee30e1"
+    },
+    {
+      "path": "crates/prime-radiant/src/sona_tuning/adjustment.rs",
+      "language": "rust",
+      "sizeLines": 204,
+      "fileCategory": "code",
+      "sha1": "21ac548d92470b9f35c18f22c06f77bb7bccc552"
+    },
+    {
+      "path": "crates/prime-radiant/src/sona_tuning/config.rs",
+      "language": "rust",
+      "sizeLines": 237,
+      "fileCategory": "code",
+      "sha1": "07a8f1358982cfd08e8416dcb9d151282389fa1a"
+    },
+    {
+      "path": "crates/prime-radiant/src/sona_tuning/error.rs",
+      "language": "rust",
+      "sizeLines": 79,
+      "fileCategory": "code",
+      "sha1": "f3bbda87e6466cea0f5d3c413978b3be13917feb"
+    },
+    {
+      "path": "crates/prime-radiant/src/sona_tuning/mod.rs",
+      "language": "rust",
+      "sizeLines": 50,
+      "fileCategory": "code",
+      "sha1": "ddaab48ba75c379fc21865fe9688564f5ecc9960"
+    },
+    {
+      "path": "crates/prime-radiant/src/sona_tuning/tuner.rs",
+      "language": "rust",
+      "sizeLines": 475,
+      "fileCategory": "code",
+      "sha1": "6f09c7b0d8cc5f02ac25cae7c8a5f36b1d15aea3"
+    },
+    {
+      "path": "crates/prime-radiant/src/storage/file.rs",
+      "language": "rust",
+      "sizeLines": 803,
+      "fileCategory": "code",
+      "sha1": "0e3dd5c96629cf1545e18bd043138a8ef91e15a2"
+    },
+    {
+      "path": "crates/prime-radiant/src/storage/memory.rs",
+      "language": "rust",
+      "sizeLines": 730,
+      "fileCategory": "code",
+      "sha1": "99593b5b6199b6930aa29e88e44b2b0c667fa701"
+    },
+    {
+      "path": "crates/prime-radiant/src/storage/mod.rs",
+      "language": "rust",
+      "sizeLines": 575,
+      "fileCategory": "code",
+      "sha1": "a077b2deb4aa30ea83f1ec54d326244330fabbf2"
+    },
+    {
+      "path": "crates/prime-radiant/src/storage/postgres.rs",
+      "language": "rust",
+      "sizeLines": 1081,
+      "fileCategory": "code",
+      "sha1": "43fd9f5b2eb5d799855022dd816770510e87d0bf"
+    },
+    {
+      "path": "crates/prime-radiant/src/substrate/edge.rs",
+      "language": "rust",
+      "sizeLines": 819,
+      "fileCategory": "code",
+      "sha1": "0246fc013e7123a0f9ed149ba64cc946b49619a9"
+    },
+    {
+      "path": "crates/prime-radiant/src/substrate/graph.rs",
+      "language": "rust",
+      "sizeLines": 1183,
+      "fileCategory": "code",
+      "sha1": "d9fe9ab6f167aad2c6b6f98d74dcc05843028b37"
+    },
+    {
+      "path": "crates/prime-radiant/src/substrate/mod.rs",
+      "language": "rust",
+      "sizeLines": 216,
+      "fileCategory": "code",
+      "sha1": "92ecbf574b14b5d809c39a37b520b6b7375fa71c"
+    },
+    {
+      "path": "crates/prime-radiant/src/substrate/node.rs",
+      "language": "rust",
+      "sizeLines": 587,
+      "fileCategory": "code",
+      "sha1": "27b25069f412603f1a92ffc0449d15ba2f3f4154"
+    },
+    {
+      "path": "crates/prime-radiant/src/substrate/repository.rs",
+      "language": "rust",
+      "sizeLines": 59,
+      "fileCategory": "code",
+      "sha1": "46107b7687e35f1ae29a09f561702cd1d48060b7"
+    },
+    {
+      "path": "crates/prime-radiant/src/substrate/restriction.rs",
+      "language": "rust",
+      "sizeLines": 1226,
+      "fileCategory": "code",
+      "sha1": "e9f1cf688183a61173a4d8f1e64a80261208d3c7"
+    },
+    {
+      "path": "crates/prime-radiant/src/tiles/adapter.rs",
+      "language": "rust",
+      "sizeLines": 369,
+      "fileCategory": "code",
+      "sha1": "8690ecbb8d0fb1c5332a1397d53102310001c089"
+    },
+    {
+      "path": "crates/prime-radiant/src/tiles/coordinator.rs",
+      "language": "rust",
+      "sizeLines": 373,
+      "fileCategory": "code",
+      "sha1": "624cd4f3adffc7e57b61fb217b707a5bc6a87182"
+    },
+    {
+      "path": "crates/prime-radiant/src/tiles/error.rs",
+      "language": "rust",
+      "sizeLines": 99,
+      "fileCategory": "code",
+      "sha1": "390707b044b4fb2302b2f3efa64d7f1a039ce2d1"
+    },
+    {
+      "path": "crates/prime-radiant/src/tiles/fabric.rs",
+      "language": "rust",
+      "sizeLines": 423,
+      "fileCategory": "code",
+      "sha1": "48cb3b5947703e32dce83a73987ea4b21675ee04"
+    },
+    {
+      "path": "crates/prime-radiant/src/tiles/mod.rs",
+      "language": "rust",
+      "sizeLines": 45,
+      "fileCategory": "code",
+      "sha1": "63b6f8b731c3f36e7c98f7df0e5b135c66a37338"
+    },
+    {
+      "path": "crates/prime-radiant/src/types.rs",
+      "language": "rust",
+      "sizeLines": 664,
+      "fileCategory": "code",
+      "sha1": "e1373c9fb71093c24cc1bf05d6f225de8e6f6fb1"
+    },
+    {
+      "path": "crates/prime-radiant/tests/chaos_tests.rs",
+      "language": "rust",
+      "sizeLines": 772,
+      "fileCategory": "code",
+      "sha1": "07ca26ad640dcddfc3ec39828dd7ada054957090"
+    },
+    {
+      "path": "crates/prime-radiant/tests/gpu_coherence_tests.rs",
+      "language": "rust",
+      "sizeLines": 520,
+      "fileCategory": "code",
+      "sha1": "6b05def9c52a9005eabe37753f215e6e05e75cff"
+    },
+    {
+      "path": "crates/prime-radiant/tests/integration/coherence_tests.rs",
+      "language": "rust",
+      "sizeLines": 772,
+      "fileCategory": "code",
+      "sha1": "fd2c451771a1be71d4cdbce63425fff3d05c6aeb"
+    },
+    {
+      "path": "crates/prime-radiant/tests/integration/gate_tests.rs",
+      "language": "rust",
+      "sizeLines": 715,
+      "fileCategory": "code",
+      "sha1": "e98889c5f0b7f942f7616b5c5fc34969e55cdedd"
+    },
+    {
+      "path": "crates/prime-radiant/tests/integration/governance_tests.rs",
+      "language": "rust",
+      "sizeLines": 1017,
+      "fileCategory": "code",
+      "sha1": "32e87084772738de873dd8ef623f556782c0b3f0"
+    },
+    {
+      "path": "crates/prime-radiant/tests/integration/graph_tests.rs",
+      "language": "rust",
+      "sizeLines": 528,
+      "fileCategory": "code",
+      "sha1": "7deda53db8970ed16797bde247240ec08964ca9f"
+    },
+    {
+      "path": "crates/prime-radiant/tests/integration/mod.rs",
+      "language": "rust",
+      "sizeLines": 13,
+      "fileCategory": "code",
+      "sha1": "117c8362ddead7dfad82ceafb925d0f84dd31582"
+    },
+    {
+      "path": "crates/prime-radiant/tests/property/coherence_properties.rs",
+      "language": "rust",
+      "sizeLines": 681,
+      "fileCategory": "code",
+      "sha1": "1c772f351f172348493cf55fe5d04dbdb07d12bb"
+    },
+    {
+      "path": "crates/prime-radiant/tests/property/mod.rs",
+      "language": "rust",
+      "sizeLines": 6,
+      "fileCategory": "code",
+      "sha1": "88c4fe7cb010da65449a8543fa3e8aef804b9e5f"
+    },
+    {
+      "path": "crates/prime-radiant/tests/replay_determinism.rs",
+      "language": "rust",
+      "sizeLines": 805,
+      "fileCategory": "code",
+      "sha1": "2024c7e1d662aa5475ebc27f7980c3ebd6078137"
+    },
+    {
+      "path": "crates/prime-radiant/tests/ruvllm_integration_tests.rs",
+      "language": "rust",
+      "sizeLines": 1393,
+      "fileCategory": "code",
+      "sha1": "f5e015711c8fec54b128ed099c4ff5f7eaced070"
+    },
+    {
+      "path": "crates/prime-radiant/tests/storage_tests.rs",
+      "language": "rust",
+      "sizeLines": 692,
+      "fileCategory": "code",
+      "sha1": "b2e6388705774821b2d088bcb243be05626bfa68"
+    },
+    {
+      "path": "crates/ruvector-nervous-system-wasm/Cargo.toml",
+      "language": "toml",
+      "sizeLines": 47,
+      "fileCategory": "config",
+      "sha1": "b7cd76b73aadd3593f0bf8eb16903c16a213357f"
+    },
+    {
+      "path": "crates/ruvector-nervous-system-wasm/README.md",
+      "language": "markdown",
+      "sizeLines": 411,
+      "fileCategory": "docs",
+      "sha1": "585ddff885e5caa75cde0507a5bfb3e7d92e734a"
+    },
+    {
+      "path": "crates/ruvector-nervous-system-wasm/pkg/README.md",
+      "language": "markdown",
+      "sizeLines": 410,
+      "fileCategory": "docs",
+      "sha1": "f2a7003b8d288f4861b08f7da7f5dbe522290fcc"
+    },
+    {
+      "path": "crates/ruvector-nervous-system-wasm/src/btsp.rs",
+      "language": "rust",
+      "sizeLines": 310,
+      "fileCategory": "code",
+      "sha1": "7b147fc5ea642221536977863ad5507b5815be5f"
+    },
+    {
+      "path": "crates/ruvector-nervous-system-wasm/src/hdc.rs",
+      "language": "rust",
+      "sizeLines": 272,
+      "fileCategory": "code",
+      "sha1": "5087de38a626c72d936854e1016f365b5e544c96"
+    },
+    {
+      "path": "crates/ruvector-nervous-system-wasm/src/lib.rs",
+      "language": "rust",
+      "sizeLines": 156,
+      "fileCategory": "code",
+      "sha1": "a1d9278163ca344b97ed76122b2e0a3f2bccb50d"
+    },
+    {
+      "path": "crates/ruvector-nervous-system-wasm/src/workspace.rs",
+      "language": "rust",
+      "sizeLines": 343,
+      "fileCategory": "code",
+      "sha1": "3dbdb2f7790ac8f57120a56763234cac866bd38d"
+    },
+    {
+      "path": "crates/ruvector-nervous-system-wasm/src/wta.rs",
+      "language": "rust",
+      "sizeLines": 334,
+      "fileCategory": "code",
+      "sha1": "335fc41c9c58527657b812433c33e24837f01717"
+    },
+    {
+      "path": "crates/ruvector-nervous-system-wasm/tests/web.rs",
+      "language": "rust",
+      "sizeLines": 321,
+      "fileCategory": "code",
+      "sha1": "ed1be6263d41cfb75155b4cce3fb7abf3bc70659"
+    },
+    {
+      "path": "crates/ruvector-nervous-system/Cargo.toml",
+      "language": "toml",
+      "sizeLines": 312,
+      "fileCategory": "config",
+      "sha1": "8bb4254af3a3ed075e5183cb5beb6f2e3af8ef14"
+    },
+    {
+      "path": "crates/ruvector-nervous-system/HDC_IMPLEMENTATION.md",
+      "language": "markdown",
+      "sizeLines": 380,
+      "fileCategory": "docs",
+      "sha1": "f38384e5801414f8be2ef2f4d2332cd418b0c12a"
+    },
+    {
+      "path": "crates/ruvector-nervous-system/HOPFIELD.md",
+      "language": "markdown",
+      "sizeLines": 124,
+      "fileCategory": "docs",
+      "sha1": "d38ec7f44fb40974b07dcee63828cd2baa7a9486"
+    },
+    {
+      "path": "crates/ruvector-nervous-system/README.md",
+      "language": "markdown",
+      "sizeLines": 438,
+      "fileCategory": "docs",
+      "sha1": "d6e7b473bfbcca1bbba4be71dc03d06afd165aa4"
+    },
+    {
+      "path": "crates/ruvector-nervous-system/benches/btsp_bench.rs",
+      "language": "rust",
+      "sizeLines": 92,
+      "fileCategory": "code",
+      "sha1": "8d6c14d7a59044c91ec1cbbf3fda717abb0b404b"
+    },
+    {
+      "path": "crates/ruvector-nervous-system/benches/eprop_bench.rs",
+      "language": "rust",
+      "sizeLines": 119,
+      "fileCategory": "code",
+      "sha1": "9a6df835425add9181c68c59bd0e1a8c99e3ff24"
+    },
+    {
+      "path": "crates/ruvector-nervous-system/benches/ewc_bench.rs",
+      "language": "rust",
+      "sizeLines": 114,
+      "fileCategory": "code",
+      "sha1": "33a02b8af67d7faffd93332b613065108c7a36a2"
+    },
+    {
+      "path": "crates/ruvector-nervous-system/benches/hdc_bench.rs",
+      "language": "rust",
+      "sizeLines": 139,
+      "fileCategory": "code",
+      "sha1": "da0ca4201748497a6e82eb1bd1c0dbff171585ee"
+    },
+    {
+      "path": "crates/ruvector-nervous-system/benches/latency_benchmarks.rs",
+      "language": "rust",
+      "sizeLines": 401,
+      "fileCategory": "code",
+      "sha1": "3a59ae94f1ba3c9b5b70e46e050470754daa6a13"
+    },
+    {
+      "path": "crates/ruvector-nervous-system/benches/pattern_separation.rs",
+      "language": "rust",
+      "sizeLines": 64,
+      "fileCategory": "code",
+      "sha1": "1eedb254142981f67f24289ed98a90eceaf0f38e"
+    },
+    {
+      "path": "crates/ruvector-nervous-system/docs/EWC_IMPLEMENTATION.md",
+      "language": "markdown",
+      "sizeLines": 239,
+      "fileCategory": "docs",
+      "sha1": "d58de71ba3fb63e8f30458e2d4bb9bcd20b61b1c"
+    },
+    {
+      "path": "crates/ruvector-nervous-system/docs/compete-implementation.md",
+      "language": "markdown",
+      "sizeLines": 229,
+      "fileCategory": "docs",
+      "sha1": "cfa367c7e5991aa9914fbb7af482c87d91a1165c"
+    },
+    {
+      "path": "crates/ruvector-nervous-system/examples/README.md",
+      "language": "markdown",
+      "sizeLines": 233,
+      "fileCategory": "docs",
+      "sha1": "45e0f4861554c58a02bffebd9c856692fa854e8c"
+    },
+    {
+      "path": "crates/ruvector-nervous-system/examples/hopfield_demo.rs",
+      "language": "rust",
+      "sizeLines": 133,
+      "fileCategory": "code",
+      "sha1": "0e184ed4552aa07b6fc9786e168b15226c5479cb"
+    },
+    {
+      "path": "crates/ruvector-nervous-system/examples/tiers/t1_anomaly_detection.rs",
+      "language": "rust",
+      "sizeLines": 512,
+      "fileCategory": "code",
+      "sha1": "bbc17f4fda21151916c5af0cd5a28907569e1f8c"
+    },
+    {
+      "path": "crates/ruvector-nervous-system/examples/tiers/t1_edge_autonomy.rs",
+      "language": "rust",
+      "sizeLines": 504,
+      "fileCategory": "code",
+      "sha1": "b0f8b764a261b225d93dc1436dfc00a6e1ad3ecc"
+    },
+    {
+      "path": "crates/ruvector-nervous-system/examples/tiers/t1_medical_wearable.rs",
+      "language": "rust",
+      "sizeLines": 582,
+      "fileCategory": "code",
+      "sha1": "0dbd338fbc7c972fb93624612039236e631ab4d3"
+    },
+    {
+      "path": "crates/ruvector-nervous-system/examples/tiers/t2_adaptive_simulation.rs",
+      "language": "rust",
+      "sizeLines": 545,
+      "fileCategory": "code",
+      "sha1": "a8b0a633d15c1eba563454dc82ae20afe5b9099b"
+    },
+    {
+      "path": "crates/ruvector-nervous-system/examples/tiers/t2_self_optimizing.rs",
+      "language": "rust",
+      "sizeLines": 644,
+      "fileCategory": "code",
+      "sha1": "ac49a0a18e3ec726f421e5c5d97a9c389094f7dc"
+    },
+    {
+      "path": "crates/ruvector-nervous-system/examples/tiers/t2_swarm_intelligence.rs",
+      "language": "rust",
+      "sizeLines": 536,
+      "fileCategory": "code",
+      "sha1": "4226d88f54b392d590cf3efc461a41138fb7b0df"
+    },
+    {
+      "path": "crates/ruvector-nervous-system/examples/tiers/t3_bio_machine.rs",
+      "language": "rust",
+      "sizeLines": 705,
+      "fileCategory": "code",
+      "sha1": "5ef4307f8c6a0bba513a64207db9c280c1ca0d14"
+    },
+    {
+      "path": "crates/ruvector-nervous-system/examples/tiers/t3_self_awareness.rs",
+      "language": "rust",
+      "sizeLines": 533,
+      "fileCategory": "code",
+      "sha1": "6431e850d16c8b4d35d9cab9ec91c605adf0656a"
+    },
+    {
+      "path": "crates/ruvector-nervous-system/examples/tiers/t3_synthetic_nervous.rs",
+      "language": "rust",
+      "sizeLines": 702,
+      "fileCategory": "code",
+      "sha1": "f7f543fa85de3d0e8a9a8c4d1dfc88bafa85a7b0"
+    },
+    {
+      "path": "crates/ruvector-nervous-system/examples/tiers/t4_agentic_self_model.rs",
+      "language": "rust",
+      "sizeLines": 933,
+      "fileCategory": "code",
+      "sha1": "cb64b459abd204baeed56dc1b5edac712bf5312c"
+    },
+    {
+      "path": "crates/ruvector-nervous-system/examples/tiers/t4_collective_dreaming.rs",
+      "language": "rust",
+      "sizeLines": 709,
+      "fileCategory": "code",
+      "sha1": "e503861bb5f5ee818d46344c51573ac333ee8a97"
+    },
+    {
+      "path": "crates/ruvector-nervous-system/examples/tiers/t4_compositional_hdc.rs",
+      "language": "rust",
+      "sizeLines": 585,
+      "fileCategory": "code",
+      "sha1": "cdd0abf1639651b0d0e2e7405c9696de915ef792"
+    },
+    {
+      "path": "crates/ruvector-nervous-system/examples/tiers/t4_neuromorphic_rag.rs",
+      "language": "rust",
+      "sizeLines": 608,
+      "fileCategory": "code",
+      "sha1": "88209637d84a0318735d58c6fe118ef484b54167"
+    },
+    {
+      "path": "crates/ruvector-nervous-system/examples/workspace_demo.rs",
+      "language": "rust",
+      "sizeLines": 211,
+      "fileCategory": "code",
+      "sha1": "e77759081d7b10761a84a5f26b29d762b9dfcf6e"
+    },
+    {
+      "path": "crates/ruvector-nervous-system/src/compete/inhibition.rs",
+      "language": "rust",
+      "sizeLines": 261,
+      "fileCategory": "code",
+      "sha1": "1d4e3848ff6844012b4ed21ed19009c941e56462"
+    },
+    {
+      "path": "crates/ruvector-nervous-system/src/compete/kwta.rs",
+      "language": "rust",
+      "sizeLines": 382,
+      "fileCategory": "code",
+      "sha1": "02f4b6a2476df646cf691dd85c3c2373097099cb"
+    },
+    {
+      "path": "crates/ruvector-nervous-system/src/compete/mod.rs",
+      "language": "rust",
+      "sizeLines": 42,
+      "fileCategory": "code",
+      "sha1": "abec7fb449fce045b2d26526b9b187071950e8a8"
+    },
+    {
+      "path": "crates/ruvector-nervous-system/src/compete/wta.rs",
+      "language": "rust",
+      "sizeLines": 287,
+      "fileCategory": "code",
+      "sha1": "04fbb0e4b54143bc755347c4dd81655f44990f8a"
+    },
+    {
+      "path": "crates/ruvector-nervous-system/src/dendrite/coincidence.rs",
+      "language": "rust",
+      "sizeLines": 293,
+      "fileCategory": "code",
+      "sha1": "8416aa619b84b447ea65f645d03fbb45cb6feeb1"
+    },
+    {
+      "path": "crates/ruvector-nervous-system/src/dendrite/compartment.rs",
+      "language": "rust",
+      "sizeLines": 189,
+      "fileCategory": "code",
+      "sha1": "638a1175b163666a4b4d1246b993d81c705a162d"
+    },
+    {
+      "path": "crates/ruvector-nervous-system/src/dendrite/mod.rs",
+      "language": "rust",
+      "sizeLines": 33,
+      "fileCategory": "code",
+      "sha1": "b8ff8df315b43d11a21608e3346bd5afa5119464"
+    },
+    {
+      "path": "crates/ruvector-nervous-system/src/dendrite/plateau.rs",
+      "language": "rust",
+      "sizeLines": 173,
+      "fileCategory": "code",
+      "sha1": "3d469b586d6a2055a0caaaf050a0f61cab7448ef"
+    },
+    {
+      "path": "crates/ruvector-nervous-system/src/dendrite/tree.rs",
+      "language": "rust",
+      "sizeLines": 277,
+      "fileCategory": "code",
+      "sha1": "c9a75773b1f52fe75d44c9ac13c6f97ec3d63d1b"
+    },
+    {
+      "path": "crates/ruvector-nervous-system/src/eventbus/IMPLEMENTATION.md",
+      "language": "markdown",
+      "sizeLines": 253,
+      "fileCategory": "docs",
+      "sha1": "0e06546b8fbfb6f0ea0450821aa41088a6e89a05"
+    },
+    {
+      "path": "crates/ruvector-nervous-system/src/eventbus/backpressure.rs",
+      "language": "rust",
+      "sizeLines": 346,
+      "fileCategory": "code",
+      "sha1": "25b26c9c2e5504f34df41144db78a16b9e6bb30a"
+    },
+    {
+      "path": "crates/ruvector-nervous-system/src/eventbus/event.rs",
+      "language": "rust",
+      "sizeLines": 217,
+      "fileCategory": "code",
+      "sha1": "14c75af53221eaa1185694e1e126c02caad2cf8b"
+    },
+    {
+      "path": "crates/ruvector-nervous-system/src/eventbus/mod.rs",
+      "language": "rust",
+      "sizeLines": 35,
+      "fileCategory": "code",
+      "sha1": "84b82e87ab54eabf8b9bfcb9ec461e47c771eaee"
+    },
+    {
+      "path": "crates/ruvector-nervous-system/src/eventbus/queue.rs",
+      "language": "rust",
+      "sizeLines": 326,
+      "fileCategory": "code",
+      "sha1": "a3d2ceda3bbfa85d15fc23055d298df15238bff1"
+    },
+    {
+      "path": "crates/ruvector-nervous-system/src/eventbus/shard.rs",
+      "language": "rust",
+      "sizeLines": 334,
+      "fileCategory": "code",
+      "sha1": "afb770521b1134cba6d8ac044b4b0c142fdb2079"
+    },
+    {
+      "path": "crates/ruvector-nervous-system/src/hdc/memory.rs",
+      "language": "rust",
+      "sizeLines": 501,
+      "fileCategory": "code",
+      "sha1": "ded5370e8d63f899c121d7ab653a711d3a8f6d8a"
+    },
+    {
+      "path": "crates/ruvector-nervous-system/src/hdc/mod.rs",
+      "language": "rust",
+      "sizeLines": 50,
+      "fileCategory": "code",
+      "sha1": "c4257053777ed55324019210a19deabe30ca2079"
+    },
+    {
+      "path": "crates/ruvector-nervous-system/src/hdc/ops.rs",
+      "language": "rust",
+      "sizeLines": 256,
+      "fileCategory": "code",
+      "sha1": "2d577b209fd5d1cd83f477edaf25a4b83b94ec64"
+    },
+    {
+      "path": "crates/ruvector-nervous-system/src/hdc/similarity.rs",
+      "language": "rust",
+      "sizeLines": 396,
+      "fileCategory": "code",
+      "sha1": "6a88275276d81beed6befffd8e7156b5f2da3cff"
+    },
+    {
+      "path": "crates/ruvector-nervous-system/src/hdc/vector.rs",
+      "language": "rust",
+      "sizeLines": 464,
+      "fileCategory": "code",
+      "sha1": "1a9869fbdd7f7274b58fc3070456719a160f97d9"
+    },
+    {
+      "path": "crates/ruvector-nervous-system/src/hopfield/capacity.rs",
+      "language": "rust",
+      "sizeLines": 295,
+      "fileCategory": "code",
+      "sha1": "d590996b7799f8c4fa256d1fb0af49c8eb5a3fe4"
+    },
+    {
+      "path": "crates/ruvector-nervous-system/src/hopfield/mod.rs",
+      "language": "rust",
+      "sizeLines": 22,
+      "fileCategory": "code",
+      "sha1": "b68f27e31553e194c982ea646b2e9cd937ebec35"
+    },
+    {
+      "path": "crates/ruvector-nervous-system/src/hopfield/network.rs",
+      "language": "rust",
+      "sizeLines": 371,
+      "fileCategory": "code",
+      "sha1": "23d78670df0a8fa70280a141bca4948e0fe08054"
+    },
+    {
+      "path": "crates/ruvector-nervous-system/src/hopfield/retrieval.rs",
+      "language": "rust",
+      "sizeLines": 234,
+      "fileCategory": "code",
+      "sha1": "f0bb9a6a130b0f580b5969818bb21c6814cc7cf3"
+    },
+    {
+      "path": "crates/ruvector-nervous-system/src/hopfield/tests.rs",
+      "language": "rust",
+      "sizeLines": 319,
+      "fileCategory": "code",
+      "sha1": "a2d6d68bb9f3bcb924205881eecaf3815daa1d0e"
+    },
+    {
+      "path": "crates/ruvector-nervous-system/src/integration/mod.rs",
+      "language": "rust",
+      "sizeLines": 45,
+      "fileCategory": "code",
+      "sha1": "26e6c268b460f5a08ca4e2dbab84d37190c02756"
+    },
+    {
+      "path": "crates/ruvector-nervous-system/src/integration/postgres.rs",
+      "language": "rust",
+      "sizeLines": 415,
+      "fileCategory": "code",
+      "sha1": "5905592350f337f4ba039708f48e61058778abac"
+    },
+    {
+      "path": "crates/ruvector-nervous-system/src/integration/ruvector.rs",
+      "language": "rust",
+      "sizeLines": 540,
+      "fileCategory": "code",
+      "sha1": "50154db271f49f4d051128da74cb4f487c8e9e31"
+    },
+    {
+      "path": "crates/ruvector-nervous-system/src/integration/tests.rs",
+      "language": "rust",
+      "sizeLines": 261,
+      "fileCategory": "code",
+      "sha1": "ed64a15f2c627a9e01c3d726c314f994b5156f29"
+    },
+    {
+      "path": "crates/ruvector-nervous-system/src/integration/versioning.rs",
+      "language": "rust",
+      "sizeLines": 504,
+      "fileCategory": "code",
+      "sha1": "84fb0bc5684e04afc6a8cd76c1a88448fdac0ae3"
+    },
+    {
+      "path": "crates/ruvector-nervous-system/src/lib.rs",
+      "language": "rust",
+      "sizeLines": 185,
+      "fileCategory": "code",
+      "sha1": "3d6160ac81f72f65b80383cae0a93ded80297fd9"
+    },
+    {
+      "path": "crates/ruvector-nervous-system/src/lib_dendrite_only.rs",
+      "language": "rust",
+      "sizeLines": 19,
+      "fileCategory": "code",
+      "sha1": "17be85200305adb142548ee9617a865fa6f775ad"
+    },
+    {
+      "path": "crates/ruvector-nervous-system/src/plasticity/btsp.rs",
+      "language": "rust",
+      "sizeLines": 654,
+      "fileCategory": "code",
+      "sha1": "fb552648d66ac0a2e4c68003f8085286df8b598b"
+    },
+    {
+      "path": "crates/ruvector-nervous-system/src/plasticity/consolidate.rs",
+      "language": "rust",
+      "sizeLines": 699,
+      "fileCategory": "code",
+      "sha1": "f4ae9576b42a26f837380ee0f19651cf7337b909"
+    },
+    {
+      "path": "crates/ruvector-nervous-system/src/plasticity/eprop.rs",
+      "language": "rust",
+      "sizeLines": 716,
+      "fileCategory": "code",
+      "sha1": "560aacb414ec6004dd3beb194b6536f86dc5931d"
+    },
+    {
+      "path": "crates/ruvector-nervous-system/src/plasticity/mod.rs",
+      "language": "rust",
+      "sizeLines": 11,
+      "fileCategory": "code",
+      "sha1": "51f7f7325deb607a2dfb6acbc33e1ea9eb6143f4"
+    },
+    {
+      "path": "crates/ruvector-nervous-system/src/routing/circadian.rs",
+      "language": "rust",
+      "sizeLines": 1150,
+      "fileCategory": "code",
+      "sha1": "28b5a9b658db1336e2000cd0ab356d09eb0e3817"
+    },
+    {
+      "path": "crates/ruvector-nervous-system/src/routing/coherence.rs",
+      "language": "rust",
+      "sizeLines": 414,
+      "fileCategory": "code",
+      "sha1": "8219bff251f16497147e2b20a7ab13294d54952c"
+    },
+    {
+      "path": "crates/ruvector-nervous-system/src/routing/mod.rs",
+      "language": "rust",
+      "sizeLines": 428,
+      "fileCategory": "code",
+      "sha1": "a97f3acebeadebdc45cc380f641d52a663b29bb8"
+    },
+    {
+      "path": "crates/ruvector-nervous-system/src/routing/predictive.rs",
+      "language": "rust",
+      "sizeLines": 290,
+      "fileCategory": "code",
+      "sha1": "f28ccf54d626fdae829a4c943aee6eff65d33274"
+    },
+    {
+      "path": "crates/ruvector-nervous-system/src/routing/workspace.rs",
+      "language": "rust",
+      "sizeLines": 1002,
+      "fileCategory": "code",
+      "sha1": "2da09ac81186359536687288fbcbdd62fa49c916"
+    },
+    {
+      "path": "crates/ruvector-nervous-system/src/separate/dentate.rs",
+      "language": "rust",
+      "sizeLines": 364,
+      "fileCategory": "code",
+      "sha1": "07644704285b4321dc34106f3c5c1e7040ff51c0"
+    },
+    {
+      "path": "crates/ruvector-nervous-system/src/separate/mod.rs",
+      "language": "rust",
+      "sizeLines": 193,
+      "fileCategory": "code",
+      "sha1": "63080718064c56dda636cb22a8985f0e802c59d1"
+    },
+    {
+      "path": "crates/ruvector-nervous-system/src/separate/projection.rs",
+      "language": "rust",
+      "sizeLines": 252,
+      "fileCategory": "code",
+      "sha1": "6d716ad59665e84eb3dc1f7277dbbc6b92a97f40"
+    },
+    {
+      "path": "crates/ruvector-nervous-system/src/separate/sparsification.rs",
+      "language": "rust",
+      "sizeLines": 403,
+      "fileCategory": "code",
+      "sha1": "6993663a4d276cbc469539d59ebcf4d3f8c432e9"
+    },
+    {
+      "path": "crates/ruvector-nervous-system/tests/btsp_integration.rs",
+      "language": "rust",
+      "sizeLines": 166,
+      "fileCategory": "code",
+      "sha1": "f812963b5ae23b15343bf524e0851b2dec26f6ed"
+    },
+    {
+      "path": "crates/ruvector-nervous-system/tests/eprop_tests.rs",
+      "language": "rust",
+      "sizeLines": 383,
+      "fileCategory": "code",
+      "sha1": "a5319978826962924c71eecad04395fd4652950f"
+    },
+    {
+      "path": "crates/ruvector-nervous-system/tests/ewc_tests.rs",
+      "language": "rust",
+      "sizeLines": 411,
+      "fileCategory": "code",
+      "sha1": "72fa74af8f2e0129b5a51d9bd2c6772765d00c5f"
+    },
+    {
+      "path": "crates/ruvector-nervous-system/tests/integration.rs",
+      "language": "rust",
+      "sizeLines": 512,
+      "fileCategory": "code",
+      "sha1": "da3a93b2bf54593bd4f6699713b85a753cf21da9"
+    },
+    {
+      "path": "crates/ruvector-nervous-system/tests/integration/nervous_integration_test.rs",
+      "language": "rust",
+      "sizeLines": 299,
+      "fileCategory": "code",
+      "sha1": "20d6e9fbb22e8dff7fc7b2a3d409a19c62b9f930"
+    },
+    {
+      "path": "crates/ruvector-nervous-system/tests/memory_bounds.rs",
+      "language": "rust",
+      "sizeLines": 284,
+      "fileCategory": "code",
+      "sha1": "5eef5dc5f7ba07a56dee48a6813f9cacccfe9fc7"
+    },
+    {
+      "path": "crates/ruvector-nervous-system/tests/retrieval_quality.rs",
+      "language": "rust",
+      "sizeLines": 505,
+      "fileCategory": "code",
+      "sha1": "de1e8170e3d282db8450e6ecaaac336af926e980"
+    },
+    {
+      "path": "crates/ruvector-nervous-system/tests/throughput.rs",
+      "language": "rust",
+      "sizeLines": 604,
+      "fileCategory": "code",
+      "sha1": "2b0c283d8f4175d2084e01e43fb17805ef2edb04"
+    },
+    {
+      "path": "crates/ruvector-nervous-system/tests/workspace_integration.rs",
+      "language": "rust",
+      "sizeLines": 113,
+      "fileCategory": "code",
+      "sha1": "6d32b31976f9b4eccd7af4f6f04b650d53df3ba5"
+    },
+    {
+      "path": "crates/sona/.cargo/config.toml",
+      "language": "toml",
+      "sizeLines": 8,
+      "fileCategory": "config",
+      "sha1": "073557e7b982c2e2a78fd8451e70b534e16acce0"
+    },
+    {
+      "path": "crates/sona/BUILD_INSTRUCTIONS.md",
+      "language": "markdown",
+      "sizeLines": 170,
+      "fileCategory": "docs",
+      "sha1": "c60e26b7cae612e7debaf22df2fbea45517d7ff8"
+    },
+    {
+      "path": "crates/sona/Cargo.toml",
+      "language": "toml",
+      "sizeLines": 263,
+      "fileCategory": "config",
+      "sha1": "74a48e0f7db27308408517abfe20e4d17858b784"
+    },
+    {
+      "path": "crates/sona/README.md",
+      "language": "markdown",
+      "sizeLines": 1502,
+      "fileCategory": "docs",
+      "sha1": "6ff048decaf38abddd491470bab5d5cbd63023eb"
+    },
+    {
+      "path": "crates/sona/WASM_COMPLETION_SUMMARY.md",
+      "language": "markdown",
+      "sizeLines": 268,
+      "fileCategory": "docs",
+      "sha1": "a17ea4af134bb26c42ce5cf69e1f817657c5841d"
+    },
+    {
+      "path": "crates/sona/benches/sona_bench.rs",
+      "language": "rust",
+      "sizeLines": 98,
+      "fileCategory": "code",
+      "sha1": "96cc0e3531cd055904612d69b3dbaa791f04d1f0"
+    },
+    {
+      "path": "crates/sona/src/engine.rs",
+      "language": "rust",
+      "sizeLines": 431,
+      "fileCategory": "code",
+      "sha1": "667b9ff1c1e57da29df5373518a3048863155981"
+    },
+    {
+      "path": "crates/sona/src/ewc.rs",
+      "language": "rust",
+      "sizeLines": 499,
+      "fileCategory": "code",
+      "sha1": "8aa351725c7b145c4d9bab4144116586e2dfd874"
+    },
+    {
+      "path": "crates/sona/src/export/dataset.rs",
+      "language": "rust",
+      "sizeLines": 406,
+      "fileCategory": "code",
+      "sha1": "a36d31281075ad87a3b82de7d4544c764f56cbeb"
+    },
+    {
+      "path": "crates/sona/src/export/huggingface_hub.rs",
+      "language": "rust",
+      "sizeLines": 485,
+      "fileCategory": "code",
+      "sha1": "00428132ab505de7768dfc7646993cca34dce932"
+    },
+    {
+      "path": "crates/sona/src/export/mod.rs",
+      "language": "rust",
+      "sizeLines": 392,
+      "fileCategory": "code",
+      "sha1": "9220bf9f9fb05d154719e23203dc3af5bdb74eac"
+    },
+    {
+      "path": "crates/sona/src/export/pretrain.rs",
+      "language": "rust",
+      "sizeLines": 666,
+      "fileCategory": "code",
+      "sha1": "d17431aa321aba029bf9d797626463a2eb7c520e"
+    },
+    {
+      "path": "crates/sona/src/export/safetensors.rs",
+      "language": "rust",
+      "sizeLines": 337,
+      "fileCategory": "code",
+      "sha1": "cafd4029d52e76c61a5e76372b19c17cca7e013f"
+    },
+    {
+      "path": "crates/sona/src/lib.rs",
+      "language": "rust",
+      "sizeLines": 96,
+      "fileCategory": "code",
+      "sha1": "8ee6ceccd126643c6ee111c466a4eb15dfb4ed08"
+    },
+    {
+      "path": "crates/sona/src/loops/background.rs",
+      "language": "rust",
+      "sizeLines": 244,
+      "fileCategory": "code",
+      "sha1": "431e1a69d02af9be18413b7c0921b10e90d4feee"
+    },
+    {
+      "path": "crates/sona/src/loops/coordinator.rs",
+      "language": "rust",
+      "sizeLines": 320,
+      "fileCategory": "code",
+      "sha1": "fa3aaf4f3b79159d7e0550bbe9954d5053483411"
+    },
+    {
+      "path": "crates/sona/src/loops/instant.rs",
+      "language": "rust",
+      "sizeLines": 247,
+      "fileCategory": "code",
+      "sha1": "0299ac9ab2ee2794b8d70ae0155da04dd12e76ba"
+    },
+    {
+      "path": "crates/sona/src/loops/mod.rs",
+      "language": "rust",
+      "sizeLines": 14,
+      "fileCategory": "code",
+      "sha1": "017fd919c4e2c8249f1a30c251502eb855683435"
+    },
+    {
+      "path": "crates/sona/src/lora.rs",
+      "language": "rust",
+      "sizeLines": 586,
+      "fileCategory": "code",
+      "sha1": "9e5c0c8ea84025d511f437e35d22c400e8fc8bfb"
+    },
+    {
+      "path": "crates/sona/src/mod.rs",
+      "language": "rust",
+      "sizeLines": 23,
+      "fileCategory": "code",
+      "sha1": "05f4d38d4542412f34b6354b3a8214fb13158a0f"
+    },
+    {
+      "path": "crates/sona/src/napi.rs",
+      "language": "rust",
+      "sizeLines": 319,
+      "fileCategory": "code",
+      "sha1": "2a1524e6bb5b4a38a3a2d54938647296a13f88a1"
+    },
+    {
+      "path": "crates/sona/src/napi_simple.rs",
+      "language": "rust",
+      "sizeLines": 286,
+      "fileCategory": "code",
+      "sha1": "bcb17efc011aa57e608d62cc0be2e374f0e4a120"
+    },
+    {
+      "path": "crates/sona/src/reasoning_bank.rs",
+      "language": "rust",
+      "sizeLines": 592,
+      "fileCategory": "code",
+      "sha1": "30fd56026773b18b827847e25f655e35dcb68711"
+    },
+    {
+      "path": "crates/sona/src/time_compat.rs",
+      "language": "rust",
+      "sizeLines": 139,
+      "fileCategory": "code",
+      "sha1": "45d4f383e5f485e856b368d63a989136716b119a"
+    },
+    {
+      "path": "crates/sona/src/training/factory.rs",
+      "language": "rust",
+      "sizeLines": 510,
+      "fileCategory": "code",
+      "sha1": "a82a10a0c990b8d10adf7155015b0162b44b8d78"
+    },
+    {
+      "path": "crates/sona/src/training/federated.rs",
+      "language": "rust",
+      "sizeLines": 681,
+      "fileCategory": "code",
+      "sha1": "b479212399fa7a0d4e254bb305db38086b1e3ef2"
+    },
+    {
+      "path": "crates/sona/src/training/metrics.rs",
+      "language": "rust",
+      "sizeLines": 468,
+      "fileCategory": "code",
+      "sha1": "46970c823a835da0c84e4f20de852b65a7c14064"
+    },
+    {
+      "path": "crates/sona/src/training/mod.rs",
+      "language": "rust",
+      "sizeLines": 70,
+      "fileCategory": "code",
+      "sha1": "5fb8064c9b051d621a4c294881b060bcc4b053ad"
+    },
+    {
+      "path": "crates/sona/src/training/pipeline.rs",
+      "language": "rust",
+      "sizeLines": 709,
+      "fileCategory": "code",
+      "sha1": "11ebc0d47fb982f3f9be960488fb873deec5459f"
+    },
+    {
+      "path": "crates/sona/src/training/templates.rs",
+      "language": "rust",
+      "sizeLines": 656,
+      "fileCategory": "code",
+      "sha1": "f55a7e9b66dfb0faca340bdbec2b33d1c86cc308"
+    },
+    {
+      "path": "crates/sona/src/trajectory.rs",
+      "language": "rust",
+      "sizeLines": 362,
+      "fileCategory": "code",
+      "sha1": "ce100c6de1ae26b9502421d456c36d9f09d267c4"
+    },
+    {
+      "path": "crates/sona/src/types.rs",
+      "language": "rust",
+      "sizeLines": 584,
+      "fileCategory": "code",
+      "sha1": "e7e91cbfef849c0195fd58dde17bcdc08ef745b0"
+    },
+    {
+      "path": "crates/sona/src/wasm.rs",
+      "language": "rust",
+      "sizeLines": 718,
+      "fileCategory": "code",
+      "sha1": "b0e5c64cbc38a7db4ee1aa193ab0c79995ed9162"
+    },
+    {
+      "path": "crates/sona/wasm-example/README.md",
+      "language": "markdown",
+      "sizeLines": 77,
+      "fileCategory": "docs",
+      "sha1": "4fb97aa50f234bff5fd087ec2a255d8938d0cf3f"
+    }
+  ]
+}

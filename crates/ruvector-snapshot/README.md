@@ -7,7 +7,7 @@
 
 **Point-in-time snapshots and backup for Ruvector vector databases.**
 
-`ruvector-snapshot` provides efficient snapshot creation, storage, and restoration for Ruvector databases. Supports incremental snapshots, compression, and integrity verification. Part of the [Ruvector](https://github.com/ruvnet/ruvector) ecosystem.
+`ruvector-snapshot` provides efficient snapshot creation, storage, and restoration for Ruvector databases. Supports incremental snapshots, compression, and integrity verification. Part of the [Ruvector](https://github.com/FlexNetOS/ruvector) ecosystem.
 
 ## Why Ruvector Snapshot?
 
@@ -198,7 +198,7 @@ snapshot-{id}/
 
 - **[Main README](../../README.md)** - Complete project overview
 - **[API Documentation](https://docs.rs/ruvector-snapshot)** - Full API reference
-- **[GitHub Repository](https://github.com/ruvnet/ruvector)** - Source code
+- **[GitHub Repository](https://github.com/FlexNetOS/ruvector)** - Source code
 
 ## License
 
@@ -208,10 +208,10 @@ snapshot-{id}/
 
 <div align="center">
 
-**Part of [Ruvector](https://github.com/ruvnet/ruvector) - Built by [rUv](https://ruv.io)**
+**Part of [Ruvector](https://github.com/FlexNetOS/ruvector) - Built by [rUv](https://ruv.io)**
 
-[![Star on GitHub](https://img.shields.io/github/stars/ruvnet/ruvector?style=social)](https://github.com/ruvnet/ruvector)
+[![Star on GitHub](https://img.shields.io/github/stars/FlexNetOS/ruvector?style=social)](https://github.com/FlexNetOS/ruvector)
 
-[Documentation](https://docs.rs/ruvector-snapshot) | [Crates.io](https://crates.io/crates/ruvector-snapshot) | [GitHub](https://github.com/ruvnet/ruvector)
+[Documentation](https://docs.rs/ruvector-snapshot) | [Crates.io](https://crates.io/crates/ruvector-snapshot) | [GitHub](https://github.com/FlexNetOS/ruvector)
 
 </div>

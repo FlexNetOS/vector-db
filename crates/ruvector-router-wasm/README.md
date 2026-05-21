@@ -561,7 +561,7 @@ function paginatedSearch(query, page = 0, pageSize = 10) {
 
 ```bash
 # Clone repository
-git clone https://github.com/ruvnet/ruvector.git
+git clone https://github.com/FlexNetOS/ruvector.git
 cd ruvector/crates/router-wasm
 
 # Build for web (ES modules)
@@ -796,7 +796,7 @@ Contributions are welcome! See [Contributing Guidelines](../../docs/development/
 
 ```bash
 # Clone and setup
-git clone https://github.com/ruvnet/ruvector.git
+git clone https://github.com/FlexNetOS/ruvector.git
 cd ruvector/crates/router-wasm
 
 # Build
@@ -826,7 +826,7 @@ Built with:
 
 ## 🌐 Links
 
-- **GitHub**: [github.com/ruvnet/ruvector](https://github.com/ruvnet/ruvector)
+- **GitHub**: [github.com/FlexNetOS/ruvector](https://github.com/FlexNetOS/ruvector)
 - **NPM**: [npmjs.com/package/router-wasm](https://www.npmjs.com/package/router-wasm)
 - **Documentation**: [ruvector docs](../../docs/README.md)
 - **Discord**: [Join community](https://discord.gg/ruvnet)
@@ -838,7 +838,7 @@ Built with:
 
 **Built by [rUv](https://ruv.io) • Part of [Ruvector](../../README.md) • MIT Licensed**
 
-[![Star on GitHub](https://img.shields.io/github/stars/ruvnet/ruvector?style=social)](https://github.com/ruvnet/ruvector)
+[![Star on GitHub](https://img.shields.io/github/stars/FlexNetOS/ruvector?style=social)](https://github.com/FlexNetOS/ruvector)
 [![Follow @ruvnet](https://img.shields.io/twitter/follow/ruvnet?style=social)](https://twitter.com/ruvnet)
 
 **Browser-First Vector Search** | **Zero Backend Required** | **Privacy First**

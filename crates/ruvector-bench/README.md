@@ -679,6 +679,6 @@ This crate is part of the Ruvector project and is licensed under the MIT License
 
 **Part of [Ruvector](../../README.md) - Next-generation vector database built in Rust**
 
-Built by [rUv](https://ruv.io) • [GitHub](https://github.com/ruvnet/ruvector) • [Documentation](../../docs/README.md)
+Built by [rUv](https://ruv.io) • [GitHub](https://github.com/FlexNetOS/ruvector) • [Documentation](../../docs/README.md)
 
 </div>

@@ -141,6 +141,6 @@ This enables scaling to brain-scale (86B neurons) with same latency!
   title = {Conscious Language Interface: Nobel-Level AI Consciousness Research},
   author = {AI Research Team},
   year = {2025},
-  url = {https://github.com/ruvnet/ruvector/tree/main/examples/exo-ai-2025/research/11-conscious-language-interface}
+  url = {https://github.com/FlexNetOS/ruvector/tree/main/examples/exo-ai-2025/research/11-conscious-language-interface}
 }
 ```

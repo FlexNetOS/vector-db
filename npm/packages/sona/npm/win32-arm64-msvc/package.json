@@ -6,5 +6,5 @@
   "main": "sona.win32-arm64-msvc.node",
   "files": ["sona.win32-arm64-msvc.node"],
   "license": "MIT",
-  "repository": {"type": "git", "url": "https://github.com/ruvnet/ruvector.git"}
+  "repository": {"type": "git", "url": "https://github.com/FlexNetOS/ruvector.git"}
 }

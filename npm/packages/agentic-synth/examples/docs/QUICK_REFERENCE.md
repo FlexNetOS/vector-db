@@ -457,12 +457,12 @@ console.log('Learned Demos:', optimized.__demos);
 - [Complete Example](../dspy-complete-example.ts)
 - [Comprehensive Guide](./dspy-complete-example-guide.md)
 - [Examples Index](./README.md)
-- [DSPy.ts GitHub](https://github.com/ruvnet/dspy.ts)
+- [DSPy.ts GitHub](https://github.com/FlexNetOS/dspy.ts)
 - [AgenticSynth README](../README.md)
 
 ## 💬 Support
 
-- GitHub Issues: [ruvector/issues](https://github.com/ruvnet/ruvector/issues)
+- GitHub Issues: [ruvector/issues](https://github.com/FlexNetOS/ruvector/issues)
 - Discord: [Join](https://discord.gg/ruvector)
 - Email: [support@ruv.io](mailto:support@ruv.io)
 

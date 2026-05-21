@@ -264,10 +264,10 @@ All must pass before publication:
   ],
   "license": "MIT",
   "author": "RUV Team",
-  "homepage": "https://github.com/ruvnet/ruvector",
+  "homepage": "https://github.com/FlexNetOS/ruvector",
   "repository": {
     "type": "git",
-    "url": "https://github.com/ruvnet/ruvector.git"
+    "url": "https://github.com/FlexNetOS/ruvector.git"
   }
 }
 ```

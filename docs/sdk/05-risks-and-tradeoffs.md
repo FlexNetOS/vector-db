@@ -139,7 +139,7 @@ force a rename. Open question O1 in `06-decision-record.md`.
 ## R8 — Repo location: monorepo vs separate
 
 **Risk.** The Python SDK could live in `crates/ruvector-py/` (in this
-monorepo) or in a separate `ruvnet/ruvector-py` repo.
+monorepo) or in a separate `FlexNetOS/ruvector-py` repo.
 
 **Decision.** Monorepo. `crates/ruvector-py/`.
 

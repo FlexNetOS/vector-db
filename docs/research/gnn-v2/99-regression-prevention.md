@@ -1143,7 +1143,7 @@ jobs:
 
       - name: Load v0.1.19 test data
         run: |
-          wget https://github.com/ruvnet/ruvector/releases/download/v0.1.19/test-data.tar.gz
+          wget https://github.com/FlexNetOS/ruvector/releases/download/v0.1.19/test-data.tar.gz
           tar -xzf test-data.tar.gz
 
       - name: Test index loading

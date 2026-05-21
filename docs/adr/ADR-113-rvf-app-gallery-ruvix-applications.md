@@ -536,4 +536,4 @@ The RVF App Gallery complements Claude Flow's TypeScript agents:
 - ADR-106: Ruvix Kernel RVF Integration
 - ADR-107: rvAgent Native Swarm Orchestration with WASM Integration
 - ADR-112: rvAgent MCP Server
-- Claude Flow: https://github.com/ruvnet/claude-flow
+- Claude Flow: https://github.com/FlexNetOS/claude-flow

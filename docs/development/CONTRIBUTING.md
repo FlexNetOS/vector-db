@@ -55,7 +55,7 @@ We pledge to make participation in our project a harassment-free experience for 
    ```
 3. Add upstream remote:
    ```bash
-   git remote add upstream https://github.com/ruvnet/ruvector.git
+   git remote add upstream https://github.com/FlexNetOS/ruvector.git
    ```
 
 ## Development Setup

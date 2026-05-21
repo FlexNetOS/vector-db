@@ -34,9 +34,9 @@ const phi = substrate.computePhi();
 
 ## Links
 
-- [GitHub](https://github.com/ruvnet/ruvector)
+- [GitHub](https://github.com/FlexNetOS/ruvector)
 - [Website](https://ruv.io)
-- [EXO-AI Documentation](https://github.com/ruvnet/ruvector/tree/main/examples/exo-ai-2025)
+- [EXO-AI Documentation](https://github.com/FlexNetOS/ruvector/tree/main/examples/exo-ai-2025)
 
 ## License
 

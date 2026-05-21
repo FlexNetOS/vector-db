@@ -234,7 +234,7 @@ If you use this research or code, please cite:
 ```
 Hierarchical Causal Consciousness (HCC) Framework
 Research Date: December 4, 2025
-Repository: github.com/ruvnet/ruvector
+Repository: github.com/FlexNetOS/ruvector
 Path: examples/exo-ai-2025/research/07-causal-emergence/
 ```
 

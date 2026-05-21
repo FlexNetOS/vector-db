@@ -1937,7 +1937,7 @@ edition = "2021"
 rust-version = "1.77"
 license = "MIT"
 authors = ["Ruvector Team"]
-repository = "https://github.com/ruvnet/ruvector"
+repository = "https://github.com/FlexNetOS/ruvector"
 description = "High-performance attention mechanisms for RuVector"
 
 [dependencies]

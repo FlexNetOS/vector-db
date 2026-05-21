@@ -357,7 +357,7 @@ npx tsx examples/employee-simulation/workplace-events.ts
 
 ```bash
 # Clone repository
-git clone https://github.com/ruvnet/ruvector.git
+git clone https://github.com/FlexNetOS/ruvector.git
 cd ruvector/packages/agentic-synth
 
 # Install dependencies
@@ -695,9 +695,9 @@ examples/
 
 ## Support
 
-- **Documentation**: https://github.com/ruvnet/ruvector/tree/main/packages/agentic-synth
-- **Issues**: https://github.com/ruvnet/ruvector/issues
-- **Discussions**: https://github.com/ruvnet/ruvector/discussions
+- **Documentation**: https://github.com/FlexNetOS/ruvector/tree/main/packages/agentic-synth
+- **Issues**: https://github.com/FlexNetOS/ruvector/issues
+- **Discussions**: https://github.com/FlexNetOS/ruvector/discussions
 - **NPM**: https://www.npmjs.com/package/@ruvector/agentic-synth
 
 ---

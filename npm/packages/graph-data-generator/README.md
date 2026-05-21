@@ -267,4 +267,4 @@ rUv - https://github.com/ruvnet
 
 ## Repository
 
-https://github.com/ruvnet/ruvector/tree/main/packages/graph-data-generator
+https://github.com/FlexNetOS/ruvector/tree/main/packages/graph-data-generator

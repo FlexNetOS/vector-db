@@ -1,0 +1,29 @@
+{
+  "lastAnalyzedAt": "2026-05-13T14:13:18Z",
+  "gitCommitHash": "9054c2cc6793ff11175460694a6479be3ac5b0af",
+  "version": "1.0.0",
+  "analyzedFiles": 3671,
+  "slice": "1+2+3+4+5a+5b+6a+6b+6c+7+8+9+10a+10b+10c+10d+10e+10f",
+  "scope": "ALL slices (1-9 + 10a-10f) \u2014 COMPLETE",
+  "slicesPresent": [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5a",
+    "5b",
+    "6a",
+    "6b",
+    "6c",
+    "7",
+    "8",
+    "9",
+    "10a",
+    "10b",
+    "10c",
+    "10d",
+    "10e",
+    "10f"
+  ],
+  "remaining": []
+}

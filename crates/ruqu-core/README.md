@@ -2,7 +2,7 @@
 
 [![Crates.io](https://img.shields.io/crates/v/ruqu-core.svg)](https://crates.io/crates/ruqu-core)
 [![Documentation](https://docs.rs/ruqu-core/badge.svg)](https://docs.rs/ruqu-core)
-[![License](https://img.shields.io/crates/l/ruqu-core.svg)](https://github.com/ruvnet/ruvector)
+[![License](https://img.shields.io/crates/l/ruqu-core.svg)](https://github.com/FlexNetOS/ruvector)
 
 **Quantum Execution Intelligence Engine in pure Rust** — 5 simulation backends with automatic routing, noise models, error mitigation, OpenQASM 3.0 export, and cryptographic witness logging.
 
@@ -127,7 +127,7 @@ let noisy_state = simulator.run_noisy(&circuit, &noise)?;
 
 ## Architecture
 
-Part of the [RuVector](https://github.com/ruvnet/ruvector) quantum ecosystem. See [ADR-QE-001](https://github.com/ruvnet/ruvector/blob/main/docs/adr/quantum-engine/ADR-QE-001-quantum-engine-core-architecture.md) for core architecture and [ADR-QE-015](https://github.com/ruvnet/ruvector/blob/main/docs/adr/quantum-engine/ADR-QE-015-quantum-execution-intelligence.md) for the execution intelligence engine design.
+Part of the [RuVector](https://github.com/FlexNetOS/ruvector) quantum ecosystem. See [ADR-QE-001](https://github.com/FlexNetOS/ruvector/blob/main/docs/adr/quantum-engine/ADR-QE-001-quantum-engine-core-architecture.md) for core architecture and [ADR-QE-015](https://github.com/FlexNetOS/ruvector/blob/main/docs/adr/quantum-engine/ADR-QE-015-quantum-execution-intelligence.md) for the execution intelligence engine design.
 
 ## License
 

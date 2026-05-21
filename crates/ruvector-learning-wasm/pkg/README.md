@@ -1,7 +1,7 @@
 # @ruvector/learning-wasm - Ultra-Fast MicroLoRA for WebAssembly
 
 [![npm version](https://img.shields.io/npm/v/ruvector-learning-wasm.svg)](https://www.npmjs.com/package/ruvector-learning-wasm)
-[![License: MIT OR Apache-2.0](https://img.shields.io/badge/license-MIT%2FApache--2.0-blue.svg)](https://github.com/ruvnet/ruvector)
+[![License: MIT OR Apache-2.0](https://img.shields.io/badge/license-MIT%2FApache--2.0-blue.svg)](https://github.com/FlexNetOS/ruvector)
 [![Bundle Size](https://img.shields.io/badge/bundle%20size-38KB%20gzip-green.svg)](https://www.npmjs.com/package/ruvector-learning-wasm)
 [![WebAssembly](https://img.shields.io/badge/WebAssembly-654FF0?logo=webassembly&logoColor=white)](https://webassembly.org/)
 
@@ -223,9 +223,9 @@ MIT OR Apache-2.0
 
 ## Links
 
-- [GitHub Repository](https://github.com/ruvnet/ruvector)
+- [GitHub Repository](https://github.com/FlexNetOS/ruvector)
 - [Full Documentation](https://ruv.io)
-- [Bug Reports](https://github.com/ruvnet/ruvector/issues)
+- [Bug Reports](https://github.com/FlexNetOS/ruvector/issues)
 
 ---
 

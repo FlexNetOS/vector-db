@@ -208,11 +208,11 @@ match enforcer.check(current, predicted) {
 ## Links
 
 - [Documentation](https://docs.rs/delta-behavior)
-- [Repository](https://github.com/ruvnet/ruvector)
-- [Issue Tracker](https://github.com/ruvnet/ruvector/issues)
+- [Repository](https://github.com/FlexNetOS/ruvector)
+- [Issue Tracker](https://github.com/FlexNetOS/ruvector/issues)
 - [Whitepaper](./WHITEPAPER.md)
 - [API Reference](./docs/API.md)
 
-[Unreleased]: https://github.com/ruvnet/ruvector/compare/delta-behavior-v0.1.0...HEAD
-[0.1.0]: https://github.com/ruvnet/ruvector/releases/tag/delta-behavior-v0.1.0
-[0.0.1]: https://github.com/ruvnet/ruvector/releases/tag/delta-behavior-v0.0.1
+[Unreleased]: https://github.com/FlexNetOS/ruvector/compare/delta-behavior-v0.1.0...HEAD
+[0.1.0]: https://github.com/FlexNetOS/ruvector/releases/tag/delta-behavior-v0.1.0
+[0.0.1]: https://github.com/FlexNetOS/ruvector/releases/tag/delta-behavior-v0.0.1

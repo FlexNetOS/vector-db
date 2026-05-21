@@ -45,7 +45,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/ruvnet/ruvector.git"
+    "url": "https://github.com/FlexNetOS/ruvector.git"
   },
   "engines": {
     "node": ">=18.0.0"
@@ -55,6 +55,7 @@
     "body-parser": "^2.2.1"
   },
   "dependencies": {
-    "@claude-flow/memory": "^3.0.0-alpha.7"
+    "@claude-flow/memory": "^3.0.0-alpha.7",
+    "@cognitum-one/sdk": "^0.2.1"
   }
 }

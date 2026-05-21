@@ -48,7 +48,7 @@ cargo clean && time cargo build --release
 **Effort**: 2-3 hours
 **Impact**: 15-25 second faster type checking
 
-**File**: `/Users/cohen/GitHub/ruvnet/ruvector/crates/ruvllm/src/lib.rs` (lines 158-520)
+**File**: `/home/ubuntu/flexnetos/ruvector/crates/ruvllm/src/lib.rs` (lines 158-520)
 
 **Current State**: 362 public re-exports
 
@@ -94,7 +94,7 @@ cargo build --lib && wc -l src/lib.rs
 **Effort**: 15 minutes
 **Impact**: 35 seconds → 7 seconds on incremental builds
 
-**File**: `/Users/cohen/GitHub/ruvnet/ruvector/Cargo.toml`
+**File**: `/home/ubuntu/flexnetos/ruvector/Cargo.toml`
 
 **Add to workspace**:
 ```toml
@@ -137,10 +137,10 @@ cargo build --profile release-dev
 **Impact**: Code clarity, maintainability
 
 **Files with unsafe missing SAFETY comments**:
-1. `/Users/cohen/GitHub/ruvnet/ruvector/crates/ruvllm/src/kernels/attention.rs` (lines 439, 461, 701, 784, 846)
-2. `/Users/cohen/GitHub/ruvnet/ruvector/crates/ruvllm/src/quantize/pi_quant_simd.rs` (multiple)
-3. `/Users/cohen/GitHub/ruvnet/ruvector/crates/ruvllm/src/kernels/norm.rs`
-4. `/Users/cohen/GitHub/ruvnet/ruvector/crates/ruvllm/src/memory_pool.rs`
+1. `/home/ubuntu/flexnetos/ruvector/crates/ruvllm/src/kernels/attention.rs` (lines 439, 461, 701, 784, 846)
+2. `/home/ubuntu/flexnetos/ruvector/crates/ruvllm/src/quantize/pi_quant_simd.rs` (multiple)
+3. `/home/ubuntu/flexnetos/ruvector/crates/ruvllm/src/kernels/norm.rs`
+4. `/home/ubuntu/flexnetos/ruvector/crates/ruvllm/src/memory_pool.rs`
 
 **Template for each unsafe block**:
 ```rust
@@ -225,7 +225,7 @@ find src -name "*.rs" -exec wc -l {} \; | awk '$1 > 600 {print}'
 **Effort**: 1 hour
 **Impact**: 8-18MB savings for users not needing tokenization
 
-**File**: `/Users/cohen/GitHub/ruvnet/ruvector/crates/ruvllm/Cargo.toml`
+**File**: `/home/ubuntu/flexnetos/ruvector/crates/ruvllm/Cargo.toml`
 
 **Current**:
 ```toml
@@ -269,7 +269,7 @@ tokenizers-lite = ["tokenizers"]          # Lightweight
 **Effort**: 30 minutes
 **Impact**: 2-3% code cleanup
 
-**File**: `/Users/cohen/GitHub/ruvnet/ruvector/crates/ruvllm/Cargo.toml`
+**File**: `/home/ubuntu/flexnetos/ruvector/crates/ruvllm/Cargo.toml`
 
 **Current**: Listed as optional but always imported
 ```toml
@@ -304,7 +304,7 @@ hf-hub = { version = "0.3", optional = true, ... }      # Used in hub/
 **Effort**: 2-3 hours
 **Impact**: Better code quality signals
 
-**File**: `/Users/cohen/GitHub/ruvnet/ruvector/crates/ruvllm/src/lib.rs` (lines 41-112)
+**File**: `/home/ubuntu/flexnetos/ruvector/crates/ruvllm/src/lib.rs` (lines 41-112)
 
 **Current**: 72 lint suppressions
 **Target**: 8-12 suppressions

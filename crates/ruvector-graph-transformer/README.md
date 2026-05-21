@@ -16,7 +16,7 @@ Most graph neural networks let you modify data freely -- add nodes, change weigh
 
 On top of that safety layer, 8 specialized modules bring cutting-edge graph intelligence: attention that scales to millions of nodes without checking every pair, physics simulations that conserve energy by construction, neurons that only fire when they should, training that automatically rolls back bad gradient steps, and geometry that works in curved spaces instead of assuming everything is flat.
 
-The result is a graph transformer you can trust: if it produces an answer, that answer was computed correctly. Part of the [RuVector](https://github.com/ruvnet/ruvector) ecosystem.
+The result is a graph transformer you can trust: if it produces an answer, that answer was computed correctly. Part of the [RuVector](https://github.com/FlexNetOS/ruvector) ecosystem.
 
 | | Standard GNN | ruvector-graph-transformer |
 |---|---|---|
@@ -258,10 +258,10 @@ cargo test -p ruvector-graph-transformer --features physics
 
 <div align="center">
 
-**Part of [RuVector](https://github.com/ruvnet/ruvector) - Built by [rUv](https://ruv.io)**
+**Part of [RuVector](https://github.com/FlexNetOS/ruvector) - Built by [rUv](https://ruv.io)**
 
-[![Star on GitHub](https://img.shields.io/github/stars/ruvnet/ruvector?style=social)](https://github.com/ruvnet/ruvector)
+[![Star on GitHub](https://img.shields.io/github/stars/FlexNetOS/ruvector?style=social)](https://github.com/FlexNetOS/ruvector)
 
-[Documentation](https://docs.rs/ruvector-graph-transformer) | [Crates.io](https://crates.io/crates/ruvector-graph-transformer) | [GitHub](https://github.com/ruvnet/ruvector)
+[Documentation](https://docs.rs/ruvector-graph-transformer) | [Crates.io](https://crates.io/crates/ruvector-graph-transformer) | [GitHub](https://github.com/FlexNetOS/ruvector)
 
 </div>

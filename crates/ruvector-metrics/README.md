@@ -7,7 +7,7 @@
 
 **Prometheus-compatible metrics collection for Ruvector vector databases.**
 
-`ruvector-metrics` provides comprehensive observability with counters, gauges, histograms, and exporters for monitoring Ruvector performance and health. Part of the [Ruvector](https://github.com/ruvnet/ruvector) ecosystem.
+`ruvector-metrics` provides comprehensive observability with counters, gauges, histograms, and exporters for monitoring Ruvector performance and health. Part of the [Ruvector](https://github.com/FlexNetOS/ruvector) ecosystem.
 
 ## Why Ruvector Metrics?
 
@@ -205,7 +205,7 @@ rate(ruvector_errors_total[5m]) / rate(ruvector_searches_total[5m])
 
 - **[Main README](../../README.md)** - Complete project overview
 - **[API Documentation](https://docs.rs/ruvector-metrics)** - Full API reference
-- **[GitHub Repository](https://github.com/ruvnet/ruvector)** - Source code
+- **[GitHub Repository](https://github.com/FlexNetOS/ruvector)** - Source code
 
 ## License
 
@@ -215,10 +215,10 @@ rate(ruvector_errors_total[5m]) / rate(ruvector_searches_total[5m])
 
 <div align="center">
 
-**Part of [Ruvector](https://github.com/ruvnet/ruvector) - Built by [rUv](https://ruv.io)**
+**Part of [Ruvector](https://github.com/FlexNetOS/ruvector) - Built by [rUv](https://ruv.io)**
 
-[![Star on GitHub](https://img.shields.io/github/stars/ruvnet/ruvector?style=social)](https://github.com/ruvnet/ruvector)
+[![Star on GitHub](https://img.shields.io/github/stars/FlexNetOS/ruvector?style=social)](https://github.com/FlexNetOS/ruvector)
 
-[Documentation](https://docs.rs/ruvector-metrics) | [Crates.io](https://crates.io/crates/ruvector-metrics) | [GitHub](https://github.com/ruvnet/ruvector)
+[Documentation](https://docs.rs/ruvector-metrics) | [Crates.io](https://crates.io/crates/ruvector-metrics) | [GitHub](https://github.com/FlexNetOS/ruvector)
 
 </div>

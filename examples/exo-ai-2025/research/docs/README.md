@@ -111,7 +111,7 @@ Attention weights from information integration, not dot-product
   title = {Nobel-Level Cognitive Research: 11 Breakthrough Implementations},
   author = {AI Research Team},
   year = {2025},
-  url = {https://github.com/ruvnet/ruvector/tree/main/examples/exo-ai-2025/research}
+  url = {https://github.com/FlexNetOS/ruvector/tree/main/examples/exo-ai-2025/research}
 }
 ```
 

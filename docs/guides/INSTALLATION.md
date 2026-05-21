@@ -141,7 +141,7 @@ npm install @ruvector/gnn-wasm     # Graph neural networks
 
 #### Build from source (not yet on crates.io)
 ```bash
-git clone https://github.com/ruvnet/ruvector.git
+git clone https://github.com/FlexNetOS/ruvector.git
 cd ruvector
 cargo install --path crates/ruvector-cli
 ```
@@ -314,7 +314,7 @@ cargo build --release
 ## Support
 
 For installation issues:
-1. Check [GitHub Issues](https://github.com/ruvnet/ruvector/issues)
+1. Check [GitHub Issues](https://github.com/FlexNetOS/ruvector/issues)
 2. Search [Stack Overflow](https://stackoverflow.com/questions/tagged/ruvector)
 3. Open a new issue with:
    - OS and version

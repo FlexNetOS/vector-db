@@ -322,7 +322,7 @@ git push origin main
 git push origin v0.1.3
 
 # 5. Monitor workflow at:
-# https://github.com/ruvnet/ruvector/actions/workflows/release.yml
+# https://github.com/FlexNetOS/ruvector/actions/workflows/release.yml
 ```
 
 ### Dry Run (Test Release)
@@ -558,9 +558,9 @@ npm version patch  # 0.1.2 -> 0.1.3
 
 ## Support
 
-- **Issues**: https://github.com/ruvnet/ruvector/issues
-- **Discussions**: https://github.com/ruvnet/ruvector/discussions
-- **Documentation**: https://github.com/ruvnet/ruvector
+- **Issues**: https://github.com/FlexNetOS/ruvector/issues
+- **Discussions**: https://github.com/FlexNetOS/ruvector/discussions
+- **Documentation**: https://github.com/FlexNetOS/ruvector
 
 ## License
 

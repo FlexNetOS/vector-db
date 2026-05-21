@@ -263,7 +263,7 @@ const plan = await system.reasoner.plan({
 ## Links
 
 - **Psycho-Symbolic Reasoner**: [npm](https://www.npmjs.com/package/psycho-symbolic-reasoner)
-- **Ruvector**: [Main repo](https://github.com/ruvnet/ruvector)
+- **Ruvector**: [Main repo](https://github.com/FlexNetOS/ruvector)
 
 ## 🎉 Getting Started
 

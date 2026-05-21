@@ -22,7 +22,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ruvnet/ruvector.git"
+    "url": "git+https://github.com/FlexNetOS/ruvector.git"
   },
   "keywords": [
     "wasm",
@@ -50,7 +50,7 @@
   "author": "rUv <team@ruvector.dev>",
   "license": "MIT OR Apache-2.0",
   "bugs": {
-    "url": "https://github.com/ruvnet/ruvector/issues"
+    "url": "https://github.com/FlexNetOS/ruvector/issues"
   },
   "homepage": "https://ruv.io/ruvector",
   "devDependencies": {

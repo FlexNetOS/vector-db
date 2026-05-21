@@ -584,7 +584,7 @@ npm install -g wasm-pack
 
 ```bash
 # Clone repository
-git clone https://github.com/ruvnet/ruvector.git
+git clone https://github.com/FlexNetOS/ruvector.git
 cd ruvector/crates/ruvector-wasm
 
 # Install dependencies
@@ -935,10 +935,10 @@ See [WASM Troubleshooting Guide](../../docs/getting-started/wasm-troubleshooting
 
 ### Community & Support
 
-- **GitHub**: [github.com/ruvnet/ruvector](https://github.com/ruvnet/ruvector)
+- **GitHub**: [github.com/FlexNetOS/ruvector](https://github.com/FlexNetOS/ruvector)
 - **Discord**: [Join our community](https://discord.gg/ruvnet)
 - **Twitter**: [@ruvnet](https://twitter.com/ruvnet)
-- **Issues**: [Report bugs](https://github.com/ruvnet/ruvector/issues)
+- **Issues**: [Report bugs](https://github.com/FlexNetOS/ruvector/issues)
 
 ## 📄 License
 
@@ -957,9 +957,9 @@ Free to use for commercial and personal projects.
 
 <div align="center">
 
-**Built by [rUv](https://ruv.io) • Open Source on [GitHub](https://github.com/ruvnet/ruvector)**
+**Built by [rUv](https://ruv.io) • Open Source on [GitHub](https://github.com/FlexNetOS/ruvector)**
 
-[![Star on GitHub](https://img.shields.io/github/stars/ruvnet/ruvector?style=social)](https://github.com/ruvnet/ruvector)
+[![Star on GitHub](https://img.shields.io/github/stars/FlexNetOS/ruvector?style=social)](https://github.com/FlexNetOS/ruvector)
 [![Follow @ruvnet](https://img.shields.io/twitter/follow/ruvnet?style=social)](https://twitter.com/ruvnet)
 
 **Perfect for**: PWAs • Offline-First Apps • Edge Computing • Privacy-First AI

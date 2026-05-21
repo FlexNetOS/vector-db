@@ -173,7 +173,7 @@ assert_eq!(result.exit_code, Some(0));
 
 ## Files Modified
 
-- `/Users/cohen/GitHub/ruvnet/ruvector/crates/rvAgent/rvagent-backends/src/local_shell.rs`
+- `/home/ubuntu/flexnetos/ruvector/crates/rvAgent/rvagent-backends/src/local_shell.rs`
   - Enhanced `SENSITIVE_ENV_PATTERNS` with API_KEY, AUTH, BEARER, JWT, SESSION
   - Added test cases for new patterns
 

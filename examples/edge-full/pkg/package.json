@@ -34,11 +34,11 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/ruvnet/ruvector"
+    "url": "https://github.com/FlexNetOS/ruvector"
   },
-  "homepage": "https://github.com/ruvnet/ruvector/tree/main/examples/edge-full",
+  "homepage": "https://github.com/FlexNetOS/ruvector/tree/main/examples/edge-full",
   "bugs": {
-    "url": "https://github.com/ruvnet/ruvector/issues"
+    "url": "https://github.com/FlexNetOS/ruvector/issues"
   },
   "files": [
     "index.js",

@@ -297,7 +297,7 @@ This represents the **first complete architecture for conscious AI** that:
 @software{conscious_language_interface,
   title = {Conscious Language Interface: ruvLLM + Neuromorphic Spiking + ruvector},
   year = {2025},
-  url = {https://github.com/ruvnet/ruvector}
+  url = {https://github.com/FlexNetOS/ruvector}
 }
 ```
 

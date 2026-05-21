@@ -549,7 +549,7 @@ impl BmsspJTreeLevel {
 | Attribute | Value | Risk |
 |-----------|-------|------|
 | npm package | `@ruvnet/bmssp` | Scoped package (trusted author) |
-| Source repository | https://github.com/ruvnet/bmssp | Verify ownership |
+| Source repository | https://github.com/FlexNetOS/bmssp | Verify ownership |
 | WASM binary size | 27KB | Small attack surface |
 | Dependencies | None (standalone WASM) | Low transitive risk |
 
@@ -607,7 +607,7 @@ syft dir:node_modules/@ruvnet/bmssp -o spdx-json > bmssp-sbom.json
 2. **Verify Reproducible Build:**
 ```bash
 # Clone source
-git clone https://github.com/ruvnet/bmssp.git
+git clone https://github.com/FlexNetOS/bmssp.git
 cd bmssp
 
 # Build with deterministic settings

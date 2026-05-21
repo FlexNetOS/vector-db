@@ -14,7 +14,7 @@
 
 [Screenpipe](https://github.com/mediar-ai/screenpipe) is an open-source desktop application that continuously records your screen, audio, and UI interactions locally. It builds a searchable timeline of everything you see, hear, and do on your computer. Out of the box, Screenpipe stores its data in SQLite with FTS5 full-text indexing -- effective for keyword lookups, but limited to literal string matching. If you search for "auth discussion," you will not find a frame that says "we talked about login security."
 
-OSpipe replaces Screenpipe's storage and search backend with the [RuVector](https://github.com/ruvnet/ruvector) ecosystem -- a collection of 70+ Rust crates providing HNSW vector search, graph neural networks, attention mechanisms, delta-change tracking, and more. Instead of keyword matching, OSpipe embeds every captured frame into a high-dimensional vector space and performs approximate nearest neighbor search, delivering true semantic recall. A query like "what was that API we discussed in standup?" will surface the relevant audio transcription even if those exact words never appeared.
+OSpipe replaces Screenpipe's storage and search backend with the [RuVector](https://github.com/FlexNetOS/ruvector) ecosystem -- a collection of 70+ Rust crates providing HNSW vector search, graph neural networks, attention mechanisms, delta-change tracking, and more. Instead of keyword matching, OSpipe embeds every captured frame into a high-dimensional vector space and performs approximate nearest neighbor search, delivering true semantic recall. A query like "what was that API we discussed in standup?" will surface the relevant audio transcription even if those exact words never appeared.
 
 Everything stays local and private. OSpipe processes all data on-device with no cloud dependency. The safety gate automatically detects and redacts PII -- credit card numbers, Social Security numbers, and email addresses -- before content ever reaches the vector store. A cosine-similarity deduplication window prevents consecutive identical frames (like a static desktop) from bloating storage. Age-based quantization progressively compresses older embeddings from 32-bit floats down to 1-bit binary, cutting long-term memory usage by 97%.
 
@@ -650,7 +650,7 @@ wasm-pack build examples/OSpipe --target web
 
 - [ADR: OSpipe Screenpipe Integration](./ADR-OSpipe-screenpipe-integration.md) -- Architecture Decision Record with full design rationale
 - [Screenpipe](https://github.com/mediar-ai/screenpipe) -- Open-source local-first desktop recording + AI memory
-- [RuVector](https://github.com/ruvnet/ruvector) -- 70+ Rust crates for vector search, graph neural networks, and attention mechanisms
+- [RuVector](https://github.com/FlexNetOS/ruvector) -- 70+ Rust crates for vector search, graph neural networks, and attention mechanisms
 - `@ruvector/ospipe` -- TypeScript SDK (npm)
 - `@ruvector/ospipe-wasm` -- WASM package (npm)
 

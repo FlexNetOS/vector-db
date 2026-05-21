@@ -2,13 +2,13 @@
 
 [![Crates.io](https://img.shields.io/crates/v/ruvector-verified.svg)](https://crates.io/crates/ruvector-verified)
 [![docs.rs](https://img.shields.io/docsrs/ruvector-verified)](https://docs.rs/ruvector-verified)
-[![License](https://img.shields.io/crates/l/ruvector-verified.svg)](https://github.com/ruvnet/ruvector)
-[![CI](https://img.shields.io/github/actions/workflow/status/ruvnet/ruvector/build-verified.yml?label=CI)](https://github.com/ruvnet/ruvector/actions)
+[![License](https://img.shields.io/crates/l/ruvector-verified.svg)](https://github.com/FlexNetOS/ruvector)
+[![CI](https://img.shields.io/github/actions/workflow/status/FlexNetOS/ruvector/build-verified.yml?label=CI)](https://github.com/FlexNetOS/ruvector/actions)
 [![MSRV](https://img.shields.io/badge/MSRV-1.77-blue.svg)](https://blog.rust-lang.org/2024/03/21/Rust-1.77.0.html)
 
 **Proof-carrying vector operations for Rust.** Every dimension check, HNSW insert, and pipeline composition produces a machine-checked proof witness -- catching bugs that `assert!` misses, with less than 2% runtime overhead.
 
-Built on [lean-agentic](https://crates.io/crates/lean-agentic) dependent types. Part of the [RuVector](https://github.com/ruvnet/ruvector) ecosystem.
+Built on [lean-agentic](https://crates.io/crates/lean-agentic) dependent types. Part of the [RuVector](https://github.com/FlexNetOS/ruvector) ecosystem.
 
 ---
 

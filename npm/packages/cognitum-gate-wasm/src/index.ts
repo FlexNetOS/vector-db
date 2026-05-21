@@ -5,7 +5,7 @@
  * "Attention becomes a permission system, not a popularity contest."
  *
  * Created by ruv.io and RuVector
- * @see https://github.com/ruvnet/ruvector
+ * @see https://github.com/FlexNetOS/ruvector
  */
 
 // =============================================================================

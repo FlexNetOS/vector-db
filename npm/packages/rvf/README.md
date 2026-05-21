@@ -201,10 +201,10 @@ cargo install --path crates/rvf/rvf-cli
 
 ```bash
 # Download a specific example
-curl -LO https://raw.githubusercontent.com/ruvnet/ruvector/main/examples/rvf/output/basic_store.rvf
+curl -LO https://raw.githubusercontent.com/FlexNetOS/ruvector/main/examples/rvf/output/basic_store.rvf
 
 # Clone just the examples
-git clone --depth 1 --filter=blob:none --sparse https://github.com/ruvnet/ruvector.git
+git clone --depth 1 --filter=blob:none --sparse https://github.com/FlexNetOS/ruvector.git
 cd ruvector && git sparse-checkout set examples/rvf/output
 ```
 

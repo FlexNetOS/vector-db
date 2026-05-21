@@ -31,12 +31,12 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ruvnet/ruvector.git",
+    "url": "git+https://github.com/FlexNetOS/ruvector.git",
     "directory": "crates/ruvector-graph-wasm"
   },
-  "homepage": "https://github.com/ruvnet/ruvector#readme",
+  "homepage": "https://github.com/FlexNetOS/ruvector#readme",
   "bugs": {
-    "url": "https://github.com/ruvnet/ruvector/issues"
+    "url": "https://github.com/FlexNetOS/ruvector/issues"
   },
   "files": [
     "ruvector_graph_wasm_bg.wasm",

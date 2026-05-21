@@ -87,4 +87,4 @@ MIT OR Apache-2.0
 
 ---
 
-Part of [RuVector](https://github.com/ruvnet/ruvector) -- the self-learning vector database.
+Part of [RuVector](https://github.com/FlexNetOS/ruvector) -- the self-learning vector database.

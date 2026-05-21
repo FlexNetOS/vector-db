@@ -358,9 +358,9 @@ MIT OR Apache-2.0
 
 ## Links
 
-- [GitHub Repository](https://github.com/ruvnet/ruvector)
-- [Documentation](https://github.com/ruvnet/ruvector/tree/main/crates/sona)
-- [rUvector Project](https://github.com/ruvnet/ruvector)
+- [GitHub Repository](https://github.com/FlexNetOS/ruvector)
+- [Documentation](https://github.com/FlexNetOS/ruvector/tree/main/crates/sona)
+- [rUvector Project](https://github.com/FlexNetOS/ruvector)
 
 ## Contributing
 

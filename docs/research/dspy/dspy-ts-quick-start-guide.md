@@ -507,7 +507,7 @@ const optimizer = new BootstrapFewShot({ metric });
 
 ### Documentation
 - **Ax Framework:** https://axllm.dev/
-- **DSPy.ts:** https://github.com/ruvnet/dspy.ts
+- **DSPy.ts:** https://github.com/FlexNetOS/dspy.ts
 - **Stanford DSPy:** https://dspy.ai/
 
 ### Community

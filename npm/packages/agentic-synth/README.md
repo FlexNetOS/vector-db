@@ -6,13 +6,13 @@
 [![npm downloads](https://img.shields.io/npm/dm/@ruvector/agentic-synth.svg?style=flat-square&logo=npm&color=CB3837)](https://www.npmjs.com/package/@ruvector/agentic-synth)
 [![npm total downloads](https://img.shields.io/npm/dt/@ruvector/agentic-synth.svg?style=flat-square&logo=npm&color=CB3837)](https://www.npmjs.com/package/@ruvector/agentic-synth)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=flat-square&logo=opensourceinitiative&logoColor=white)](https://opensource.org/licenses/MIT)
-[![CI Status](https://img.shields.io/github/actions/workflow/status/ruvnet/ruvector/ci.yml?style=flat-square&logo=githubactions&logoColor=white&label=CI)](https://github.com/ruvnet/ruvector/actions)
-[![Test Coverage](https://img.shields.io/badge/coverage-98%25-brightgreen?style=flat-square&logo=vitest&logoColor=white)](https://github.com/ruvnet/ruvector)
+[![CI Status](https://img.shields.io/github/actions/workflow/status/FlexNetOS/ruvector/ci.yml?style=flat-square&logo=githubactions&logoColor=white&label=CI)](https://github.com/FlexNetOS/ruvector/actions)
+[![Test Coverage](https://img.shields.io/badge/coverage-98%25-brightgreen?style=flat-square&logo=vitest&logoColor=white)](https://github.com/FlexNetOS/ruvector)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.9-blue?style=flat-square&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![Node.js](https://img.shields.io/badge/Node.js-18+-green?style=flat-square&logo=node.js&logoColor=white)](https://nodejs.org/)
-[![GitHub stars](https://img.shields.io/github/stars/ruvnet/ruvector?style=flat-square&logo=github&color=181717)](https://github.com/ruvnet/ruvector)
-[![GitHub forks](https://img.shields.io/github/forks/ruvnet/ruvector?style=flat-square&logo=github&color=181717)](https://github.com/ruvnet/ruvector/fork)
-[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square&logo=github)](https://github.com/ruvnet/ruvector/pulls)
+[![GitHub stars](https://img.shields.io/github/stars/FlexNetOS/ruvector?style=flat-square&logo=github&color=181717)](https://github.com/FlexNetOS/ruvector)
+[![GitHub forks](https://img.shields.io/github/forks/FlexNetOS/ruvector?style=flat-square&logo=github&color=181717)](https://github.com/FlexNetOS/ruvector/fork)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square&logo=github)](https://github.com/FlexNetOS/ruvector/pulls)
 [![Sponsor](https://img.shields.io/badge/Sponsor-❤-ff69b4?style=flat-square&logo=githubsponsors)](https://github.com/sponsors/ruvnet)
 
 </div>
@@ -730,7 +730,7 @@ npx tsx examples/agentic-jujutsu/test-suite.ts
 
 **Features:** Git-like version control, multi-agent coordination, ReasoningBank intelligence, cryptographic security
 
-**NPM Package:** `agentic-jujutsu` - [GitHub](https://github.com/ruvnet/agentic-jujutsu) | [NPM](https://www.npmjs.com/package/agentic-jujutsu)
+**NPM Package:** `agentic-jujutsu` - [GitHub](https://github.com/FlexNetOS/agentic-jujutsu) | [NPM](https://www.npmjs.com/package/agentic-jujutsu)
 
 **[📖 Full Documentation](./examples/agentic-jujutsu/README.md)**
 
@@ -788,8 +788,8 @@ const results = await db.search('wireless headphones', { limit: 5 });
 
 **Links:**
 - 📦 [NPM Package](https://www.npmjs.com/package/ruvector)
-- 🐙 [GitHub Repository](https://github.com/ruvnet/ruvector)
-- 📖 [Documentation](https://github.com/ruvnet/ruvector#readme)
+- 🐙 [GitHub Repository](https://github.com/FlexNetOS/ruvector)
+- 📖 [Documentation](https://github.com/FlexNetOS/ruvector#readme)
 
 ---
 
@@ -812,7 +812,7 @@ for await (const event of synth.generateStream({ type: 'events', count: 10000 })
 
 **Links:**
 - 📦 [NPM Package](https://www.npmjs.com/package/midstreamer)
-- 🐙 [GitHub Repository](https://github.com/ruvnet/midstreamer)
+- 🐙 [GitHub Repository](https://github.com/FlexNetOS/midstreamer)
 
 ---
 
@@ -840,7 +840,7 @@ await robotics.schedule({
 
 **Links:**
 - 📦 [NPM Package](https://www.npmjs.com/package/agentic-robotics)
-- 🐙 [GitHub Repository](https://github.com/ruvnet/agentic-robotics)
+- 🐙 [GitHub Repository](https://github.com/FlexNetOS/agentic-robotics)
 
 ---
 
@@ -871,7 +871,7 @@ await generator.rollbackToVersion(previousCommit);
 
 **Links:**
 - 📦 [NPM Package](https://www.npmjs.com/package/agentic-jujutsu)
-- 🐙 [GitHub Repository](https://github.com/ruvnet/agentic-jujutsu)
+- 🐙 [GitHub Repository](https://github.com/FlexNetOS/agentic-jujutsu)
 - 📖 [Integration Examples](./examples/agentic-jujutsu/README.md)
 
 ---
@@ -890,7 +890,7 @@ const optimizedModule = await optimizer.compile(generator, trainingExamples);
 
 **Links:**
 - 📦 [NPM Package](https://www.npmjs.com/package/dspy.ts)
-- 🐙 [GitHub Repository](https://github.com/ruvnet/dspy.ts)
+- 🐙 [GitHub Repository](https://github.com/FlexNetOS/dspy.ts)
 - 📖 [Integration Guide](./examples/docs/DSPY_INTEGRATION_SUMMARY.md)
 - 🎯 [Complete Example](./examples/dspy-complete-example.ts)
 
@@ -1164,7 +1164,7 @@ We welcome contributions from the community! Whether it's bug fixes, new feature
 
 ```bash
 # Clone repository
-git clone https://github.com/ruvnet/ruvector.git
+git clone https://github.com/FlexNetOS/ruvector.git
 cd ruvector/packages/agentic-synth
 
 # Install dependencies
@@ -1207,14 +1207,14 @@ We love new examples! To add one:
 
 ### **Get Help**
 
-- 📖 **Documentation:** [GitHub Wiki](https://github.com/ruvnet/ruvector/wiki)
-- 💬 **Discussions:** [GitHub Discussions](https://github.com/ruvnet/ruvector/discussions)
-- 🐛 **Report Bugs:** [GitHub Issues](https://github.com/ruvnet/ruvector/issues)
-- 💡 **Feature Requests:** [GitHub Issues](https://github.com/ruvnet/ruvector/issues/new?template=feature_request.md)
+- 📖 **Documentation:** [GitHub Wiki](https://github.com/FlexNetOS/ruvector/wiki)
+- 💬 **Discussions:** [GitHub Discussions](https://github.com/FlexNetOS/ruvector/discussions)
+- 🐛 **Report Bugs:** [GitHub Issues](https://github.com/FlexNetOS/ruvector/issues)
+- 💡 **Feature Requests:** [GitHub Issues](https://github.com/FlexNetOS/ruvector/issues/new?template=feature_request.md)
 
 ### **Stay Connected**
 
-- 🐙 **GitHub:** [@ruvnet/ruvector](https://github.com/ruvnet/ruvector)
+- 🐙 **GitHub:** [@FlexNetOS/ruvector](https://github.com/FlexNetOS/ruvector)
 - 📦 **NPM:** [@ruvector/agentic-synth](https://www.npmjs.com/package/@ruvector/agentic-synth)
 - 🌐 **Website:** [ruv.io](https://ruv.io) *(coming soon)*
 - 💬 **Discord:** [Join our community](https://discord.gg/ruvector) *(coming soon)*
@@ -1275,12 +1275,12 @@ Built with amazing open-source technologies:
 ### **AI & ML**
 - 🧠 [Google Gemini](https://ai.google.dev/) - Fast, cost-effective generative AI
 - 🤖 [OpenRouter](https://openrouter.ai/) - Multi-model AI routing
-- 🦜 [DSPy.ts](https://github.com/ruvnet/dspy.ts) - Prompt optimization framework
+- 🦜 [DSPy.ts](https://github.com/FlexNetOS/dspy.ts) - Prompt optimization framework
 - 🧬 [LangChain](https://www.langchain.com/) - AI application framework
 
 ### **Databases & Storage**
-- 🎯 [Ruvector](https://github.com/ruvnet/ruvector) - High-performance vector database
-- 💾 [AgenticDB](https://github.com/ruvnet/agenticdb) - Agentic database layer
+- 🎯 [Ruvector](https://github.com/FlexNetOS/ruvector) - High-performance vector database
+- 💾 [AgenticDB](https://github.com/FlexNetOS/agenticdb) - Agentic database layer
 
 ### **Developer Tools**
 - 📘 [TypeScript](https://www.typescriptlang.org/) - Type-safe development
@@ -1290,7 +1290,7 @@ Built with amazing open-source technologies:
 
 ### **Version Control**
 - 🔄 [Jujutsu](https://github.com/martinvonz/jj) - Next-gen version control
-- 🔐 [Agentic-Jujutsu](https://github.com/ruvnet/agentic-jujutsu) - Quantum-resistant VCS
+- 🔐 [Agentic-Jujutsu](https://github.com/FlexNetOS/agentic-jujutsu) - Quantum-resistant VCS
 
 ---
 
@@ -1298,8 +1298,8 @@ Built with amazing open-source technologies:
 
 ### **Package**
 - 📦 **NPM:** [@ruvector/agentic-synth](https://www.npmjs.com/package/@ruvector/agentic-synth)
-- 🐙 **GitHub:** [ruvnet/ruvector](https://github.com/ruvnet/ruvector)
-- 📖 **Documentation:** [GitHub Wiki](https://github.com/ruvnet/ruvector/wiki)
+- 🐙 **GitHub:** [FlexNetOS/ruvector](https://github.com/FlexNetOS/ruvector)
+- 📖 **Documentation:** [GitHub Wiki](https://github.com/FlexNetOS/ruvector/wiki)
 
 ### **Examples & Guides**
 - 🎯 [Examples Index](./examples/README.md)
@@ -1308,36 +1308,36 @@ Built with amazing open-source technologies:
 - ⚡ [Quick Reference](./examples/docs/QUICK_REFERENCE.md)
 
 ### **Related Projects**
-- 🎯 [Ruvector](https://github.com/ruvnet/ruvector) - Vector database
-- 🦜 [DSPy.ts](https://github.com/ruvnet/dspy.ts) - Prompt optimization
-- 🔄 [Agentic-Jujutsu](https://github.com/ruvnet/agentic-jujutsu) - Version control
-- 🤖 [Agentic-Robotics](https://github.com/ruvnet/agentic-robotics) - Workflow automation
-- 🌊 [Midstreamer](https://github.com/ruvnet/midstreamer) - Real-time streaming
+- 🎯 [Ruvector](https://github.com/FlexNetOS/ruvector) - Vector database
+- 🦜 [DSPy.ts](https://github.com/FlexNetOS/dspy.ts) - Prompt optimization
+- 🔄 [Agentic-Jujutsu](https://github.com/FlexNetOS/agentic-jujutsu) - Version control
+- 🤖 [Agentic-Robotics](https://github.com/FlexNetOS/agentic-robotics) - Workflow automation
+- 🌊 [Midstreamer](https://github.com/FlexNetOS/midstreamer) - Real-time streaming
 
 ### **Community**
-- 💬 [Discussions](https://github.com/ruvnet/ruvector/discussions)
-- 🐛 [Issues](https://github.com/ruvnet/ruvector/issues)
+- 💬 [Discussions](https://github.com/FlexNetOS/ruvector/discussions)
+- 🐛 [Issues](https://github.com/FlexNetOS/ruvector/issues)
 - 🎁 [Sponsor](https://github.com/sponsors/ruvnet)
 
 ---
 
 ## 📊 **Project Stats**
 
-![GitHub stars](https://img.shields.io/github/stars/ruvnet/ruvector?style=social)
-![GitHub forks](https://img.shields.io/github/forks/ruvnet/ruvector?style=social)
-![GitHub watchers](https://img.shields.io/github/watchers/ruvnet/ruvector?style=social)
+![GitHub stars](https://img.shields.io/github/stars/FlexNetOS/ruvector?style=social)
+![GitHub forks](https://img.shields.io/github/forks/FlexNetOS/ruvector?style=social)
+![GitHub watchers](https://img.shields.io/github/watchers/FlexNetOS/ruvector?style=social)
 
 ![npm version](https://img.shields.io/npm/v/@ruvector/agentic-synth)
 ![npm downloads](https://img.shields.io/npm/dm/@ruvector/agentic-synth)
 ![npm total downloads](https://img.shields.io/npm/dt/@ruvector/agentic-synth)
 
-![GitHub issues](https://img.shields.io/github/issues/ruvnet/ruvector)
-![GitHub pull requests](https://img.shields.io/github/issues-pr/ruvnet/ruvector)
-![GitHub contributors](https://img.shields.io/github/contributors/ruvnet/ruvector)
+![GitHub issues](https://img.shields.io/github/issues/FlexNetOS/ruvector)
+![GitHub pull requests](https://img.shields.io/github/issues-pr/FlexNetOS/ruvector)
+![GitHub contributors](https://img.shields.io/github/contributors/FlexNetOS/ruvector)
 
-![GitHub last commit](https://img.shields.io/github/last-commit/ruvnet/ruvector)
-![GitHub commit activity](https://img.shields.io/github/commit-activity/m/ruvnet/ruvector)
-![GitHub code size](https://img.shields.io/github/languages/code-size/ruvnet/ruvector)
+![GitHub last commit](https://img.shields.io/github/last-commit/FlexNetOS/ruvector)
+![GitHub commit activity](https://img.shields.io/github/commit-activity/m/FlexNetOS/ruvector)
+![GitHub code size](https://img.shields.io/github/languages/code-size/FlexNetOS/ruvector)
 
 ---
 
@@ -1351,7 +1351,7 @@ npx @ruvector/agentic-synth interactive
 
 **Made with ❤️ by [rUv](https://github.com/ruvnet)**
 
-**[⭐ Star us on GitHub](https://github.com/ruvnet/ruvector) • [🐦 Follow on Twitter](https://twitter.com/ruvnet) • [💬 Join Discord](https://discord.gg/ruvector)**
+**[⭐ Star us on GitHub](https://github.com/FlexNetOS/ruvector) • [🐦 Follow on Twitter](https://twitter.com/ruvnet) • [💬 Join Discord](https://discord.gg/ruvector)**
 
 </div>
 

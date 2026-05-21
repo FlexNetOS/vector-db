@@ -20,7 +20,7 @@ Each ESP32 chip runs **one tiny-agent role** drawn from the ruvllm/ruvector prim
 
 Chips federate over UART / SPI / ESP-NOW using `FederationMessage` (`MAX_FEDERATION_SIZE = 8`).
 
-> **Honest scope.** This example does **not** implement transformer inference at MCU SRAM scale. Real model inference on ESP32 is ADR-090's PSRAM path (ESP32-P4, 8 MB). The "INT8 transformer in 4 KB" framing in the previous README was the gap reported in [issue #409](https://github.com/ruvnet/ruvector/issues/409) and is removed here. What this example *does* ship is the federation-ready primitive layer: HNSW kNN, RAG retrieval, semantic memory, anomaly detection, MicroLoRA rank-1/2 adaptation, and the federation message bus — all `no_std` and all individually exercised on real hardware.
+> **Honest scope.** This example does **not** implement transformer inference at MCU SRAM scale. Real model inference on ESP32 is ADR-090's PSRAM path (ESP32-P4, 8 MB). The "INT8 transformer in 4 KB" framing in the previous README was the gap reported in [issue #409](https://github.com/FlexNetOS/ruvector/issues/409) and is removed here. What this example *does* ship is the federation-ready primitive layer: HNSW kNN, RAG retrieval, semantic memory, anomaly detection, MicroLoRA rank-1/2 adaptation, and the federation message bus — all `no_std` and all individually exercised on real hardware.
 
 ## Why a tiny agent per chip
 
@@ -79,7 +79,7 @@ npx ruvllm-esp32 monitor
 
 **Linux/macOS:**
 ```bash
-git clone https://github.com/ruvnet/ruvector
+git clone https://github.com/FlexNetOS/ruvector
 cd ruvector/examples/ruvLLM/esp32-flash
 ./install.sh              # Install deps + build
 ./install.sh flash        # Flash to auto-detected port
@@ -87,7 +87,7 @@ cd ruvector/examples/ruvLLM/esp32-flash
 
 **Windows (PowerShell):**
 ```powershell
-git clone https://github.com/ruvnet/ruvector
+git clone https://github.com/FlexNetOS/ruvector
 cd ruvector\examples\ruvLLM\esp32-flash
 
 # One-time setup (installs espup, espflash, toolchain)
@@ -121,7 +121,7 @@ espup install
 source ~/export-esp.sh  # Linux/macOS
 
 # Clone and build
-git clone https://github.com/ruvnet/ruvector
+git clone https://github.com/FlexNetOS/ruvector
 cd ruvector/examples/ruvLLM/esp32-flash
 cargo build --release
 
@@ -582,7 +582,7 @@ The library crate is available at [crates.io/crates/ruvllm-esp32](https://crates
 This directory contains a complete, ready-to-flash project with all features:
 
 ```bash
-git clone https://github.com/ruvnet/ruvector
+git clone https://github.com/FlexNetOS/ruvector
 cd ruvector/examples/ruvLLM/esp32-flash
 cargo build --release
 ```
@@ -597,11 +597,11 @@ MIT
 
 ## Links
 
-- [Main Repository](https://github.com/ruvnet/ruvector)
+- [Main Repository](https://github.com/FlexNetOS/ruvector)
 - [Rust Library (crates.io)](https://crates.io/crates/ruvllm-esp32)
 - [npm CLI Tool](https://www.npmjs.com/package/ruvllm-esp32)
 - [Documentation](https://docs.rs/ruvllm-esp32)
-- [Issue Tracker](https://github.com/ruvnet/ruvector/issues)
+- [Issue Tracker](https://github.com/FlexNetOS/ruvector/issues)
 
 ---
 
