@@ -15,6 +15,13 @@
 !README.md
 !knowledge-graph.json
 !onboarding.md
+# Code-evaluation artifacts produced by the slice pipeline — durable outputs,
+# not scratch. fingerprints*.json + meta.json + slice-*-knowledge-graph.json
+# are the canonical evaluation state used by /understand-* commands.
+!fingerprints.json
+!fingerprints.slice-*.json
+!meta.json
+!slice-*-knowledge-graph.json
 # Both `!tours/` and `!tours/**` are required: `!tours/` un-ignores the
 # directory entry so git descends into it; `!tours/**` un-ignores every file
 # *inside* it (otherwise the leading `*` rule still matches their filenames

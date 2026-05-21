@@ -1,5 +1,0 @@
-[
-  "crates/ruvector-graph-transformer-wasm/src/transformer.rs",
-  "crates/ruvector-graph-transformer-wasm/src/utils.rs",
-  "crates/ruvector-graph-transformer-wasm/tests/web.rs"
-]

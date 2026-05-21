@@ -70,8 +70,17 @@ claude-flow.config.json
 .swarm/
 .hive-mind/
 .claude-flow/
-.omc/
-.understand-anything/
+
+# OMC runtime state — ignore by default, but keep curated learned skills.
+.omc/*
+!.omc/skills/
+.omc/skills/*
+!.omc/skills/*.md
+
+# .understand-anything has its own nested .gitignore with an allow-list of
+# durable artifacts (fingerprints, knowledge graphs, meta). Don't duplicate it
+# here — let the nested file own that directory's policy.
+
 memory/
 coordination/
 memory/claude-flow-data.json

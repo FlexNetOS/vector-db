@@ -1,8 +1,0 @@
-[
-  "crates/sona/src/training/templates.rs",
-  "crates/sona/src/trajectory.rs",
-  "crates/sona/src/types.rs",
-  "crates/sona/src/wasm.rs",
-  "crates/sona/WASM_COMPLETION_SUMMARY.md",
-  "crates/sona/wasm-example/README.md"
-]

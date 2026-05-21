@@ -1,7 +1,0 @@
-[
-  "crates/ruvector-acorn/src/lib.rs",
-  "crates/ruvector-acorn/src/main.rs",
-  "crates/ruvector-acorn/src/search.rs",
-  "crates/ruvector-acorn-wasm/Cargo.toml",
-  "crates/ruvector-acorn-wasm/src/lib.rs"
-]

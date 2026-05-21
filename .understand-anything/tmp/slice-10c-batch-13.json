@@ -1,6 +1,0 @@
-[
-  "crates/ruvector-sparse-inference-wasm/Cargo.toml",
-  "crates/ruvector-sparse-inference-wasm/README.md",
-  "crates/ruvector-sparse-inference-wasm/src/lib.rs",
-  "crates/ruvector-sparse-inference-wasm/tests/web.rs"
-]

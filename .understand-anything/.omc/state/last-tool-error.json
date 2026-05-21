@@ -1,7 +1,0 @@
-{
-  "tool_name": "Bash",
-  "tool_input_preview": "{\"command\":\"jq '.results[] | select(.path == \\\"crates/rvm/crates/rvm-sched/src/priority.rs\\\") | {functions: [.functions[] | {name, startLine, endLine, lineCount: (.endLine - .startLine + 1), isExporte...",
-  "error": "Exit code 5\njq: error (at /home/drdave/repos/RuVector/.understand-anything/tmp/ua-file-extract-results-9.json:7240): Cannot iterate over null (null)",
-  "timestamp": "2026-05-13T10:45:28.379Z",
-  "retry_count": 5
-}
