@@ -278,7 +278,10 @@ impl AgiContainerBuilder {
             None => [0u8; 8],
         };
 
-        let flags = self.segments.to_flags() | self.extra_flags;
+        // Mark manifest as present for validation.
+        let mut segments = self.segments;
+        segments.manifest_present = true;
+        let flags = segments.to_flags() | self.extra_flags;
 
         let created_ns = SystemTime::now()
             .duration_since(UNIX_EPOCH)
