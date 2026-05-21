@@ -394,6 +394,76 @@ fn bench_container_build_parse() {
     assert!(parse_ns < 5_000, "parse too slow: {parse_ns} ns/op");
 }
 
+// -- 9. Manifest-presence flag round-trip (regression for the PR #26 no-op fix) --
+
+#[test]
+fn builder_emits_has_manifest_flag() {
+    // Exercise the build() -> header.flags -> has_manifest() path that the
+    // prior "fix" silently failed to cover. Before AGI_HAS_MANIFEST existed,
+    // setting manifest_present = true on the builder's segments was a no-op:
+    // to_flags() ignored the field and no header bit was emitted.
+    let (payload, header) = AgiContainerBuilder::new([0xCA; 16], [0xFE; 16])
+        .with_model_id("claude-opus-4-7")
+        .with_orchestrator(ORCH_JSON)
+        .with_segments(ContainerSegments {
+            kernel_present: true,
+            kernel_size: 1024,
+            orchestrator_present: true,
+            // Intentionally omit manifest_present: the builder must set it.
+            ..Default::default()
+        })
+        .build()
+        .unwrap();
+
+    assert!(
+        header.has_manifest(),
+        "AgiContainerBuilder::build() must set AGI_HAS_MANIFEST in header.flags"
+    );
+
+    let rt = AgiContainerHeader::from_bytes(&header.to_bytes()).unwrap();
+    assert!(rt.has_manifest(), "AGI_HAS_MANIFEST must survive header round-trip");
+
+    let parsed = ParsedAgiManifest::parse(&payload).unwrap();
+    assert!(
+        parsed.header.has_manifest(),
+        "parsed header must report has_manifest() = true"
+    );
+}
+
+#[test]
+fn signed_builder_emits_has_manifest_flag() {
+    // build_and_sign() calls build() internally; the manifest flag must
+    // survive the signing path as well.
+    let (_, header) = AgiContainerBuilder::new([0xAB; 16], [0xCD; 16])
+        .with_model_id("claude-opus-4-7")
+        .with_segments(ContainerSegments {
+            kernel_present: true,
+            kernel_size: 1,
+            ..Default::default()
+        })
+        .build_and_sign(SIGNING_KEY)
+        .unwrap();
+
+    assert!(header.has_manifest(), "signed containers must also set AGI_HAS_MANIFEST");
+    assert!(header.is_signed(), "sanity: signed flag still set");
+}
+
+#[test]
+fn to_flags_includes_manifest_bit_when_present() {
+    // Direct test on ContainerSegments::to_flags() to lock the bit allocation.
+    let with_manifest = ContainerSegments {
+        manifest_present: true,
+        ..Default::default()
+    };
+    assert_ne!(with_manifest.to_flags() & AGI_HAS_MANIFEST, 0);
+
+    let without_manifest = ContainerSegments {
+        manifest_present: false,
+        ..Default::default()
+    };
+    assert_eq!(without_manifest.to_flags() & AGI_HAS_MANIFEST, 0);
+}
+
 #[test]
 fn bench_flags_computation() {
     use std::time::Instant;
