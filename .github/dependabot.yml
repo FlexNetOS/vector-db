@@ -53,10 +53,10 @@ updates:
     versioning-strategy: "increase-if-necessary"
     # Production deps only — devDeps drift is much less interesting
     # from a supply-chain standpoint (jest/eslint bumps don't ship
-    # to users).
-    ignore:
-      - dependency-name: "*"
-        dependency-type: "development"
+    # to users). `dependency-type` is only valid under `allow`, not
+    # `ignore`, so we use allow to restrict to production deps.
+    allow:
+      - dependency-type: "production"
 
   # ────────────────────────────────────────────────────────
   # GitHub Actions — uses statements in .github/workflows/

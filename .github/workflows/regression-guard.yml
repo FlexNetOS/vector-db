@@ -33,10 +33,18 @@ jobs:
           # captured prefix `(\S+)` to flag only same-lock cases.
           # Pattern 1: .write() …\1.(write|read)()
           # Pattern 2: .read()  …\1.write()
-          # Bash -P (PCRE) supports backreferences.
-          if grep -rnPe '(\S+)\.write\(\)[^;]*\1\.(write|read)\(\)' \
-                  -rnPe '(\S+)\.read\(\)[^;]*\1\.write\(\)' \
+          # Bash -P (PCRE) supports backreferences but only ONE pattern
+          # per invocation, so we run two separate greps.
+          found=0
+          if grep -rnP '(\S+)\.write\(\)[^;]*\1\.(write|read)\(\)' \
                  --include='*.rs' -- crates/ ; then
+            found=1
+          fi
+          if grep -rnP '(\S+)\.read\(\)[^;]*\1\.write\(\)' \
+                 --include='*.rs' -- crates/ ; then
+            found=1
+          fi
+          if [ "$found" -eq 1 ]; then
             echo "::error::Found reentrant parking_lot lock acquisition on a single statement (regression of issue #437). Bind the guard once: 'let mut g = x.write(); g.field = …;'"
             exit 1
           fi
