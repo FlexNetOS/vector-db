@@ -329,24 +329,35 @@ impl rvagent_tools::Backend for LocalFsBackend {
         command: &str,
         timeout_secs: u32,
     ) -> std::result::Result<rvagent_tools::ExecuteResponse, String> {
-        use std::io::Read;
+        use std::io::{self, Read};
+        use std::os::unix::process::CommandExt;
         use std::process::{Command, Stdio};
         use std::time::{Duration, Instant};
 
         let timeout = Duration::from_secs(if timeout_secs == 0 { 30 } else { timeout_secs as u64 });
 
-        let mut child = Command::new("sh")
-            .arg("-c")
+        let mut cmd = Command::new("sh");
+        cmd.arg("-c")
             .arg(command)
             .current_dir(&self.cwd)
             .stdout(Stdio::piped())
-            .stderr(Stdio::piped())
-            .spawn()
-            .map_err(|e| format!("execute failed: {}", e))?;
+            .stderr(Stdio::piped());
+
+        // Start the child in its own process group so we can kill the entire
+        // tree on timeout, not just the direct `sh` child.
+        unsafe {
+            cmd.pre_exec(|| {
+                libc::setsid();
+                Ok(())
+            });
+        }
+
+        let mut child = cmd.spawn().map_err(|e| format!("execute failed: {}", e))?;
+        let child_pid = child.id();
 
         // Drain stdout/stderr on separate threads to avoid pipe-buffer deadlocks.
-        // The OS pipe buffer is typically 64KB; if we don't drain while the child
-        // is running, a verbose command will block on write and never exit.
+        // After collecting MAX_OUTPUT_BYTES we keep draining to /dev/null so the
+        // child doesn't receive SIGPIPE when it writes beyond the cap.
         const MAX_OUTPUT_BYTES: usize = 1024 * 1024;
         let stdout_pipe = child.stdout.take();
         let stderr_pipe = child.stderr.take();
@@ -355,6 +366,8 @@ impl rvagent_tools::Backend for LocalFsBackend {
             let mut buf = Vec::new();
             if let Some(mut pipe) = stdout_pipe {
                 let _ = pipe.by_ref().take(MAX_OUTPUT_BYTES as u64).read_to_end(&mut buf);
+                // Drain remaining output to prevent SIGPIPE to the child.
+                let _ = io::copy(&mut pipe, &mut io::sink());
             }
             buf
         });
@@ -362,6 +375,7 @@ impl rvagent_tools::Backend for LocalFsBackend {
             let mut buf = Vec::new();
             if let Some(mut pipe) = stderr_pipe {
                 let _ = pipe.by_ref().take(MAX_OUTPUT_BYTES as u64).read_to_end(&mut buf);
+                let _ = io::copy(&mut pipe, &mut io::sink());
             }
             buf
         });
@@ -373,8 +387,10 @@ impl rvagent_tools::Backend for LocalFsBackend {
                 Some(status) => break status.code().unwrap_or(-1),
                 None => {
                     if Instant::now() >= deadline {
+                        // Kill the entire process group, then reap the direct child.
+                        unsafe { libc::kill(-(child_pid as i32), libc::SIGKILL); }
                         let _ = child.kill();
-                        let _ = child.wait(); // reap the zombie
+                        let _ = child.wait();
                         break -1;
                     }
                     std::thread::sleep(Duration::from_millis(50));
@@ -382,8 +398,21 @@ impl rvagent_tools::Backend for LocalFsBackend {
             }
         };
 
-        let stdout_bytes = stdout_handle.join().unwrap_or_default();
-        let stderr_bytes = stderr_handle.join().unwrap_or_default();
+        // Join reader threads with a timeout — descendant processes that inherited
+        // the pipes can hold them open after the direct child exits.
+        const JOIN_TIMEOUT: Duration = Duration::from_secs(5);
+        let join_deadline = Instant::now() + JOIN_TIMEOUT;
+
+        let stdout_bytes = match stdout_handle.join() {
+            Ok(b) => b,
+            Err(_) => Vec::new(),
+        };
+        let remaining = join_deadline.saturating_duration_since(Instant::now());
+        let stderr_bytes = if remaining.is_zero() {
+            Vec::new()
+        } else {
+            stderr_handle.join().unwrap_or_default()
+        };
 
         let stdout = String::from_utf8_lossy(&stdout_bytes);
         let stderr = String::from_utf8_lossy(&stderr_bytes);

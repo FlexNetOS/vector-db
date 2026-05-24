@@ -41,6 +41,7 @@ ed25519-dalek = "2"
 hex = "0.4"
 axum = "0.8"
 reqwest = { version = "0.12", features = ["json", "rustls-tls"], default-features = false }
+libc = "0.2"
 
 [dev-dependencies]
 tempfile = "3.14"

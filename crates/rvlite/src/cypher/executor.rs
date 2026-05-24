@@ -3,7 +3,7 @@
 use super::ast::*;
 use super::graph_store::*;
 use serde::{Deserialize, Serialize};
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 use thiserror::Error;
 
 #[derive(Debug, Error)]
@@ -449,7 +449,10 @@ impl<'a> Executor<'a> {
         } else {
             // One result row per matched binding set.
             for matched_vars in &context.matched_rows {
-                let mut row_ctx = context.clone();
+                let mut row_ctx = ExecutionContext {
+                    variables: context.variables.clone(),
+                    matched_rows: Vec::new(),
+                };
                 for (k, v) in matched_vars {
                     row_ctx.variables.insert(k.clone(), v.clone());
                 }
@@ -528,28 +531,49 @@ impl<'a> Executor<'a> {
             }).collect()
         };
 
+        // Collect unique node/edge IDs to avoid double-delete errors when the
+        // same entity appears in multiple matched rows.
+        let mut node_ids: Vec<String> = Vec::new();
+        let mut edge_ids: Vec<String> = Vec::new();
+        let mut seen_nodes = HashSet::new();
+        let mut seen_edges = HashSet::new();
+        let mut needs_detach = false;
+
         for row_vars in &row_contexts {
             for expr in &clause.expressions {
                 if let Expression::Variable(var) = expr {
                     if let Some(ctx_val) = row_vars.get(var) {
                         match ctx_val {
                             ContextValue::Node(node) => {
-                                if clause.detach {
-                                    self.graph.delete_node(&node.id)?;
-                                } else {
+                                if !clause.detach {
                                     return Err(ExecutionError::ExecutionError(
                                         "Cannot delete node with relationships without DETACH"
                                             .to_string(),
                                     ));
                                 }
+                                needs_detach = true;
+                                if seen_nodes.insert(node.id.clone()) {
+                                    node_ids.push(node.id.clone());
+                                }
                             }
                             ContextValue::Edge(edge) => {
-                                self.graph.delete_edge(&edge.id)?;
+                                if seen_edges.insert(edge.id.clone()) {
+                                    edge_ids.push(edge.id.clone());
+                                }
                             }
                             _ => {}
                         }
                     }
                 }
+            }
+        }
+
+        for eid in &edge_ids {
+            self.graph.delete_edge(eid)?;
+        }
+        if needs_detach {
+            for nid in &node_ids {
+                self.graph.delete_node(nid)?;
             }
         }
 
