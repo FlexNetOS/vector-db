@@ -272,23 +272,12 @@ export class IntelligenceEngine {
   // =========================================================================
 
   /**
-   * Generate embedding using ONNX, attention, or hash (in order of preference)
+   * Generate embedding using attention or hash (sync). Use embedAsync() for ONNX.
    */
   embed(text: string): number[] {
     const dim = this.config.embeddingDim;
 
-    // Try ONNX semantic embeddings first (best quality)
-    if (this.onnxReady && this.onnxEmbedder) {
-      try {
-        // Note: This is sync wrapper for async ONNX
-        // For full async, use embedAsync
-        return this.hashEmbed(text, dim); // Fallback for sync context
-      } catch {
-        // Fall through
-      }
-    }
-
-    // Try to use attention-based embedding
+    // Try to use attention-based embedding (best sync quality)
     if (this.attention?.DotProductAttention) {
       try {
         return this.attentionEmbed(text, dim);
@@ -1073,12 +1062,39 @@ export class IntelligenceEngine {
       this.errorPatterns.clear();
       this.coEditPatterns.clear();
       this.agentMappings.clear();
+
+      // Reset the ANN index so stale vectors from the previous dataset are not
+      // returned by recall(). Re-creating the VectorDB instance is the most
+      // reliable way to clear the underlying HNSW graph.
+      if (this.vectorDb) {
+        try {
+          const VDB = getVectorDB();
+          this.vectorDb = new VDB({
+            dimensions: this.config.embeddingDim,
+            distanceMetric: 'Cosine',
+          });
+        } catch {
+          // VectorDB re-init failed; fall back to brute-force recall
+          this.vectorDb = null;
+        }
+      }
     }
 
-    // Import memories
+    // Import memories and re-index them in the ANN
     if (data.memories) {
       for (const mem of data.memories) {
         this.memories.set(mem.id, mem);
+        if (this.vectorDb && mem.embedding && mem.embedding.length > 0) {
+          try {
+            this.vectorDb.insert({
+              id: mem.id,
+              vector: new Float32Array(mem.embedding),
+              metadata: JSON.stringify({ content: mem.content, type: mem.type, created: mem.created }),
+            });
+          } catch {
+            // Indexing error for this entry; continue with the rest
+          }
+        }
       }
     }
 

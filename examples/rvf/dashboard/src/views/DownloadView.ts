@@ -46,7 +46,7 @@ const DOWNLOADS: DownloadItem[] = [
     file: `ruvector-${VERSION}-linux-x64.tar.gz`,
     size: '~10 MB',
     ext: '.tar.gz',
-    desc: 'Linux (x86_64) tarball — Ubuntu 20+, Debian 11+, Fedora 36+',
+    desc: 'Linux (x86_64) tarball — Ubuntu 26.04+, Debian 11+, Fedora 36+',
   },
 ];
 

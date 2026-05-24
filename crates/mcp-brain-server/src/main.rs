@@ -32,13 +32,23 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         // Wait 30s before first cycle (let startup finish, data load)
         tokio::time::sleep(std::time::Duration::from_secs(30)).await;
 
-        // Run an initial enhanced cycle on startup to bootstrap cognitive state (full retrain)
-        let result = routes::run_enhanced_training_cycle(&train_state, true);
-        tracing::info!(
-            "Initial cognitive bootstrap: props={}, inferences={}, voice={}, curiosity={}, strange_loop={:.4}",
-            result.propositions_extracted, result.inferences_derived,
-            result.voice_thoughts, result.curiosity_triggered, result.strange_loop_score
-        );
+        // Run an initial enhanced cycle on startup to bootstrap cognitive state (full retrain).
+        // spawn_blocking avoids starving HTTP handlers during the CPU-intensive bootstrap.
+        {
+            let state = train_state.clone();
+            match tokio::task::spawn_blocking(move || routes::run_enhanced_training_cycle(&state, true)).await {
+                Ok(result) => {
+                    tracing::info!(
+                        "Initial cognitive bootstrap: props={}, inferences={}, voice={}, curiosity={}, strange_loop={:.4}",
+                        result.propositions_extracted, result.inferences_derived,
+                        result.voice_thoughts, result.curiosity_triggered, result.strange_loop_score
+                    );
+                }
+                Err(e) => {
+                    tracing::error!("Initial cognitive bootstrap failed: {e}");
+                }
+            }
+        }
         let mut last_memory_count = train_state.store.memory_count();
         let mut last_vote_count = train_state.store.vote_count();
 
@@ -115,20 +125,27 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                 // to benefit from incremental processing; the function auto-forces a full
                 // retrain every 24h.
                 if new_memories > 0 || new_votes > 0 || tick_count % 15 == 0 {
-                    let result = routes::run_enhanced_training_cycle(&train_state, false);
-                    tracing::info!(
-                        "Cognitive cycle #{} ({}): props={}, inferences={}, voice={}, auto_votes={}, \
-                         curiosity={}, sona_patterns={}, strange_loop={:.4}, lora_auto={}, processed={}/{}",
-                        tick_count / 5,
-                        if result.was_full_retrain { "full" } else { "incremental" },
-                        result.propositions_extracted, result.inferences_derived,
-                        result.voice_thoughts, result.auto_votes,
-                        result.curiosity_triggered, result.sona_patterns,
-                        result.strange_loop_score, result.lora_auto_submitted,
-                        result.memories_processed, result.memory_count
-                    );
-                    last_memory_count = current_memories;
-                    last_vote_count = current_votes;
+                    let state = train_state.clone();
+                    match tokio::task::spawn_blocking(move || routes::run_enhanced_training_cycle(&state, false)).await {
+                        Ok(result) => {
+                            tracing::info!(
+                                "Cognitive cycle #{} ({}): props={}, inferences={}, voice={}, auto_votes={}, \
+                                 curiosity={}, sona_patterns={}, strange_loop={:.4}, lora_auto={}, processed={}/{}",
+                                tick_count / 5,
+                                if result.was_full_retrain { "full" } else { "incremental" },
+                                result.propositions_extracted, result.inferences_derived,
+                                result.voice_thoughts, result.auto_votes,
+                                result.curiosity_triggered, result.sona_patterns,
+                                result.strange_loop_score, result.lora_auto_submitted,
+                                result.memories_processed, result.memory_count
+                            );
+                            last_memory_count = current_memories;
+                            last_vote_count = current_votes;
+                        }
+                        Err(e) => {
+                            tracing::error!("Cognitive cycle #{} panicked: {e}", tick_count / 5);
+                        }
+                    }
                 }
             }
         }

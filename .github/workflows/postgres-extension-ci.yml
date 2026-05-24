@@ -30,7 +30,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest]
+        os: [ubuntu-26.04]
         pg_version: [17]
         rust: [stable]
         include:
@@ -120,7 +120,7 @@ jobs:
   # Test with all features enabled
   test-all-features:
     name: Test All Features (PostgreSQL 17)
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
 
     steps:
       - name: Checkout code
@@ -158,7 +158,7 @@ jobs:
   # Benchmark on pull requests
   benchmark:
     name: Benchmark
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     if: github.event_name == 'pull_request'
 
     steps:
@@ -200,7 +200,7 @@ jobs:
   # Security audit
   security:
     name: Security Audit
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
 
     steps:
       - name: Checkout code
@@ -218,7 +218,7 @@ jobs:
   # Package the extension
   package:
     name: Package Extension
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     needs: [test, test-all-features]
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
 
@@ -261,7 +261,7 @@ jobs:
   # Integration tests with Docker
   integration-test:
     name: Integration Test (Docker)
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
 
     steps:
       - name: Checkout code

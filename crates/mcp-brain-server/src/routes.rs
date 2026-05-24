@@ -344,6 +344,7 @@ pub async fn create_router() -> (Router, AppState) {
         .route("/v1/lora/submit", post(lora_submit))
         .route("/v1/training/preferences", get(training_preferences))
         .route("/v1/train", post(train_endpoint))
+        .route("/v1/reclassify", post(reclassify))
         // Brainpedia (ADR-062)
         .route("/v1/pages", get(list_pages).post(create_page))
         .route("/v1/pages/:id", get(get_page))
@@ -473,7 +474,7 @@ pub fn run_training_cycle(state: &AppState) -> TrainingCycleResult {
 }
 
 /// Enhanced training result (ADR-110)
-#[derive(Debug, Clone, serde::Serialize)]
+#[derive(Debug, Clone, Default, serde::Serialize)]
 pub struct EnhancedTrainingResult {
     pub sona_message: String,
     pub sona_patterns: usize,
@@ -3109,7 +3110,12 @@ async fn train_endpoint(
     _contributor: AuthenticatedContributor,
 ) -> Result<Json<TrainingCycleResult>, (StatusCode, String)> {
     check_read_only(&state)?;
-    let result = run_training_cycle(&state);
+    let result = tokio::task::spawn_blocking(move || run_training_cycle(&state))
+        .await
+        .map_err(|e| {
+            tracing::error!("Training cycle panicked: {e}");
+            (StatusCode::INTERNAL_SERVER_ERROR, format!("training cycle failed: {e}"))
+        })?;
     tracing::info!(
         "Training cycle (explicit): sona_patterns={}, pareto={}→{}, memories={}",
         result.sona_patterns,
@@ -3118,6 +3124,81 @@ async fn train_endpoint(
         result.memory_count
     );
     Ok(Json(result))
+}
+
+/// POST /v1/reclassify — re-cluster memories and refresh category embeddings
+///
+/// Triggered by the `brain-reclassify-daily` Cloud Scheduler job (every 4 h).
+/// Runs a training cycle (which rebuilds SONA patterns + cluster centroids) and
+/// a drift check, then returns a per-category summary so the caller knows which
+/// categories shifted.  Read-only mode blocks this endpoint.
+async fn reclassify(
+    State(state): State<AppState>,
+    _contributor: AuthenticatedContributor,
+) -> Result<Json<serde_json::Value>, (StatusCode, String)> {
+    check_read_only(&state)?;
+
+    // 1. Training cycle — rebuilds cluster centroids + SONA patterns.
+    // spawn_blocking avoids starving HTTP handlers during the CPU-intensive cycle.
+    let training = {
+        let st = state.clone();
+        tokio::task::spawn_blocking(move || run_training_cycle(&st))
+            .await
+            .map_err(|e| {
+                tracing::error!("Reclassify training cycle panicked: {e}");
+                (StatusCode::INTERNAL_SERVER_ERROR, format!("training cycle failed: {e}"))
+            })?
+    };
+    *state.pipeline_metrics.last_training.write() = Some(chrono::Utc::now());
+
+    // 2. Drift check — computes per-category centroid movement
+    let drift_report = {
+        let drift = state.drift.read();
+        drift.compute_drift(None)
+    };
+    *state.pipeline_metrics.last_drift_check.write() = Some(chrono::Utc::now());
+
+    // 3. Category summary from current store (spawn_blocking — clustering is CPU-intensive)
+    let st2 = state.clone();
+    let (clusters, category_summary) = tokio::task::spawn_blocking(move || {
+        let all_mems = st2.store.all_memories();
+        let clusters = build_memory_clusters(&all_mems);
+        let summary: Vec<serde_json::Value> = clusters
+            .iter()
+            .map(|(_, ids, cat)| {
+                serde_json::json!({
+                    "category": cat,
+                    "memory_count": ids.len(),
+                })
+            })
+            .collect();
+        (clusters, summary)
+    })
+    .await
+    .map_err(|e| {
+        tracing::error!("Reclassify clustering panicked: {e}");
+        (StatusCode::INTERNAL_SERVER_ERROR, format!("clustering failed: {e}"))
+    })?;
+
+    tracing::info!(
+        "Reclassify: sona_patterns={}, pareto={}→{}, drifting={}, categories={}",
+        training.sona_patterns,
+        training.pareto_before,
+        training.pareto_after,
+        drift_report.is_drifting,
+        clusters.len(),
+    );
+
+    Ok(Json(serde_json::json!({
+        "status": "ok",
+        "sona_patterns": training.sona_patterns,
+        "pareto_before": training.pareto_before,
+        "pareto_after": training.pareto_after,
+        "memory_count": training.memory_count,
+        "is_drifting": drift_report.is_drifting,
+        "drift_coefficient_of_variation": drift_report.coefficient_of_variation,
+        "categories": category_summary,
+    })))
 }
 
 // ──────────────────────────────────────────────────────────────────────

@@ -40,7 +40,7 @@ jobs:
             artifact: target/aarch64-apple-darwin/release/libruvllm.dylib
             artifact_name: ruvllm.darwin-arm64.node
 
-          - host: ubuntu-latest
+          - host: ubuntu-26.04
             target: x86_64-unknown-linux-gnu
             docker: ghcr.io/napi-rs/napi-rs/nodejs-rust:lts-debian
             build: |
@@ -50,7 +50,7 @@ jobs:
             artifact: libruvllm.so
             artifact_name: ruvllm.linux-x64-gnu.node
 
-          - host: ubuntu-latest
+          - host: ubuntu-26.04
             target: aarch64-unknown-linux-gnu
             docker: ghcr.io/napi-rs/napi-rs/nodejs-rust:lts-debian-aarch64
             build: |
@@ -123,7 +123,7 @@ jobs:
 
   publish:
     name: Publish npm packages
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     needs: build
     steps:
       - uses: actions/checkout@v4
@@ -214,7 +214,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
+        os: [ubuntu-26.04, macos-latest, windows-latest]
         node: [18, 20]
 
     steps:

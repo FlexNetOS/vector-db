@@ -34,7 +34,7 @@ jobs:
   # Job 1: Code Quality Checks
   quality:
     name: Code Quality & Linting
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
 
     steps:
       - name: Checkout repository
@@ -76,7 +76,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
+        os: [ubuntu-26.04, macos-latest, windows-latest]
         node-version: ['18.x', '20.x', '22.x']
 
     steps:
@@ -130,7 +130,7 @@ jobs:
         run: npm run test:cli || echo "CLI tests have known issues with JSON output format"
 
       - name: Upload build artifacts
-        if: matrix.os == 'ubuntu-latest' && matrix.node-version == '20.x'
+        if: matrix.os == 'ubuntu-26.04' && matrix.node-version == '20.x'
         uses: actions/upload-artifact@v4
         with:
           name: build-artifacts
@@ -142,7 +142,7 @@ jobs:
   # Job 3: Test Coverage
   coverage:
     name: Test Coverage Report
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     needs: quality
 
     steps:
@@ -185,7 +185,7 @@ jobs:
   # Job 4: Performance Benchmarks
   benchmarks:
     name: Performance Benchmarks
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     needs: build-test
     if: github.event.inputs.run_benchmarks == 'true' || github.ref == 'refs/heads/main'
 
@@ -222,7 +222,7 @@ jobs:
   # Job 5: Security Audit
   security:
     name: Security Audit
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     needs: quality
 
     steps:
@@ -247,7 +247,7 @@ jobs:
   # Job 6: Package Validation
   package-validation:
     name: NPM Package Validation
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     needs: build-test
 
     steps:
@@ -299,7 +299,7 @@ jobs:
   # Job 7: Documentation Check
   docs:
     name: Documentation Validation
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
 
     steps:
       - name: Checkout repository
@@ -325,7 +325,7 @@ jobs:
   # Job 8: Integration Test Summary
   integration-summary:
     name: Generate Test Summary
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     needs: [quality, build-test, coverage, security, package-validation, docs]
     if: always()
 

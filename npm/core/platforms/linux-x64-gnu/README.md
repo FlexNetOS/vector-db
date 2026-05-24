@@ -29,7 +29,7 @@ The correct platform-specific package will be automatically installed based on y
 ## Compatibility
 
 This package is compatible with:
-- Ubuntu 18.04+ (all versions)
+- Ubuntu 26.04+ (all versions)
 - Debian 10+ (Buster and later)
 - CentOS 7+ / RHEL 7+
 - Fedora (all supported versions)
@@ -84,7 +84,7 @@ If you see "Cannot find module 'ruvector-core-linux-x64-gnu'":
 
 If the module fails to load:
 1. Ensure you have glibc installed: `ldd --version`
-2. The binary requires glibc 2.17+ (CentOS 7+) or 2.27+ (Ubuntu 18.04+)
+2. The binary requires glibc 2.17+ (CentOS 7+) or 2.27+ (Ubuntu 26.04+)
 3. For Alpine Linux or musl-based systems, this package will not work (use a glibc-based distro)
 
 ## Related Packages

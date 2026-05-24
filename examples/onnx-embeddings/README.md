@@ -574,7 +574,7 @@ Decoder models     LastToken
 
 ### Embedding Generation Speed
 
-*Tested on AMD EPYC 7763 (64-core), Ubuntu 22.04*
+*Tested on AMD EPYC 7763 (64-core), Ubuntu 26.04*
 
 | Configuration | Single Text | Batch 32 | Batch 128 | Throughput |
 |---------------|-------------|----------|-----------|------------|

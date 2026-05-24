@@ -321,7 +321,7 @@ cargo build --release
 
 | OS | Version | Architecture | Status |
 |----|---------|--------------|--------|
-| Linux | Ubuntu 22.04+ | x86_64 | ⏳ Pending |
+| Linux | Ubuntu 26.04+ | x86_64 | ⏳ Pending |
 | Linux | Fedora 38+ | x86_64 | ⏳ Pending |
 | Linux | Arch Linux | x86_64 | ⏳ Pending |
 | macOS | 13+ (Ventura) | Intel | ⏳ Pending |

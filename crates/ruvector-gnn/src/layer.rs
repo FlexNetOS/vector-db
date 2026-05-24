@@ -5,8 +5,12 @@
 
 use crate::error::GnnError;
 use ndarray::{Array1, Array2, ArrayView1};
+use rand::SeedableRng;
 use rand_distr::{Distribution, Normal};
 use serde::{Deserialize, Serialize};
+use std::sync::atomic::{AtomicU64, Ordering};
+
+static LAYER_COUNTER: AtomicU64 = AtomicU64::new(0);
 
 /// Linear transformation layer (weight matrix multiplication)
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -16,9 +20,15 @@ pub struct Linear {
 }
 
 impl Linear {
-    /// Create a new linear layer with Xavier/Glorot initialization
+    /// Create a new linear layer with Xavier/Glorot initialization.
+    /// Uses a deterministic seeded RNG (faster than thread_rng on all platforms,
+    /// especially ARM64) while still producing well-distributed weights.
     pub fn new(input_dim: usize, output_dim: usize) -> Self {
-        let mut rng = rand::thread_rng();
+        let counter = LAYER_COUNTER.fetch_add(1, Ordering::Relaxed);
+        let seed = (input_dim as u64).wrapping_mul(6364136223846793005)
+            ^ (output_dim as u64).wrapping_mul(1442695040888963407)
+            ^ counter.wrapping_mul(2862933555777941757);
+        let mut rng = rand::rngs::StdRng::seed_from_u64(seed);
 
         // Xavier initialization: scale = sqrt(2.0 / (input_dim + output_dim))
         let scale = (2.0 / (input_dim + output_dim) as f32).sqrt();

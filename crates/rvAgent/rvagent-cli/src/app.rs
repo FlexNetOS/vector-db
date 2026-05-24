@@ -329,24 +329,103 @@ impl rvagent_tools::Backend for LocalFsBackend {
         command: &str,
         timeout_secs: u32,
     ) -> std::result::Result<rvagent_tools::ExecuteResponse, String> {
-        use std::process::Command;
-        let output = Command::new("sh")
-            .arg("-c")
-            .arg(command)
-            .current_dir(&self.cwd)
-            .output()
-            .map_err(|e| format!("execute failed: {}", e))?;
-        let _ = timeout_secs; // timeout handled at a higher level if needed
-        let stdout = String::from_utf8_lossy(&output.stdout);
-        let stderr = String::from_utf8_lossy(&output.stderr);
-        let combined = if stderr.is_empty() {
+        use std::io::Read;
+        use std::process::{Command, Stdio};
+        use std::time::{Duration, Instant};
+
+        // Security: environment sanitization — strip sensitive variables (SEC-005 / ADR-103 C2).
+        const SAFE_ENV_VARS: &[&str] = &[
+            "PATH", "HOME", "USER", "SHELL", "LANG", "LC_ALL", "LC_CTYPE", "TERM", "TMPDIR", "TZ",
+        ];
+        const SENSITIVE_PATTERNS: &[&str] = &[
+            "SECRET", "KEY", "TOKEN", "PASSWORD", "CREDENTIAL",
+            "AWS_", "AZURE_", "GCP_", "DATABASE_URL", "PRIVATE",
+            "API_KEY", "AUTH", "BEARER", "JWT", "SESSION",
+        ];
+
+        let mut cmd = Command::new("sh");
+        cmd.arg("-c").arg(command).current_dir(&self.cwd);
+        cmd.env_clear();
+        for var in SAFE_ENV_VARS {
+            if let Ok(val) = std::env::var(var) {
+                let upper = var.to_uppercase();
+                let sensitive = SENSITIVE_PATTERNS.iter().any(|pat| upper.contains(pat));
+                if !sensitive {
+                    cmd.env(var, val);
+                }
+            }
+        }
+        cmd.stdout(Stdio::piped()).stderr(Stdio::piped());
+
+        let timeout = Duration::from_secs(if timeout_secs == 0 { 30 } else { timeout_secs as u64 });
+
+        let mut child = cmd.spawn().map_err(|e| format!("execute failed: {}", e))?;
+
+        // Drain stdout/stderr on separate threads to avoid pipe-buffer deadlocks.
+        // The OS pipe buffer is typically 64KB; if we don't drain while the child
+        // is running, a verbose command will block on write and never exit.
+        const MAX_OUTPUT_BYTES: usize = 1024 * 1024;
+        let stdout_pipe = child.stdout.take();
+        let stderr_pipe = child.stderr.take();
+
+        let stdout_handle = std::thread::spawn(move || {
+            let mut buf = Vec::new();
+            if let Some(mut pipe) = stdout_pipe {
+                let _ = pipe.by_ref().take(MAX_OUTPUT_BYTES as u64).read_to_end(&mut buf);
+                // Keep draining so the child doesn't get SIGPIPE.
+                let _ = std::io::copy(&mut pipe, &mut std::io::sink());
+            }
+            buf
+        });
+        let stderr_handle = std::thread::spawn(move || {
+            let mut buf = Vec::new();
+            if let Some(mut pipe) = stderr_pipe {
+                let _ = pipe.by_ref().take(MAX_OUTPUT_BYTES as u64).read_to_end(&mut buf);
+                let _ = std::io::copy(&mut pipe, &mut std::io::sink());
+            }
+            buf
+        });
+
+        // Poll for exit with a deadline.
+        let deadline = Instant::now() + timeout;
+        let exit_code = loop {
+            match child.try_wait().map_err(|e| format!("wait failed: {}", e))? {
+                Some(status) => break status.code().unwrap_or(-1),
+                None => {
+                    if Instant::now() >= deadline {
+                        let _ = child.kill();
+                        let _ = child.wait(); // reap the zombie
+                        break -1;
+                    }
+                    std::thread::sleep(Duration::from_millis(50));
+                }
+            }
+        };
+
+        let stdout_bytes = stdout_handle.join().unwrap_or_default();
+        let stderr_bytes = stderr_handle.join().unwrap_or_default();
+
+        let stdout = String::from_utf8_lossy(&stdout_bytes);
+        let stderr = String::from_utf8_lossy(&stderr_bytes);
+        let mut combined = if stderr.is_empty() {
             stdout.into_owned()
         } else {
             format!("{}\n{}", stdout, stderr)
         };
+
+        // Truncate on a UTF-8 char boundary to avoid panicking.
+        if combined.len() > MAX_OUTPUT_BYTES {
+            let mut truncate_at = MAX_OUTPUT_BYTES;
+            while !combined.is_char_boundary(truncate_at) {
+                truncate_at -= 1;
+            }
+            combined.truncate(truncate_at);
+            combined.push_str("\n... [output truncated]");
+        }
+
         Ok(rvagent_tools::ExecuteResponse {
             output: combined,
-            exit_code: output.status.code().unwrap_or(-1),
+            exit_code,
         })
     }
 }

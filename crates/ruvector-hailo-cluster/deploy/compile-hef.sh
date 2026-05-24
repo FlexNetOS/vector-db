@@ -60,7 +60,7 @@ Hailo Dataflow Compiler not found on PATH.
 Install from:
   https://hailo.ai/developer-zone/sw-downloads/
 
-Typical Ubuntu 22.04 install (as root):
+Typical Ubuntu 26.04 install (as root):
   sudo apt install ./hailort_*.deb
   sudo apt install ./hailo-dataflow-compiler_*.deb
   hailo --version
