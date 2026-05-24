@@ -371,17 +371,23 @@ impl rvagent_tools::Backend for LocalFsBackend {
             let mut buf = Vec::new();
             if let Some(mut pipe) = stdout_pipe {
                 let _ = pipe.by_ref().take(MAX_OUTPUT_BYTES as u64).read_to_end(&mut buf);
+                // Send collected output immediately so recv_timeout gets it
+                // even if the drain below blocks on inherited pipe FDs.
+                let _ = stdout_tx.send(buf);
                 let _ = io::copy(&mut pipe, &mut io::sink());
+            } else {
+                let _ = stdout_tx.send(buf);
             }
-            let _ = stdout_tx.send(buf);
         });
         std::thread::spawn(move || {
             let mut buf = Vec::new();
             if let Some(mut pipe) = stderr_pipe {
                 let _ = pipe.by_ref().take(MAX_OUTPUT_BYTES as u64).read_to_end(&mut buf);
+                let _ = stderr_tx.send(buf);
                 let _ = io::copy(&mut pipe, &mut io::sink());
+            } else {
+                let _ = stderr_tx.send(buf);
             }
-            let _ = stderr_tx.send(buf);
         });
 
         // Poll for exit with a deadline.
