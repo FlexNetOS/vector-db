@@ -358,26 +358,30 @@ impl rvagent_tools::Backend for LocalFsBackend {
         // Drain stdout/stderr on separate threads to avoid pipe-buffer deadlocks.
         // After collecting MAX_OUTPUT_BYTES we keep draining to /dev/null so the
         // child doesn't receive SIGPIPE when it writes beyond the cap.
+        // Each thread sends its result through a channel so the main thread can
+        // use recv_timeout instead of the unconditionally-blocking join().
         const MAX_OUTPUT_BYTES: usize = 1024 * 1024;
         let stdout_pipe = child.stdout.take();
         let stderr_pipe = child.stderr.take();
 
-        let stdout_handle = std::thread::spawn(move || {
+        let (stdout_tx, stdout_rx) = std::sync::mpsc::channel::<Vec<u8>>();
+        let (stderr_tx, stderr_rx) = std::sync::mpsc::channel::<Vec<u8>>();
+
+        std::thread::spawn(move || {
             let mut buf = Vec::new();
             if let Some(mut pipe) = stdout_pipe {
                 let _ = pipe.by_ref().take(MAX_OUTPUT_BYTES as u64).read_to_end(&mut buf);
-                // Drain remaining output to prevent SIGPIPE to the child.
                 let _ = io::copy(&mut pipe, &mut io::sink());
             }
-            buf
+            let _ = stdout_tx.send(buf);
         });
-        let stderr_handle = std::thread::spawn(move || {
+        std::thread::spawn(move || {
             let mut buf = Vec::new();
             if let Some(mut pipe) = stderr_pipe {
                 let _ = pipe.by_ref().take(MAX_OUTPUT_BYTES as u64).read_to_end(&mut buf);
                 let _ = io::copy(&mut pipe, &mut io::sink());
             }
-            buf
+            let _ = stderr_tx.send(buf);
         });
 
         // Poll for exit with a deadline.
@@ -398,21 +402,11 @@ impl rvagent_tools::Backend for LocalFsBackend {
             }
         };
 
-        // Join reader threads with a timeout — descendant processes that inherited
+        // Collect output with a bounded wait — descendant processes that inherited
         // the pipes can hold them open after the direct child exits.
         const JOIN_TIMEOUT: Duration = Duration::from_secs(5);
-        let join_deadline = Instant::now() + JOIN_TIMEOUT;
-
-        let stdout_bytes = match stdout_handle.join() {
-            Ok(b) => b,
-            Err(_) => Vec::new(),
-        };
-        let remaining = join_deadline.saturating_duration_since(Instant::now());
-        let stderr_bytes = if remaining.is_zero() {
-            Vec::new()
-        } else {
-            stderr_handle.join().unwrap_or_default()
-        };
+        let stdout_bytes = stdout_rx.recv_timeout(JOIN_TIMEOUT).unwrap_or_default();
+        let stderr_bytes = stderr_rx.recv_timeout(JOIN_TIMEOUT).unwrap_or_default();
 
         let stdout = String::from_utf8_lossy(&stdout_bytes);
         let stderr = String::from_utf8_lossy(&stderr_bytes);
