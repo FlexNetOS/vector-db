@@ -8,7 +8,7 @@ in any project can read/write the same vector store.
 
 ```bash
 # 1. Register the AgentDB MCP server. The server uses stdio transport.
-claude mcp add agentdb -- npx -y agentdb@latest mcp start
+claude mcp add agentdb -- npx -y agentdb@3.0.0-alpha.14 mcp start
 
 # 2. Verify it registered.
 claude mcp list | grep agentdb
@@ -16,7 +16,7 @@ claude mcp list | grep agentdb
 
 You should see something like:
 ```
-agentdb  npx -y agentdb@latest mcp start  (stdio)
+agentdb  npx -y agentdb@3.0.0-alpha.14 mcp start  (stdio)
 ```
 
 ## Confirm in-session
@@ -64,7 +64,7 @@ Or, if you prefer a project-scoped MCP definition, edit
   "mcpServers": {
     "agentdb-ragdemo": {
       "command": "npx",
-      "args": ["-y", "agentdb@latest", "mcp", "start"],
+      "args": ["-y", "agentdb@3.0.0-alpha.14", "mcp", "start"],
       "env": {
         "AGENTDB_PATH": "/abs/path/to/ruvector/examples/agentdb-rag/vectors.db"
       }
@@ -79,7 +79,7 @@ The MCP server speaks JSON-RPC over stdio. You can poke it directly:
 
 ```bash
 echo '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2024-11-05","capabilities":{},"clientInfo":{"name":"smoke","version":"0"}}}' \
-  | npx --yes agentdb@latest mcp start
+  | npx --yes agentdb@3.0.0-alpha.14 mcp start
 ```
 
 A valid response includes `"protocolVersion"` and `"capabilities":{"tools":{}}`.
@@ -100,4 +100,4 @@ claude mcp remove agentdb
   functionally identical for the tool surface.
 - If `/mcp` in Claude Code shows the server as failed (or `claude mcp get
   agentdb` reports an unhealthy state), the server probably crashed on
-  startup. Run `npx --yes agentdb@latest doctor` to diagnose.
+  startup. Run `npx --yes agentdb@3.0.0-alpha.14 doctor` to diagnose.

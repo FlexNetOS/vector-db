@@ -43,7 +43,7 @@ function parseArgs(argv) {
 
 function runCli(args, env = {}) {
   return new Promise((res, rej) => {
-    const p = spawn('npx', ['--yes', 'agentdb@latest', ...args], {
+    const p = spawn('npx', ['--yes', 'agentdb@3.0.0-alpha.14', ...args], {
       env: { ...process.env, AGENTDB_PATH: DB, ...env },
     });
     let out = '', err = '';
@@ -59,21 +59,39 @@ function runCli(args, env = {}) {
 // ANSI escape codes: ESC [ <params> <intermediate> <final>
 const ANSI_RE = /\x1b\[[0-9;]*[a-zA-Z]/g;
 
+// Single-pass bracket-depth scanner. Finds the first `[`/`{` in the cleaned
+// stdout, walks forward tracking depth + string state, and returns the
+// substring spanning the matched outer container. O(n) instead of the
+// previous O(n^2) shrink-loop, which was both slow and a CPU-DoS vector
+// against attacker-influenced CLI output.
 function extractJsonPayload(stdout) {
-  // Strip ANSI color codes (their `[` sequences confuse bracket scanning).
   const clean = stdout.replace(ANSI_RE, '');
-  // Walk lines until one starts with `[` or `{`; parse from there to end.
-  const lines = clean.split('\n');
-  for (let i = 0; i < lines.length; i++) {
-    const first = lines[i].trimStart()[0];
-    if (first !== '[' && first !== '{') continue;
-    const candidate = lines.slice(i).join('\n').trim();
-    try {
-      return JSON.parse(candidate);
-    } catch {
-      // try shrinking from the end — handles trailing CLI epilogues
-      for (let j = candidate.length; j > 0; j--) {
-        try { return JSON.parse(candidate.slice(0, j)); } catch { /* shrink */ }
+  const n = clean.length;
+  let i = 0;
+  // Find the first opening bracket of a JSON value
+  while (i < n && clean[i] !== '[' && clean[i] !== '{') i++;
+  if (i >= n) return null;
+
+  const open = clean[i];
+  const close = open === '[' ? ']' : '}';
+  let depth = 0;
+  let inString = false;
+  let escape = false;
+
+  for (let j = i; j < n; j++) {
+    const c = clean[j];
+    if (inString) {
+      if (escape) { escape = false; continue; }
+      if (c === '\\') { escape = true; continue; }
+      if (c === '"') inString = false;
+      continue;
+    }
+    if (c === '"') { inString = true; continue; }
+    if (c === open) depth++;
+    else if (c === close) {
+      depth--;
+      if (depth === 0) {
+        try { return JSON.parse(clean.slice(i, j + 1)); } catch { return null; }
       }
     }
   }
@@ -171,6 +189,9 @@ async function main() {
 
   const prompt = buildPrompt(question, hits);
   console.log(JSON.stringify({
+    // Stable output contract — agents that consume this JSON should pin to
+    // a major version and treat unknown minor-version fields as additive.
+    schema: 'ruvector.rag.query/v1',
     query: question,
     local_embed_backend: EMBED_BACKEND,
     local_embed_dim: localVec.length,

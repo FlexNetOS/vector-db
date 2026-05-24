@@ -8,8 +8,8 @@
     "init": "bash init.sh",
     "seed": "node src/seed-docs.mjs",
     "query": "node src/query.mjs --",
-    "stats": "AGENTDB_PATH=./vectors.db npx --yes agentdb@latest db stats",
-    "mcp": "AGENTDB_PATH=./vectors.db npx --yes agentdb@latest mcp start",
+    "stats": "AGENTDB_PATH=./vectors.db npx --yes agentdb@3.0.0-alpha.14 db stats",
+    "mcp": "AGENTDB_PATH=./vectors.db npx --yes agentdb@3.0.0-alpha.14 mcp start",
     "bench": "bash benchmark.sh"
   },
   "engines": {

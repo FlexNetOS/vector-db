@@ -32,10 +32,10 @@ esac
 rm -f "$AGENTDB_PATH"
 
 echo "==> agentdb init  path=$AGENTDB_PATH  dim=$DIM  backend=auto (ruvector preferred)"
-npx --yes agentdb@latest init "$AGENTDB_PATH" --dimension "$DIM" --preset small
+npx --yes agentdb@3.0.0-alpha.14 init "$AGENTDB_PATH" --dimension "$DIM" --preset small
 
 echo "==> agentdb status"
-npx --yes agentdb@latest status --db "$AGENTDB_PATH" --verbose 2>&1 | sed 's/^/    /'
+npx --yes agentdb@3.0.0-alpha.14 status --db "$AGENTDB_PATH" --verbose 2>&1 | sed 's/^/    /'
 
 echo
 echo "OK. Database ready at: $AGENTDB_PATH"

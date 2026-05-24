@@ -22,7 +22,7 @@ hashed embedder so the example is reproducible. Drop-in upgrade paths to
 - `npx` (bundled with npm)
 - ~50MB free disk for the test corpus
 
-No global installs. Everything runs through `npx agentdb@latest`.
+No global installs. Everything runs through `npx agentdb@3.0.0-alpha.14`.
 
 ## Quick start
 
@@ -42,6 +42,14 @@ node src/query.mjs "Compare cosine vs euclidean distance" --threshold 0.3
 ```
 
 ## Architecture
+
+> **Diagram description (for screen readers):** The pipeline has two phases.
+> **Ingest** runs once: text + embedding flows into `agentdb store-pattern`
+> under domain `rag-corpus`, which writes vectors into the HNSW index inside
+> `vectors.db`. **Query** runs per question: the question text goes through
+> `agentdb query` which auto-embeds and ANN-searches the same index, returning
+> top-k pattern hits. Those hits feed `buildPrompt(question, hits)`, which
+> emits a context-injected prompt that the caller pipes into any LLM.
 
 ```
 INGEST (one-time)                    QUERY (per question)
@@ -77,7 +85,7 @@ as plain text. Pipe it to `claude`, `gpt-4`, or any local LLM.
 ### Real ML embeddings (Xenova/transformers)
 
 ```bash
-npx agentdb@latest install-embeddings
+npx agentdb@3.0.0-alpha.14 install-embeddings
 EMBED_BACKEND=xenova ./init.sh && EMBED_BACKEND=xenova node src/seed-docs.mjs
 EMBED_BACKEND=xenova node src/query.mjs "your question"
 ```

@@ -21,11 +21,17 @@ RUNS="${RUNS:-10}"
 export AGENTDB_PATH EMBED_BACKEND
 echo "==> Benchmarking with EMBED_BACKEND=$EMBED_BACKEND, RUNS=$RUNS, DB=$AGENTDB_PATH"
 
-./init.sh > /tmp/agentdb-init.log 2>&1
+# mktemp prevents the symlink-attack class where a local attacker pre-creates
+# /tmp/agentdb-*.log as a symlink to an arbitrary file. Cleaned up on exit.
+INIT_LOG=$(mktemp -t agentdb-init.XXXXXX.log)
+SEED_LOG=$(mktemp -t agentdb-seed.XXXXXX.log)
+trap 'rm -f "$INIT_LOG" "$SEED_LOG"' EXIT
+
+./init.sh > "$INIT_LOG" 2>&1
 
 echo "==> Measuring seed throughput"
 SEED_START=$(date +%s%N)
-node src/seed-docs.mjs > /tmp/agentdb-seed.log 2>&1
+node src/seed-docs.mjs > "$SEED_LOG" 2>&1
 SEED_END=$(date +%s%N)
 SEED_MS=$(( (SEED_END - SEED_START) / 1000000 ))
 DOC_COUNT=$(wc -l < data/corpus.jsonl)
@@ -66,7 +72,7 @@ AVG_LAT_MS=$(( TOTAL_LAT_NS / COUNT / 1000000 ))
 echo "==> Measuring raw query latency (no Node wrapper)"
 RAW_START=$(date +%s%N)
 for ((i = 0; i < RUNS; i++)); do
-  AGENTDB_PATH="$AGENTDB_PATH" npx --yes agentdb@latest query \
+  AGENTDB_PATH="$AGENTDB_PATH" npx --yes agentdb@3.0.0-alpha.14 query \
     --query "HNSW search?" --domain rag-corpus --k 5 --format json > /dev/null 2>&1
 done
 RAW_END=$(date +%s%N)
@@ -77,10 +83,36 @@ DB_SIZE_BYTES=$(stat -c %s "$AGENTDB_PATH" 2>/dev/null || echo 0)
 TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
 HOST=$(uname -nm)
 NODE_VER=$(node --version)
-AGENTDB_VER=$(npx --yes agentdb@latest --version 2>&1 | grep -oE 'v?[0-9]+\.[0-9]+\.[0-9]+[-a-z0-9.]*' | head -1 || echo "unknown")
+AGENTDB_VER=$(npx --yes agentdb@3.0.0-alpha.14 --version 2>&1 | grep -oE 'v?[0-9]+\.[0-9]+\.[0-9]+[-a-z0-9.]*' | head -1 || echo "unknown")
 
-cat > BENCHMARK_RESULTS.json <<EOF
+# Build BENCHMARK_RESULTS.json via jq so any quote/newline/special character in
+# $HOST or version strings is properly escaped. Falls back to a here-doc only
+# if jq is unavailable, with the same warning.
+if command -v jq >/dev/null 2>&1; then
+  jq -n \
+    --arg timestamp "$TIMESTAMP" \
+    --arg host "$HOST" \
+    --arg node "$NODE_VER" \
+    --arg agentdb "$AGENTDB_VER" \
+    --arg embed_backend "$EMBED_BACKEND" \
+    --argjson runs "$RUNS" \
+    --argjson doc_count "$DOC_COUNT" \
+    --argjson db_size_bytes "$DB_SIZE_BYTES" \
+    --argjson seed_total_ms "$SEED_MS" \
+    --arg     seed_docs_per_sec "$SEED_RATE" \
+    --argjson e2e_query_avg_ms "$AVG_LAT_MS" \
+    --argjson raw_query_avg_ms "$RAW_AVG_MS" \
+    '{schema:"ruvector.rag.bench/v1", timestamp:$timestamp, host:$host, node:$node,
+      agentdb:$agentdb, embed_backend:$embed_backend, runs_per_question:$runs,
+      doc_count:$doc_count, db_size_bytes:$db_size_bytes,
+      seed_total_ms:$seed_total_ms, seed_docs_per_sec:($seed_docs_per_sec|tonumber),
+      e2e_query_avg_ms:$e2e_query_avg_ms, raw_query_avg_ms:$raw_query_avg_ms}' \
+    > BENCHMARK_RESULTS.json
+else
+  echo "warn: jq not found; JSON output may be malformed if host contains special chars" >&2
+  cat > BENCHMARK_RESULTS.json <<EOF
 {
+  "schema": "ruvector.rag.bench/v1",
   "timestamp": "$TIMESTAMP",
   "host": "$HOST",
   "node": "$NODE_VER",
@@ -95,6 +127,7 @@ cat > BENCHMARK_RESULTS.json <<EOF
   "raw_query_avg_ms": $RAW_AVG_MS
 }
 EOF
+fi
 
 {
   echo
