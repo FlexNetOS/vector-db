@@ -329,52 +329,95 @@ impl rvagent_tools::Backend for LocalFsBackend {
         command: &str,
         timeout_secs: u32,
     ) -> std::result::Result<rvagent_tools::ExecuteResponse, String> {
-        use std::io::Read;
+        use std::io::{self, Read};
+        use std::os::unix::process::CommandExt;
         use std::process::{Command, Stdio};
         use std::time::{Duration, Instant};
 
-        let timeout = Duration::from_secs(if timeout_secs == 0 { 30 } else { timeout_secs as u64 });
+        let timeout = Duration::from_secs(if timeout_secs == 0 {
+            30
+        } else {
+            timeout_secs as u64
+        });
 
-        let mut child = Command::new("sh")
-            .arg("-c")
+        let mut cmd = Command::new("sh");
+        cmd.arg("-c")
             .arg(command)
             .current_dir(&self.cwd)
             .stdout(Stdio::piped())
-            .stderr(Stdio::piped())
-            .spawn()
-            .map_err(|e| format!("execute failed: {}", e))?;
+            .stderr(Stdio::piped());
+
+        // Start the child in its own process group so we can kill the entire
+        // tree on timeout, not just the direct `sh` child.
+        unsafe {
+            cmd.pre_exec(|| {
+                if libc::setsid() == -1 {
+                    return Err(io::Error::last_os_error());
+                }
+                Ok(())
+            });
+        }
+
+        let mut child = cmd.spawn().map_err(|e| format!("execute failed: {}", e))?;
+        let child_pid = child.id();
 
         // Drain stdout/stderr on separate threads to avoid pipe-buffer deadlocks.
-        // The OS pipe buffer is typically 64KB; if we don't drain while the child
-        // is running, a verbose command will block on write and never exit.
+        // After collecting MAX_OUTPUT_BYTES we keep draining to /dev/null so the
+        // child doesn't receive SIGPIPE when it writes beyond the cap.
+        // Each thread sends its result through a channel so the main thread can
+        // use recv_timeout instead of the unconditionally-blocking join().
         const MAX_OUTPUT_BYTES: usize = 1024 * 1024;
         let stdout_pipe = child.stdout.take();
         let stderr_pipe = child.stderr.take();
 
-        let stdout_handle = std::thread::spawn(move || {
+        let (stdout_tx, stdout_rx) = std::sync::mpsc::channel::<Vec<u8>>();
+        let (stderr_tx, stderr_rx) = std::sync::mpsc::channel::<Vec<u8>>();
+
+        std::thread::spawn(move || {
             let mut buf = Vec::new();
             if let Some(mut pipe) = stdout_pipe {
-                let _ = pipe.by_ref().take(MAX_OUTPUT_BYTES as u64).read_to_end(&mut buf);
+                let _ = pipe
+                    .by_ref()
+                    .take(MAX_OUTPUT_BYTES as u64)
+                    .read_to_end(&mut buf);
+                // Send collected output immediately so recv_timeout gets it
+                // even if the drain below blocks on inherited pipe FDs.
+                let _ = stdout_tx.send(buf);
+                let _ = io::copy(&mut pipe, &mut io::sink());
+            } else {
+                let _ = stdout_tx.send(buf);
             }
-            buf
         });
-        let stderr_handle = std::thread::spawn(move || {
+        std::thread::spawn(move || {
             let mut buf = Vec::new();
             if let Some(mut pipe) = stderr_pipe {
-                let _ = pipe.by_ref().take(MAX_OUTPUT_BYTES as u64).read_to_end(&mut buf);
+                let _ = pipe
+                    .by_ref()
+                    .take(MAX_OUTPUT_BYTES as u64)
+                    .read_to_end(&mut buf);
+                let _ = stderr_tx.send(buf);
+                let _ = io::copy(&mut pipe, &mut io::sink());
+            } else {
+                let _ = stderr_tx.send(buf);
             }
-            buf
         });
 
         // Poll for exit with a deadline.
         let deadline = Instant::now() + timeout;
         let exit_code = loop {
-            match child.try_wait().map_err(|e| format!("wait failed: {}", e))? {
+            match child
+                .try_wait()
+                .map_err(|e| format!("wait failed: {}", e))?
+            {
                 Some(status) => break status.code().unwrap_or(-1),
                 None => {
                     if Instant::now() >= deadline {
+                        // Kill the entire process group, then reap the direct child.
+                        unsafe {
+                            libc::kill(-(child_pid as i32), libc::SIGKILL);
+                        }
                         let _ = child.kill();
-                        let _ = child.wait(); // reap the zombie
+                        let _ = child.wait();
                         break -1;
                     }
                     std::thread::sleep(Duration::from_millis(50));
@@ -382,8 +425,11 @@ impl rvagent_tools::Backend for LocalFsBackend {
             }
         };
 
-        let stdout_bytes = stdout_handle.join().unwrap_or_default();
-        let stderr_bytes = stderr_handle.join().unwrap_or_default();
+        // Collect output with a bounded wait — descendant processes that inherited
+        // the pipes can hold them open after the direct child exits.
+        const JOIN_TIMEOUT: Duration = Duration::from_secs(5);
+        let stdout_bytes = stdout_rx.recv_timeout(JOIN_TIMEOUT).unwrap_or_default();
+        let stderr_bytes = stderr_rx.recv_timeout(JOIN_TIMEOUT).unwrap_or_default();
 
         let stdout = String::from_utf8_lossy(&stdout_bytes);
         let stderr = String::from_utf8_lossy(&stderr_bytes);
