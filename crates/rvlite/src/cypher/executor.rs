@@ -433,7 +433,9 @@ impl<'a> Executor<'a> {
                     Expression::Variable(var) => var.clone(),
                     _ => "?column?".to_string(),
                 });
-            columns.push(col_name.clone());
+            if !columns.contains(&col_name) {
+                columns.push(col_name);
+            }
         }
 
         let mut result = ExecutionResult::new(columns.clone());

@@ -333,16 +333,33 @@ impl rvagent_tools::Backend for LocalFsBackend {
         use std::process::{Command, Stdio};
         use std::time::{Duration, Instant};
 
+        // Security: environment sanitization — strip sensitive variables (SEC-005 / ADR-103 C2).
+        const SAFE_ENV_VARS: &[&str] = &[
+            "PATH", "HOME", "USER", "SHELL", "LANG", "LC_ALL", "LC_CTYPE", "TERM", "TMPDIR", "TZ",
+        ];
+        const SENSITIVE_PATTERNS: &[&str] = &[
+            "SECRET", "KEY", "TOKEN", "PASSWORD", "CREDENTIAL",
+            "AWS_", "AZURE_", "GCP_", "DATABASE_URL", "PRIVATE",
+            "API_KEY", "AUTH", "BEARER", "JWT", "SESSION",
+        ];
+
+        let mut cmd = Command::new("sh");
+        cmd.arg("-c").arg(command).current_dir(&self.cwd);
+        cmd.env_clear();
+        for var in SAFE_ENV_VARS {
+            if let Ok(val) = std::env::var(var) {
+                let upper = var.to_uppercase();
+                let sensitive = SENSITIVE_PATTERNS.iter().any(|pat| upper.contains(pat));
+                if !sensitive {
+                    cmd.env(var, val);
+                }
+            }
+        }
+        cmd.stdout(Stdio::piped()).stderr(Stdio::piped());
+
         let timeout = Duration::from_secs(if timeout_secs == 0 { 30 } else { timeout_secs as u64 });
 
-        let mut child = Command::new("sh")
-            .arg("-c")
-            .arg(command)
-            .current_dir(&self.cwd)
-            .stdout(Stdio::piped())
-            .stderr(Stdio::piped())
-            .spawn()
-            .map_err(|e| format!("execute failed: {}", e))?;
+        let mut child = cmd.spawn().map_err(|e| format!("execute failed: {}", e))?;
 
         // Drain stdout/stderr on separate threads to avoid pipe-buffer deadlocks.
         // The OS pipe buffer is typically 64KB; if we don't drain while the child
