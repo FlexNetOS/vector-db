@@ -15,7 +15,7 @@ env:
 
 jobs:
   check:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     strategy:
       matrix:
         feature-set:
@@ -35,7 +35,7 @@ jobs:
         run: cargo check -p ruvector-verified ${{ matrix.feature-set }}
 
   test:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     needs: check
     steps:
       - uses: actions/checkout@v4
@@ -47,7 +47,7 @@ jobs:
         run: cargo test -p ruvector-verified
 
   bench:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     needs: check
     steps:
       - uses: actions/checkout@v4
@@ -57,7 +57,7 @@ jobs:
         run: cargo bench -p ruvector-verified --all-features -- --test
 
   clippy:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     steps:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@stable

@@ -29,7 +29,7 @@ The correct platform-specific package will be automatically installed based on y
 ## Compatibility
 
 This package is compatible with:
-- Ubuntu 18.04+ (ARM64)
+- Ubuntu 26.04+ (ARM64)
 - Debian 10+ Buster (ARM64)
 - CentOS 7+ / RHEL 7+ (ARM64)
 - Amazon Linux 2+ (Graviton processors)
@@ -94,7 +94,7 @@ If you see "Cannot find module 'ruvector-core-linux-arm64-gnu'":
 
 If the module fails to load:
 1. Ensure you have glibc installed: `ldd --version`
-2. The binary requires glibc 2.17+ (CentOS 7+) or 2.27+ (Ubuntu 18.04+)
+2. The binary requires glibc 2.17+ (CentOS 7+) or 2.27+ (Ubuntu 26.04+)
 3. For Alpine Linux or musl-based systems, this package will not work (use a glibc-based distro)
 
 ### Cross-Compilation

@@ -431,7 +431,7 @@ const DATA_DIR = process.env.RUVECTOR_DATA_DIR ||
 
 ### 10.1 Cross-Platform Testing
 **Required Environments**:
-- ✅ Ubuntu 22.04 (GitHub Actions)
+- ✅ Ubuntu 26.04 (GitHub Actions)
 - ✅ macOS 14 Sonoma (M1 + Intel)
 - ✅ Windows 11 (PowerShell + CMD + WSL)
 

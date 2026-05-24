@@ -33,7 +33,7 @@ env:
 jobs:
   attractor:
     name: Attractor pipeline
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     # The pipeline must NOT fail the workflow on a red trajectory --
     # that's recorded as training signal, not as a failure. Job-level
     # `continue-on-error` is the wrong primitive (it changes the rolled-

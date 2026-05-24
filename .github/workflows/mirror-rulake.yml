@@ -37,7 +37,7 @@ concurrency:
 jobs:
   mirror:
     name: Sync crate + ADRs to ruvnet/RuLake
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     steps:
       - name: Checkout monorepo
         uses: actions/checkout@v4

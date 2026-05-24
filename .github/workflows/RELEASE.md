@@ -35,7 +35,7 @@ Options:
 
 ### Stage 1: Validation (`validate`)
 
-**Runs on**: `ubuntu-22.04`
+**Runs on**: `ubuntu-26.04`
 
 **Tasks**:
 - ✅ Check code formatting with `cargo fmt`
@@ -48,7 +48,7 @@ Options:
 
 ### Stage 2: Build Rust Crates (`build-crates`)
 
-**Runs on**: `ubuntu-22.04`
+**Runs on**: `ubuntu-26.04`
 
 **Tasks**:
 - Build all workspace crates in release mode
@@ -64,7 +64,7 @@ Options:
 
 ### Stage 3: Build WASM Packages (`build-wasm`)
 
-**Runs on**: `ubuntu-22.04`
+**Runs on**: `ubuntu-26.04`
 
 **Tasks**:
 - Install `wasm-pack` build tool
@@ -86,16 +86,16 @@ Options:
 **Reuses**: `./.github/workflows/build-native.yml` as callable workflow
 
 **Platforms built**:
-- Linux x64 (GNU) - `ubuntu-22.04`
-- Linux ARM64 (GNU) - `ubuntu-22.04` with cross-compilation
+- Linux x64 (GNU) - `ubuntu-26.04`
+- Linux ARM64 (GNU) - `ubuntu-26.04` with cross-compilation
 - macOS x64 (Intel) - `macos-13`
 - macOS ARM64 (Apple Silicon) - `macos-14`
 - Windows x64 (MSVC) - `windows-2022`
 
 **Build matrix details**:
 ```yaml
-- host: ubuntu-22.04, target: x86_64-unknown-linux-gnu
-- host: ubuntu-22.04, target: aarch64-unknown-linux-gnu
+- host: ubuntu-26.04, target: x86_64-unknown-linux-gnu
+- host: ubuntu-26.04, target: aarch64-unknown-linux-gnu
 - host: macos-13, target: x86_64-apple-darwin
 - host: macos-14, target: aarch64-apple-darwin
 - host: windows-2022, target: x86_64-pc-windows-msvc
@@ -105,7 +105,7 @@ Options:
 
 ### Stage 5: Publish Rust Crates (`publish-crates`)
 
-**Runs on**: `ubuntu-22.04`
+**Runs on**: `ubuntu-26.04`
 
 **Requires**:
 - ✅ Validation passed
@@ -137,7 +137,7 @@ Options:
 
 ### Stage 6: Publish npm Packages (`publish-npm`)
 
-**Runs on**: `ubuntu-22.04`
+**Runs on**: `ubuntu-26.04`
 
 **Requires**:
 - ✅ Validation passed
@@ -172,7 +172,7 @@ Options:
 
 ### Stage 7: Create GitHub Release (`create-release`)
 
-**Runs on**: `ubuntu-22.04`
+**Runs on**: `ubuntu-26.04`
 
 **Requires**:
 - ✅ All build jobs succeeded
@@ -207,7 +207,7 @@ Options:
 
 ### Stage 8: Release Summary (`release-summary`)
 
-**Runs on**: `ubuntu-22.04`
+**Runs on**: `ubuntu-26.04`
 
 **Always runs**: Even if previous jobs fail
 
@@ -293,8 +293,8 @@ The native build job uses a strategic matrix to cover all platforms:
 
 | Platform | Host Runner | Rust Target | NAPI Platform | Cross-Compile |
 |----------|-------------|-------------|---------------|---------------|
-| Linux x64 | ubuntu-22.04 | x86_64-unknown-linux-gnu | linux-x64-gnu | No |
-| Linux ARM64 | ubuntu-22.04 | aarch64-unknown-linux-gnu | linux-arm64-gnu | Yes (gcc-aarch64) |
+| Linux x64 | ubuntu-26.04 | x86_64-unknown-linux-gnu | linux-x64-gnu | No |
+| Linux ARM64 | ubuntu-26.04 | aarch64-unknown-linux-gnu | linux-arm64-gnu | Yes (gcc-aarch64) |
 | macOS Intel | macos-13 | x86_64-apple-darwin | darwin-x64 | No |
 | macOS ARM | macos-14 | aarch64-apple-darwin | darwin-arm64 | No |
 | Windows | windows-2022 | x86_64-pc-windows-msvc | win32-x64-msvc | No |

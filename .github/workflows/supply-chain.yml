@@ -55,7 +55,7 @@ jobs:
   # ─────────────────────────────────────────────────────────────────
   dependency-review:
     name: dependency-review (PRs only)
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-26.04
     if: github.event_name == 'pull_request'
     continue-on-error: true
     permissions:
@@ -86,7 +86,7 @@ jobs:
   # ─────────────────────────────────────────────────────────────────
   cargo-audit:
     name: cargo audit (RustSec advisories)
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-26.04
     steps:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@stable
@@ -110,7 +110,7 @@ jobs:
   # ─────────────────────────────────────────────────────────────────
   cargo-deny:
     name: cargo deny (license + source + ban policy)
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-26.04
     steps:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@stable
@@ -125,7 +125,7 @@ jobs:
   # ─────────────────────────────────────────────────────────────────
   npm-audit:
     name: npm audit (npm/ workspace)
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-26.04
     defaults:
       run:
         working-directory: npm
@@ -161,7 +161,7 @@ jobs:
   # ─────────────────────────────────────────────────────────────────
   lockfile-integrity:
     name: lockfile integrity (Cargo.lock)
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-26.04
     steps:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@stable

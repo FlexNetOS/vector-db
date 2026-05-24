@@ -284,7 +284,7 @@
 - [ ] Backward compatibility with legacy paths
 
 ### Manual Testing
-- [ ] Fresh Ubuntu 22.04 VM
+- [ ] Fresh Ubuntu 26.04 VM
 - [ ] Fresh macOS 14 VM
 - [ ] Fresh Windows 11 VM (PowerShell)
 - [ ] Codespaces environment

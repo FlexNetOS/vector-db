@@ -5,7 +5,7 @@ on:
 
 jobs:
   copilot-setup:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     environment: copilot
     steps:
       - name: Cleanup before git clone

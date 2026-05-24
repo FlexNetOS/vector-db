@@ -21,7 +21,7 @@ env:
 jobs:
   rust-cli-tests:
     name: Rust CLI Tests
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     steps:
       - uses: actions/checkout@v4
 
@@ -64,7 +64,7 @@ jobs:
 
   npm-cli-tests:
     name: npm CLI Tests
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     steps:
       - uses: actions/checkout@v4
 
@@ -108,7 +108,7 @@ jobs:
 
   postgres-schema-validation:
     name: PostgreSQL Schema Validation
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     services:
       postgres:
         image: postgres:15
@@ -176,7 +176,7 @@ jobs:
 
   feature-parity-check:
     name: Feature Parity Check
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     needs: [rust-cli-tests, npm-cli-tests]
     steps:
       - uses: actions/checkout@v4

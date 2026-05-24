@@ -28,7 +28,7 @@ permissions:
 jobs:
   rust-benchmarks:
     name: Rust Benchmarks
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     timeout-minutes: 60
 
     steps:
@@ -172,7 +172,7 @@ jobs:
 
   sql-benchmarks:
     name: SQL Benchmarks
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     timeout-minutes: 60
     if: github.event_name == 'workflow_dispatch' && github.event.inputs.run_sql_benchmarks == 'true'
 
@@ -264,7 +264,7 @@ jobs:
 
   benchmark-comparison:
     name: Compare with Baseline
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     needs: rust-benchmarks
     if: github.event_name == 'pull_request'
 

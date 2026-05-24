@@ -53,7 +53,7 @@ jobs:
   # Determine which models to process
   prepare:
     name: Prepare Model List
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     outputs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}
       quantizations: ${{ steps.set-matrix.outputs.quantizations }}
@@ -89,7 +89,7 @@ jobs:
   # Optimize models in parallel
   optimize:
     name: Optimize ${{ matrix.model }}
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     needs: prepare
     strategy:
       fail-fast: false
@@ -177,7 +177,7 @@ jobs:
   # Upload to Google Cloud Storage
   upload-gcs:
     name: Upload to GCS
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     needs: [prepare, optimize]
     if: github.event.inputs.upload_gcs != 'false'
     steps:
@@ -218,7 +218,7 @@ jobs:
   # Upload to IPFS via Pinata
   upload-ipfs:
     name: Upload to IPFS
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     needs: [prepare, optimize]
     if: github.event.inputs.upload_ipfs == 'true'
     steps:
@@ -277,7 +277,7 @@ jobs:
   # Update registry with new model information
   update-registry:
     name: Update Registry
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     needs: [optimize, upload-gcs]
     if: always() && needs.optimize.result == 'success'
     steps:
@@ -373,7 +373,7 @@ jobs:
   # Run benchmarks on optimized models
   benchmark:
     name: Benchmark Models
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     needs: [optimize]
     if: github.event_name == 'release'
     steps:
