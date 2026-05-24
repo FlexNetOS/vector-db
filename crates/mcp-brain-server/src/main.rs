@@ -139,13 +139,13 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                                 result.strange_loop_score, result.lora_auto_submitted,
                                 result.memories_processed, result.memory_count
                             );
+                            last_memory_count = current_memories;
+                            last_vote_count = current_votes;
                         }
                         Err(e) => {
                             tracing::error!("Cognitive cycle #{} panicked: {e}", tick_count / 5);
                         }
                     }
-                    last_memory_count = current_memories;
-                    last_vote_count = current_votes;
                 }
             }
         }
