@@ -1,0 +1,18 @@
+{
+  "name": "agentdb-rag-example",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Self-contained AgentDB v3 + ruvector RAG example",
+  "scripts": {
+    "init": "bash init.sh",
+    "seed": "node src/seed-docs.mjs",
+    "query": "node src/query.mjs",
+    "stats": "npx --yes agentdb@latest db stats",
+    "mcp": "npx --yes agentdb@latest mcp start",
+    "bench": "bash benchmark.sh"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
