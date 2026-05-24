@@ -529,6 +529,12 @@ impl<'a> Executor<'a> {
             }).collect()
         };
 
+        // Collect unique node/edge IDs across all matched rows to avoid
+        // double-delete errors when MATCH yields the same entity multiple times.
+        let mut node_ids = std::collections::HashSet::new();
+        let mut edge_ids = std::collections::HashSet::new();
+        let mut has_non_detach_node = false;
+
         for row_vars in &row_contexts {
             for expr in &clause.expressions {
                 if let Expression::Variable(var) = expr {
@@ -536,22 +542,32 @@ impl<'a> Executor<'a> {
                         match ctx_val {
                             ContextValue::Node(node) => {
                                 if clause.detach {
-                                    self.graph.delete_node(&node.id)?;
+                                    node_ids.insert(node.id.clone());
                                 } else {
-                                    return Err(ExecutionError::ExecutionError(
-                                        "Cannot delete node with relationships without DETACH"
-                                            .to_string(),
-                                    ));
+                                    has_non_detach_node = true;
                                 }
                             }
                             ContextValue::Edge(edge) => {
-                                self.graph.delete_edge(&edge.id)?;
+                                edge_ids.insert(edge.id.clone());
                             }
                             _ => {}
                         }
                     }
                 }
             }
+        }
+
+        if has_non_detach_node {
+            return Err(ExecutionError::ExecutionError(
+                "Cannot delete node with relationships without DETACH".to_string(),
+            ));
+        }
+
+        for eid in &edge_ids {
+            self.graph.delete_edge(eid)?;
+        }
+        for nid in &node_ids {
+            self.graph.delete_node(nid)?;
         }
 
         Ok(ExecutionResult::new(vec![]))

@@ -335,13 +335,17 @@ export class VectorIndex {
 }
 
 /** Get backend info (compat with old getBackendInfo() call). */
-export function getBackendInfo(): { type: 'native' | 'wasm'; version: string; features: string[] } {
-  const type = implementationType === 'native' ? 'native' : 'wasm';
+export function getBackendInfo(): { type: 'native' | 'wasm' | 'rvf'; version: string; features: string[] } {
+  const backendType = implementationType === 'native' ? 'native'
+    : implementationType === 'rvf' ? 'rvf'
+    : 'wasm';
   const { version } = getVersion();
-  const features: string[] = type === 'native'
+  const features: string[] = backendType === 'native'
     ? ['SIMD', 'Multi-threading', 'Rust-native']
+    : backendType === 'rvf'
+    ? ['RVF-container', 'Persistence', 'Cross-platform']
     : ['Browser-compatible', 'Cross-platform'];
-  return { type, version, features };
+  return { type: backendType, version, features };
 }
 
 /** Check native availability (compat alias for isNative()). */
