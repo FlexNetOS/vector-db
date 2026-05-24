@@ -334,7 +334,11 @@ impl rvagent_tools::Backend for LocalFsBackend {
         use std::process::{Command, Stdio};
         use std::time::{Duration, Instant};
 
-        let timeout = Duration::from_secs(if timeout_secs == 0 { 30 } else { timeout_secs as u64 });
+        let timeout = Duration::from_secs(if timeout_secs == 0 {
+            30
+        } else {
+            timeout_secs as u64
+        });
 
         let mut cmd = Command::new("sh");
         cmd.arg("-c")
@@ -370,7 +374,10 @@ impl rvagent_tools::Backend for LocalFsBackend {
         std::thread::spawn(move || {
             let mut buf = Vec::new();
             if let Some(mut pipe) = stdout_pipe {
-                let _ = pipe.by_ref().take(MAX_OUTPUT_BYTES as u64).read_to_end(&mut buf);
+                let _ = pipe
+                    .by_ref()
+                    .take(MAX_OUTPUT_BYTES as u64)
+                    .read_to_end(&mut buf);
                 // Send collected output immediately so recv_timeout gets it
                 // even if the drain below blocks on inherited pipe FDs.
                 let _ = stdout_tx.send(buf);
@@ -382,7 +389,10 @@ impl rvagent_tools::Backend for LocalFsBackend {
         std::thread::spawn(move || {
             let mut buf = Vec::new();
             if let Some(mut pipe) = stderr_pipe {
-                let _ = pipe.by_ref().take(MAX_OUTPUT_BYTES as u64).read_to_end(&mut buf);
+                let _ = pipe
+                    .by_ref()
+                    .take(MAX_OUTPUT_BYTES as u64)
+                    .read_to_end(&mut buf);
                 let _ = stderr_tx.send(buf);
                 let _ = io::copy(&mut pipe, &mut io::sink());
             } else {
@@ -393,12 +403,17 @@ impl rvagent_tools::Backend for LocalFsBackend {
         // Poll for exit with a deadline.
         let deadline = Instant::now() + timeout;
         let exit_code = loop {
-            match child.try_wait().map_err(|e| format!("wait failed: {}", e))? {
+            match child
+                .try_wait()
+                .map_err(|e| format!("wait failed: {}", e))?
+            {
                 Some(status) => break status.code().unwrap_or(-1),
                 None => {
                     if Instant::now() >= deadline {
                         // Kill the entire process group, then reap the direct child.
-                        unsafe { libc::kill(-(child_pid as i32), libc::SIGKILL); }
+                        unsafe {
+                            libc::kill(-(child_pid as i32), libc::SIGKILL);
+                        }
                         let _ = child.kill();
                         let _ = child.wait();
                         break -1;
