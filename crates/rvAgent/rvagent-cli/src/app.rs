@@ -351,7 +351,9 @@ impl rvagent_tools::Backend for LocalFsBackend {
         // tree on timeout, not just the direct `sh` child.
         unsafe {
             cmd.pre_exec(|| {
-                libc::setsid();
+                if libc::setsid() == -1 {
+                    return Err(io::Error::last_os_error());
+                }
                 Ok(())
             });
         }
