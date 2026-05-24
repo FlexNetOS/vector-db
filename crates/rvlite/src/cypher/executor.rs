@@ -24,12 +24,15 @@ pub enum ExecutionError {
 #[derive(Debug, Clone)]
 pub struct ExecutionContext {
     pub variables: HashMap<String, ContextValue>,
+    /// Rows produced by MATCH — each entry is one set of matched bindings.
+    pub matched_rows: Vec<HashMap<String, ContextValue>>,
 }
 
 impl ExecutionContext {
     pub fn new() -> Self {
         Self {
             variables: HashMap::new(),
+            matched_rows: Vec::new(),
         }
     }
 
@@ -267,7 +270,9 @@ impl<'a> Executor<'a> {
             });
         }
 
-        // Merge matches into context
+        // Store each matched binding set as a separate row so RETURN can iterate all of them.
+        // Also merge bindings into the top-level context so SET/DELETE can resolve variables.
+        context.matched_rows = matches.iter().map(|ctx| ctx.variables.clone()).collect();
         for match_ctx in matches {
             for (var, val) in match_ctx.variables {
                 context.bind(var, val);
@@ -420,8 +425,6 @@ impl<'a> Executor<'a> {
         context: &ExecutionContext,
     ) -> Result<ExecutionResult, ExecutionError> {
         let mut columns = Vec::new();
-        let mut row = HashMap::new();
-
         for item in &clause.items {
             let col_name = item
                 .alias
@@ -430,15 +433,34 @@ impl<'a> Executor<'a> {
                     Expression::Variable(var) => var.clone(),
                     _ => "?column?".to_string(),
                 });
-
             columns.push(col_name.clone());
-
-            let value = self.evaluate_expression_ctx(&item.expression, context)?;
-            row.insert(col_name, value);
         }
 
-        let mut result = ExecutionResult::new(columns);
-        result.add_row(row);
+        let mut result = ExecutionResult::new(columns.clone());
+
+        if context.matched_rows.is_empty() {
+            // No MATCH rows — evaluate once against the top-level context.
+            let mut row = HashMap::new();
+            for (item, col) in clause.items.iter().zip(columns.iter()) {
+                let value = self.evaluate_expression_ctx(&item.expression, context)?;
+                row.insert(col.clone(), value);
+            }
+            result.add_row(row);
+        } else {
+            // One result row per matched binding set.
+            for matched_vars in &context.matched_rows {
+                let mut row_ctx = context.clone();
+                for (k, v) in matched_vars {
+                    row_ctx.variables.insert(k.clone(), v.clone());
+                }
+                let mut row = HashMap::new();
+                for (item, col) in clause.items.iter().zip(columns.iter()) {
+                    let value = self.evaluate_expression_ctx(&item.expression, &row_ctx)?;
+                    row.insert(col.clone(), value);
+                }
+                result.add_row(row);
+            }
+        }
 
         Ok(result)
     }
@@ -448,24 +470,41 @@ impl<'a> Executor<'a> {
         clause: &SetClause,
         context: &ExecutionContext,
     ) -> Result<ExecutionResult, ExecutionError> {
-        for item in &clause.items {
-            match item {
-                SetItem::Property {
-                    variable,
-                    property,
-                    value,
-                } => {
-                    let val = self.evaluate_expression(value, context)?;
-                    if let Some(ContextValue::Node(node)) = context.get(variable) {
-                        if let Some(node_mut) = self.graph.get_node_mut(&node.id) {
-                            node_mut.set_property(property.clone(), val);
+        // Iterate matched rows so SET applies to every MATCH result.
+        let row_contexts: Vec<HashMap<String, ContextValue>> = if context.matched_rows.is_empty() {
+            vec![context.variables.clone()]
+        } else {
+            context.matched_rows.iter().map(|vars| {
+                let mut merged = context.variables.clone();
+                merged.extend(vars.iter().map(|(k, v)| (k.clone(), v.clone())));
+                merged
+            }).collect()
+        };
+
+        for row_vars in &row_contexts {
+            let row_ctx = ExecutionContext {
+                variables: row_vars.clone(),
+                matched_rows: Vec::new(),
+            };
+            for item in &clause.items {
+                match item {
+                    SetItem::Property {
+                        variable,
+                        property,
+                        value,
+                    } => {
+                        let val = self.evaluate_expression(value, &row_ctx)?;
+                        if let Some(ContextValue::Node(node)) = row_ctx.get(variable) {
+                            if let Some(node_mut) = self.graph.get_node_mut(&node.id) {
+                                node_mut.set_property(property.clone(), val);
+                            }
                         }
                     }
-                }
-                _ => {
-                    return Err(ExecutionError::UnsupportedOperation(
-                        "Only property SET supported".to_string(),
-                    ))
+                    _ => {
+                        return Err(ExecutionError::UnsupportedOperation(
+                            "Only property SET supported".to_string(),
+                        ))
+                    }
                 }
             }
         }
@@ -478,24 +517,37 @@ impl<'a> Executor<'a> {
         clause: &DeleteClause,
         context: &ExecutionContext,
     ) -> Result<ExecutionResult, ExecutionError> {
-        for expr in &clause.expressions {
-            if let Expression::Variable(var) = expr {
-                if let Some(ctx_val) = context.get(var) {
-                    match ctx_val {
-                        ContextValue::Node(node) => {
-                            if clause.detach {
-                                self.graph.delete_node(&node.id)?;
-                            } else {
-                                return Err(ExecutionError::ExecutionError(
-                                    "Cannot delete node with relationships without DETACH"
-                                        .to_string(),
-                                ));
+        // Iterate matched rows so DELETE applies to every MATCH result.
+        let row_contexts: Vec<HashMap<String, ContextValue>> = if context.matched_rows.is_empty() {
+            vec![context.variables.clone()]
+        } else {
+            context.matched_rows.iter().map(|vars| {
+                let mut merged = context.variables.clone();
+                merged.extend(vars.iter().map(|(k, v)| (k.clone(), v.clone())));
+                merged
+            }).collect()
+        };
+
+        for row_vars in &row_contexts {
+            for expr in &clause.expressions {
+                if let Expression::Variable(var) = expr {
+                    if let Some(ctx_val) = row_vars.get(var) {
+                        match ctx_val {
+                            ContextValue::Node(node) => {
+                                if clause.detach {
+                                    self.graph.delete_node(&node.id)?;
+                                } else {
+                                    return Err(ExecutionError::ExecutionError(
+                                        "Cannot delete node with relationships without DETACH"
+                                            .to_string(),
+                                    ));
+                                }
                             }
+                            ContextValue::Edge(edge) => {
+                                self.graph.delete_edge(&edge.id)?;
+                            }
+                            _ => {}
                         }
-                        ContextValue::Edge(edge) => {
-                            self.graph.delete_edge(&edge.id)?;
-                        }
-                        _ => {}
                     }
                 }
             }

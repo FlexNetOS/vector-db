@@ -3109,7 +3109,12 @@ async fn train_endpoint(
     _contributor: AuthenticatedContributor,
 ) -> Result<Json<TrainingCycleResult>, (StatusCode, String)> {
     check_read_only(&state)?;
-    let result = run_training_cycle(&state);
+    let result = tokio::task::spawn_blocking(move || run_training_cycle(&state))
+        .await
+        .map_err(|e| {
+            tracing::error!("Training cycle panicked: {e}");
+            (StatusCode::INTERNAL_SERVER_ERROR, format!("training cycle failed: {e}"))
+        })?;
     tracing::info!(
         "Training cycle (explicit): sona_patterns={}, pareto={}→{}, memories={}",
         result.sona_patterns,
