@@ -7,9 +7,9 @@
   "scripts": {
     "init": "bash init.sh",
     "seed": "node src/seed-docs.mjs",
-    "query": "node src/query.mjs",
-    "stats": "npx --yes agentdb@latest db stats",
-    "mcp": "npx --yes agentdb@latest mcp start",
+    "query": "node src/query.mjs --",
+    "stats": "AGENTDB_PATH=./vectors.db npx --yes agentdb@latest db stats",
+    "mcp": "AGENTDB_PATH=./vectors.db npx --yes agentdb@latest mcp start",
     "bench": "bash benchmark.sh"
   },
   "engines": {

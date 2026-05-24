@@ -38,7 +38,7 @@ node src/seed-docs.mjs
 # 3) Ask questions
 node src/query.mjs "How does HNSW indexing work?"
 node src/query.mjs "What is product quantization?" -k 3
-node src/query.mjs "Compare cosine vs euclidean distance" --mmr
+node src/query.mjs "Compare cosine vs euclidean distance" --threshold 0.3
 ```
 
 ## Architecture

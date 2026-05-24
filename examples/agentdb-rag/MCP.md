@@ -32,9 +32,11 @@ After restarting Claude Code (or `/mcp reconnect`), the server surfaces
 | AgentDB | 5 | causal edges, recall-with-certificate |
 | Batch ops | 3 | bulk insert / search / export |
 
-Inspect the canonical names in your session with:
+Inspect the canonical names in-session via Claude Code's `/mcp` slash command,
+or list registered servers from the shell with:
 ```bash
-claude mcp tools agentdb
+claude mcp list
+claude mcp get agentdb
 ```
 
 Verified smoke-test response (server replies to `initialize`):
@@ -96,5 +98,6 @@ claude mcp remove agentdb
 - AgentDB v3 auto-detects the **ruvector** backend if it's installed (it is,
   in this repo). Otherwise it falls back to hnswlib or sql.js — slower but
   functionally identical for the tool surface.
-- If `claude mcp tools agentdb` shows zero tools, the server probably crashed
-  on startup. Run `npx --yes agentdb@latest doctor` to diagnose.
+- If `/mcp` in Claude Code shows the server as failed (or `claude mcp get
+  agentdb` reports an unhealthy state), the server probably crashed on
+  startup. Run `npx --yes agentdb@latest doctor` to diagnose.

@@ -105,9 +105,18 @@ function summarizeHit(h) {
   };
 }
 
+// Neutralize delimiter strings ("=== CONTEXT ===" etc.) inside retrieved doc
+// text so a malicious document cannot inject fake sections that override the
+// system instructions. This is a minimum-viable defense — production RAG
+// systems should also validate ingest sources and consider structured prompts.
+function sanitizeContext(text) {
+  if (text == null) return '[no text]';
+  return String(text).replace(/={3,}/g, '===');
+}
+
 function buildPrompt(question, hits) {
   const ctxBlocks = hits.map((h, i) => {
-    const text = h.text || '[no text]';
+    const text = sanitizeContext(h.text || '[no text]');
     const id = h.doc_id || h.id || `hit-${i}`;
     return `[${i + 1}] (${id}) ${text}`;
   });
@@ -120,7 +129,7 @@ function buildPrompt(question, hits) {
     ctxBlocks.join('\n'),
     '',
     '=== QUESTION ===',
-    question,
+    sanitizeContext(question),
     '',
     '=== ANSWER ===',
   ].join('\n');

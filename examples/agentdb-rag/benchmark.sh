@@ -12,11 +12,14 @@
 set -euo pipefail
 cd "$(dirname "$0")"
 
-: "${AGENTDB_PATH:=./vectors.db}"
+# Bench uses a dedicated DB so it never clobbers the user's seeded vectors.db.
+# Caller can still override with AGENTDB_PATH if they want bench == workload.
+: "${AGENTDB_PATH:=./bench.db}"
 : "${EMBED_BACKEND:=hash}"
 RUNS="${RUNS:-10}"
 
-echo "==> Benchmarking with EMBED_BACKEND=$EMBED_BACKEND, RUNS=$RUNS"
+export AGENTDB_PATH EMBED_BACKEND
+echo "==> Benchmarking with EMBED_BACKEND=$EMBED_BACKEND, RUNS=$RUNS, DB=$AGENTDB_PATH"
 
 ./init.sh > /tmp/agentdb-init.log 2>&1
 
@@ -26,7 +29,10 @@ node src/seed-docs.mjs > /tmp/agentdb-seed.log 2>&1
 SEED_END=$(date +%s%N)
 SEED_MS=$(( (SEED_END - SEED_START) / 1000000 ))
 DOC_COUNT=$(wc -l < data/corpus.jsonl)
-SEED_RATE=$(awk -v ms="$SEED_MS" -v n="$DOC_COUNT" 'BEGIN{printf "%.2f", n*1000/ms}')
+# Guard against SEED_MS=0 (would yield `inf` and break the JSON output).
+if [[ "$SEED_MS" -le 0 ]]; then SEED_RATE="0.00"; else
+  SEED_RATE=$(awk -v ms="$SEED_MS" -v n="$DOC_COUNT" 'BEGIN{printf "%.2f", n*1000/ms}')
+fi
 
 QUESTIONS=(
   "How does HNSW indexing work?"

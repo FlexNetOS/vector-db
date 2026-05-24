@@ -20,6 +20,14 @@ case "$EMBED_BACKEND" in
   *)       echo "unknown EMBED_BACKEND=$EMBED_BACKEND" >&2; exit 2 ;;
 esac
 
+# Defense-in-depth: refuse to rm anything that doesn't look like an AgentDB
+# file. Prevents `AGENTDB_PATH=/etc/passwd ./init.sh` from doing damage.
+case "$AGENTDB_PATH" in
+  *..*)           echo "refusing AGENTDB_PATH containing '..': $AGENTDB_PATH" >&2; exit 2 ;;
+  *.db|*.db-*)    : ;;
+  *)              echo "refusing AGENTDB_PATH that does not end in .db: $AGENTDB_PATH" >&2; exit 2 ;;
+esac
+
 # Wipe any prior DB so re-runs are idempotent (the file is .gitignore'd).
 rm -f "$AGENTDB_PATH"
 
