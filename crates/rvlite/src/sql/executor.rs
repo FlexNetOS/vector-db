@@ -290,7 +290,7 @@ impl SqlEngine {
                 // truncation still yields enough results (HNSW returns k nearest
                 // before filtering, so with k==limit we may get 0 matches).
                 let k = if filter.is_some() {
-                    (base_k * 20).max(100)
+                    base_k.saturating_mul(20).max(100)
                 } else {
                     base_k
                 };

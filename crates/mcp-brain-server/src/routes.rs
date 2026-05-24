@@ -3158,18 +3158,27 @@ async fn reclassify(
     };
     *state.pipeline_metrics.last_drift_check.write() = Some(chrono::Utc::now());
 
-    // 3. Category summary from current store
-    let all_mems = state.store.all_memories();
-    let clusters = build_memory_clusters(&all_mems);
-    let category_summary: Vec<serde_json::Value> = clusters
-        .iter()
-        .map(|(_, ids, cat)| {
-            serde_json::json!({
-                "category": cat,
-                "memory_count": ids.len(),
+    // 3. Category summary from current store (spawn_blocking — clustering is CPU-intensive)
+    let st2 = state.clone();
+    let (clusters, category_summary) = tokio::task::spawn_blocking(move || {
+        let all_mems = st2.store.all_memories();
+        let clusters = build_memory_clusters(&all_mems);
+        let summary: Vec<serde_json::Value> = clusters
+            .iter()
+            .map(|(_, ids, cat)| {
+                serde_json::json!({
+                    "category": cat,
+                    "memory_count": ids.len(),
+                })
             })
-        })
-        .collect();
+            .collect();
+        (clusters, summary)
+    })
+    .await
+    .map_err(|e| {
+        tracing::error!("Reclassify clustering panicked: {e}");
+        (StatusCode::INTERNAL_SERVER_ERROR, format!("clustering failed: {e}"))
+    })?;
 
     tracing::info!(
         "Reclassify: sona_patterns={}, pareto={}→{}, drifting={}, categories={}",
