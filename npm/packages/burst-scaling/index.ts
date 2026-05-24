@@ -387,7 +387,7 @@ export class BurstScalingSystem {
 
     // Calculate average metrics
     let totalLatency = 0;
-    const totalErrorRate = 0;
+    let totalErrorRate = 0;
     let count = 0;
 
     summary.forEach(metrics => {
