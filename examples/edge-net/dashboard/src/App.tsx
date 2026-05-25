@@ -10,6 +10,8 @@ import { WASMModules } from './components/wasm/WASMModules';
 import { MCPTools } from './components/mcp/MCPTools';
 import { CreditsPanel } from './components/dashboard/CreditsPanel';
 import { ConsolePanel } from './components/dashboard/ConsolePanel';
+import { ActivityPanel } from './components/dashboard/ActivityPanel';
+import { SettingsPanel } from './components/dashboard/SettingsPanel';
 import { IdentityPanel } from './components/identity/IdentityPanel';
 import { DocumentationPanel } from './components/docs/DocumentationPanel';
 import { BrainStatus } from './components/brain/BrainStatus';
@@ -232,16 +234,8 @@ function App() {
         </div>
       ),
       console: <ConsolePanel />,
-      activity: (
-        <div className="crystal-card p-8 text-center">
-          <p className="text-zinc-400">Activity log coming soon...</p>
-        </div>
-      ),
-      settings: (
-        <div className="crystal-card p-8 text-center">
-          <p className="text-zinc-400">Settings panel coming soon...</p>
-        </div>
-      ),
+      activity: <ActivityPanel />,
+      settings: <SettingsPanel />,
       docs: (
         <div className="space-y-6">
           <h1 className="text-2xl font-bold">
