@@ -414,6 +414,8 @@ npx @ruvector/cli hooks install
 npm install @ruvector/ruvllm
 ```
 
+Want a chat UI? See [User Interfaces](#user-interfaces) — the primary `ui/ruvocal/` surface plus six example dashboards.
+
 ### Node.js / Browser
 
 ```bash
@@ -1042,6 +1044,29 @@ cargo add prime-radiant --features gpu,simd
 ```
 
 </details>
+
+## User Interfaces
+
+RuVector ships with one production chat UI (`ui/ruvocal/`) and six standalone example dashboards under `examples/` and `crates/*/examples/`. All seven surfaces are covered by CI via [`examples-ui-ci.yml`](.github/workflows/examples-ui-ci.yml) (the six examples) and [`ui-ci.yml`](.github/workflows/ui-ci.yml) (`ui/ruvocal/`).
+
+| Surface | Stack | What it shows |
+|---|---|---|
+| [`ui/ruvocal/`](./ui/ruvocal/) | SvelteKit 2 / Svelte 5 / Vite 6 | **Primary chat UI** — Hugging Face `chat-ui` v0.20.0 (vendored). Speaks OpenAI-compatible APIs (HF router, llama.cpp `--server --api`, Ollama, OpenRouter, Poe). [README →](./ui/ruvocal/README.md) |
+| [`examples/rvf/dashboard/`](./examples/rvf/dashboard/) | TypeScript / Vite 6 / Three.js / D3 | RVF Causal Atlas — 14 views (Atlas, Coherence, Boundaries, Memory, Planets, Life, Witness, Solver, BlindTest, Discovery, Dyson, Status, Download, Docs). Offline-dev mode via `VITE_MOCK_API=true`. |
+| [`examples/edge-net/dashboard/`](./examples/edge-net/dashboard/) | React 19 / Vite 7 / HeroUI / Tailwind | Time Crystal Network visualization with Activity Log, Settings, and PiKey restore (feature-flagged). Apple Silicon devs see [README](./examples/edge-net/dashboard/README.md#known-issue-apple-silicon-darwin-arm64) for the upstream wrtc workaround. |
+| [`examples/scipix/web/`](./examples/scipix/web/) | Rust → WASM via `wasm-pack` | Scientific OCR demo — math equations and technical diagrams → LaTeX / MathML. Build: `cd examples/scipix/web && npm run build`. [README →](./examples/scipix/web/README.md) |
+| [`examples/ruvLLM/esp32-flash/web-flasher/`](./examples/ruvLLM/esp32-flash/web-flasher/) | Vanilla JS + Web Serial | ESP32 firmware web-flasher — Chrome/Edge/Opera only. Firmware URL parameterizable via `?firmware_url=...`. |
+| [`crates/rvlite/examples/dashboard/`](./crates/rvlite/examples/dashboard/) | React 19 / Vite 7 / HeroUI / Tailwind 4 | rvLite SQL + Vector dashboard — Bulk Vector Import, Filter Builder, SQL Schema Browser, Vector Inspector. Requires parent rvLite WASM build for full e2e; see [README](./crates/rvlite/examples/dashboard/README.md#parent-crate-integration). |
+| [`crates/ruvllm-wasm/src/webgpu/`](./crates/ruvllm-wasm/src/webgpu/) | Rust / WebGPU / wasm-bindgen | WebGPU compute kernels (GPU-accelerated KV-cache, shader pipelines). Built as a component of the `ruvllm-wasm` crate, covered by [`ruvllm-build.yml`](./.github/workflows/ruvllm-build.yml). |
+
+The simplest way to interact with RuVector is `ui/ruvocal/`:
+
+```bash
+cd ui/ruvocal && cp .env.example .env && npm install && npm run dev
+# Then open http://localhost:5173
+```
+
+Each example dashboard is self-contained — `cd` into its directory and run `npm install && npm run dev` (or the stack equivalent listed in its own README).
 
 ## Deployment
 
