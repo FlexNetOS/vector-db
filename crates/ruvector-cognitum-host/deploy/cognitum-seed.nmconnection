@@ -5,12 +5,19 @@ type=ethernet
 autoconnect=true
 autoconnect-priority=10
 
-# Match any USB-CDC interface (cdc_ncm, cdc_ether, rndis_host all bind to
-# different endpoints of the Seed's composite USB gadget). Matching by
-# driver instead of MAC means this keyfile works for any Cognitum Seed
-# plugged into this host, not just the currently-paired one.
+# Match the cdc_ncm (or cdc_ether legacy) USB-CDC endpoint of the Seed's
+# composite USB gadget. We deliberately DO NOT match rndis_host: the Seed
+# exposes both CDC-NCM and RNDIS endpoints simultaneously (RNDIS is for
+# Windows compatibility), but on Linux kernel 7.x the rndis_host driver
+# silently times out on transmit queue 0 with this Seed firmware (0.21.11),
+# making the iface look up but with no working traffic. Matching cdc_ncm
+# only forces NM to auto-activate on the working endpoint.
+#
+# Matching by driver instead of MAC means this keyfile works for any
+# Cognitum Seed plugged into this host (Seed regenerates MACs on each
+# boot), not just the currently-paired one.
 [match]
-driver=cdc_ncm;cdc_ether;rndis_host
+driver=cdc_ncm;cdc_ether
 
 [ethernet]
 
