@@ -1,0 +1,24 @@
+# Cognitum Seed USB-gadget appliance — udev rules
+#
+# The Seed enumerates as a Linux Foundation composite gadget (VID 1d6b,
+# PID 0104), which other generic Linux gadget devices also use. We further
+# match on iManufacturer="RuVector" and iProduct="Cognitum Seed" to avoid
+# colliding with unrelated USB-gadget hardware.
+#
+# Effects:
+#   - For the gadget's net interfaces (cdc_ncm + rndis_host both bind):
+#       tag with systemd so units can BindsTo this device, and explicitly
+#       allow NetworkManager to manage them (paranoia — NM is usually
+#       allowed by default for non-virtual ethernet).
+#   - For the gadget's mass-storage block device: create a stable
+#       /dev/cognitum-seed-usb symlink (independent of /dev/sdN assignment),
+#       and tag with systemd.
+#
+# Installed at: /etc/udev/rules.d/70-cognitum-seed.rules
+# Source of truth: crates/ruvector-cognitum-host/deploy/70-cognitum-seed.rules
+
+# Net interfaces (USB-CDC endpoints of the composite gadget)
+SUBSYSTEM=="net", ACTION=="add", ATTRS{idVendor}=="1d6b", ATTRS{idProduct}=="0104", ATTRS{manufacturer}=="RuVector", ATTRS{product}=="Cognitum Seed", TAG+="systemd", ENV{NM_UNMANAGED}="0"
+
+# Mass-storage block device (the USB volume labelled COGNITUM)
+SUBSYSTEM=="block", ACTION=="add|change", ENV{ID_FS_LABEL}=="COGNITUM", SYMLINK+="cognitum-seed-usb", TAG+="systemd"

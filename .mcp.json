@@ -33,18 +33,25 @@
     "cognitum": {
       "type": "sse",
       "url": "https://cognitum.one/mcpSse",
-      "description": "Cognitum Cloud control plane (api.cognitum.one). 7 cloud MCP tools: catalog, orders, witness chain, etc. Add COGNITUM_API_KEY for write operations.",
+      "description": "Cognitum Cloud control plane (api.cognitum.one). 7 cloud MCP tools: catalog, orders, witness chain, etc. Add COGNITUM_API_KEY for write operations. NOTE: server-side MCP-SSE protocol bug observed 2026-05-24 (missing endpoint event); fix needed at cognitum.one. See crates/ruvector-cognitum-host/README.md.",
       "env": {
         "COGNITUM_API_KEY": "${COGNITUM_API_KEY}"
       },
       "autoStart": false
     },
     "cognitum-seed": {
-      "type": "sse",
-      "url": "https://cognitum.local:8443/mcp",
-      "description": "Local Cognitum Seed appliance (114 on-device tools). Requires paired bearer token. Falls back to USB-gadget at http://169.254.42.1/mcp (no auth, physical cable trust).",
-      "env": {
-        "COGNITUM_SEED_TOKEN": "${COGNITUM_SEED_TOKEN}"
+      "type": "http",
+      "url": "http://169.254.42.1/mcp",
+      "description": "Cognitum Seed appliance over USB-gadget (cable-trust, no auth, no TLS). Default + highest-priority transport per the device's own auto-detect (see /run/media/$USER/COGNITUM/open.html). Requires this fork's crates/ruvector-cognitum-host/deploy/install.sh to be run first (otherwise NetworkManager dead-loops on DHCP and 169.254.42.1 is unreachable).",
+      "autoStart": false
+    },
+    "cognitum-seed-wifi": {
+      "type": "http",
+      "url": "https://cognitum-578b.local:8443/mcp",
+      "description": "Cognitum Seed via mDNS (Wi-Fi or USB), bearer token auth. Hostname cognitum-578b.local is device-specific (CPU-serial suffix from STATUS.txt) — update if the Seed changes. Requires the Seed to be on Wi-Fi (per ADR-048: bearer auth mandatory off-USB) and avahi-daemon running on the host.",
+      "headers": {
+        "Authorization": "Bearer ${COGNITUM_SEED_TOKEN}",
+        "Accept": "application/json, text/event-stream"
       },
       "autoStart": false
     }

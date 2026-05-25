@@ -1,0 +1,13 @@
+[package]
+name = "ruvector-cognitum-host"
+version = "0.1.0"
+edition = "2021"
+description = "Host-side plumbing for connecting a Cognitum Seed USB-gadget appliance on Linux (deploy/ artifacts only). Companion to vendor/cognitum-one and ADR-163."
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/FlexNetOS/ruvector"
+keywords = ["cognitum", "seed", "usb-gadget", "linux", "edge-ai"]
+categories = ["network-programming", "embedded"]
+publish = false
+
+[lib]
+path = "src/lib.rs"
