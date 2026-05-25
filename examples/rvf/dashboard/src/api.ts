@@ -1,5 +1,10 @@
 const BASE = '';
 
+// Offline development flag. When VITE_MOCK_API=true, fetchStatus() returns a
+// static plausible payload so the UI can boot without a backend. All other
+// endpoints continue to hit the live API.
+const MOCK_API = import.meta.env.VITE_MOCK_API === 'true';
+
 // --- Atlas types ---
 
 export interface AtlasQueryResult {
@@ -294,6 +299,14 @@ export async function fetchWitnessLog(): Promise<WitnessLogResponse> {
 // The API wraps status: { status, uptime_seconds, store: { ... }, ... }
 
 export async function fetchStatus(): Promise<SystemStatus> {
+  if (MOCK_API) {
+    return {
+      uptime: 3600,
+      segments: 4,
+      file_size: 178_257_920,
+      download_progress: { 'LIGHT_SEG': 1.0, 'SPECTRUM_SEG': 0.85, 'ORBIT_SEG': 1.0, 'CAUSAL_SEG': 0.92 },
+    };
+  }
   const raw = await get<{
     uptime_seconds: number;
     store: { total_segments: number; file_size: number };

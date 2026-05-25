@@ -1097,12 +1097,12 @@ export class DysonSphereView {
 
     const statusBadge = isDebunked
       ? '<span style="font-size:8px;padding:2px 6px;border-radius:3px;background:rgba(255,77,77,0.15);color:#FF4D4D;font-weight:700;text-transform:uppercase;letter-spacing:0.3px">DEBUNKED</span>'
-      : (c as Record<string, unknown>).follow_up_status
+      : (c as unknown as Record<string, unknown>).follow_up_status
         ? '<span style="font-size:8px;padding:2px 6px;border-radius:3px;background:rgba(255,176,32,0.1);color:var(--warning);font-weight:600;text-transform:uppercase;letter-spacing:0.3px">UNCONFIRMED</span>'
         : '';
 
-    const followUp = (c as Record<string, unknown>).follow_up_status
-      ? `<div style="font-size:9px;color:${isDebunked ? '#FF4D4D' : 'var(--warning)'};margin-top:4px;font-style:italic;border-top:1px solid var(--border-subtle);padding-top:4px">${(c as Record<string, unknown>).follow_up_status}</div>`
+    const followUp = (c as unknown as Record<string, unknown>).follow_up_status
+      ? `<div style="font-size:9px;color:${isDebunked ? '#FF4D4D' : 'var(--warning)'};margin-top:4px;font-style:italic;border-top:1px solid var(--border-subtle);padding-top:4px">${(c as unknown as Record<string, unknown>).follow_up_status}</div>`
       : '';
 
     card.innerHTML = `
