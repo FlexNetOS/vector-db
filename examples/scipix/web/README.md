@@ -21,10 +21,20 @@ npm install ruvector-scipix-wasm
 
 ### Build from Source
 
+Builds the WebAssembly module from the parent `ruvector-scipix` crate via
+`wasm-pack`. Requires Rust + `wasm-pack` on PATH (the script auto-installs it
+if missing); `pkg/` is generated and git-ignored.
+
 ```bash
-cd examples/scipix
-npm run build
+cd examples/scipix/web
+npm install
+npm run build          # release profile, slower, smaller wasm
+# or
+npm run build:dev      # dev profile, fast iteration
 ```
+
+Outputs land in `examples/scipix/web/pkg/` (entry: `ruvector_scipix.js`,
+`ruvector_scipix_bg.wasm`).
 
 ### Basic Usage
 
@@ -135,9 +145,12 @@ type RecognitionFormat = 'text' | 'latex' | 'both';
 
 ## Demo
 
-Run the interactive demo:
+Run the interactive demo (`dev` builds the wasm module in dev profile, then
+serves `examples/scipix/web/` over `python3 -m http.server`):
 
 ```bash
+cd examples/scipix/web
+npm install
 npm run dev
 ```
 
