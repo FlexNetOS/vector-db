@@ -1,0 +1,35 @@
+[connection]
+id=cognitum-seed
+uuid=c0d11d6b-0104-4c00-9c00-c00000000001
+type=ethernet
+autoconnect=true
+autoconnect-priority=10
+
+# Match the cdc_ncm (or cdc_ether legacy) USB-CDC endpoint of the Seed's
+# composite USB gadget. We deliberately DO NOT match rndis_host: the Seed
+# exposes both CDC-NCM and RNDIS endpoints simultaneously (RNDIS is for
+# Windows compatibility), but on Linux kernel 7.x the rndis_host driver
+# silently times out on transmit queue 0 with this Seed firmware (0.21.11),
+# making the iface look up but with no working traffic. Matching cdc_ncm
+# only forces NM to auto-activate on the working endpoint.
+#
+# Matching by driver instead of MAC means this keyfile works for any
+# Cognitum Seed plugged into this host (Seed regenerates MACs on each
+# boot), not just the currently-paired one.
+[match]
+driver=cdc_ncm;cdc_ether
+
+[ethernet]
+
+# Seed serves static link-local 169.254.42.1 with NO DHCP responder.
+# IPv4LL auto-assigns 169.254.x.x to us; the kernel adds a connected
+# /16 route, so 169.254.42.1 becomes reachable. NM was previously stuck
+# in DHCP wait, which is why nothing worked out of the box.
+[ipv4]
+method=link-local
+may-fail=false
+
+[ipv6]
+method=ignore
+
+[proxy]
