@@ -1,0 +1,170 @@
+name: Examples UI CI
+
+# Builds and tests the 5 example UI surfaces that ui-ci.yml does NOT
+# cover (it only handles ui/ruvocal/). Without this workflow, every
+# Rust/native change can silently rot these dashboards.
+#
+# See project memory project_ui_ci_gap.md for the structural rationale:
+# the gap is the reason the user reported "all UI features are not
+# working" — these surfaces aren't broken because someone broke them
+# recently, they're broken because nothing watches them.
+#
+# Out of scope here: crates/ruvllm-wasm/src/webgpu is a Rust module
+# inside a parent crate, built by ruvllm-build.yml as part of normal
+# cargo. It is not a standalone UI surface.
+
+on:
+  push:
+    branches: [main, develop]
+    paths:
+      - "examples/rvf/dashboard/**"
+      - "examples/edge-net/dashboard/**"
+      - "examples/scipix/**"
+      - "crates/rvlite/examples/dashboard/**"
+      - "examples/ruvLLM/esp32-flash/**"
+      - ".github/workflows/examples-ui-ci.yml"
+  pull_request:
+    paths:
+      - "examples/rvf/dashboard/**"
+      - "examples/edge-net/dashboard/**"
+      - "examples/scipix/**"
+      - "crates/rvlite/examples/dashboard/**"
+      - "examples/ruvLLM/esp32-flash/**"
+      - ".github/workflows/examples-ui-ci.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  rvf-dashboard:
+    name: rvf-dashboard (build)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: examples/rvf/dashboard
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Install dependencies
+        run: npm install --no-audit
+      - name: Build
+        run: npm run build
+
+  edge-net-dashboard:
+    name: edge-net-dashboard (lint + test + build)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: examples/edge-net/dashboard
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Install dependencies
+        run: npm install --no-audit
+      - name: Lint
+        run: npm run lint
+      - name: Test
+        run: npm run test
+      - name: Build
+        run: npm run build
+
+  scipix-web:
+    name: scipix-web (wasm-pack build)
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    # Non-blocking during stabilization: `examples/scipix/Cargo.toml` declares
+    # host-unconditional dependencies (`tokio[signal]` -> mio, axum, reqwest,
+    # dialoguer, ...) that do not compile for `wasm32-unknown-unknown`, and
+    # `examples/scipix/src/lib.rs` exposes 10 non-wasm modules unconditionally.
+    # Producing a working `pkg/` requires gating those modules behind
+    # `#[cfg(not(target_arch = "wasm32"))]` and moving the deps into
+    # `[target.'cfg(not(target_arch = "wasm32"))'.dependencies]` -- a multi-file
+    # structural change tracked as a separate follow-up PR.
+    # Keep this job a visible RED signal on PRs without blocking merges, so the
+    # regression does not silently get re-introduced once the structural fix lands.
+    continue-on-error: true
+    defaults:
+      run:
+        working-directory: examples/scipix/web
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Setup Rust + wasm32 target
+        run: |
+          rustup target add wasm32-unknown-unknown
+          rustc --version
+          cargo --version
+      - name: Install wasm-pack
+        run: |
+          if ! command -v wasm-pack &> /dev/null; then
+            curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
+          fi
+          wasm-pack --version
+      - name: Install dependencies
+        run: npm install --no-audit
+      - name: Build (wasm-pack)
+        run: npm run build
+
+  rvlite-dashboard:
+    name: rvlite-dashboard (lint + build + test)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: crates/rvlite/examples/dashboard
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Install dependencies
+        run: npm install --no-audit
+      - name: Lint
+        run: npm run lint
+      - name: Build
+        run: npm run build
+      - name: Test (allow failure during stabilization)
+        # `npm test` invokes custom node scripts (test-all.mjs, test-sql.mjs,
+        # e2e-wasm-test.mjs) that may need integration with the parent
+        # rvlite crate's WASM build. Gated as non-blocking until that
+        # integration is verified — failure becomes a visible signal in
+        # the PR check list without blocking merges.
+        continue-on-error: true
+        run: npm run test
+
+  esp32-web-flasher:
+    name: esp32-web-flasher (html validate)
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    defaults:
+      run:
+        working-directory: examples/ruvLLM/esp32-flash/web-flasher
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Install html-validate
+        run: npm install -g html-validate
+      - name: Validate index.html
+        # Standalone Web Serial flasher — no build pipeline; validate the
+        # static HTML against the HTML5 spec so structural rot is caught.
+        run: html-validate index.html

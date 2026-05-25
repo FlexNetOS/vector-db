@@ -1,0 +1,104 @@
+{
+  "version": 1,
+  "createdAt": "2026-05-25T01:30:00.234Z",
+  "updatedAt": "2026-05-25T01:30:11.803Z",
+  "briefPath": ".omc/ultragoal/brief.md",
+  "goalsPath": ".omc/ultragoal/goals.json",
+  "ledgerPath": ".omc/ultragoal/ledger.jsonl",
+  "claudeGoalMode": "aggregate",
+  "goals": [
+    {
+      "id": "G001-heal-rvf-dashboard",
+      "title": "Heal rvf/dashboard",
+      "objective": "Install, build, lint, and smoke-test examples/rvf/dashboard until green; mock fetchStatus() and WebSocket calls for offline dev; verify all 14 view files load without console errors",
+      "status": "in_progress",
+      "attempt": 1,
+      "createdAt": "2026-05-25T01:30:00.234Z",
+      "updatedAt": "2026-05-25T01:30:11.803Z",
+      "startedAt": "2026-05-25T01:30:11.803Z"
+    },
+    {
+      "id": "G002-heal-edge-net-dashboard",
+      "title": "Heal edge-net/dashboard",
+      "objective": "Install, build, lint, test (Linux only), implement-or-feature-flag the 3 coming-soon stubs; document the upstream #276 (wrtc darwin-arm64) Apple Silicon block prominently",
+      "status": "pending",
+      "attempt": 0,
+      "createdAt": "2026-05-25T01:30:00.234Z",
+      "updatedAt": "2026-05-25T01:30:00.234Z"
+    },
+    {
+      "id": "G003-heal-scipix-web",
+      "title": "Heal scipix/web",
+      "objective": "Run wasm-pack build .. --target web --out-dir web/pkg --release -- --features wasm to produce missing pkg/; wire npm run dev to build first; verify example.html loads the WASM module without console errors",
+      "status": "pending",
+      "attempt": 0,
+      "createdAt": "2026-05-25T01:30:00.234Z",
+      "updatedAt": "2026-05-25T01:30:00.234Z"
+    },
+    {
+      "id": "G004-heal-esp32-flash-web-flasher",
+      "title": "Heal esp32-flash/web-flasher",
+      "objective": "Verify upstream issue #409 firmware delivery fix landed; parameterize firmware URL via query string or config; add a prominent Chrome/Edge/Opera-only browser warning visible before connect button",
+      "status": "pending",
+      "attempt": 0,
+      "createdAt": "2026-05-25T01:30:00.234Z",
+      "updatedAt": "2026-05-25T01:30:00.234Z"
+    },
+    {
+      "id": "G005-heal-rvlite-examples-dashboard",
+      "title": "Heal rvlite/examples/dashboard",
+      "objective": "Run npm ci; consolidate the 11 markdown design docs into a single coherent README.md that matches actual current code; verify integration with parent rvlite crate's WASM build",
+      "status": "pending",
+      "attempt": 0,
+      "createdAt": "2026-05-25T01:30:00.234Z",
+      "updatedAt": "2026-05-25T01:30:00.234Z"
+    },
+    {
+      "id": "G006-heal-ruvllm-wasm-webgpu",
+      "title": "Heal ruvllm-wasm/webgpu",
+      "objective": "Add wasm-pack build --target web smoke check to ruvllm-build.yml (or to examples-ui-ci.yml); add a no-WebGPU fallback test that exercises the CPU code path",
+      "status": "pending",
+      "attempt": 0,
+      "createdAt": "2026-05-25T01:30:00.234Z",
+      "updatedAt": "2026-05-25T01:30:00.234Z"
+    },
+    {
+      "id": "G007-commit-and-verify-agentdb-reflexion",
+      "title": "Commit and verify AgentDB reflexion fix",
+      "objective": "Stage and commit the 32.4K frontier-schema.sql patch + 6 wiring files in examples/agentdb-rag/; run agentdb pattern store/search end-to-end and confirm episodes table now exists; if still broken document gap in docs/agentdb-reflexion-status.md and confirm claude-flow agentdb-pattern-store fallback works",
+      "status": "pending",
+      "attempt": 0,
+      "createdAt": "2026-05-25T01:30:00.234Z",
+      "updatedAt": "2026-05-25T01:30:00.234Z"
+    },
+    {
+      "id": "G008-add-ui-section-to-root-readme",
+      "title": "Add UI section to root README",
+      "objective": "Add a 'User Interfaces' section to root README.md listing all 7 UI surfaces (ruvocal + 6 examples) with one-line description and link to their own README; add a link from the top-level Quick Start to ui/ruvocal/README.md as the primary UI",
+      "status": "pending",
+      "attempt": 0,
+      "createdAt": "2026-05-25T01:30:00.234Z",
+      "updatedAt": "2026-05-25T01:30:00.234Z"
+    },
+    {
+      "id": "G009-local-ci-verification",
+      "title": "Local CI verification",
+      "objective": "Run all 5 jobs from examples-ui-ci.yml locally (or in a representative environment) and capture green output; if any job is red, fix the root cause not the workflow; record results in docs/ui-ci-verification.md",
+      "status": "pending",
+      "attempt": 0,
+      "createdAt": "2026-05-25T01:30:00.234Z",
+      "updatedAt": "2026-05-25T01:30:00.234Z"
+    },
+    {
+      "id": "G010-open-pr-to-flexnetos-develop",
+      "title": "Open PR to FlexNetOS/develop",
+      "objective": "Push branch feat/examples-ui-ci to origin; open PR via gh pr create --base develop with title 'UI Healing: 6 example dashboards + CI + README + AgentDB fix' and body summarizing all per-surface evidence, the reasoned 5-of-6 CI exclusion, the AgentDB fix outcome, and links to artifacts under .omc/ultragoal/; update auto-memory with anything new learned",
+      "status": "pending",
+      "attempt": 0,
+      "createdAt": "2026-05-25T01:30:00.234Z",
+      "updatedAt": "2026-05-25T01:30:00.234Z"
+    }
+  ],
+  "claudeObjective": "Complete all ultragoal stories in .omc/ultragoal/goals.json: G001-heal-rvf-dashboard Heal rvf/dashboard; G002-heal-edge-net-dashboard Heal edge-net/dashboard; G003-heal-scipix-web Heal scipix/web; G004-heal-esp32-flash-web-flasher Heal esp32-flash/web-flasher; G005-heal-rvlite-examples-dashboard Heal rvlite/examples/dashboard; G006-heal-ruvllm-wasm-webgpu Heal ruvllm-wasm/webgpu; G007-commit-and-verify-agentdb-reflexion Commit and verify AgentDB reflexion fix; G008-add-ui-section-to-root-readme Add UI section to root README; G009-local-ci-verification Local CI verification; G010-open-pr-to-flexnetos-develop Open PR to FlexNetOS/develop",
+  "activeGoalId": "G001-heal-rvf-dashboard"
+}

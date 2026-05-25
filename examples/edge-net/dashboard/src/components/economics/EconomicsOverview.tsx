@@ -385,8 +385,8 @@ export function EconomicsOverview() {
                     borderRadius: 8,
                     fontSize: 12,
                   }}
-                  formatter={(value: number) => [
-                    `${value.toFixed(2)}x`,
+                  formatter={(value) => [
+                    `${Number(value ?? 0).toFixed(2)}x`,
                     'Multiplier',
                   ]}
                 />
@@ -446,8 +446,8 @@ export function EconomicsOverview() {
                     borderRadius: 8,
                     fontSize: 12,
                   }}
-                  formatter={(value: number) => [
-                    value.toLocaleString(),
+                  formatter={(value) => [
+                    Number(value ?? 0).toLocaleString(),
                     'Nodes',
                   ]}
                 />

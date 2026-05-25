@@ -1,0 +1,2 @@
+{"ts":"2026-05-25T01:30:00.234Z","event":"plan_created","message":"10 goal(s) created"}
+{"ts":"2026-05-25T01:30:11.803Z","event":"goal_started","goalId":"G001-heal-rvf-dashboard","status":"in_progress","message":"Attempt 1"}

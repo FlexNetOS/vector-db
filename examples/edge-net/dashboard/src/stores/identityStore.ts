@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { edgeNetService, type PiKeyInstance } from '../services/edgeNet';
+import { featureFlags } from '../utils/featureFlags';
 
 export interface PeerIdentity {
   id: string;
@@ -244,7 +245,14 @@ export const useIdentityStore = create<IdentityState>()(
         try {
           // If password provided, treat as encrypted backup
           if (password) {
-            // TODO: Implement PiKey.restoreFromBackup when available
+            if (!featureFlags.piKeyRestore) {
+              throw new Error(
+                'Encrypted backup restore is disabled. Set VITE_ENABLE_PIKEY_RESTORE=true to enable (requires PiKey.restoreFromBackup in WASM).'
+              );
+            }
+            // TODO: Implement PiKey.restoreFromBackup when available in WASM module.
+            // Flag-gated path: callers opted in via VITE_ENABLE_PIKEY_RESTORE but
+            // the WASM binding still needs to land upstream.
             throw new Error('Encrypted backup import not yet implemented');
           }
 

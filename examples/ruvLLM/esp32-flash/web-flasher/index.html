@@ -198,6 +198,26 @@
             display: block;
         }
 
+        .hint {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            margin-top: 0.5rem;
+        }
+
+        .progress-hidden {
+            display: none;
+        }
+
+        .progress-text {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            text-align: center;
+        }
+
+        .footer-links {
+            margin-top: 0.5rem;
+        }
+
         footer {
             text-align: center;
             margin-top: 2rem;
@@ -217,7 +237,7 @@
         <p class="subtitle">Flash AI firmware directly from your browser - no installation required</p>
 
         <div id="browser-check" class="warning-box">
-            ⚠️ Web Serial API not supported. Please use Chrome, Edge, or Opera.
+            ⚠ Web Serial API requires Chrome, Edge, or Opera. Firefox and Safari are not supported.
         </div>
 
         <!-- Step 1: Select Target -->
@@ -246,8 +266,8 @@
             <div class="status disconnected" id="connection-status">
                 ○ Not connected
             </div>
-            <button id="connect-btn" class="primary">Connect ESP32</button>
-            <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 0.5rem;">
+            <button id="connect-btn" type="button" class="primary">Connect ESP32</button>
+            <p class="hint">
                 Hold BOOT button while clicking connect if device doesn't appear
             </p>
         </div>
@@ -255,11 +275,11 @@
         <!-- Step 3: Flash -->
         <div class="card">
             <h2><span class="step-number">3</span> Flash Firmware</h2>
-            <button id="flash-btn" class="primary" disabled>Flash RuvLLM</button>
-            <div class="progress" id="progress-container" style="display: none;">
+            <button id="flash-btn" type="button" class="primary" disabled>Flash RuvLLM</button>
+            <div class="progress progress-hidden" id="progress-container">
                 <div class="progress-bar" id="progress-bar"></div>
             </div>
-            <p id="progress-text" style="color: var(--text-muted); font-size: 0.85rem; text-align: center;"></p>
+            <p id="progress-text" class="progress-text"></p>
         </div>
 
         <!-- Log Output -->
@@ -276,7 +296,7 @@
                 <a href="https://crates.io/crates/ruvllm-esp32">Crates.io</a> ·
                 <a href="https://www.npmjs.com/package/ruvllm-esp32">npm</a>
             </p>
-            <p style="margin-top: 0.5rem;">RuvLLM ESP32 - Tiny LLM Inference for Microcontrollers</p>
+            <p class="footer-links">RuvLLM ESP32 - Tiny LLM Inference for Microcontrollers</p>
         </footer>
     </div>
 
@@ -284,7 +304,11 @@
         // ESP Web Serial Flasher
         // Uses esptool.js for actual flashing
 
-        const FIRMWARE_BASE_URL = 'https://github.com/FlexNetOS/ruvector/releases/latest/download';
+        // Firmware URL is parameterizable via ?firmware_url=... query string for
+        // local mirrors, staging releases, or self-hosted artifacts. Defaults to
+        // the canonical GitHub release artifact path (see upstream issue #409).
+        const params = new URLSearchParams(window.location.search);
+        const FIRMWARE_BASE_URL = params.get('firmware_url') || 'https://github.com/FlexNetOS/ruvector/releases/latest/download';
 
         let port = null;
         let connected = false;
@@ -372,7 +396,7 @@
             const target = targetSelect.value;
             log(`Starting flash for ${target}...`);
 
-            progressContainer.style.display = 'block';
+            progressContainer.classList.remove('progress-hidden');
             flashBtn.disabled = true;
 
             try {

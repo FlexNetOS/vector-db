@@ -1,7 +1,7 @@
 {
-  "name": "ruvector-mathpix-wasm",
+  "name": "ruvector-scipix-wasm",
   "version": "0.1.0",
-  "description": "Mathpix OCR WebAssembly bindings",
+  "description": "Scipix OCR WebAssembly bindings (LaTeX/MathML from images)",
   "type": "module",
   "main": "index.js",
   "types": "types.ts",

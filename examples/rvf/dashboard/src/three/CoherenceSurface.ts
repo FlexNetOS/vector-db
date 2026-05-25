@@ -132,7 +132,7 @@ export class CoherenceSurface {
     this.updateContours(values);
   }
 
-  private updateWireframe(geometry: THREE.PlaneGeometry): void {
+  private updateWireframe(geometry: THREE.BufferGeometry): void {
     if (this.wireframe) {
       this.scene.remove(this.wireframe);
       this.wireframe.geometry.dispose();
